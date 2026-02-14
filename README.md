@@ -12,12 +12,16 @@ Primero clone el repositorio con `git clone`.
 
 Estos scripts te permiten cargar variables de entorno desde un archivo `.env` en diferentes sistemas operativos.
 
-### 📁 Archivos incluidos
+### 📁 Archivos incluidos en la carpeta scripts
 
 - `load-env.sh` - Para Linux y macOS (Bash/Zsh)
+- `run-dev.sh`
 - `load-env.ps1` - Para Windows PowerShell
-- `load-env.bat` - Para Windows Command Prompt (CMD)
+- `run-dev.ps1`
+- `run-dev.bat` - Para Windows Command Prompt (CMD)
 - `.env.example` - Archivo de ejemplo
+
+Los scripts `run` cargan el entorno y lanzan la aplicación.
 
 ### 🚀 Uso
 
@@ -26,63 +30,20 @@ Estos scripts te permiten cargar variables de entorno desde un archivo `.env` en
 cp .env.example .env
 ```
 
-### Linux / macOS
+### Linux / macOS permisos
 
 ```bash
 # Dar permisos de ejecución (solo la primera vez)
-chmod +x load-env.sh
-
-# Cargar las variables
-source load-env.sh
-# o
-. load-env.sh
-
-# Para usar un archivo diferente
-source load-env.sh mi-archivo.env
-
-# Verificar que se cargaron
-echo $DB_URL
+chmod +x ./scripts/load-env.sh
+chmod +x ./scripts/run-dev.sh
 ```
 
-### Windows PowerShell
+### Windows PowerShell permisos
 
 ```powershell
-# Ejecutar el script
-.\scripts\load-env.ps1
-
-# Para usar un archivo diferente
-.\scripts\load-env.ps1 -EnvFile "mi-archivo.env"
-
-# Verificar que se cargaron
-echo $env:DB_URL
-
 # Si tienes problemas de permisos, ejecuta primero:
 Unblock-File -Path .\scripts\load-env.ps1
-```
-
-### Windows CMD
-
-```cmd
-# IMPORTANTE: Usar 'call' para mantener las variables en la sesión
-call .\scripts\load-env.bat
-
-# Verificar que se cargaron
-echo %DB_URL%
-```
-
-## 📝 Formato del archivo .env
-
-```bash
-# Comentarios comienzan con #
-VARIABLE_SIMPLE=valor
-
-# Valores con espacios usan comillas
-VARIABLE_CON_ESPACIOS="valor con espacios"
-OTRA_VARIABLE='también funciona con comillas simples'
-
-# Sin espacios alrededor del signo =
-DB_HOST=localhost
-DB_PORT=5432
+Unblock-File -Path .\scripts\run-dev.ps1
 ```
 
 ## ⚠️ Notas importantes
@@ -97,12 +58,20 @@ Una vez configurado el entorno, iniciar el proyecto es tan simple como ejecutar:
 
 ### Windows
 
+#### Windows Powershell
+
 ```powershell
-.\mvnw spring-boot:run
+.\scripts\run-dev.ps1
+```
+
+#### CMD
+
+```cmd
+call .\scripts\run-dev.bat
 ```
 
 ### Linux/macOS
 
 ```bash
-mvnw spring-boot:run
+source ./scripts/run-dev.sh
 ```
