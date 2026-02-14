@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: DondeSiempre
+  profiles:
+    active: ${SPRING_PROFILE:dev}
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
