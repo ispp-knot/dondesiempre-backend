@@ -16,18 +16,29 @@ Estos scripts te permiten cargar variables de entorno desde un archivo `.env` en
 
 - `load-env.sh` - Para Linux y macOS (Bash/Zsh)
 - `run-dev.sh`
+- `run-dev-docker.sh`
 - `load-env.ps1` - Para Windows PowerShell
 - `run-dev.ps1`
+- `run-dev-docker.ps1`
 - `run-dev.bat` - Para Windows Command Prompt (CMD)
+- `run-dev-docker.bat` - Para Windows Command Prompt (CMD)
 - `.env.example` - Archivo de ejemplo
 
 Los scripts `run` cargan el entorno y lanzan la aplicación.
+Los scripts `docker` carga el entorno, levanta una base de datos postgresql con docker y lanzan la aplicación.
 
 ### 🚀 Uso
 
+Para usar la base de datos de neon copie el .env.example vacío y rellenelo:
+
 ```bash
-#Rellene el .env con los valores de las variables de entorno
 cp .env.example .env
+```
+
+En caso de usar la base de datos levantada en un contenedor use:
+
+```bash
+cp .env.dev .env
 ```
 
 ### Linux / macOS permisos
@@ -36,6 +47,7 @@ cp .env.example .env
 # Dar permisos de ejecución (solo la primera vez)
 chmod +x ./scripts/load-env.sh
 chmod +x ./scripts/run-dev.sh
+chmod +x ./mvnw
 ```
 
 ### Windows PowerShell permisos
@@ -64,10 +76,22 @@ Una vez configurado el entorno, iniciar el proyecto es tan simple como ejecutar:
 .\scripts\run-dev.ps1
 ```
 
+Si se va a usar la DB de docker usar:
+
+```powershell
+.\scripts\run-dev-docker.ps1
+```
+
 #### CMD
 
 ```cmd
 call .\scripts\run-dev.bat
+```
+
+Si se va a usar la DB de docker usar:
+
+```powershell
+.\scripts\run-dev-docker.bat
 ```
 
 ### Linux/macOS
@@ -75,3 +99,11 @@ call .\scripts\run-dev.bat
 ```bash
 source ./scripts/run-dev.sh
 ```
+
+Si se va a usar la DB de docker usar:
+
+```powershell
+.\scripts\run-dev-docker.sh
+```
+
+Tras detenter la aplicación por completo puede usar `docker compose down` para detener la base de datos. Esto supondrá su eliminación y la eliminación de datos fuera del init.sql.
