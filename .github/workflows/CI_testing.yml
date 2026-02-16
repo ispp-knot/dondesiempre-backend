@@ -34,9 +34,9 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
-        distribution: 'temurin'
-        java-version: '25'
-        cache: 'maven'
+          distribution: 'temurin'
+          java-version: '25'
+          cache: 'maven'
 
       - name: Set up Docker Compose
         run: |
