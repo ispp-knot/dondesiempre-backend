@@ -1,7 +1,10 @@
-import static org.junit.jupiter.api.Assertions.*;
+package ispp.project.dondesiempre.example;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
+
+import example.SimpleOperation;
 
 class SimpleOperationTest {
     
