@@ -13,4 +13,4 @@ fi
 
 # Ejecutar Spring Boot con perfil dev
 echo "Iniciando Spring Boot con perfil 'dev'..."
-./mvnw test
+./mvnw test -Dspring-boot.run.profiles=dev

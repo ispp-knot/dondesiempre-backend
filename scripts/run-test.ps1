@@ -8,4 +8,4 @@ if (Test-Path $envScript) {
 
 # Ejecutar Spring Boot con perfil dev
 Write-Host "Iniciando Spring Boot con perfil 'dev'..."
-./mvnw test
+./mvnw test -Dspring-boot.run.profiles=dev

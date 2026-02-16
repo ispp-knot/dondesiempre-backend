@@ -53,7 +53,7 @@ if exist "%ENV_FILE%" (
 REM Ejecutar Spring Boot con perfil dev
 echo Iniciando Spring Boot con perfil 'dev'...
 echo.
-call mvnw test
+call mvnw test -Dspring-boot.run.profiles=dev
 
 endlocal
 pause
