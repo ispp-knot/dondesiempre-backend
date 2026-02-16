@@ -4,6 +4,11 @@
 
 En este documento se detallan los pasos para poder iniciar el backend de donde siempre y empezar el desarrollo.
 
+# Requisitos
+
+- Java 25 (Configurar JAVA_HOME y el Path)
+- Docker compose(Opcional)
+
 # Clone del repositorio
 
 Primero clone el repositorio con `git clone`.
@@ -62,7 +67,6 @@ Unblock-File -Path .\scripts\run-dev.ps1
 
 1. **Las variables solo existen en la sesión actual** - No se guardan permanentemente
 2. **Linux/Mac**: Debes usar `source` o `.` antes del script
-3. **Windows CMD**: Debes usar `call` antes del script
 
 ## Iniciar el proyecto
 
@@ -85,7 +89,7 @@ Si se va a usar la DB de docker usar:
 #### CMD
 
 ```cmd
-call .\scripts\run-dev.bat
+.\scripts\run-dev.bat
 ```
 
 Si se va a usar la DB de docker usar:
@@ -107,3 +111,20 @@ Si se va a usar la DB de docker usar:
 ```
 
 Tras detenter la aplicación por completo puede usar `docker compose down` para detener la base de datos. Esto supondrá su eliminación y la eliminación de datos fuera del init.sql.
+
+## Para Testear
+
+Es necesario tener instalado Maven (y tenerlo añadido al entorno del sistema)
+
+Para instalar Maven, dirigirse a las siguiente URL: [Descarga de Maven](https://maven.apache.org/download.cgi)
+Seleccionar la opcion de *Binary Zip archive* y descomprimir el archivo en una carpeta dentro de C:/Archivos de Programa/Apache
+
+Luego de tener instalado maven, ejecutar la base de datos de pruebas en un contenedor de docker
+
+```powershell
+docker compose -f docker-compose.test.yml up
+```
+
+```powershell
+mvn test
+```
