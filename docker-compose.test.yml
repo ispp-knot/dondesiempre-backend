@@ -1,0 +1,16 @@
+services:
+  postgres-test:
+    image: postgis/postgis
+    container_name: postgres-test
+    ports:
+      - "5433:5432"
+    environment:
+      DB_URL: jdbc:postgresql://localhost:5432/devdb
+      DB_USER: devuser
+      DB_PASSWORD: devpass
+    volumes:
+      - pgdata-test:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  pgdata-test:
