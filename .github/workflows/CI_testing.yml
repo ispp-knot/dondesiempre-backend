@@ -15,7 +15,7 @@ on:
 
 jobs:
   test:
-    
+    runs-on: ubuntu-latest
 
     # Global environment variables shared across services and steps
     env:
@@ -32,4 +32,4 @@ jobs:
 
       # Step 5: Run the pytest test suite (ignoring Selenium tests)
       - name: Run Tests
-        run: ./scripts/run-test.bat
+        run: ./scripts/run-test.sh
