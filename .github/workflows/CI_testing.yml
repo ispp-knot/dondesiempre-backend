@@ -33,4 +33,4 @@ jobs:
 
       # Step 5: Run the pytest test suite (ignoring Selenium tests)
       - name: Run Tests
-        run: ./scripts/run-test.sh
+        run: mvn test
