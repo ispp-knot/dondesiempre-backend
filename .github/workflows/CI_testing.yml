@@ -38,6 +38,10 @@ jobs:
           java-version: '25'
           cache: 'maven'
 
+      - name: Debug - List files
+        run: ls -R
+
+
       - name: Set up Docker Compose
         run: |
           docker compose -f docker-compose.test.yml up -d
