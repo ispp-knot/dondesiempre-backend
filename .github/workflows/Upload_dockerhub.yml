@@ -1,12 +1,9 @@
 name: Build and Push Docker Image
 on:
-  pull_request:
-    types: [closed]
+  push:
     branches: [main-2]
   workflow_dispatch:
-  push:
-    branches:
-      - "**" # Se ejecuta en push a cualquier rama
+
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
