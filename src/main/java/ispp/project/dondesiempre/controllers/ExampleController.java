@@ -10,7 +10,7 @@ public class ExampleController {
 
     @GetMapping("/health")
     public String getHealth() {
-        return "Server is up";
+        return "Server is up!";
     }
 
 }
