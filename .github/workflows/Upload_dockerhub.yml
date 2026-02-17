@@ -1,16 +1,16 @@
 name: Build and Push Docker Image
-
 on:
   pull_request:
     types: [closed]
     branches: [main]
   workflow_dispatch:
-
+  push:
+    branches:
+      - "**" # Se ejecuta en push a cualquier rama
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
-    if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
-
+    # Removida la condición del if
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
