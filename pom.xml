@@ -122,6 +122,31 @@
 					</excludes>
 				</configuration>
 			</plugin>
+			<!-- Linter -->
+			 <plugin>
+				<groupId>com.diffplug.spotless</groupId>
+				<artifactId>spotless-maven-plugin</artifactId>
+				<version>3.2.1</version>
+				<configuration>
+					<ratchetFrom>origin/main</ratchetFrom>
+					<java>
+					<googleJavaFormat>
+						<style>GOOGLE</style> <!-- o AOSP -->
+					</googleJavaFormat>
+					<removeUnusedImports/>
+					<trimTrailingWhitespace/>
+					<endWithNewline/>
+					</java>
+				</configuration>
+				<executions>
+					<execution>
+					<goals>
+						<goal>check</goal> <!-- falla el build si hay diff -->
+					</goals>
+					<phase>verify</phase>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 

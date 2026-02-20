@@ -9,8 +9,8 @@ import org.springframework.web.server.ResponseStatusException;
 @RestController
 public class ErrorHandlerController implements ErrorController {
 
-    @GetMapping("/error")
-    public String customError() {
-        throw new ResponseStatusException(HttpStatusCode.valueOf(404));
-    }
+  @GetMapping("/error")
+  public String customError() {
+    throw new ResponseStatusException(HttpStatusCode.valueOf(404));
+  }
 }
