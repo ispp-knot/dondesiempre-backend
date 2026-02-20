@@ -1,4 +1,4 @@
-name: Lint
+name: Spotless Check
 
 on:
   pull_request:
@@ -7,12 +7,13 @@ on:
 
 jobs:
   spotless:
-    name: Run Spotless Lint Check
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up JDK 25
         uses: actions/setup-java@v4
