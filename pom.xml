@@ -155,4 +155,33 @@
 		</plugins>
 	</build>
 
+	<profiles>
+		<profile>
+			<id>test</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.liquibase</groupId>
+						<artifactId>liquibase-maven-plugin</artifactId>
+						<version>5.0.1</version>
+						<configuration>
+							<changeLogFile>src/main/resources/db/changelog/db.changelog-master.yaml</changeLogFile>
+							<diffChangeLogFile>src/main/resources/db/changelog/${maven.build.timestamp}_changelog.yaml</diffChangeLogFile>
+							<driver>org.postgresql.Driver</driver>
+							<url>jdbc:postgresql://localhost:5433/testdb</url>
+							<defaultSchemaName />
+							<username>testuser</username>
+							<password>testpass</password>
+							<referenceUrl>hibernate:spring:ispp.project.dondesiempre.models?dialect=org.hibernate.dialect.PostgreSQLDialect
+								&amp;hibernate.physical_naming_strategy=org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
+								&amp;hibernate.implicit_naming_strategy=org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
+							</referenceUrl>
+							<diffExcludeObjects>table:spatial_ref_sys, view:geography_columns, view:geometry_columns</diffExcludeObjects>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
 </project>
