@@ -49,5 +49,17 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
+      - name: Process resources
+        run: ./mvnw process-resources -Ptest
+
+      - name: Validate Liquibase changesets
+        run: ./mvnw liquibase:validate -Ptest
+
+      - name: Preview updateSQL (dry run)
+        run: ./mvnw liquibase:updateSQL -Ptest
+
+      - name: Preview rollbackSQL (dry run)
+        run: ./mvnw liquibase:rollbackSQL -Dliquibase.rollbackCount=1 -Ptest
+
       - name: Run Tests
         run: mvn test

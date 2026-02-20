@@ -2,11 +2,10 @@ spring:
   config:
     activate:
       on-profile: prod
-  jpa:
-    hibernate:
-      ddl-auto: validate
-    show-sql: false
-    open-in-view: false
+  datasource:
+    url: jdbc:postgresql://localhost:5434/proddb
+    username: produser
+    password: prodpass
   logging:
     level:
       root: ERROR
