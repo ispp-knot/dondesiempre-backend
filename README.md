@@ -13,25 +13,6 @@ En este documento se detallan los pasos para poder iniciar el backend de donde s
 
 Primero clone el repositorio con `git clone`.
 
-## Carga de las variables de entorno desde .env
-
-Estos scripts te permiten cargar variables de entorno desde un archivo `.env` en diferentes sistemas operativos.
-
-### 📁 Archivos incluidos en la carpeta scripts
-
-- `load-env.sh` - Para Linux y macOS (Bash/Zsh)
-- `run-dev.sh`
-- `run-dev-docker.sh`
-- `load-env.ps1` - Para Windows PowerShell
-- `run-dev.ps1`
-- `run-dev-docker.ps1`
-- `run-dev.bat` - Para Windows Command Prompt (CMD)
-- `run-dev-docker.bat` - Para Windows Command Prompt (CMD)
-- `.env.example` - Archivo de ejemplo
-
-Los scripts `run` cargan el entorno y lanzan la aplicación.
-Los scripts `docker` carga el entorno, levanta una base de datos postgresql con docker y lanzan la aplicación.
-
 ### 🚀 Uso
 
 Para usar la base de datos de neon copie el .env.example vacío y rellenelo:
@@ -46,56 +27,14 @@ En caso de usar la base de datos levantada en un contenedor use:
 cp .env.dev .env
 ```
 
-### Linux / macOS permisos
-
-```bash
-# Dar permisos de ejecución (solo la primera vez)
-chmod +x ./scripts/load-env.sh
-chmod +x ./scripts/run-dev.sh
-chmod +x ./mvnw
-```
-
-### Windows PowerShell permisos
-
-```powershell
-# Si tienes problemas de permisos, ejecuta primero:
-Unblock-File -Path .\scripts\load-env.ps1
-Unblock-File -Path .\scripts\run-dev.ps1
-```
-
-## ⚠️ Notas importantes
-
-1. **Las variables solo existen en la sesión actual** - No se guardan permanentemente
-2. **Linux/Mac**: Debes usar `source` o `.` antes del script
-
 ## Iniciar el proyecto
 
 Una vez configurado el entorno, iniciar el proyecto es tan simple como ejecutar:
 
 ### Windows
 
-#### Windows Powershell
-
 ```powershell
-.\scripts\run-dev.ps1
-```
-
-Si se va a usar la DB de docker usar:
-
-```powershell
-.\scripts\run-dev-docker.ps1
-```
-
-#### CMD
-
-```cmd
-.\scripts\run-dev.bat
-```
-
-Si se va a usar la DB de docker usar:
-
-```powershell
-.\scripts\run-dev-docker.bat
+.\mvnw spring-boot:run
 ```
 
 ### Linux/macOS
@@ -112,19 +51,39 @@ Si se va a usar la DB de docker usar:
 
 Tras detenter la aplicación por completo puede usar `docker compose down` para detener la base de datos. Esto supondrá su eliminación y la eliminación de datos fuera del init.sql.
 
+> Si se va a usar la DB de docker ejecutar los siguiente antes de arrancar spring:
+>
+> ```powershell
+> docker compose up -d postgres
+> ```
+>
+> Para detenerlo:
+>
+> ```powershell
+> docker compose down
+> ```
+
 ## Para Testear
 
 Es necesario tener instalado Maven (y tenerlo añadido al entorno del sistema)
 
 Para instalar Maven, dirigirse a las siguiente URL: [Descarga de Maven](https://maven.apache.org/download.cgi)
-Seleccionar la opcion de *Binary Zip archive* y descomprimir el archivo en una carpeta dentro de C:/Archivos de Programa/Apache
+Seleccionar la opcion de _Binary Zip archive_ y descomprimir el archivo en una carpeta dentro de C:/Archivos de Programa/Apache
 
 Luego de tener instalado maven, ejecutar la base de datos de pruebas en un contenedor de docker
 
-```powershell
+```bash
 docker compose -f docker-compose.test.yml up
 ```
 
+### Windows
+
 ```powershell
-mvn test
+.\mvnw test
+```
+
+### Linux/macOS
+
+```bash
+mvnw test
 ```
