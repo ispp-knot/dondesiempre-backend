@@ -49,5 +49,26 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
+      - name: Validate Liquibase changesets
+        run: ./mvnw liquibase:validate -Dspring-boot.run.profiles=test
+
+      - name: Preview updateSQL (dry run)
+        run: ./mvnw liquibase:updateSQL -Dspring-boot.run.profiles=test
+
+      - name: Count new changesets
+        id: count_changesets
+        run: |
+          # Count changesets in new/modified changelog files
+          CHANGESET_COUNT=$(git diff origin/main...HEAD -- 'src/main/resources/db/changelog/*.yaml' | grep -c '^\+.*- changeSet:' || echo "0")
+          echo "count=$CHANGESET_COUNT" >> $GITHUB_OUTPUT
+          echo "Found $CHANGESET_COUNT new changeset(s)"
+
+      - name: Preview rollbackSQL (dry run of new changeSets)
+        if: steps.count_changesets.outputs.count > 0
+        run: ./mvnw liquibase:rollbackCountSQL -Dspring-boot.run.profiles=test
+
+      - name: Apply Liquibase migrations
+        run: ./mvnw liquibase:update -Dspring-boot.run.profiles=test
+
       - name: Run Tests
         run: mvn test

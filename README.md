@@ -126,7 +126,7 @@ Seleccionar la opcion de *Binary Zip archive* y descomprimir el archivo en una c
 Luego de tener instalado maven, ejecutar la base de datos de pruebas en un contenedor de docker
 
 ```powershell
-docker compose -f docker-compose.test.yml up
+docker compose up
 ```
 
 ```powershell
