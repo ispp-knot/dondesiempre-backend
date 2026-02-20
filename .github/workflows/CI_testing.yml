@@ -59,7 +59,7 @@ jobs:
         run: ./mvnw liquibase:updateSQL -Ptest
 
       - name: Preview rollbackSQL (dry run)
-       run: ./mvnw liquibase:rollbackSQL -Dliquibase.rollbackCount=1 -Ptest
+        run: ./mvnw liquibase:rollbackSQL -Dliquibase.rollbackCount=1 -Ptest
 
       - name: Run Tests
         run: mvn test

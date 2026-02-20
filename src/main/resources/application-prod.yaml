@@ -2,6 +2,10 @@ spring:
   config:
     activate:
       on-profile: prod
+  datasource:
+    url: jdbc:postgresql://localhost:5434/proddb
+    username: produser
+    password: prodpass
   logging:
     level:
       root: ERROR

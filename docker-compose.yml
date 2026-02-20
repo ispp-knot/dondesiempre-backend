@@ -25,6 +25,20 @@ services:
       - pgdata-test:/var/lib/postgresql/data
     restart: unless-stopped
 
+  postgres-prod:
+    image: postgis/postgis:17-3.5
+    container_name: postgres-prod
+    ports:
+      - "5434:5432"
+    environment:
+      POSTGRES_USER: produser
+      POSTGRES_PASSWORD: prodpass
+      POSTGRES_DB: proddb
+    volumes:
+      - pgdata-prod:/var/lib/postgresql/data
+    restart: unless-stopped
+
 volumes:
   pgdata:
   pgdata-test:
+  pgdata-prod:

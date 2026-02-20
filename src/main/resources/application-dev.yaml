@@ -2,6 +2,15 @@ spring:
   config:
     activate:
       on-profile: dev
+  datasource:
+    url: jdbc:postgresql://localhost:5432/devdb
+    username: devuser
+    password: devpass
+  jpa:
+    hibernate:
+      ddl-auto: update
+  liquibase:
+    enabled: false
   logging:
     level:
       root: ERROR
