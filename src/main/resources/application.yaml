@@ -7,3 +7,8 @@ spring:
     url: ${DB_URL}
     username: ${DB_USER}
     password: ${DB_PASSWORD}
+springdoc:
+  swagger-ui:
+    enabled: false
+  api-docs:
+    enabled: false
