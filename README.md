@@ -112,6 +112,10 @@ Si se va a usar la DB de docker usar:
 
 Tras detenter la aplicación por completo puede usar `docker compose down` para detener la base de datos. Esto supondrá su eliminación y la eliminación de datos fuera del init.sql.
 
+## Swagger
+
+La interfaz de Swagger está disponible en el perfil de desarrollo en <http://localhost:8080/api/v1/swagger>.
+
 ## Para Testear
 
 Es necesario tener instalado Maven (y tenerlo añadido al entorno del sistema)
