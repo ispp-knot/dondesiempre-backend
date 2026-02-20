@@ -40,28 +40,26 @@ Una vez configurado el entorno, iniciar el proyecto es tan simple como ejecutar:
 ### Linux/macOS
 
 ```bash
-source ./scripts/run-dev.sh
+mvnw spring-boot:run
 ```
 
-Si se va a usar la DB de docker usar:
+### Docker PostgreSQL
+
+Si se va a usar la DB de docker ejecutar los siguiente antes de arrancar spring:
 
 ```powershell
-.\scripts\run-dev-docker.sh
+docker compose up -d postgres
 ```
 
-Tras detenter la aplicación por completo puede usar `docker compose down` para detener la base de datos. Esto supondrá su eliminación y la eliminación de datos fuera del init.sql.
+Para detenerlo:
 
-> Si se va a usar la DB de docker ejecutar los siguiente antes de arrancar spring:
->
-> ```powershell
-> docker compose up -d postgres
-> ```
->
-> Para detenerlo:
->
-> ```powershell
-> docker compose down
-> ```
+```powershell
+docker compose down
+```
+
+## Swagger
+
+La interfaz de Swagger está disponible en el perfil de desarrollo en <http://localhost:8080/api/v1/swagger>.
 
 ## Para Testear
 
