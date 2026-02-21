@@ -7,3 +7,5 @@ databaseChangeLog:
       file: db/changelog/003-create-product-model.yaml
   - include:
       file: db/changelog/004-create-store-model.yaml
+  - include:
+      file: db/changelog/005-add-new-client-requirements.yaml
