@@ -25,20 +25,20 @@ services:
       - pgdata-test:/var/lib/postgresql/data
     restart: unless-stopped
 
-  postgres-prod:
+  postgres-devmigrations:
     image: postgis/postgis:17-3.5
-    container_name: postgres-prod
+    container_name: postgres-devmigrations
     ports:
       - "5434:5432"
     environment:
-      POSTGRES_USER: produser
-      POSTGRES_PASSWORD: prodpass
-      POSTGRES_DB: proddb
+      POSTGRES_USER: devmigruser
+      POSTGRES_PASSWORD: devmigrpass
+      POSTGRES_DB: devmigrdb
     volumes:
-      - pgdata-prod:/var/lib/postgresql/data
+      - pgdata-devmigr:/var/lib/postgresql/data
     restart: unless-stopped
 
 volumes:
   pgdata:
   pgdata-test:
-  pgdata-prod:
+  pgdata-devmigr:
