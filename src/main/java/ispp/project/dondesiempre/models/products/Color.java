@@ -1,5 +1,6 @@
-package ispp.project.dondesiempre.models;
+package ispp.project.dondesiempre.models.products;
 
+import ispp.project.dondesiempre.models.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -11,16 +12,11 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-@Table(name = "clients")
-public class Client extends BaseEntity {
+@Table(name = "colors")
+public class Color extends BaseEntity {
 
   @Column
   @NotNull
   @Size(max = 255)
-  String name;
-
-  @Column
-  @NotNull
-  @Size(max = 255)
-  String surname;
+  String color;
 }
