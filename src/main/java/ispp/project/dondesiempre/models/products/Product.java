@@ -16,14 +16,13 @@ import lombok.Setter;
 @Table(name = "products")
 public class Product extends BaseEntity {
 
-    @Column
-    @NotNull
-    @Size(max = 255)
-    String name;
+  @Column
+  @NotNull
+  @Size(max = 255)
+  String name;
 
-    @Column
-    @NotNull
-    @Min(0)
-    Double price;
-
+  @Column
+  @NotNull
+  @Min(0)
+  Double price;
 }

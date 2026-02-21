@@ -15,9 +15,8 @@ import lombok.Setter;
 @Table(name = "socialNetworks")
 public class SocialNetwork extends BaseEntity {
 
-    @Column
-    @NotNull
-    @Size(max = 255)
-    String name;
-
+  @Column
+  @NotNull
+  @Size(max = 255)
+  String name;
 }

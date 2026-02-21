@@ -15,23 +15,22 @@ import lombok.Setter;
 @Table(name = "stores")
 public class Store extends BaseEntity {
 
-    @Column
-    @NotNull
-    @Size(max = 255)
-    String name;
+  @Column
+  @NotNull
+  @Size(max = 255)
+  String name;
 
-    @Column
-    @NotNull
-    @Size(max = 255)
-    String location;
+  @Column
+  @NotNull
+  @Size(max = 255)
+  String location;
 
-    @Column
-    @NotNull
-    @Size(max = 255)
-    String openingHours;
+  @Column
+  @NotNull
+  @Size(max = 255)
+  String openingHours;
 
-    @Column(columnDefinition = "TEXT")
-    @Size(max = 5000)
-    String aboutUs;
-
+  @Column(columnDefinition = "TEXT")
+  @Size(max = 5000)
+  String aboutUs;
 }

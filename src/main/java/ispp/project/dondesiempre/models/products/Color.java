@@ -15,9 +15,8 @@ import lombok.Setter;
 @Table(name = "colors")
 public class Color extends BaseEntity {
 
-    @Column
-    @NotNull
-    @Size(max = 255)
-    String color;
-
+  @Column
+  @NotNull
+  @Size(max = 255)
+  String color;
 }

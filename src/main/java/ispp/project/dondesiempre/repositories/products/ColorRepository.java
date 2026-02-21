@@ -1,9 +1,6 @@
 package ispp.project.dondesiempre.repositories.products;
 
+import ispp.project.dondesiempre.models.products.Color;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import ispp.project.dondesiempre.models.products.Color;
-
-public interface ColorRepository extends JpaRepository<Color, Integer> {
-
-}
+public interface ColorRepository extends JpaRepository<Color, Integer> {}

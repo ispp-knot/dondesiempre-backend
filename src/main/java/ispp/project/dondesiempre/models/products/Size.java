@@ -14,9 +14,8 @@ import lombok.Setter;
 @Table(name = "sizes")
 public class Size extends BaseEntity {
 
-    @Column
-    @NotNull
-    @jakarta.validation.constraints.Size(max = 255)
-    String size;
-
+  @Column
+  @NotNull
+  @jakarta.validation.constraints.Size(max = 255)
+  String size;
 }

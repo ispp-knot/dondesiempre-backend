@@ -14,14 +14,13 @@ import lombok.Setter;
 @Table(name = "clients")
 public class Client extends BaseEntity {
 
-    @Column
-    @NotNull
-    @Size(max = 255)
-    String name;
+  @Column
+  @NotNull
+  @Size(max = 255)
+  String name;
 
-    @Column
-    @NotNull
-    @Size(max = 255)
-    String surname;
-
+  @Column
+  @NotNull
+  @Size(max = 255)
+  String surname;
 }
