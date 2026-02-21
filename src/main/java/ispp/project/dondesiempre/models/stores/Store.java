@@ -1,8 +1,10 @@
 package ispp.project.dondesiempre.models.stores;
 
 import ispp.project.dondesiempre.models.BaseEntity;
+import ispp.project.dondesiempre.models.storefronts.Storefront;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -33,4 +35,7 @@ public class Store extends BaseEntity {
   @Column(columnDefinition = "TEXT")
   @Size(max = 5000)
   String aboutUs;
+
+  @OneToOne(mappedBy = "store")
+  private Storefront storefront;
 }
