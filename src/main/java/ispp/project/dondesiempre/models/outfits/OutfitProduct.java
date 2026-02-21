@@ -1,8 +1,5 @@
 package ispp.project.dondesiempre.models.outfits;
 
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-
 import ispp.project.dondesiempre.models.BaseEntity;
 import ispp.project.dondesiempre.models.products.Product;
 import jakarta.persistence.Column;
@@ -13,6 +10,8 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Getter
