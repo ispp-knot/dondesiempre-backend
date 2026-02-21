@@ -7,13 +7,13 @@ env:
 
 on:
   push:
-    branches: ["main", "bugfix/correct-workflow-port"]
+    branches: ["main"]
   workflow_dispatch:
     inputs:
       job_to_run:
         description: "Which job to run"
         required: true
-        default: "build-only"
+        default: "both"
         type: choice
         options:
           - both
@@ -59,7 +59,7 @@ jobs:
           path: "${{ github.workspace }}/target/*.jar"
 
   deploy:
-    if: ${{ github.event.inputs.job_to_run != 'build-only' }}
+    if: ${{ github.event_name == 'push' || github.event.inputs.job_to_run != 'build-only' }}
     permissions:
       contents: none
     runs-on: ubuntu-latest
