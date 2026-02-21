@@ -5,9 +5,9 @@ services:
     ports:
       - "5433:5432"
     environment:
-      POSTGRES_DB: testdb
       POSTGRES_USER: testuser
       POSTGRES_PASSWORD: testpass
+      POSTGRES_DB: testdb
     volumes:
       - pgdata-test:/var/lib/postgresql/data
     restart: unless-stopped

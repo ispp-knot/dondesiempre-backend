@@ -2,7 +2,7 @@
 # Run Tests Workflow
 # ----------------------------------------------------------------------------
 
-name: Testing
+name: Test
 
 on:
   push:
@@ -10,7 +10,7 @@ on:
   pull_request:
     branches: [main]
   workflow_dispatch:
-  
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -31,7 +31,7 @@ jobs:
           --health-retries=5
 
     steps:
-      
+
       - name: Checkout
         uses: actions/checkout@v5
 
@@ -48,6 +48,18 @@ jobs:
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-
+
+      - name: Process resources
+        run: ./mvnw process-resources -Ptest
+
+      - name: Validate Liquibase changesets
+        run: ./mvnw liquibase:validate -Ptest
+
+      - name: Preview updateSQL (dry run)
+        run: ./mvnw liquibase:updateSQL -Ptest
+
+      - name: Preview rollbackSQL (dry run)
+        run: ./mvnw liquibase:rollbackSQL -Dliquibase.rollbackCount=1 -Ptest
 
       - name: Run Tests
         run: mvn test

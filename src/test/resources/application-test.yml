@@ -4,10 +4,3 @@ spring:
     username: testuser
     password: testpass
     driver-class-name: org.postgresql.Driver
-  jpa:
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
-    hibernate:
-      ddl-auto: create-drop
-  sql:
-    init:
-      mode: always

@@ -28,19 +28,20 @@
 	</scm>
 	<properties>
 		<java.version>25</java.version>
+		<maven.build.timestamp.format>yyyy-MM-dd-HHmmss</maven.build.timestamp.format>
 	</properties>
 
 	<dependencyManagement>
-    <dependencies>
-        <dependency>
-            <groupId>me.paulschwarz</groupId>
-            <artifactId>spring-dotenv-bom</artifactId>
-            <version>5.1.0</version>
-            <type>pom</type>
-            <scope>import</scope>
-        </dependency>
-    </dependencies>
-</dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>me.paulschwarz</groupId>
+				<artifactId>spring-dotenv-bom</artifactId>
+				<version>5.1.0</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -94,6 +95,16 @@
 			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
 			<version>2.2.0</version>
 		</dependency>
+		<dependency>
+			<groupId>org.liquibase</groupId>
+			<artifactId>liquibase-core</artifactId>
+			<version>5.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.liquibase.ext</groupId>
+			<artifactId>liquibase-hibernate6</artifactId>
+			<version>5.0.1</version>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -122,7 +133,80 @@
 					</excludes>
 				</configuration>
 			</plugin>
+			<plugin>
+    <groupId>org.liquibase</groupId>
+			<artifactId>liquibase-maven-plugin</artifactId>
+			<version>5.0.1</version>
+			<configuration>
+					<changeLogFile>src/main/resources/db/changelog/db.changelog-master.yaml</changeLogFile>
+					<diffChangeLogFile>src/main/resources/db/changelog/${maven.build.timestamp}_changelog.yaml</diffChangeLogFile>
+					<driver>org.postgresql.Driver</driver>
+					<url>jdbc:postgresql://localhost:5434/proddb</url>
+					<defaultSchemaName />
+					<username>produser</username>
+					<password>prodpass</password>
+					<referenceUrl>hibernate:spring:ispp.project.dondesiempre.models?dialect=org.hibernate.dialect.PostgreSQLDialect
+							&amp;hibernate.physical_naming_strategy=org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
+							&amp;hibernate.implicit_naming_strategy=org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
+					</referenceUrl>
+					<diffExcludeObjects>table:spatial_ref_sys, view:geography_columns, view:geometry_columns</diffExcludeObjects>
+			</configuration>
+		</plugin>
+			<!-- Linter -->
+			 <plugin>
+				<groupId>com.diffplug.spotless</groupId>
+				<artifactId>spotless-maven-plugin</artifactId>
+				<version>3.2.1</version>
+				<configuration>
+					<ratchetFrom>origin/main</ratchetFrom>
+					<java>
+					<googleJavaFormat>
+						<style>GOOGLE</style> <!-- o AOSP -->
+					</googleJavaFormat>
+					<removeUnusedImports/>
+					<trimTrailingWhitespace/>
+					<endWithNewline/>
+					</java>
+				</configuration>
+				<executions>
+					<execution>
+					<goals>
+						<goal>check</goal> <!-- falla el build si hay diff -->
+					</goals>
+					<phase>verify</phase>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
+
+	<profiles>
+		<profile>
+			<id>test</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.liquibase</groupId>
+						<artifactId>liquibase-maven-plugin</artifactId>
+						<version>5.0.1</version>
+						<configuration>
+							<changeLogFile>src/main/resources/db/changelog/db.changelog-master.yaml</changeLogFile>
+							<diffChangeLogFile>src/main/resources/db/changelog/${maven.build.timestamp}_changelog.yaml</diffChangeLogFile>
+							<driver>org.postgresql.Driver</driver>
+							<url>jdbc:postgresql://localhost:5433/testdb</url>
+							<defaultSchemaName />
+							<username>testuser</username>
+							<password>testpass</password>
+							<referenceUrl>hibernate:spring:ispp.project.dondesiempre.models?dialect=org.hibernate.dialect.PostgreSQLDialect
+								&amp;hibernate.physical_naming_strategy=org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
+								&amp;hibernate.implicit_naming_strategy=org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
+							</referenceUrl>
+							<diffExcludeObjects>table:spatial_ref_sys, view:geography_columns, view:geometry_columns</diffExcludeObjects>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 
 </project>
