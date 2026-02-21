@@ -1,6 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      id: 1771691574654-3
+      id: 1771699061159-3
       author: ignacio (generated)
       changes:
         - createTable:
@@ -22,7 +22,7 @@ databaseChangeLog:
                   type: VARCHAR(255)
             tableName: colors
   - changeSet:
-      id: 1771691574654-7
+      id: 1771699061159-8
       author: ignacio (generated)
       changes:
         - createTable:
@@ -44,7 +44,7 @@ databaseChangeLog:
                   type: VARCHAR(255)
             tableName: sizes
   - changeSet:
-      id: 1771691574654-6
+      id: 1771699061159-7
       author: ignacio (generated)
       changes:
         - createTable:
@@ -71,7 +71,34 @@ databaseChangeLog:
                   type: FLOAT(53)
             tableName: products
   - changeSet:
-      id: 1771691574654-4
+      id: 1771699061159-4
+      author: ignacio (generated)
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: product_colorsPK
+                  name: id
+                  type: INTEGER
+              - column:
+                  name: version
+                  type: INTEGER
+              - column:
+                  constraints:
+                    nullable: false
+                  name: color_id
+                  type: INTEGER
+              - column:
+                  constraints:
+                    nullable: false
+                  name: product_id
+                  type: INTEGER
+            tableName: product_colors
+  - changeSet:
+      id: 1771699061159-5
       author: ignacio (generated)
       changes:
         - createTable:
@@ -89,11 +116,6 @@ databaseChangeLog:
               - column:
                   constraints:
                     nullable: false
-                  name: color_id
-                  type: INTEGER
-              - column:
-                  constraints:
-                    nullable: false
                   name: product_id
                   type: INTEGER
               - column:
@@ -103,7 +125,7 @@ databaseChangeLog:
                   type: INTEGER
             tableName: product_sizes
   - changeSet:
-      id: 1771691574654-5
+      id: 1771699061159-6
       author: ignacio (generated)
       changes:
         - createTable:
@@ -135,20 +157,7 @@ databaseChangeLog:
                   type: INTEGER
             tableName: product_stocks
   - changeSet:
-      id: 1771691574654-12
-      author: ignacio (generated)
-      changes:
-        - addForeignKeyConstraint:
-            baseColumnNames: product_id
-            baseTableName: product_stocks
-            constraintName: FK1dm90iiym3tkqyivfwcsrmn2k
-            deferrable: false
-            initiallyDeferred: false
-            referencedColumnNames: id
-            referencedTableName: products
-            validate: true
-  - changeSet:
-      id: 1771691574654-13
+      id: 1771699061159-14
       author: ignacio (generated)
       changes:
         - addForeignKeyConstraint:
@@ -161,7 +170,7 @@ databaseChangeLog:
             referencedTableName: sizes
             validate: true
   - changeSet:
-      id: 1771691574654-15
+      id: 1771699061159-17
       author: ignacio (generated)
       changes:
         - addForeignKeyConstraint:
@@ -174,33 +183,46 @@ databaseChangeLog:
             referencedTableName: products
             validate: true
   - changeSet:
-      id: 1771691574654-17
+      id: 1771699061159-19
       author: ignacio (generated)
       changes:
         - addForeignKeyConstraint:
             baseColumnNames: color_id
-            baseTableName: product_sizes
-            constraintName: FKe9smqbs7iix664j8yjqijk10x
+            baseTableName: product_colors
+            constraintName: FKb9e4okm5xhksf4up2ltc8gxv0
             deferrable: false
             initiallyDeferred: false
             referencedColumnNames: id
             referencedTableName: colors
             validate: true
   - changeSet:
-      id: 1771691574654-19
+      id: 1771699061159-21
       author: ignacio (generated)
       changes:
         - addForeignKeyConstraint:
-            baseColumnNames: color_id
-            baseTableName: product_stocks
-            constraintName: FKs7iwm38e1lmoin1c9v21hvhr7
+            baseColumnNames: product_id
+            baseTableName: product_colors
+            constraintName: FKqhu7cqni31911lmvx4fqmiw65
             deferrable: false
             initiallyDeferred: false
             referencedColumnNames: id
-            referencedTableName: product_sizes
+            referencedTableName: products
             validate: true
   - changeSet:
-      id: 1771691574654-20
+      id: 1771699061159-13
+      author: ignacio (generated)
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: product_id
+            baseTableName: product_stocks
+            constraintName: FK1dm90iiym3tkqyivfwcsrmn2k
+            deferrable: false
+            initiallyDeferred: false
+            referencedColumnNames: id
+            referencedTableName: products
+            validate: true
+  - changeSet:
+      id: 1771699061159-22
       author: ignacio (generated)
       changes:
         - addForeignKeyConstraint:
@@ -211,4 +233,17 @@ databaseChangeLog:
             initiallyDeferred: false
             referencedColumnNames: id
             referencedTableName: product_sizes
+            validate: true
+  - changeSet:
+      id: 1771699061159-15
+      author: ignacio (generated)
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: color_id
+            baseTableName: product_stocks
+            constraintName: FK3n2mhs8fo9w1jxcxrhlap38fu
+            deferrable: false
+            initiallyDeferred: false
+            referencedColumnNames: id
+            referencedTableName: product_colors
             validate: true
