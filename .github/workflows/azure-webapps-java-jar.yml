@@ -7,13 +7,13 @@ env:
 
 on:
   push:
-    branches: ["main"]
+    branches: ["main", "bugfix/correct-workflow-port"]
   workflow_dispatch:
     inputs:
       job_to_run:
         description: "Which job to run"
         required: true
-        default: "both"
+        default: "build-only"
         type: choice
         options:
           - both
@@ -32,7 +32,7 @@ jobs:
           POSTGRES_USER: testuser
           POSTGRES_PASSWORD: testpass
         ports:
-          - 5432:5432
+          - 5433:5432
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
