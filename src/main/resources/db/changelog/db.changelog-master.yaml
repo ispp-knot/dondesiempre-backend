@@ -11,3 +11,5 @@ databaseChangeLog:
       file: db/changelog/005-add-new-client-requirements.yaml
   - include:
       file: db/changelog/006-add-new-store-requirements.yaml
+  - include:
+      file: db/changelog/007-add-new-product-requirements.yaml
