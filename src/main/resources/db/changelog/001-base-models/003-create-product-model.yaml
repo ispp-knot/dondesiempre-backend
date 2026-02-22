@@ -1,0 +1,249 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1771699061159-3
+      author: ignacio (generated)
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: colorsPK
+                  name: id
+                  type: INTEGER
+              - column:
+                  name: version
+                  type: INTEGER
+              - column:
+                  constraints:
+                    nullable: false
+                  name: color
+                  type: VARCHAR(255)
+            tableName: colors
+  - changeSet:
+      id: 1771699061159-8
+      author: ignacio (generated)
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: sizesPK
+                  name: id
+                  type: INTEGER
+              - column:
+                  name: version
+                  type: INTEGER
+              - column:
+                  constraints:
+                    nullable: false
+                  name: size
+                  type: VARCHAR(255)
+            tableName: sizes
+  - changeSet:
+      id: 1771699061159-7
+      author: ignacio (generated)
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: productsPK
+                  name: id
+                  type: INTEGER
+              - column:
+                  name: version
+                  type: INTEGER
+              - column:
+                  constraints:
+                    nullable: false
+                  name: name
+                  type: VARCHAR(255)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: price
+                  type: FLOAT(53)
+            tableName: products
+  - changeSet:
+      id: 1771699061159-4
+      author: ignacio (generated)
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: product_colorsPK
+                  name: id
+                  type: INTEGER
+              - column:
+                  name: version
+                  type: INTEGER
+              - column:
+                  constraints:
+                    nullable: false
+                  name: color_id
+                  type: INTEGER
+              - column:
+                  constraints:
+                    nullable: false
+                  name: product_id
+                  type: INTEGER
+            tableName: product_colors
+  - changeSet:
+      id: 1771699061159-5
+      author: ignacio (generated)
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: product_sizesPK
+                  name: id
+                  type: INTEGER
+              - column:
+                  name: version
+                  type: INTEGER
+              - column:
+                  constraints:
+                    nullable: false
+                  name: product_id
+                  type: INTEGER
+              - column:
+                  constraints:
+                    nullable: false
+                  name: size_id
+                  type: INTEGER
+            tableName: product_sizes
+  - changeSet:
+      id: 1771699061159-6
+      author: ignacio (generated)
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: product_stocksPK
+                  name: id
+                  type: INTEGER
+              - column:
+                  name: version
+                  type: INTEGER
+              - column:
+                  constraints:
+                    nullable: false
+                  name: color_id
+                  type: INTEGER
+              - column:
+                  constraints:
+                    nullable: false
+                  name: product_id
+                  type: INTEGER
+              - column:
+                  constraints:
+                    nullable: false
+                  name: size_id
+                  type: INTEGER
+            tableName: product_stocks
+  - changeSet:
+      id: 1771699061159-14
+      author: ignacio (generated)
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: size_id
+            baseTableName: product_sizes
+            constraintName: FK3bqabm2nc8yyl9to7fo8trak4
+            deferrable: false
+            initiallyDeferred: false
+            referencedColumnNames: id
+            referencedTableName: sizes
+            validate: true
+  - changeSet:
+      id: 1771699061159-17
+      author: ignacio (generated)
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: product_id
+            baseTableName: product_sizes
+            constraintName: FK4isa0j51hpdn7cx04m831jic4
+            deferrable: false
+            initiallyDeferred: false
+            referencedColumnNames: id
+            referencedTableName: products
+            validate: true
+  - changeSet:
+      id: 1771699061159-19
+      author: ignacio (generated)
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: color_id
+            baseTableName: product_colors
+            constraintName: FKb9e4okm5xhksf4up2ltc8gxv0
+            deferrable: false
+            initiallyDeferred: false
+            referencedColumnNames: id
+            referencedTableName: colors
+            validate: true
+  - changeSet:
+      id: 1771699061159-21
+      author: ignacio (generated)
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: product_id
+            baseTableName: product_colors
+            constraintName: FKqhu7cqni31911lmvx4fqmiw65
+            deferrable: false
+            initiallyDeferred: false
+            referencedColumnNames: id
+            referencedTableName: products
+            validate: true
+  - changeSet:
+      id: 1771699061159-13
+      author: ignacio (generated)
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: product_id
+            baseTableName: product_stocks
+            constraintName: FK1dm90iiym3tkqyivfwcsrmn2k
+            deferrable: false
+            initiallyDeferred: false
+            referencedColumnNames: id
+            referencedTableName: products
+            validate: true
+  - changeSet:
+      id: 1771699061159-22
+      author: ignacio (generated)
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: size_id
+            baseTableName: product_stocks
+            constraintName: FKse6hmtjvx89uj0uew2ijyw2g8
+            deferrable: false
+            initiallyDeferred: false
+            referencedColumnNames: id
+            referencedTableName: product_sizes
+            validate: true
+  - changeSet:
+      id: 1771699061159-15
+      author: ignacio (generated)
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: color_id
+            baseTableName: product_stocks
+            constraintName: FK3n2mhs8fo9w1jxcxrhlap38fu
+            deferrable: false
+            initiallyDeferred: false
+            referencedColumnNames: id
+            referencedTableName: product_colors
+            validate: true
