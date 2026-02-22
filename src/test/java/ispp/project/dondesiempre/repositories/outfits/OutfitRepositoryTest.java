@@ -176,24 +176,24 @@ public class OutfitRepositoryTest {
     outfitProduct = outfitProductRepository.save(outfitProduct);
 
     storeProduct = new StoreProducts();
-    storeProduct.setProduct(products.get(1));
-    storeProduct.setStore(store1);
-    storeProduct = storeProductsRepository.save(storeProduct);
-
-    outfitProduct = new OutfitProduct();
-    outfitProduct.setIndex(1);
-    outfitProduct.setProduct(products.get(1));
-    outfitProduct.setOutfit(outfit2);
-    outfitProduct = outfitProductRepository.save(outfitProduct);
-
-    storeProduct = new StoreProducts();
     storeProduct.setProduct(products.get(2));
     storeProduct.setStore(store1);
     storeProduct = storeProductsRepository.save(storeProduct);
 
     outfitProduct = new OutfitProduct();
-    outfitProduct.setIndex(0);
+    outfitProduct.setIndex(1);
     outfitProduct.setProduct(products.get(2));
+    outfitProduct.setOutfit(outfit2);
+    outfitProduct = outfitProductRepository.save(outfitProduct);
+
+    storeProduct = new StoreProducts();
+    storeProduct.setProduct(products.get(1));
+    storeProduct.setStore(store1);
+    storeProduct = storeProductsRepository.save(storeProduct);
+
+    outfitProduct = new OutfitProduct();
+    outfitProduct.setIndex(0);
+    outfitProduct.setProduct(products.get(1));
     outfitProduct.setOutfit(outfit2);
     outfitProduct = outfitProductRepository.save(outfitProduct);
 
@@ -214,6 +214,9 @@ public class OutfitRepositoryTest {
 
     assertTrue(result.contains(outfit1));
     assertTrue(result.contains(outfit2));
+
+    assertEquals(0, result.get(0).getIndex());
+    assertEquals(1, result.get(1).getIndex());
 
     assertFalse(result.contains(outfit3));
   }
