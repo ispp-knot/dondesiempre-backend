@@ -1,7 +1,5 @@
 package ispp.project.dondesiempre.models.storefronts;
 
-import org.hibernate.validator.constraints.URL;
-
 import ispp.project.dondesiempre.models.BaseEntity;
 import ispp.project.dondesiempre.validators.HexColor;
 import jakarta.persistence.Column;
@@ -10,6 +8,7 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.validator.constraints.URL;
 
 @Entity
 @Getter
