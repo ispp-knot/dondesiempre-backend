@@ -1,6 +1,12 @@
 package ispp.project.dondesiempre.repositories.outfits;
 
 import ispp.project.dondesiempre.models.outfits.Outfit;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
-public interface OutfitRepository extends JpaRepository<Outfit, Integer> {}
+public interface OutfitRepository extends JpaRepository<Outfit, Integer> {
+  @Query(
+      "select distinct op.outfit from OutfitProduct op join StoreProducts sp on op.product.id = sp.product.id where sp.store.id = :storeId")
+  public List<Outfit> findByStoreId(Integer storeId);
+}
