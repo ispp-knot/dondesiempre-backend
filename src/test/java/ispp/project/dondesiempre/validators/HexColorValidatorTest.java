@@ -9,42 +9,42 @@ public class HexColorValidatorTest {
   private final HexColorValidator validator = new HexColorValidator();
 
   @Test
-  void acceptsNull() {
+  void shouldPass_WhenNull() {
     assertTrue(validator.isValid(null, null));
   }
 
   @Test
-  void accepts6HexDigitsLowercase() {
+  void shouldAccept_When6HexDigitsLowercase() {
     assertTrue(validator.isValid("#00ffaa", null));
   }
 
   @Test
-  void accepts6HexDigitsUppercase() {
+  void shouldAccept_When6HexDigitsUppercase() {
     assertTrue(validator.isValid("#AABBCC", null));
   }
 
   @Test
-  void accepts3HexDigits() {
+  void shouldAccept_When3HexDigits() {
     assertTrue(validator.isValid("#0fA", null));
   }
 
   @Test
-  void rejectsMissingHash() {
+  void shouldReject_WhenMissingHash() {
     assertFalse(validator.isValid("AABBCC", null));
   }
 
   @Test
-  void rejectsTooShort() {
+  void shouldReject_WhenTooShort() {
     assertFalse(validator.isValid("#AA", null));
   }
 
   @Test
-  void rejectsTooLong() {
+  void shouldReject_WhenTooLong() {
     assertFalse(validator.isValid("#AABBCCD", null));
   }
 
   @Test
-  void rejectsNonHexCharacters() {
+  void shouldReject_WhenNonHexCharacters() {
     assertFalse(validator.isValid("#GGHHII", null));
   }
 }
