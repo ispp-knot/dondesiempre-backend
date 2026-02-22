@@ -1,0 +1,24 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1771765796033-1
+      author: ignacio
+      changes:
+        - addColumn:
+            tableName: clients
+            columns:
+              - column:
+                  name: location
+                  type: geometry(Point,4326)
+        - dropColumn:
+            tableName: clients
+            columnName: address
+      rollback:
+        - dropColumn:
+            tableName: clients
+            columnName: location
+        - addColumn:
+            tableName: clients
+            columns:
+              - column:
+                  name: address
+                  type: VARCHAR(255)

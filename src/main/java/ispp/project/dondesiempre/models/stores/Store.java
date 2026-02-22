@@ -39,6 +39,10 @@ public class Store extends BaseEntity {
   Point location;
 
   @Column
+  @Size(max = 255)
+  String address;
+
+  @Column
   @NotBlank
   @Size(max = 255)
   String openingHours;
