@@ -13,4 +13,7 @@ public interface OutfitRepository extends JpaRepository<Outfit, Integer> {
 
   @Query("select op.product from OutfitProduct op where op.outfit.id = :id")
   public List<Product> findOutfitProductsById(Integer id);
+
+  @Query("select op.index from OutfitProduct op where op.outfit.id = :id")
+  public List<Integer> findOutfitProductIndicesById(Integer id);
 }

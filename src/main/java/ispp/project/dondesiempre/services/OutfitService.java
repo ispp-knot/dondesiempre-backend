@@ -115,6 +115,7 @@ public class OutfitService {
     Product product;
     OutfitProduct outfitProduct;
     List<Product> productsOfOutfit;
+    List<Integer> productIndicesOfOutfit;
 
     outfit = findById(outfitId);
     product =
@@ -126,6 +127,12 @@ public class OutfitService {
     if (productsOfOutfit.stream().mapToInt(prod -> prod.getStore().getId()).distinct().count()
         > 1L) {
       throw new InvalidRequestException("All products in an outfit must belong to the same store.");
+    }
+    productIndicesOfOutfit = outfitRepository.findOutfitProductIndicesById(outfitId);
+    productIndicesOfOutfit.add(dto.getIndex());
+
+    if (productsOfOutfit.stream().distinct().count() < productIndicesOfOutfit.size()) {
+      throw new InvalidRequestException("All products in an outfit must have distinct indices.");
     }
     outfitProduct = new OutfitProduct();
     outfitProduct.setIndex(dto.getIndex());
