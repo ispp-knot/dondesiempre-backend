@@ -32,5 +32,5 @@ public class Client extends BaseEntity {
 
   @Column
   @Size(max = 255)
-  String location;
+  String address;
 }

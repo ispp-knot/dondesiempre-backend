@@ -7,6 +7,8 @@ databaseChangeLog:
             tableName: stores
             columns:
               - column:
+                  constraints:
+                    nullable: false
                   name: address
                   type: VARCHAR(255)
       rollback:

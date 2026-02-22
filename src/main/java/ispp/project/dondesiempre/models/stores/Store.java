@@ -40,6 +40,7 @@ public class Store extends BaseEntity {
 
   @Column
   @Size(max = 255)
+  @NotBlank
   String address;
 
   @Column
