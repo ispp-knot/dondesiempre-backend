@@ -18,16 +18,18 @@ las migraciones por si mismas, se puede usar el perfil de `prod`.
 
 Las migraciones se organizan **una carpeta por tarea**, para evitar que todo quede en un único directorio plano, conservando la atomicidad de cada archivo de migración. La estructura es la siguiente:
 
-    src/main/resources/db/changelog/
-    ├── db.changelog-master.yaml
-    ├── 001-base-models/
-    │   ├── base-models.changelog.yaml
-    │   └── 001-create-clients.yaml
-    │   └── ...
-    ├── 002-maps/
-    │   ├── maps.changelog.yaml
-    │   ├── 001-create-map-entity.yaml
-    │   └── ...
+```
+src/main/resources/db/changelog/
+├── db.changelog-master.yaml
+├── 001-base-models/
+│   ├── base-models.changelog.yaml
+│   └── 001-create-clients.yaml
+│   └── ...
+├── 002-maps/
+│   ├── maps.changelog.yaml
+│   ├── 001-create-map-entity.yaml
+│   └── ...
+```
 
 Cada **subcarpeta** tiene **su propio archivo de changelog** (_XXX\-taskName_.changelog.yaml) que lista sus changesets, y el **master** incluye los **changelogs de todas las subcarpetas**, en orden.
 
