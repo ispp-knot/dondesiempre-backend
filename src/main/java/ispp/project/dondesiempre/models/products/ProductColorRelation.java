@@ -1,13 +1,10 @@
 package ispp.project.dondesiempre.models.products;
 
 import ispp.project.dondesiempre.models.BaseEntity;
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
@@ -16,25 +13,16 @@ import org.hibernate.annotations.OnDeleteAction;
 @Entity
 @Getter
 @Setter
-@Table(name = "products")
-public class Product extends BaseEntity {
-
-  @Column
-  @NotNull
-  @Size(max = 255)
-  String name;
-
-  @Column
-  @NotNull
-  @Min(0)
-  Double price;
-
-  @Column(columnDefinition = "TEXT")
-  @Size(max = 5000)
-  String description;
+@Table(name = "product_color_relations")
+public class ProductColorRelation extends BaseEntity {
 
   @NotNull
   @ManyToOne(optional = false)
   @OnDelete(action = OnDeleteAction.CASCADE)
-  private ProductType type;
+  private Product product;
+
+  @NotNull
+  @ManyToOne(optional = false)
+  @OnDelete(action = OnDeleteAction.CASCADE)
+  private ProductColor color;
 }

@@ -3,3 +3,5 @@ databaseChangeLog:
       file: db/changelog/001-base-models/base-models.changelog.yaml
   - include:
       file: db/changelog/004-enable-postgis/enable-postgis.changelog.yaml
+  - include:
+      file: db/changelog/005-entities-renaming/entities-renaming.changelog.yaml

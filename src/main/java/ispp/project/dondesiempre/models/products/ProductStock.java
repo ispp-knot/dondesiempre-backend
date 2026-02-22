@@ -13,7 +13,7 @@ import org.hibernate.annotations.OnDeleteAction;
 @Entity
 @Getter
 @Setter
-@Table(name = "productStocks")
+@Table(name = "product_stocks")
 public class ProductStock extends BaseEntity {
 
   @NotNull
@@ -24,10 +24,10 @@ public class ProductStock extends BaseEntity {
   @NotNull
   @ManyToOne(optional = false)
   @OnDelete(action = OnDeleteAction.CASCADE)
-  private ProductSize size;
+  private ProductSizeRelation size;
 
   @NotNull
   @ManyToOne(optional = false)
   @OnDelete(action = OnDeleteAction.CASCADE)
-  private ProductColor color;
+  private ProductColorRelation color;
 }
