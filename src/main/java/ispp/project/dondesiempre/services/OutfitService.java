@@ -1,21 +1,25 @@
 package ispp.project.dondesiempre.services;
 
+import java.security.InvalidParameterException;
+import java.util.List;
+
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import ispp.project.dondesiempre.models.outfits.Outfit;
 import ispp.project.dondesiempre.models.outfits.OutfitOutfitTag;
 import ispp.project.dondesiempre.models.outfits.OutfitProduct;
 import ispp.project.dondesiempre.models.outfits.OutfitTag;
 import ispp.project.dondesiempre.models.outfits.dto.OutfitCreationDTO;
+import ispp.project.dondesiempre.models.outfits.dto.OutfitCreationProductDTO;
 import ispp.project.dondesiempre.models.products.Product;
 import ispp.project.dondesiempre.repositories.outfits.OutfitOutfitTagRepository;
 import ispp.project.dondesiempre.repositories.outfits.OutfitProductRepository;
 import ispp.project.dondesiempre.repositories.outfits.OutfitRepository;
 import ispp.project.dondesiempre.repositories.products.ProductRepository;
 import jakarta.persistence.EntityNotFoundException;
-import java.security.InvalidParameterException;
-import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class OutfitService {
@@ -72,13 +76,22 @@ public class OutfitService {
 
     dto.getTags().stream().forEach(name -> addTag(outfitId, name));
     dto.getProducts().stream()
-        .forEach(product -> addProduct(outfitId, product.getId(), product.getIndex()));
+        .forEach(product -> addProduct(outfitId, product));
 
     return outfit;
   }
 
   @Transactional
-  public void addTag(Integer outfitId, String tagName) {
+  public Outfit update(Outfit outfit) {
+    Outfit newOutfit;
+
+    newOutfit = new Outfit();
+    BeanUtils.copyProperties(outfit, newOutfit, "id");
+    return outfitRepository.save(newOutfit);
+  }
+
+  @Transactional
+  public OutfitTag addTag(Integer outfitId, String tagName) {
     Outfit outfit;
     OutfitTag tag;
     OutfitOutfitTag outfitTag;
@@ -90,22 +103,30 @@ public class OutfitService {
     outfitTag.setOutfit(outfit);
     outfitTag.setTag(tag);
     outfitOutfitTagRepository.save(outfitTag);
+
+    return tag;
   }
 
   @Transactional
-  public void addProduct(Integer outfitId, Integer productId, Integer index) {
+  public Product addProduct(Integer outfitId, OutfitCreationProductDTO dto) {
     Outfit outfit;
     Product product;
     OutfitProduct outfitProduct;
 
     outfit = findById(outfitId);
-    product =
-        productRepository.findById(productId).orElseThrow(() -> new EntityNotFoundException());
+    product = productRepository.findById(dto.getId()).orElseThrow(() -> new EntityNotFoundException());
 
     outfitProduct = new OutfitProduct();
-    outfitProduct.setIndex(index);
+    outfitProduct.setIndex(dto.getIndex());
     outfitProduct.setOutfit(outfit);
     outfitProduct.setProduct(product);
     outfitProductRepository.save(outfitProduct);
+
+    return product;
+  }
+
+  @Transactional
+  public void delete(Integer id) {
+    outfitRepository.deleteById(id);
   }
 }
