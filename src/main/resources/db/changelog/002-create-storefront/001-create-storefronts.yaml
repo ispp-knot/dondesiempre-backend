@@ -9,6 +9,7 @@ databaseChangeLog:
               - column:
                   name: id
                   type: INTEGER
+                  autoIncrement: true
                   constraints:
                     nullable: false
                     primaryKey: true
@@ -17,17 +18,12 @@ databaseChangeLog:
                   name: version
                   type: INTEGER
               - column:
-                  name: banner_image
-                  type: OID
-              - column:
-                  name: banner_image_content_type
+                  name: banner_image_url
                   type: VARCHAR(255)
               - column:
-                  name: banner_image_filename
-                  type: VARCHAR(512)
-              - column:
-                  name: is_first_colecciones
+                  name: is_first_collections
                   type: BOOLEAN
+                  defaultValueBoolean: true
                   constraints:
                     nullable: false
               - column:
