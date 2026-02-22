@@ -8,9 +8,11 @@ import ispp.project.dondesiempre.models.outfits.Outfit;
 import ispp.project.dondesiempre.models.outfits.OutfitProduct;
 import ispp.project.dondesiempre.models.products.Product;
 import ispp.project.dondesiempre.models.products.ProductType;
+import ispp.project.dondesiempre.models.storefronts.Storefront;
 import ispp.project.dondesiempre.models.stores.Store;
 import ispp.project.dondesiempre.repositories.products.ProductRepository;
 import ispp.project.dondesiempre.repositories.products.ProductTypeRepository;
+import ispp.project.dondesiempre.repositories.storefronts.StorefrontRepository;
 import ispp.project.dondesiempre.repositories.stores.StoreRepository;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +34,8 @@ public class OutfitRepositoryTest {
 
   @Autowired private StoreRepository storeRepository;
 
+  @Autowired private StorefrontRepository storefrontRepository;
+
   @Autowired private ProductRepository productRepository;
 
   @Autowired private OutfitProductRepository outfitProductRepository;
@@ -41,6 +45,7 @@ public class OutfitRepositoryTest {
   @Test
   void testFindOneByStoreId() {
     Store store;
+    Storefront storefront;
 
     ProductType type;
     Product product;
@@ -50,9 +55,13 @@ public class OutfitRepositoryTest {
 
     List<Outfit> result;
 
+    storefront = new Storefront();
+    storefrontRepository.save(storefront);
+
     store = new Store();
     store.setName("Test store");
     store.setAddress("Test address");
+    store.setStorefront(storefront);
     store.setLocation(
         new Point(
             new CoordinateArraySequence(new Coordinate[] {new Coordinate(0.0, 0.0)}),
@@ -96,6 +105,7 @@ public class OutfitRepositoryTest {
   @Test
   void testFindMultipleByStoreId() {
     Store store1, store2;
+    Storefront storefront1, storefront2;
 
     ProductType type;
     Integer numProducts;
@@ -107,9 +117,16 @@ public class OutfitRepositoryTest {
 
     List<Outfit> result;
 
+    storefront1 = new Storefront();
+    storefrontRepository.save(storefront1);
+
+    storefront2 = new Storefront();
+    storefrontRepository.save(storefront2);
+
     store1 = new Store();
     store1.setName("Test store 1");
     store1.setAddress("Test address");
+    store1.setStorefront(storefront1);
     store1.setLocation(
         new Point(
             new CoordinateArraySequence(new Coordinate[] {new Coordinate(0.0, 0.0)}),
@@ -124,6 +141,7 @@ public class OutfitRepositoryTest {
     store2 = new Store();
     store2.setName("Test store 2");
     store2.setAddress("Test address");
+    store2.setStorefront(storefront2);
     store2.setLocation(
         new Point(
             new CoordinateArraySequence(new Coordinate[] {new Coordinate(0.0, 0.0)}),
