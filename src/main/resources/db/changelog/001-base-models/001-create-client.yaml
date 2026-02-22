@@ -1,0 +1,26 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1771590011531-1
+      author: miniluz (generated)
+      changes:
+        - createSequence:
+            incrementBy: 50
+            sequenceName: entity_sequence
+            startValue: 100
+  - changeSet:
+      id: 1771590011531-2
+      author: miniluz (generated)
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: clientsPK
+                  name: id
+                  type: INTEGER
+              - column:
+                  name: version
+                  type: INTEGER
+            tableName: clients

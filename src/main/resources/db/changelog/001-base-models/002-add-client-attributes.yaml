@@ -1,0 +1,18 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1771691574654-2
+      author: ignacio
+      changes:
+        - addColumn:
+            tableName: clients
+            columns:
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: surname
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
