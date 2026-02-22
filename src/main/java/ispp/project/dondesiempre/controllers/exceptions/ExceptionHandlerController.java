@@ -19,7 +19,7 @@ public class ExceptionHandlerController {
   }
 
   @ResponseStatus(HttpStatus.BAD_REQUEST)
-  @ExceptionHandler(ResourceNotFoundException.class)
+  @ExceptionHandler(InvalidRequestException.class)
   public ResponseEntity<String> handleInvalidRequestException(
       InvalidRequestException exception, WebRequest request) {
     return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
