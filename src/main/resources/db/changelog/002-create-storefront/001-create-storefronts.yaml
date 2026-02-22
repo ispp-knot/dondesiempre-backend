@@ -1,0 +1,42 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20260222-001-create-storefronts
+      author: mquirosq
+      changes:
+        - createTable:
+            tableName: storefronts
+            columns:
+              - column:
+                  name: id
+                  type: INTEGER
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: storefrontsPK
+              - column:
+                  name: version
+                  type: INTEGER
+              - column:
+                  name: banner_image
+                  type: OID
+              - column:
+                  name: banner_image_content_type
+                  type: VARCHAR(255)
+              - column:
+                  name: banner_image_filename
+                  type: VARCHAR(512)
+              - column:
+                  name: is_first_colecciones
+                  type: BOOLEAN
+                  constraints:
+                    nullable: false
+              - column:
+                  name: primary_color
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: secondary_color
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
