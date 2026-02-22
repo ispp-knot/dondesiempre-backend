@@ -3,6 +3,7 @@ package ispp.project.dondesiempre.services;
 import ispp.project.dondesiempre.models.products.Product;
 import ispp.project.dondesiempre.models.products.dto.ProductCreationDTO;
 import ispp.project.dondesiempre.repositories.products.ProductRepository;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,5 +35,23 @@ public class ProductService {
 
   public Double getRealPrice(Product product) {
     return product.getPrice() * (1 - product.getDiscount());
+  }
+
+  public List<Product> getAllProducts() {
+    return productRepository.findAll();
+  }
+
+  public List<Product> getAllDiscountedProducts() {
+    return productRepository.findAllDiscountedProducts();
+  }
+
+  public Product updateProductDiscount(Integer id, Double discount) {
+    Product product = getProductById(id);
+    if (product == null) {
+      throw new RuntimeException("Product not found");
+    }
+    product.setDiscount(discount);
+    Product updatedProduct = productRepository.save(product);
+    return updatedProduct;
   }
 }
