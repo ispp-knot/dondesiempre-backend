@@ -1,0 +1,40 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1771769126551-51
+      author: ignacio
+      changes:
+        - renameTable:
+            oldTableName: product_colors
+            newTableName: product_color_relations
+
+  - changeSet:
+      id: 1771769126551-53
+      author: ignacio
+      changes:
+        - renameTable:
+            oldTableName: product_sizes
+            newTableName: product_size_relations
+
+  - changeSet:
+      id: 1771769126551-50
+      author: ignacio
+      changes:
+        - renameTable:
+            oldTableName: colors
+            newTableName: product_colors
+
+  - changeSet:
+      id: 1771769126551-52
+      author: ignacio
+      changes:
+        - renameTable:
+            oldTableName: sizes
+            newTableName: product_sizes
+
+  - changeSet:
+      id: 1771769126551-54
+      author: ignacio
+      changes:
+        - renameTable:
+            oldTableName: types
+            newTableName: product_types

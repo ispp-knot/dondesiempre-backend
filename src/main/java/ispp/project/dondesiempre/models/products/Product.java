@@ -37,7 +37,7 @@ public class Product extends BaseEntity {
   @NotNull
   @ManyToOne(optional = false)
   @OnDelete(action = OnDeleteAction.CASCADE)
-  private Type type;
+  private ProductType type;
 
   @NotNull
   @ManyToOne(optional = false)

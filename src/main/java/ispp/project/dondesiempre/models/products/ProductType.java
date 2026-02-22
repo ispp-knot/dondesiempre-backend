@@ -12,8 +12,8 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-@Table(name = "types")
-public class Type extends BaseEntity {
+@Table(name = "product_types")
+public class ProductType extends BaseEntity {
 
   @Column
   @NotNull
