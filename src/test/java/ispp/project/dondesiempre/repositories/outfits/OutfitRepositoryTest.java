@@ -7,10 +7,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import ispp.project.dondesiempre.models.outfits.Outfit;
 import ispp.project.dondesiempre.models.outfits.OutfitProduct;
 import ispp.project.dondesiempre.models.products.Product;
-import ispp.project.dondesiempre.models.products.Type;
+import ispp.project.dondesiempre.models.products.ProductType;
 import ispp.project.dondesiempre.models.stores.Store;
 import ispp.project.dondesiempre.repositories.products.ProductRepository;
-import ispp.project.dondesiempre.repositories.products.TypeRepository;
+import ispp.project.dondesiempre.repositories.products.ProductTypeRepository;
 import ispp.project.dondesiempre.repositories.stores.StoreRepository;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,13 +36,13 @@ public class OutfitRepositoryTest {
 
   @Autowired private OutfitProductRepository outfitProductRepository;
 
-  @Autowired private TypeRepository typeRepository;
+  @Autowired private ProductTypeRepository typeRepository;
 
   @Test
   void testFindOneByStoreId() {
     Store store;
 
-    Type type;
+    ProductType type;
     Product product;
 
     Outfit outfit;
@@ -64,7 +64,7 @@ public class OutfitRepositoryTest {
     store.setAcceptsShipping(false);
     store = storeRepository.save(store);
 
-    type = new Type();
+    type = new ProductType();
     type.setType("Test type");
     type = typeRepository.save(type);
 
@@ -97,7 +97,7 @@ public class OutfitRepositoryTest {
   void testFindMultipleByStoreId() {
     Store store1, store2;
 
-    Type type;
+    ProductType type;
     Integer numProducts;
 
     List<Product> products;
@@ -135,7 +135,7 @@ public class OutfitRepositoryTest {
     store2.setAcceptsShipping(false);
     store2 = storeRepository.save(store2);
 
-    type = new Type();
+    type = new ProductType();
     type.setType("Test type");
     type = typeRepository.save(type);
 
