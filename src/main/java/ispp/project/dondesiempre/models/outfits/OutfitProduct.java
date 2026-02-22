@@ -21,7 +21,7 @@ public class OutfitProduct extends BaseEntity {
   @Column
   @NotNull
   @Min(0)
-  private Integer order;
+  private Integer index;
 
   @NotNull
   @ManyToOne(optional = false)

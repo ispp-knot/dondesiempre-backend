@@ -19,7 +19,7 @@ public class Outfit extends BaseEntity {
   @Column
   @NotNull
   @Min(0)
-  private Integer order;
+  private Integer index;
 
   @Column
   @NotNull

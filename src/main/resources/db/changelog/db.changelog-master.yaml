@@ -1,3 +1,5 @@
 databaseChangeLog:
   - include:
       file: db/changelog/001-base-models/base-models.changelog.yaml
+  - include:
+      file: db/changelog/003-outfits-backend/outfits-backend.changelog.yaml
