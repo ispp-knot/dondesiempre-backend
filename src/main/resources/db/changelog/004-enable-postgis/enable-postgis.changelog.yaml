@@ -1,0 +1,5 @@
+databaseChangeLog:
+  - include:
+      file: db/changelog/004-enable-postgis/001-modify-store-location.yaml
+  - include:
+      file: db/changelog/004-enable-postgis/002-add-store-address.yaml

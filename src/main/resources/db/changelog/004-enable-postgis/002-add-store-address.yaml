@@ -1,0 +1,17 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1771765796033-1
+      author: ignacio
+      changes:
+        - addColumn:
+            tableName: stores
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                  name: address
+                  type: VARCHAR(255)
+      rollback:
+        - dropColumn:
+            tableName: stores
+            columnName: address
