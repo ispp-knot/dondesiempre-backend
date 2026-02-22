@@ -1,13 +1,5 @@
 package ispp.project.dondesiempre.services;
 
-import java.security.InvalidParameterException;
-import java.util.List;
-
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import ispp.project.dondesiempre.models.outfits.Outfit;
 import ispp.project.dondesiempre.models.outfits.OutfitOutfitTag;
 import ispp.project.dondesiempre.models.outfits.OutfitProduct;
@@ -20,6 +12,12 @@ import ispp.project.dondesiempre.repositories.outfits.OutfitProductRepository;
 import ispp.project.dondesiempre.repositories.outfits.OutfitRepository;
 import ispp.project.dondesiempre.repositories.products.ProductRepository;
 import jakarta.persistence.EntityNotFoundException;
+import java.security.InvalidParameterException;
+import java.util.List;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class OutfitService {
@@ -107,20 +105,24 @@ public class OutfitService {
   }
 
   @Transactional
-  public Product addProduct(Integer outfitId, OutfitCreationProductDTO dto) throws InvalidParameterException {
+  public Product addProduct(Integer outfitId, OutfitCreationProductDTO dto)
+      throws InvalidParameterException {
     Outfit outfit;
     Product product;
     OutfitProduct outfitProduct;
     List<Product> productsOfOutfit;
 
     outfit = findById(outfitId);
-    product = productRepository.findById(dto.getId()).orElseThrow(() -> new EntityNotFoundException());
+    product =
+        productRepository.findById(dto.getId()).orElseThrow(() -> new EntityNotFoundException());
 
     productsOfOutfit = outfitRepository.findOutfitProductsById(outfitId);
     productsOfOutfit.add(product);
 
-    if (productsOfOutfit.stream().mapToInt(prod -> prod.getStore().getId()).distinct().count() > 1L) {
-      throw new InvalidParameterException("All products in an outfit must belong to the same store.");
+    if (productsOfOutfit.stream().mapToInt(prod -> prod.getStore().getId()).distinct().count()
+        > 1L) {
+      throw new InvalidParameterException(
+          "All products in an outfit must belong to the same store.");
     }
     outfitProduct = new OutfitProduct();
     outfitProduct.setIndex(dto.getIndex());

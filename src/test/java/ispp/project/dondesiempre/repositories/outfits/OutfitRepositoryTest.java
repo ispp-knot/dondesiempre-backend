@@ -4,9 +4,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import ispp.project.dondesiempre.models.outfits.Outfit;
+import ispp.project.dondesiempre.models.outfits.OutfitProduct;
+import ispp.project.dondesiempre.models.products.Product;
+import ispp.project.dondesiempre.models.products.Type;
+import ispp.project.dondesiempre.models.stores.Store;
+import ispp.project.dondesiempre.repositories.products.ProductRepository;
+import ispp.project.dondesiempre.repositories.products.TypeRepository;
+import ispp.project.dondesiempre.repositories.stores.StoreRepository;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.junit.jupiter.api.Test;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
@@ -18,32 +25,18 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-import ispp.project.dondesiempre.models.outfits.Outfit;
-import ispp.project.dondesiempre.models.outfits.OutfitProduct;
-import ispp.project.dondesiempre.models.products.Product;
-import ispp.project.dondesiempre.models.products.Type;
-import ispp.project.dondesiempre.models.stores.Store;
-import ispp.project.dondesiempre.repositories.products.ProductRepository;
-import ispp.project.dondesiempre.repositories.products.TypeRepository;
-import ispp.project.dondesiempre.repositories.stores.StoreRepository;
-
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 public class OutfitRepositoryTest {
-  @Autowired
-  private OutfitRepository outfitRepository;
+  @Autowired private OutfitRepository outfitRepository;
 
-  @Autowired
-  private StoreRepository storeRepository;
+  @Autowired private StoreRepository storeRepository;
 
-  @Autowired
-  private ProductRepository productRepository;
+  @Autowired private ProductRepository productRepository;
 
-  @Autowired
-  private OutfitProductRepository outfitProductRepository;
+  @Autowired private OutfitProductRepository outfitProductRepository;
 
-  @Autowired
-  private TypeRepository typeRepository;
+  @Autowired private TypeRepository typeRepository;
 
   @Test
   void testFindOneByStoreId() {
@@ -62,7 +55,7 @@ public class OutfitRepositoryTest {
     store.setAddress("Test address");
     store.setLocation(
         new Point(
-            new CoordinateArraySequence(new Coordinate[] { new Coordinate(0.0, 0.0) }),
+            new CoordinateArraySequence(new Coordinate[] {new Coordinate(0.0, 0.0)}),
             new GeometryFactory(new PrecisionModel(PrecisionModel.FIXED), 0)));
     store.setAboutUs("Test description");
     store.setOpeningHours("Test opening hours");
@@ -119,7 +112,7 @@ public class OutfitRepositoryTest {
     store1.setAddress("Test address");
     store1.setLocation(
         new Point(
-            new CoordinateArraySequence(new Coordinate[] { new Coordinate(0.0, 0.0) }),
+            new CoordinateArraySequence(new Coordinate[] {new Coordinate(0.0, 0.0)}),
             new GeometryFactory(new PrecisionModel(PrecisionModel.FIXED), 0)));
     store1.setAboutUs("Test description");
     store1.setOpeningHours("Test opening hours");
@@ -133,7 +126,7 @@ public class OutfitRepositoryTest {
     store2.setAddress("Test address");
     store2.setLocation(
         new Point(
-            new CoordinateArraySequence(new Coordinate[] { new Coordinate(0.0, 0.0) }),
+            new CoordinateArraySequence(new Coordinate[] {new Coordinate(0.0, 0.0)}),
             new GeometryFactory(new PrecisionModel(PrecisionModel.FIXED), 0)));
     store2.setAboutUs("Test description");
     store2.setOpeningHours("Test opening hours");
