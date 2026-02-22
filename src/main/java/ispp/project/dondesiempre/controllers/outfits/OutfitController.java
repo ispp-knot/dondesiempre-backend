@@ -1,7 +1,14 @@
 package ispp.project.dondesiempre.controllers.outfits;
 
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import ispp.project.dondesiempre.models.outfits.Outfit;
+import ispp.project.dondesiempre.models.outfits.OutfitTag;
+import ispp.project.dondesiempre.models.outfits.dto.OutfitCreationDTO;
+import ispp.project.dondesiempre.models.outfits.dto.OutfitCreationProductDTO;
+import ispp.project.dondesiempre.models.products.Product;
+import ispp.project.dondesiempre.services.OutfitService;
+import jakarta.validation.Valid;
 import java.util.List;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -11,15 +18,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
-import ispp.project.dondesiempre.models.outfits.Outfit;
-import ispp.project.dondesiempre.models.outfits.OutfitTag;
-import ispp.project.dondesiempre.models.outfits.dto.OutfitCreationDTO;
-import ispp.project.dondesiempre.models.outfits.dto.OutfitCreationProductDTO;
-import ispp.project.dondesiempre.models.products.Product;
-import ispp.project.dondesiempre.services.OutfitService;
-import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/outfits")
@@ -50,7 +48,8 @@ public class OutfitController {
 
   @PostMapping("{id}")
   @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<Outfit> update(@PathVariable("id") Integer id, @RequestBody @Valid Outfit outfit) {
+  public ResponseEntity<Outfit> update(
+      @PathVariable("id") Integer id, @RequestBody @Valid Outfit outfit) {
     return new ResponseEntity<>(outfitService.update(id, outfit), HttpStatus.OK);
   }
 

@@ -1,5 +1,7 @@
 package ispp.project.dondesiempre.services;
 
+import ispp.project.dondesiempre.exceptions.InvalidRequestException;
+import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.models.outfits.Outfit;
 import ispp.project.dondesiempre.models.outfits.OutfitOutfitTag;
 import ispp.project.dondesiempre.models.outfits.OutfitProduct;
@@ -12,7 +14,6 @@ import ispp.project.dondesiempre.repositories.outfits.OutfitProductRepository;
 import ispp.project.dondesiempre.repositories.outfits.OutfitRepository;
 import ispp.project.dondesiempre.repositories.products.ProductRepository;
 import jakarta.persistence.EntityNotFoundException;
-import java.security.InvalidParameterException;
 import java.util.List;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,8 +47,10 @@ public class OutfitService {
   }
 
   @Transactional(readOnly = true)
-  public Outfit findById(Integer id) throws EntityNotFoundException {
-    return outfitRepository.findById(id).orElseThrow(() -> new EntityNotFoundException());
+  public Outfit findById(Integer id) throws ResourceNotFoundException {
+    return outfitRepository
+        .findById(id)
+        .orElseThrow(() -> new ResourceNotFoundException("Outfit with ID " + id + "not found."));
   }
 
   @Transactional(readOnly = true)
@@ -56,7 +59,7 @@ public class OutfitService {
   }
 
   @Transactional
-  public Outfit create(OutfitCreationDTO dto) throws InvalidParameterException {
+  public Outfit create(OutfitCreationDTO dto) throws InvalidRequestException {
     Outfit outfit;
     Integer outfitId;
 
@@ -67,7 +70,7 @@ public class OutfitService {
     outfit.setDiscount(0.0);
 
     if (dto.getProducts() == null || (dto.getProducts() != null && dto.getProducts().size() <= 0)) {
-      throw new InvalidParameterException("An outfit cannot be created without products.");
+      throw new InvalidRequestException("An outfit cannot be created without products.");
     }
     outfit = outfitRepository.save(outfit);
     outfitId = outfit.getId();
@@ -79,7 +82,7 @@ public class OutfitService {
   }
 
   @Transactional
-  public Outfit update(Integer id, Outfit outfit) throws EntityNotFoundException {
+  public Outfit update(Integer id, Outfit outfit) throws ResourceNotFoundException {
     Outfit outfitToUpdate;
 
     outfitToUpdate = findById(id);
@@ -89,7 +92,7 @@ public class OutfitService {
   }
 
   @Transactional
-  public OutfitTag addTag(Integer outfitId, String tagName) throws EntityNotFoundException {
+  public OutfitTag addTag(Integer outfitId, String tagName) throws ResourceNotFoundException {
     Outfit outfit;
     OutfitTag tag;
     OutfitOutfitTag outfitTag;
@@ -107,21 +110,22 @@ public class OutfitService {
 
   @Transactional
   public Product addProduct(Integer outfitId, OutfitCreationProductDTO dto)
-      throws EntityNotFoundException, InvalidParameterException {
+      throws ResourceNotFoundException, InvalidRequestException {
     Outfit outfit;
     Product product;
     OutfitProduct outfitProduct;
     List<Product> productsOfOutfit;
 
     outfit = findById(outfitId);
-    product = productRepository.findById(dto.getId()).orElseThrow(() -> new EntityNotFoundException());
+    product =
+        productRepository.findById(dto.getId()).orElseThrow(() -> new EntityNotFoundException());
 
     productsOfOutfit = outfitRepository.findOutfitProductsById(outfitId);
     productsOfOutfit.add(product);
 
-    if (productsOfOutfit.stream().mapToInt(prod -> prod.getStore().getId()).distinct().count() > 1L) {
-      throw new InvalidParameterException(
-          "All products in an outfit must belong to the same store.");
+    if (productsOfOutfit.stream().mapToInt(prod -> prod.getStore().getId()).distinct().count()
+        > 1L) {
+      throw new InvalidRequestException("All products in an outfit must belong to the same store.");
     }
     outfitProduct = new OutfitProduct();
     outfitProduct.setIndex(dto.getIndex());
