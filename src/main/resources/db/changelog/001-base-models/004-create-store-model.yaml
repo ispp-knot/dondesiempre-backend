@@ -1,0 +1,169 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1771699061159-9
+      author: ignacio (generated)
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: social_networksPK
+                  name: id
+                  type: INTEGER
+              - column:
+                  name: version
+                  type: INTEGER
+              - column:
+                  constraints:
+                    nullable: false
+                  name: name
+                  type: VARCHAR(255)
+            tableName: social_networks
+  - changeSet:
+      id: 1771699061159-12
+      author: ignacio (generated)
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: storesPK
+                  name: id
+                  type: INTEGER
+              - column:
+                  name: version
+                  type: INTEGER
+              - column:
+                  name: about_us
+                  type: TEXT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: location
+                  type: VARCHAR(255)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: name
+                  type: VARCHAR(255)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: opening_hours
+                  type: VARCHAR(255)
+            tableName: stores
+  - changeSet:
+      id: 1771699061159-10
+      author: ignacio (generated)
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: store_productsPK
+                  name: id
+                  type: INTEGER
+              - column:
+                  name: version
+                  type: INTEGER
+              - column:
+                  constraints:
+                    nullable: false
+                  name: product_id
+                  type: INTEGER
+              - column:
+                  constraints:
+                    nullable: false
+                  name: store_id
+                  type: INTEGER
+            tableName: store_products
+  - changeSet:
+      id: 1771699061159-11
+      author: ignacio (generated)
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: store_social_networksPK
+                  name: id
+                  type: INTEGER
+              - column:
+                  name: version
+                  type: INTEGER
+              - column:
+                  constraints:
+                    nullable: false
+                  name: link
+                  type: VARCHAR(500)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: social_network_id
+                  type: INTEGER
+              - column:
+                  constraints:
+                    nullable: false
+                  name: store_id
+                  type: INTEGER
+            tableName: store_social_networks
+  - changeSet:
+      id: 1771699061159-16
+      author: ignacio (generated)
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: product_id
+            baseTableName: store_products
+            constraintName: FK4h269080dgg4gx53cxukn7i3v
+            deferrable: false
+            initiallyDeferred: false
+            referencedColumnNames: id
+            referencedTableName: products
+            validate: true
+  - changeSet:
+      id: 1771699061159-18
+      author: ignacio (generated)
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: store_id
+            baseTableName: store_social_networks
+            constraintName: FK6xvfv0fvne2oki135ai0yxcx7
+            deferrable: false
+            initiallyDeferred: false
+            referencedColumnNames: id
+            referencedTableName: stores
+            validate: true
+  - changeSet:
+      id: 1771699061159-20
+      author: ignacio (generated)
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: store_id
+            baseTableName: store_products
+            constraintName: FKf7xjkv3of5tjf4cgn23ui8sre
+            deferrable: false
+            initiallyDeferred: false
+            referencedColumnNames: id
+            referencedTableName: stores
+            validate: true
+  - changeSet:
+      id: 1771699061159-23
+      author: ignacio (generated)
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: social_network_id
+            baseTableName: store_social_networks
+            constraintName: FKspkqoavsjgt8yb10fvreeqgwm
+            deferrable: false
+            initiallyDeferred: false
+            referencedColumnNames: id
+            referencedTableName: social_networks
+            validate: true

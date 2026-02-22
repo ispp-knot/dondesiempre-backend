@@ -13,7 +13,7 @@ import org.hibernate.annotations.OnDeleteAction;
 @Entity
 @Getter
 @Setter
-@Table(name = "productSizes")
+@Table(name = "productColors")
 public class ProductColor extends BaseEntity {
 
   @NotNull
