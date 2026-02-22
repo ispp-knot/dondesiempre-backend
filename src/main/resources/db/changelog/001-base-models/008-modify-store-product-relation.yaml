@@ -1,0 +1,44 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1771784370586-25
+      author: ignacio (generated)
+      changes:
+        - dropForeignKeyConstraint:
+            baseTableName: store_products
+            constraintName: FK4h269080dgg4gx53cxukn7i3v
+  - changeSet:
+      id: 1771784370586-26
+      author: ignacio (generated)
+      changes:
+        - dropForeignKeyConstraint:
+            baseTableName: store_products
+            constraintName: FKf7xjkv3of5tjf4cgn23ui8sre
+  - changeSet:
+      id: 1771784370586-23
+      author: ignacio (generated)
+      changes:
+        - addColumn:
+            columns:
+              - column:
+                  name: store_id
+                  type: INTEGER
+            tableName: products
+  - changeSet:
+      id: 1771784370586-24
+      author: ignacio (generated)
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: store_id
+            baseTableName: products
+            constraintName: FKgcyffheofvmy2x5l78xam63mc
+            deferrable: false
+            initiallyDeferred: false
+            referencedColumnNames: id
+            referencedTableName: stores
+            validate: true
+  - changeSet:
+      id: 1771784370586-27
+      author: ignacio (generated)
+      changes:
+        - dropTable:
+            tableName: store_products

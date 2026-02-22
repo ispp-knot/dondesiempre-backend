@@ -1,0 +1,144 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1771790114877-23
+      author: ignacio (generated)
+      changes:
+        - dropForeignKeyConstraint:
+            baseTableName: product_stocks
+            constraintName: FK1dm90iiym3tkqyivfwcsrmn2k
+  - changeSet:
+      id: 1771790114877-24
+      author: ignacio (generated)
+      changes:
+        - dropForeignKeyConstraint:
+            baseTableName: product_size_relations
+            constraintName: FK3bqabm2nc8yyl9to7fo8trak4
+  - changeSet:
+      id: 1771790114877-25
+      author: ignacio (generated)
+      changes:
+        - dropForeignKeyConstraint:
+            baseTableName: product_stocks
+            constraintName: FK3n2mhs8fo9w1jxcxrhlap38fu
+  - changeSet:
+      id: 1771790114877-26
+      author: ignacio (generated)
+      changes:
+        - dropForeignKeyConstraint:
+            baseTableName: product_size_relations
+            constraintName: FK4isa0j51hpdn7cx04m831jic4
+  - changeSet:
+      id: 1771790114877-27
+      author: ignacio (generated)
+      changes:
+        - dropForeignKeyConstraint:
+            baseTableName: product_color_relations
+            constraintName: FKb9e4okm5xhksf4up2ltc8gxv0
+  - changeSet:
+      id: 1771790114877-28
+      author: ignacio (generated)
+      changes:
+        - dropForeignKeyConstraint:
+            baseTableName: product_color_relations
+            constraintName: FKqhu7cqni31911lmvx4fqmiw65
+  - changeSet:
+      id: 1771790114877-29
+      author: ignacio (generated)
+      changes:
+        - dropForeignKeyConstraint:
+            baseTableName: product_stocks
+            constraintName: FKse6hmtjvx89uj0uew2ijyw2g8
+  - changeSet:
+      id: 1771790114877-19
+      author: ignacio (generated)
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: product_variantsPK
+                  name: id
+                  type: INTEGER
+              - column:
+                  name: version
+                  type: INTEGER
+              - column:
+                  constraints:
+                    nullable: false
+                  name: is_available
+                  type: BOOLEAN
+              - column:
+                  constraints:
+                    nullable: false
+                  name: color_id
+                  type: INTEGER
+              - column:
+                  constraints:
+                    nullable: false
+                  name: product_id
+                  type: INTEGER
+              - column:
+                  constraints:
+                    nullable: false
+                  name: size_id
+                  type: INTEGER
+            tableName: product_variants
+  - changeSet:
+      id: 1771790114877-20
+      author: ignacio (generated)
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: size_id
+            baseTableName: product_variants
+            constraintName: FK5qhko1h0tpvcaab33jxnnbdd6
+            deferrable: false
+            initiallyDeferred: false
+            referencedColumnNames: id
+            referencedTableName: product_sizes
+            validate: true
+  - changeSet:
+      id: 1771790114877-21
+      author: ignacio (generated)
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: product_id
+            baseTableName: product_variants
+            constraintName: FKosqitn4s405cynmhb87lkvuau
+            deferrable: false
+            initiallyDeferred: false
+            referencedColumnNames: id
+            referencedTableName: products
+            validate: true
+  - changeSet:
+      id: 1771790114877-22
+      author: ignacio (generated)
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: color_id
+            baseTableName: product_variants
+            constraintName: FKt7528jm35x6ofhd1sqpr8ls0
+            deferrable: false
+            initiallyDeferred: false
+            referencedColumnNames: id
+            referencedTableName: product_colors
+            validate: true
+  - changeSet:
+      id: 1771790114877-30
+      author: ignacio (generated)
+      changes:
+        - dropTable:
+            tableName: product_color_relations
+  - changeSet:
+      id: 1771790114877-31
+      author: ignacio (generated)
+      changes:
+        - dropTable:
+            tableName: product_size_relations
+  - changeSet:
+      id: 1771790114877-32
+      author: ignacio (generated)
+      changes:
+        - dropTable:
+            tableName: product_stocks
