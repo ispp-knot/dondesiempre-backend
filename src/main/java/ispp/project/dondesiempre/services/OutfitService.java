@@ -79,12 +79,13 @@ public class OutfitService {
   }
 
   @Transactional
-  public Outfit update(Outfit outfit) {
-    Outfit newOutfit;
+  public Outfit update(Integer id, Outfit outfit) throws EntityNotFoundException {
+    Outfit outfitToUpdate;
 
-    newOutfit = new Outfit();
-    BeanUtils.copyProperties(outfit, newOutfit, "id");
-    return outfitRepository.save(newOutfit);
+    outfitToUpdate = findById(id);
+
+    BeanUtils.copyProperties(outfit, outfitToUpdate, "id");
+    return outfitRepository.save(outfitToUpdate);
   }
 
   @Transactional
@@ -106,21 +107,19 @@ public class OutfitService {
 
   @Transactional
   public Product addProduct(Integer outfitId, OutfitCreationProductDTO dto)
-      throws InvalidParameterException {
+      throws EntityNotFoundException, InvalidParameterException {
     Outfit outfit;
     Product product;
     OutfitProduct outfitProduct;
     List<Product> productsOfOutfit;
 
     outfit = findById(outfitId);
-    product =
-        productRepository.findById(dto.getId()).orElseThrow(() -> new EntityNotFoundException());
+    product = productRepository.findById(dto.getId()).orElseThrow(() -> new EntityNotFoundException());
 
     productsOfOutfit = outfitRepository.findOutfitProductsById(outfitId);
     productsOfOutfit.add(product);
 
-    if (productsOfOutfit.stream().mapToInt(prod -> prod.getStore().getId()).distinct().count()
-        > 1L) {
+    if (productsOfOutfit.stream().mapToInt(prod -> prod.getStore().getId()).distinct().count() > 1L) {
       throw new InvalidParameterException(
           "All products in an outfit must belong to the same store.");
     }
