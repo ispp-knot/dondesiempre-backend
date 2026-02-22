@@ -1,8 +1,9 @@
 package ispp.project.dondesiempre.models.stores;
 
 import ispp.project.dondesiempre.models.BaseEntity;
-import ispp.project.dondesiempre.validators.Phone;
 import ispp.project.dondesiempre.models.storefronts.Storefront;
+import ispp.project.dondesiempre.validators.Phone;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
@@ -12,7 +13,6 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import jakarta.persistence.CascadeType;
 import lombok.Getter;
 import lombok.Setter;
 
