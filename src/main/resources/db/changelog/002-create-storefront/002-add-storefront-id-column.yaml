@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20260222-002-add-storefront-id-to-stores
+      author: mquirosq
+      changes:
+        - addColumn:
+            tableName: stores
+            columns:
+              - column:
+                  name: storefront_id
+                  type: INTEGER
