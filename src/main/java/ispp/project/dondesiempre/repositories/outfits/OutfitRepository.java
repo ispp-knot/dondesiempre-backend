@@ -7,8 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 public interface OutfitRepository extends JpaRepository<Outfit, Integer> {
-  @Query(
-      "select distinct op.outfit from OutfitProduct op join StoreProducts sp on op.product.id = sp.product.id where sp.store.id = :storeId order by op.outfit.index asc")
+  @Query("select distinct op.outfit from OutfitProduct op where op.product.store.id = :storeId order by op.outfit.index asc")
   public List<Outfit> findByStoreId(Integer storeId);
 
   @Query("select op.product from OutfitProduct op where op.outfit.id = :id")

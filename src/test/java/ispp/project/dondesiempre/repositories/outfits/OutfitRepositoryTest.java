@@ -4,18 +4,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import ispp.project.dondesiempre.models.outfits.Outfit;
-import ispp.project.dondesiempre.models.outfits.OutfitProduct;
-import ispp.project.dondesiempre.models.products.Product;
-import ispp.project.dondesiempre.models.products.Type;
-import ispp.project.dondesiempre.models.stores.Store;
-import ispp.project.dondesiempre.models.stores.StoreProducts;
-import ispp.project.dondesiempre.repositories.products.ProductRepository;
-import ispp.project.dondesiempre.repositories.products.TypeRepository;
-import ispp.project.dondesiempre.repositories.stores.StoreProductsRepository;
-import ispp.project.dondesiempre.repositories.stores.StoreRepository;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.junit.jupiter.api.Test;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
@@ -27,20 +18,32 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import ispp.project.dondesiempre.models.outfits.Outfit;
+import ispp.project.dondesiempre.models.outfits.OutfitProduct;
+import ispp.project.dondesiempre.models.products.Product;
+import ispp.project.dondesiempre.models.products.Type;
+import ispp.project.dondesiempre.models.stores.Store;
+import ispp.project.dondesiempre.repositories.products.ProductRepository;
+import ispp.project.dondesiempre.repositories.products.TypeRepository;
+import ispp.project.dondesiempre.repositories.stores.StoreRepository;
+
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 public class OutfitRepositoryTest {
-  @Autowired private OutfitRepository outfitRepository;
+  @Autowired
+  private OutfitRepository outfitRepository;
 
-  @Autowired private StoreRepository storeRepository;
+  @Autowired
+  private StoreRepository storeRepository;
 
-  @Autowired private ProductRepository productRepository;
+  @Autowired
+  private ProductRepository productRepository;
 
-  @Autowired private StoreProductsRepository storeProductsRepository;
+  @Autowired
+  private OutfitProductRepository outfitProductRepository;
 
-  @Autowired private OutfitProductRepository outfitProductRepository;
-
-  @Autowired private TypeRepository typeRepository;
+  @Autowired
+  private TypeRepository typeRepository;
 
   @Test
   void testFindOneByStoreId() {
@@ -48,7 +51,6 @@ public class OutfitRepositoryTest {
 
     Type type;
     Product product;
-    StoreProducts storeProduct;
 
     Outfit outfit;
     OutfitProduct outfitProduct;
@@ -60,7 +62,7 @@ public class OutfitRepositoryTest {
     store.setAddress("Test address");
     store.setLocation(
         new Point(
-            new CoordinateArraySequence(new Coordinate[] {new Coordinate(0.0, 0.0)}),
+            new CoordinateArraySequence(new Coordinate[] { new Coordinate(0.0, 0.0) }),
             new GeometryFactory(new PrecisionModel(PrecisionModel.FIXED), 0)));
     store.setAboutUs("Test description");
     store.setOpeningHours("Test opening hours");
@@ -77,6 +79,7 @@ public class OutfitRepositoryTest {
     product.setName("Test product");
     product.setPrice(10.0);
     product.setType(type);
+    product.setStore(store);
     product = productRepository.save(product);
 
     outfit = new Outfit();
@@ -84,11 +87,6 @@ public class OutfitRepositoryTest {
     outfit.setDiscount(0.0);
     outfit.setIndex(0);
     outfit = outfitRepository.save(outfit);
-
-    storeProduct = new StoreProducts();
-    storeProduct.setProduct(product);
-    storeProduct.setStore(store);
-    storeProduct = storeProductsRepository.save(storeProduct);
 
     outfitProduct = new OutfitProduct();
     outfitProduct.setIndex(0);
@@ -110,7 +108,6 @@ public class OutfitRepositoryTest {
     Integer numProducts;
 
     List<Product> products;
-    StoreProducts storeProduct;
 
     Outfit outfit1, outfit2, outfit3;
     OutfitProduct outfitProduct;
@@ -122,7 +119,7 @@ public class OutfitRepositoryTest {
     store1.setAddress("Test address");
     store1.setLocation(
         new Point(
-            new CoordinateArraySequence(new Coordinate[] {new Coordinate(0.0, 0.0)}),
+            new CoordinateArraySequence(new Coordinate[] { new Coordinate(0.0, 0.0) }),
             new GeometryFactory(new PrecisionModel(PrecisionModel.FIXED), 0)));
     store1.setAboutUs("Test description");
     store1.setOpeningHours("Test opening hours");
@@ -136,7 +133,7 @@ public class OutfitRepositoryTest {
     store2.setAddress("Test address");
     store2.setLocation(
         new Point(
-            new CoordinateArraySequence(new Coordinate[] {new Coordinate(0.0, 0.0)}),
+            new CoordinateArraySequence(new Coordinate[] { new Coordinate(0.0, 0.0) }),
             new GeometryFactory(new PrecisionModel(PrecisionModel.FIXED), 0)));
     store2.setAboutUs("Test description");
     store2.setOpeningHours("Test opening hours");
@@ -181,10 +178,7 @@ public class OutfitRepositoryTest {
 
       products.add(product);
     }
-    storeProduct = new StoreProducts();
-    storeProduct.setProduct(products.get(0));
-    storeProduct.setStore(store1);
-    storeProduct = storeProductsRepository.save(storeProduct);
+    products.get(0).setStore(store1);
 
     outfitProduct = new OutfitProduct();
     outfitProduct.setIndex(0);
@@ -192,10 +186,7 @@ public class OutfitRepositoryTest {
     outfitProduct.setOutfit(outfit1);
     outfitProduct = outfitProductRepository.save(outfitProduct);
 
-    storeProduct = new StoreProducts();
-    storeProduct.setProduct(products.get(2));
-    storeProduct.setStore(store1);
-    storeProduct = storeProductsRepository.save(storeProduct);
+    products.get(1).setStore(store1);
 
     outfitProduct = new OutfitProduct();
     outfitProduct.setIndex(1);
@@ -203,10 +194,7 @@ public class OutfitRepositoryTest {
     outfitProduct.setOutfit(outfit2);
     outfitProduct = outfitProductRepository.save(outfitProduct);
 
-    storeProduct = new StoreProducts();
-    storeProduct.setProduct(products.get(1));
-    storeProduct.setStore(store1);
-    storeProduct = storeProductsRepository.save(storeProduct);
+    products.get(2).setStore(store1);
 
     outfitProduct = new OutfitProduct();
     outfitProduct.setIndex(0);
@@ -214,10 +202,7 @@ public class OutfitRepositoryTest {
     outfitProduct.setOutfit(outfit2);
     outfitProduct = outfitProductRepository.save(outfitProduct);
 
-    storeProduct = new StoreProducts();
-    storeProduct.setProduct(products.get(3));
-    storeProduct.setStore(store2);
-    storeProduct = storeProductsRepository.save(storeProduct);
+    products.get(3).setStore(store2);
 
     outfitProduct = new OutfitProduct();
     outfitProduct.setIndex(0);
