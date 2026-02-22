@@ -1,11 +1,11 @@
 package ispp.project.dondesiempre.models;
 
+import ispp.project.dondesiempre.validators.Phone;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
@@ -28,9 +28,7 @@ public class Client extends BaseEntity {
 
   @Column @NotBlank @Email String email;
 
-  @Column
-  @Pattern(regexp = "^(\\+\\d{1,3}[- ]?)?\\d{7,15}$")
-  String phone;
+  @Column @Phone String phone;
 
   @Column
   @Size(max = 255)
