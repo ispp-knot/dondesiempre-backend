@@ -17,6 +17,11 @@ import ispp.project.dondesiempre.repositories.stores.StoreRepository;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Test;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.PrecisionModel;
+import org.locationtech.jts.geom.impl.CoordinateArraySequence;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
@@ -52,7 +57,11 @@ public class OutfitRepositoryTest {
 
     store = new Store();
     store.setName("Test store");
-    store.setLocation("Test location");
+    store.setAddress("Test address");
+    store.setLocation(
+        new Point(
+            new CoordinateArraySequence(new Coordinate[] {new Coordinate(0.0, 0.0)}),
+            new GeometryFactory(new PrecisionModel(PrecisionModel.FIXED), 0)));
     store.setAboutUs("Test description");
     store.setOpeningHours("Test opening hours");
     store.setEmail("test@test.com");
@@ -110,7 +119,11 @@ public class OutfitRepositoryTest {
 
     store1 = new Store();
     store1.setName("Test store 1");
-    store1.setLocation("Test location");
+    store1.setAddress("Test address");
+    store1.setLocation(
+        new Point(
+            new CoordinateArraySequence(new Coordinate[] {new Coordinate(0.0, 0.0)}),
+            new GeometryFactory(new PrecisionModel(PrecisionModel.FIXED), 0)));
     store1.setAboutUs("Test description");
     store1.setOpeningHours("Test opening hours");
     store1.setEmail("test@test.com");
@@ -120,7 +133,11 @@ public class OutfitRepositoryTest {
 
     store2 = new Store();
     store2.setName("Test store 2");
-    store2.setLocation("Test location");
+    store2.setAddress("Test address");
+    store2.setLocation(
+        new Point(
+            new CoordinateArraySequence(new Coordinate[] {new Coordinate(0.0, 0.0)}),
+            new GeometryFactory(new PrecisionModel(PrecisionModel.FIXED), 0)));
     store2.setAboutUs("Test description");
     store2.setOpeningHours("Test opening hours");
     store2.setEmail("test@test.com");
