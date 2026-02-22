@@ -5,12 +5,14 @@ import ispp.project.dondesiempre.validators.Phone;
 import ispp.project.dondesiempre.models.storefronts.Storefront;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import jakarta.persistence.CascadeType;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -50,6 +52,7 @@ public class Store extends BaseEntity {
 
   @Column @NotNull Boolean acceptsShipping;
 
-  @OneToOne(mappedBy = "store")
+  @OneToOne(cascade = CascadeType.ALL)
+  @JoinColumn(name = "storefront_id", referencedColumnName = "id", nullable = false)
   private Storefront storefront;
 }

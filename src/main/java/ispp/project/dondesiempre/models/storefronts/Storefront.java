@@ -4,11 +4,9 @@ import ispp.project.dondesiempre.models.BaseEntity;
 import ispp.project.dondesiempre.models.stores.Store;
 import ispp.project.dondesiempre.validators.HexColor;
 import jakarta.persistence.Basic;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
@@ -50,7 +48,6 @@ public class Storefront extends BaseEntity {
   @Column(name = "banner_image_filename", length = 512)
   private String bannerImageFilename;
 
-  @OneToOne(cascade = CascadeType.ALL)
-  @JoinColumn(name = "store_id", referencedColumnName = "id")
+  @OneToOne(mappedBy = "storefront")
   private Store store;
 }
