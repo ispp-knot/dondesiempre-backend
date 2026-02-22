@@ -1,0 +1,15 @@
+databaseChangeLog:
+  - include:
+      file: db/changelog/001-base-models/001-create-client.yaml
+  - include:
+      file: db/changelog/001-base-models/002-add-client-attributes.yaml
+  - include:
+      file: db/changelog/001-base-models/003-create-product-model.yaml
+  - include:
+      file: db/changelog/001-base-models/004-create-store-model.yaml
+  - include:
+      file: db/changelog/001-base-models/005-add-new-client-requirements.yaml
+  - include:
+      file: db/changelog/001-base-models/006-add-new-store-requirements.yaml
+  - include:
+      file: db/changelog/001-base-models/007-add-new-product-requirements.yaml
