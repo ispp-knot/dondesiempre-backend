@@ -1,6 +1,7 @@
 services:
   postgres:
     image: postgis/postgis:17-3.5
+    platform: linux/amd64
     container_name: postgres-dev
     ports:
       - "5432:5432"
@@ -14,6 +15,7 @@ services:
 
   postgres-test:
     image: postgis/postgis:17-3.5
+    platform: linux/amd64
     container_name: postgres-test
     ports:
       - "5433:5432"
@@ -27,6 +29,7 @@ services:
 
   postgres-devmigrations:
     image: postgis/postgis:17-3.5
+    platform: linux/amd64
     container_name: postgres-devmigrations
     ports:
       - "5434:5432"

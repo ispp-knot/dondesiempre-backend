@@ -9,6 +9,9 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+import org.locationtech.jts.geom.Point;
 
 @Entity
 @Getter
@@ -30,7 +33,7 @@ public class Client extends BaseEntity {
 
   @Column @Phone String phone;
 
-  @Column
-  @Size(max = 255)
-  String address;
+  @Column(columnDefinition = "geometry(Point, 4326)")
+  @JdbcTypeCode(SqlTypes.GEOMETRY)
+  Point address;
 }
