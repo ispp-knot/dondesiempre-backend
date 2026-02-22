@@ -1,0 +1,13 @@
+databaseChangeLog:
+- changeSet:
+    id: 1771787666116-25
+    author: roth (generated)
+    changes:
+    - addColumn:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: discount
+            type: FLOAT(53)
+        tableName: products
