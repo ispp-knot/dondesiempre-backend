@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20260223-002-add-outfit-constraints
+      author: guill_1goz466
+      changes:
+        - addNotNullConstraint:
+            tableName: outfits
+            columnName: discount
+            columnDataType: FLOAT(53)

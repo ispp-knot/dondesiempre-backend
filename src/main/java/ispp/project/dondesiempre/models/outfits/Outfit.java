@@ -10,6 +10,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.validator.constraints.URL;
 
 @Entity
 @Getter
@@ -26,13 +27,10 @@ public class Outfit extends BaseEntity {
   @Size(max = 255)
   private String name;
 
-  @Column
-  @Nullable
-  @Size(max = 255)
-  private String image;
+  @Column @Nullable @URL private String image;
 
   @Column
-  @Nullable
+  @NotNull
   @Min(0)
   private Double discount;
 }
