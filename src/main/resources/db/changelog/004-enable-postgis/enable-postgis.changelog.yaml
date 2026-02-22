@@ -1,7 +1,5 @@
 databaseChangeLog:
   - include:
-      file: db/changelog/004-enable-postgis/001-modify-client-address.yaml
+      file: db/changelog/004-enable-postgis/001-modify-store-location.yaml
   - include:
-      file: db/changelog/004-enable-postgis/002-modify-store-location.yaml
-  - include:
-      file: db/changelog/004-enable-postgis/003-add-not-null-locations.yaml
+      file: db/changelog/004-enable-postgis/002-add-store-address.yaml
