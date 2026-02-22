@@ -15,7 +15,7 @@ import org.hibernate.annotations.OnDeleteAction;
 @Entity
 @Getter
 @Setter
-@Table(name = "storeSocialNetworks")
+@Table(name = "store_social_networks")
 public class StoreSocialNetwork extends BaseEntity {
 
   @Column(length = 500)

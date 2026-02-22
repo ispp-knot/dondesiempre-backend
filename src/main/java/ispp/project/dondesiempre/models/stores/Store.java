@@ -15,6 +15,9 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+import org.locationtech.jts.geom.Point;
 
 @Entity
 @Getter
@@ -34,10 +37,15 @@ public class Store extends BaseEntity {
   @Size(max = 255)
   String storeID;
 
+  @Column(columnDefinition = "geometry(Point, 4326)")
+  @JdbcTypeCode(SqlTypes.GEOMETRY)
+  @NotNull
+  Point location;
+
   @Column
-  @NotBlank
   @Size(max = 255)
-  String location;
+  @NotBlank
+  String address;
 
   @Column
   @NotBlank

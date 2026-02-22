@@ -13,3 +13,5 @@ databaseChangeLog:
       file: db/changelog/001-base-models/006-add-new-store-requirements.yaml
   - include:
       file: db/changelog/001-base-models/007-add-new-product-requirements.yaml
+  - include:
+      file: db/changelog/001-base-models/008-modify-store-product-relation.yaml

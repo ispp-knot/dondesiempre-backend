@@ -1,0 +1,17 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1771765796033-2
+      author: ignacio
+      changes:
+        - modifyDataType:
+            tableName: stores
+            columnName: location
+            newDataType: geometry(Point,4326)
+        - addNotNullConstraint:
+            tableName: stores
+            columnName: location
+      rollback:
+        - modifyDataType:
+            tableName: stores
+            columnName: location
+            newDataType: varchar(255)
