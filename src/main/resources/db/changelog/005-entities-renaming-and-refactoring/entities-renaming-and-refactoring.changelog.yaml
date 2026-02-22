@@ -1,0 +1,5 @@
+databaseChangeLog:
+  - include:
+      file: db/changelog/005-entities-renaming-and-refactoring/001-table-renaming.yaml
+  - include:
+      file: db/changelog/005-entities-renaming-and-refactoring/002-stock-refactoring.yaml

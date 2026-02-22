@@ -1,6 +1,7 @@
 package ispp.project.dondesiempre.models.products;
 
 import ispp.project.dondesiempre.models.BaseEntity;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -13,8 +14,8 @@ import org.hibernate.annotations.OnDeleteAction;
 @Entity
 @Getter
 @Setter
-@Table(name = "productStocks")
-public class ProductStock extends BaseEntity {
+@Table(name = "product_variants")
+public class ProductVariant extends BaseEntity {
 
   @NotNull
   @ManyToOne(optional = false)
@@ -30,4 +31,6 @@ public class ProductStock extends BaseEntity {
   @ManyToOne(optional = false)
   @OnDelete(action = OnDeleteAction.CASCADE)
   private ProductColor color;
+
+  @Column @NotNull Boolean isAvailable;
 }

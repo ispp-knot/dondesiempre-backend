@@ -12,7 +12,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-@Table(name = "socialNetworks")
+@Table(name = "social_networks")
 public class SocialNetwork extends BaseEntity {
 
   @Column
