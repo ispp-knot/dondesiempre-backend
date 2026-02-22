@@ -1,3 +1,0 @@
-databaseChangeLog:
-  - include:
-      file: db/changelog/005-entities-renaming/001-table-renaming.yaml
