@@ -29,13 +29,24 @@ public class Product extends BaseEntity {
   @Column
   @NotNull
   @Min(0)
-  Double price;
+  Integer priceEuros;
 
   @Column
   @NotNull
   @Min(0)
-  @Max(1)
-  Double discount;
+  @Max(99)
+  Integer priceCents;
+
+  @Column
+  @NotNull
+  @Min(0)
+  Integer discountedPriceEuros;
+
+  @Column
+  @NotNull
+  @Min(0)
+  @Max(99)
+  Integer discountedPriceCents;
 
   @Column(columnDefinition = "TEXT")
   @Size(max = 5000)

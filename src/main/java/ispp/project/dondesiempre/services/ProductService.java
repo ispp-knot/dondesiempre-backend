@@ -3,38 +3,35 @@ package ispp.project.dondesiempre.services;
 import ispp.project.dondesiempre.models.products.Product;
 import ispp.project.dondesiempre.models.products.dto.ProductCreationDTO;
 import ispp.project.dondesiempre.repositories.products.ProductRepository;
+import jakarta.transaction.Transactional;
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class ProductService {
 
   private final ProductRepository productRepository;
-  private final TypeService typeService;
+  private final ProductTypeService productTypeService;
 
-  @Autowired
-  public ProductService(ProductRepository productRepository, TypeService typeService) {
-    this.productRepository = productRepository;
-    this.typeService = typeService;
-  }
-
+  @Transactional
   public Product saveProduct(ProductCreationDTO dto) {
     Product product = new Product();
     product.setName(dto.getName());
-    product.setPrice(dto.getPrice());
-    product.setDiscount(dto.getDiscount());
+    product.setPriceEuros(dto.getPriceEuros());
+    product.setPriceCents(dto.getPriceCents());
+    product.setDiscountedPriceEuros(dto.getDiscountEuros());
+    product.setDiscountedPriceCents(dto.getDiscountCents());
     product.setDescription(dto.getDescription());
-    product.setType(typeService.getTypeById(dto.getTypeId()));
+    product.setType(productTypeService.getProductTypeById(dto.getTypeId()));
     return productRepository.save(product);
   }
 
   public Product getProductById(Integer id) {
-    return productRepository.findById(id).orElse(null);
-  }
-
-  public Double getRealPrice(Product product) {
-    return product.getPrice() * (1 - product.getDiscount());
+    Product product =
+        productRepository.findById(id).orElseThrow(() -> new RuntimeException("Product not found"));
+    return product;
   }
 
   public List<Product> getAllProducts() {
@@ -45,12 +42,12 @@ public class ProductService {
     return productRepository.findAllDiscountedProducts();
   }
 
-  public Product updateProductDiscount(Integer id, Double discount) {
+  @Transactional
+  public Product updateProductDiscount(
+      Integer id, Integer discountedEuros, Integer discountedCents) {
     Product product = getProductById(id);
-    if (product == null) {
-      throw new RuntimeException("Product not found");
-    }
-    product.setDiscount(discount);
+    product.setDiscountedPriceEuros(discountedEuros);
+    product.setDiscountedPriceCents(discountedCents);
     Product updatedProduct = productRepository.save(product);
     return updatedProduct;
   }
