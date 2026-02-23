@@ -8,14 +8,18 @@ import ispp.project.dondesiempre.models.outfits.OutfitProduct;
 import ispp.project.dondesiempre.models.outfits.OutfitTag;
 import ispp.project.dondesiempre.models.outfits.dto.OutfitCreationDTO;
 import ispp.project.dondesiempre.models.outfits.dto.OutfitCreationProductDTO;
+import ispp.project.dondesiempre.models.outfits.dto.OutfitDTO;
+import ispp.project.dondesiempre.models.outfits.dto.OutfitProductDTO;
+import ispp.project.dondesiempre.models.outfits.dto.OutfitUpdateDTO;
 import ispp.project.dondesiempre.models.products.Product;
 import ispp.project.dondesiempre.repositories.outfits.OutfitOutfitTagRepository;
 import ispp.project.dondesiempre.repositories.outfits.OutfitProductRepository;
 import ispp.project.dondesiempre.repositories.outfits.OutfitRepository;
 import ispp.project.dondesiempre.repositories.products.ProductRepository;
+import ispp.project.dondesiempre.repositories.storefronts.StorefrontRepository;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
-import org.springframework.beans.BeanUtils;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +31,7 @@ public class OutfitService {
   private OutfitOutfitTagRepository outfitOutfitTagRepository;
 
   private ProductRepository productRepository;
+  private StorefrontRepository storefrontRepository;
 
   private OutfitTagService outfitTagService;
 
@@ -36,12 +41,14 @@ public class OutfitService {
       OutfitProductRepository outfitProductRepository,
       OutfitOutfitTagRepository outfitOutfitTagRepository,
       ProductRepository productRepository,
+      StorefrontRepository storefrontRepository,
       OutfitTagService outfitTagService) {
     this.outfitRepository = outfitRepository;
     this.outfitProductRepository = outfitProductRepository;
     this.outfitOutfitTagRepository = outfitOutfitTagRepository;
 
     this.productRepository = productRepository;
+    this.storefrontRepository = storefrontRepository;
 
     this.outfitTagService = outfitTagService;
   }
@@ -54,20 +61,44 @@ public class OutfitService {
   }
 
   @Transactional(readOnly = true)
-  public List<Outfit> findByStore(Integer storeId) {
-    return outfitRepository.findByStoreId(storeId);
+  public OutfitDTO findByIdToDTO(Integer id) throws ResourceNotFoundException {
+    return new OutfitDTO(
+        findById(id),
+        outfitRepository.findOutfitTagsById(id),
+        outfitRepository.findOutfitOutfitProductsById(id));
+  }
+
+  @Transactional(readOnly = true)
+  public List<OutfitDTO> findByStore(Integer storeId) {
+    return outfitRepository.findByStoreId(storeId).stream()
+        .map(
+            outfit ->
+                new OutfitDTO(
+                    outfit,
+                    outfitRepository.findOutfitTagsById(outfit.getId()),
+                    outfitRepository.findOutfitOutfitProductsById(outfit.getId())))
+        .collect(Collectors.toList());
   }
 
   @Transactional
-  public Outfit create(OutfitCreationDTO dto) throws InvalidRequestException {
+  public OutfitDTO create(OutfitCreationDTO dto) throws InvalidRequestException {
     Outfit outfit;
     Integer outfitId;
 
     outfit = new Outfit();
+
     outfit.setName(dto.getName());
+    outfit.setDescription(dto.getDescription());
     outfit.setIndex(dto.getIndex());
     outfit.setImage(dto.getImage());
     outfit.setDiscount(0.0);
+    outfit.setStorefront(
+        storefrontRepository
+            .findById(dto.getStorefrontid())
+            .orElseThrow(
+                () ->
+                    new ResourceNotFoundException(
+                        "Storefront with ID" + dto.getStorefrontid() + "not found.")));
 
     if (dto.getProducts() == null || (dto.getProducts() != null && dto.getProducts().size() <= 0)) {
       throw new InvalidRequestException("An outfit cannot be created without products.");
@@ -78,21 +109,32 @@ public class OutfitService {
     dto.getTags().stream().forEach(name -> addTag(outfitId, name));
     dto.getProducts().stream().forEach(product -> addProduct(outfitId, product));
 
-    return outfit;
+    return new OutfitDTO(
+        outfit,
+        outfitRepository.findOutfitTagsById(outfit.getId()),
+        outfitRepository.findOutfitOutfitProductsById(outfit.getId()));
   }
 
   @Transactional
-  public Outfit update(Integer id, Outfit outfit) throws ResourceNotFoundException {
+  public OutfitDTO update(Integer id, OutfitUpdateDTO dto) throws ResourceNotFoundException {
     Outfit outfitToUpdate;
 
     outfitToUpdate = findById(id);
 
-    BeanUtils.copyProperties(outfit, outfitToUpdate, "id");
-    return outfitRepository.save(outfitToUpdate);
+    outfitToUpdate.setName(dto.getName());
+    outfitToUpdate.setDescription(dto.getDescription());
+    outfitToUpdate.setDiscount(dto.getDiscount());
+    outfitToUpdate.setImage(dto.getImage());
+    outfitToUpdate.setIndex(dto.getIndex());
+
+    return new OutfitDTO(
+        outfitRepository.save(outfitToUpdate),
+        outfitRepository.findOutfitTagsById(id),
+        outfitRepository.findOutfitOutfitProductsById(id));
   }
 
   @Transactional
-  public OutfitTag addTag(Integer outfitId, String tagName) throws ResourceNotFoundException {
+  public String addTag(Integer outfitId, String tagName) throws ResourceNotFoundException {
     Outfit outfit;
     OutfitTag tag;
     OutfitOutfitTag outfitTag;
@@ -105,11 +147,11 @@ public class OutfitService {
     outfitTag.setTag(tag);
     outfitOutfitTagRepository.save(outfitTag);
 
-    return tag;
+    return tag.getName();
   }
 
   @Transactional
-  public Product addProduct(Integer outfitId, OutfitCreationProductDTO dto)
+  public OutfitProductDTO addProduct(Integer outfitId, OutfitCreationProductDTO dto)
       throws ResourceNotFoundException, InvalidRequestException {
     Outfit outfit;
     Product product;
@@ -140,7 +182,7 @@ public class OutfitService {
     outfitProduct.setProduct(product);
     outfitProductRepository.save(outfitProduct);
 
-    return product;
+    return new OutfitProductDTO(outfitProduct);
   }
 
   @Transactional

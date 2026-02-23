@@ -1,11 +1,11 @@
 package ispp.project.dondesiempre.controllers.outfits;
 
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
-import ispp.project.dondesiempre.models.outfits.Outfit;
-import ispp.project.dondesiempre.models.outfits.OutfitTag;
 import ispp.project.dondesiempre.models.outfits.dto.OutfitCreationDTO;
 import ispp.project.dondesiempre.models.outfits.dto.OutfitCreationProductDTO;
-import ispp.project.dondesiempre.models.products.Product;
+import ispp.project.dondesiempre.models.outfits.dto.OutfitDTO;
+import ispp.project.dondesiempre.models.outfits.dto.OutfitProductDTO;
+import ispp.project.dondesiempre.models.outfits.dto.OutfitUpdateDTO;
 import ispp.project.dondesiempre.services.OutfitService;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -30,38 +30,38 @@ public class OutfitController {
 
   @GetMapping("{id}")
   @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<Outfit> getById(@PathVariable("id") Integer id) {
-    return new ResponseEntity<>(outfitService.findById(id), HttpStatus.OK);
+  public ResponseEntity<OutfitDTO> getById(@PathVariable("id") Integer id) {
+    return new ResponseEntity<>(outfitService.findByIdToDTO(id), HttpStatus.OK);
   }
 
   @GetMapping("store/{storeId}")
   @ResponseStatus(HttpStatus.FOUND)
-  public ResponseEntity<List<Outfit>> getByStoreId(@PathVariable("storeId") Integer storeId) {
+  public ResponseEntity<List<OutfitDTO>> getByStoreId(@PathVariable("storeId") Integer storeId) {
     return new ResponseEntity<>(outfitService.findByStore(storeId), HttpStatus.FOUND);
   }
 
   @PostMapping("")
   @ResponseStatus(HttpStatus.CREATED)
-  public ResponseEntity<Outfit> create(@RequestBody @Valid OutfitCreationDTO dto) {
+  public ResponseEntity<OutfitDTO> create(@RequestBody @Valid OutfitCreationDTO dto) {
     return new ResponseEntity<>(outfitService.create(dto), HttpStatus.CREATED);
   }
 
   @PostMapping("{id}")
   @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<Outfit> update(
-      @PathVariable("id") Integer id, @RequestBody @Valid Outfit outfit) {
-    return new ResponseEntity<>(outfitService.update(id, outfit), HttpStatus.OK);
+  public ResponseEntity<OutfitDTO> update(
+      @PathVariable("id") Integer id, @RequestBody @Valid OutfitUpdateDTO dto) {
+    return new ResponseEntity<>(outfitService.update(id, dto), HttpStatus.OK);
   }
 
   @PostMapping("{id}/tags")
   @ResponseStatus(HttpStatus.CREATED)
-  public ResponseEntity<OutfitTag> addTag(@PathVariable("id") Integer id, @RequestBody String tag) {
+  public ResponseEntity<String> addTag(@PathVariable("id") Integer id, @RequestBody String tag) {
     return new ResponseEntity<>(outfitService.addTag(id, tag), HttpStatus.CREATED);
   }
 
   @PostMapping("{id}/products")
   @ResponseStatus(HttpStatus.CREATED)
-  public ResponseEntity<Product> addProduct(
+  public ResponseEntity<OutfitProductDTO> addProduct(
       @PathVariable("id") Integer id, @RequestBody OutfitCreationProductDTO dto) {
     return new ResponseEntity<>(outfitService.addProduct(id, dto), HttpStatus.CREATED);
   }

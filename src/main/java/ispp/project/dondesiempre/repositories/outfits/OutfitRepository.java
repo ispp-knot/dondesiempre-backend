@@ -1,6 +1,7 @@
 package ispp.project.dondesiempre.repositories.outfits;
 
 import ispp.project.dondesiempre.models.outfits.Outfit;
+import ispp.project.dondesiempre.models.outfits.OutfitProduct;
 import ispp.project.dondesiempre.models.products.Product;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -16,4 +17,10 @@ public interface OutfitRepository extends JpaRepository<Outfit, Integer> {
 
   @Query("select op.index from OutfitProduct op where op.outfit.id = :id")
   public List<Integer> findOutfitProductIndicesById(Integer id);
+
+  @Query("select op from OutfitProduct op where op.outfit.id = :id")
+  public List<OutfitProduct> findOutfitOutfitProductsById(Integer id);
+
+  @Query("select distinct ot.tag.name from OutfitOutfitTag ot where ot.outfit.id = :id")
+  public List<String> findOutfitTagsById(Integer id);
 }
