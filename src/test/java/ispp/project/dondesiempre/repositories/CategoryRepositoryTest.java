@@ -141,4 +141,33 @@ class CategoryRepositoryTest {
 
     assertFalse(categoryRepository.existsByNameAndStoreId("Inexistente", store.getId()));
   }
+
+  @Test
+  void testSameNameDifferentStores() {
+    Store store1 = crearStore();
+    Store store2 = crearStore();
+
+    Category cat1 = new Category();
+    cat1.setName("Camisetas");
+    cat1.setStore(store1);
+    categoryRepository.save(cat1);
+
+    Category cat2 = new Category();
+    cat2.setName("Camisetas");
+    cat2.setStore(store2);
+    categoryRepository.save(cat2);
+
+    assertTrue(categoryRepository.existsByNameAndStoreId("Camisetas", store1.getId()));
+    assertTrue(categoryRepository.existsByNameAndStoreId("Camisetas", store2.getId()));
+  }
+
+  @Test
+  void testFindByStoreId_empty() {
+    Store store2 = crearStore();
+
+    List<Category> categories = categoryRepository.findByStoreId(store2.getId());
+
+    assertNotNull(categories);
+    assertTrue(categories.isEmpty());
+  }
 }
