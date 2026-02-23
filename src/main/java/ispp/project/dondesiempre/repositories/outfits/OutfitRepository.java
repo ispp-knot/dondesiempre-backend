@@ -21,6 +21,6 @@ public interface OutfitRepository extends JpaRepository<Outfit, Integer> {
   @Query("select op from OutfitProduct op where op.outfit.id = :id order by op.index asc")
   public List<OutfitProduct> findOutfitOutfitProductsById(Integer id);
 
-  @Query("select distinct ot.tag.name from OutfitOutfitTag ot where ot.outfit.id = :id")
+  @Query("select distinct ot.tag.name from OutfitTagRelation ot where ot.outfit.id = :id")
   public List<String> findOutfitTagsById(Integer id);
 }

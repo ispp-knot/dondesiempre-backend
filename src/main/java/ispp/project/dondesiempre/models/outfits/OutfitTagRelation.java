@@ -13,8 +13,8 @@ import org.hibernate.annotations.OnDeleteAction;
 @Entity
 @Getter
 @Setter
-@Table(name = "outfitOutfitTags")
-public class OutfitOutfitTag extends BaseEntity {
+@Table(name = "outfit_tag_relation")
+public class OutfitTagRelation extends BaseEntity {
   @NotNull
   @ManyToOne(optional = false)
   @OnDelete(action = OnDeleteAction.CASCADE)

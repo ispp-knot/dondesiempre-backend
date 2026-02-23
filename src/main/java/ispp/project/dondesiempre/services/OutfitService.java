@@ -3,18 +3,18 @@ package ispp.project.dondesiempre.services;
 import ispp.project.dondesiempre.exceptions.InvalidRequestException;
 import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.models.outfits.Outfit;
-import ispp.project.dondesiempre.models.outfits.OutfitOutfitTag;
 import ispp.project.dondesiempre.models.outfits.OutfitProduct;
 import ispp.project.dondesiempre.models.outfits.OutfitTag;
+import ispp.project.dondesiempre.models.outfits.OutfitTagRelation;
 import ispp.project.dondesiempre.models.outfits.dto.OutfitCreationDTO;
 import ispp.project.dondesiempre.models.outfits.dto.OutfitCreationProductDTO;
 import ispp.project.dondesiempre.models.outfits.dto.OutfitDTO;
 import ispp.project.dondesiempre.models.outfits.dto.OutfitProductDTO;
 import ispp.project.dondesiempre.models.outfits.dto.OutfitUpdateDTO;
 import ispp.project.dondesiempre.models.products.Product;
-import ispp.project.dondesiempre.repositories.outfits.OutfitOutfitTagRepository;
 import ispp.project.dondesiempre.repositories.outfits.OutfitProductRepository;
 import ispp.project.dondesiempre.repositories.outfits.OutfitRepository;
+import ispp.project.dondesiempre.repositories.outfits.OutfitTagRelationRepository;
 import ispp.project.dondesiempre.repositories.products.ProductRepository;
 import ispp.project.dondesiempre.repositories.storefronts.StorefrontRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -29,7 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class OutfitService {
   private OutfitRepository outfitRepository;
   private OutfitProductRepository outfitProductRepository;
-  private OutfitOutfitTagRepository outfitOutfitTagRepository;
+  private OutfitTagRelationRepository outfitTagRelationRepository;
 
   private ProductRepository productRepository;
   private StorefrontRepository storefrontRepository;
@@ -40,13 +40,13 @@ public class OutfitService {
   public OutfitService(
       OutfitRepository outfitRepository,
       OutfitProductRepository outfitProductRepository,
-      OutfitOutfitTagRepository outfitOutfitTagRepository,
+      OutfitTagRelationRepository outfitTagRelationRepository,
       ProductRepository productRepository,
       StorefrontRepository storefrontRepository,
       OutfitTagService outfitTagService) {
     this.outfitRepository = outfitRepository;
     this.outfitProductRepository = outfitProductRepository;
-    this.outfitOutfitTagRepository = outfitOutfitTagRepository;
+    this.outfitTagRelationRepository = outfitTagRelationRepository;
 
     this.productRepository = productRepository;
     this.storefrontRepository = storefrontRepository;
@@ -138,15 +138,15 @@ public class OutfitService {
   public String addTag(Integer outfitId, String tagName) throws ResourceNotFoundException {
     Outfit outfit;
     OutfitTag tag;
-    OutfitOutfitTag outfitTag;
+    OutfitTagRelation outfitTag;
 
     outfit = findById(outfitId);
     tag = outfitTagService.findOrCreateTag(tagName);
 
-    outfitTag = new OutfitOutfitTag();
+    outfitTag = new OutfitTagRelation();
     outfitTag.setOutfit(outfit);
     outfitTag.setTag(tag);
-    outfitOutfitTagRepository.save(outfitTag);
+    outfitTagRelationRepository.save(outfitTag);
 
     return tag.getName();
   }
