@@ -43,7 +43,37 @@ public class OutfitRepositoryTest {
   @Autowired private ProductTypeRepository typeRepository;
 
   @Test
-  void testFindOneByStoreId() {
+  void shouldReturnNoOutfits_whenStoreHasNoOutfits() {
+    Store store;
+    Storefront storefront;
+
+    List<Outfit> result;
+
+    storefront = new Storefront();
+    storefrontRepository.save(storefront);
+
+    store = new Store();
+    store.setName("Test store");
+    store.setAddress("Test address");
+    store.setStorefront(storefront);
+    store.setLocation(
+        new Point(
+            new CoordinateArraySequence(new Coordinate[] {new Coordinate(0.0, 0.0)}),
+            new GeometryFactory(new PrecisionModel(PrecisionModel.FIXED), 0)));
+    store.setAboutUs("Test description");
+    store.setOpeningHours("Test opening hours");
+    store.setEmail("test@test.com");
+    store.setStoreID("testStoreID");
+    store.setAcceptsShipping(false);
+    store = storeRepository.save(store);
+
+    result = outfitRepository.findByStoreId(store.getId());
+
+    assertTrue(result.isEmpty());
+  }
+
+  @Test
+  void shouldReturnOneOutfit_whenStoreHasOneOutfit() {
     Store store;
     Storefront storefront;
 
@@ -104,7 +134,7 @@ public class OutfitRepositoryTest {
   }
 
   @Test
-  void testFindMultipleByStoreId() {
+  void shouldReturnTwoOutfits_whenStoreHasTwoOutfits() {
     Store store1, store2;
     Storefront storefront1, storefront2;
 
