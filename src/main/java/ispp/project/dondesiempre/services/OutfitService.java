@@ -21,38 +21,21 @@ import jakarta.persistence.EntityNotFoundException;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@RequiredArgsConstructor
 public class OutfitService {
-  private OutfitRepository outfitRepository;
-  private OutfitProductRepository outfitProductRepository;
-  private OutfitTagRelationRepository outfitTagRelationRepository;
+  private final OutfitRepository outfitRepository;
+  private final OutfitProductRepository outfitProductRepository;
+  private final OutfitTagRelationRepository outfitTagRelationRepository;
 
-  private ProductRepository productRepository;
-  private StorefrontRepository storefrontRepository;
+  private final ProductRepository productRepository;
+  private final StorefrontRepository storefrontRepository;
 
-  private OutfitTagService outfitTagService;
-
-  @Autowired
-  public OutfitService(
-      OutfitRepository outfitRepository,
-      OutfitProductRepository outfitProductRepository,
-      OutfitTagRelationRepository outfitTagRelationRepository,
-      ProductRepository productRepository,
-      StorefrontRepository storefrontRepository,
-      OutfitTagService outfitTagService) {
-    this.outfitRepository = outfitRepository;
-    this.outfitProductRepository = outfitProductRepository;
-    this.outfitTagRelationRepository = outfitTagRelationRepository;
-
-    this.productRepository = productRepository;
-    this.storefrontRepository = storefrontRepository;
-
-    this.outfitTagService = outfitTagService;
-  }
+  private final OutfitTagService outfitTagService;
 
   @Transactional(readOnly = true)
   public Outfit findById(Integer id) throws ResourceNotFoundException {
