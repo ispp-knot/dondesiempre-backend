@@ -1,0 +1,7 @@
+databaseChangeLog:
+  - changeSet:
+      id: enable_postgis
+      author: ignacio
+      changes:
+        - sql:
+            sql: CREATE EXTENSION IF NOT EXISTS postgis;
