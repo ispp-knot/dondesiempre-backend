@@ -24,7 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
 @Transactional
-@ActiveProfiles("dev")
+@ActiveProfiles("test")
 class CategoryRepositoryTest {
 
   @Autowired private CategoryRepository categoryRepository;

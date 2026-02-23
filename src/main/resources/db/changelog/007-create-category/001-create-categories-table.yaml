@@ -1,0 +1,43 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001-create-categories-table
+      author: tu-nombre
+      changes:
+        - createTable:
+            tableName: categories
+            columns:
+              - column:
+                  name: id
+                  type: INTEGER
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+                    primaryKeyName: categoriesPK
+              - column:
+                  name: version
+                  type: INTEGER
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: TEXT
+              - column:
+                  name: store_id
+                  type: INTEGER
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: 001-add-fk-categories-store
+      author: tu-nombre
+      changes:
+        - addForeignKeyConstraint:
+            baseTableName: categories
+            baseColumnNames: store_id
+            referencedTableName: stores
+            referencedColumnNames: id
+            constraintName: FKcategories_store
+            validate: true
