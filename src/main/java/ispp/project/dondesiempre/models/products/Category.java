@@ -4,10 +4,9 @@ import ispp.project.dondesiempre.models.BaseEntity;
 import ispp.project.dondesiempre.models.stores.Store;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -18,35 +17,20 @@ import org.hibernate.annotations.OnDeleteAction;
 @Entity
 @Getter
 @Setter
-@Table(name = "products")
-public class Product extends BaseEntity {
+@Table(name = "categories")
+public class Category extends BaseEntity {
 
   @Column
-  @NotNull
+  @NotBlank
   @Size(max = 255)
-  String name;
-
-  @Column
-  @NotNull
-  @Min(0)
-  Double price;
+  private String name;
 
   @Column(columnDefinition = "TEXT")
-  @Size(max = 5000)
-  String description;
-
-  @NotNull
-  @ManyToOne(optional = false)
-  @OnDelete(action = OnDeleteAction.CASCADE)
-  private ProductType type;
+  @Size(max = 1000)
+  private String description;
 
   @NotNull
   @ManyToOne(optional = false)
   @OnDelete(action = OnDeleteAction.CASCADE)
   private Store store;
-
-  @ManyToOne(optional = true)
-  @OnDelete(action = OnDeleteAction.SET_NULL)
-  @JoinColumn(name = "category_id")
-  private Category category;
 }
