@@ -99,8 +99,7 @@ public class OutfitService {
   private Integer calculatePriceOnCreation(List<OutfitCreationProductDTO> dtos)
       throws EntityNotFoundException {
     return dtos.stream()
-        .mapToDouble(dto -> productService.findById(dto.getId()).getPrice())
-        .mapToInt(price -> (int) (price * 100.0))
+        .mapToInt(dto -> productService.getProductById(dto.getId()).getDiscountedPriceInCents())
         .sum();
   }
 
@@ -153,7 +152,7 @@ public class OutfitService {
     List<Integer> productIndicesOfOutfit;
 
     outfit = applicationContext.getBean(OutfitService.class).findById(outfitId);
-    product = productService.findById(dto.getId());
+    product = productService.getProductById(dto.getId());
 
     productsOfOutfit = outfitRepository.findOutfitProductsById(outfitId);
     productsOfOutfit.add(product);

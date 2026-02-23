@@ -5,7 +5,7 @@ import ispp.project.dondesiempre.models.products.Product;
 import ispp.project.dondesiempre.models.products.dto.DiscountModificationDTO;
 import ispp.project.dondesiempre.models.products.dto.GetProductDTO;
 import ispp.project.dondesiempre.models.products.dto.ProductCreationDTO;
-import ispp.project.dondesiempre.services.ProductService;
+import ispp.project.dondesiempre.services.products.ProductService;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -34,12 +34,14 @@ public class ProductController {
 
   @GetMapping("/{id}")
   public ResponseEntity<GetProductDTO> getProductById(@PathVariable Integer id) {
-    Product product = productService.getProductById(id);
-    if (product == null) {
+
+    try {
+      Product product = productService.getProductById(id);
+      GetProductDTO dto = GetProductDTO.fromProduct(product);
+      return new ResponseEntity<>(dto, HttpStatus.OK);
+    } catch (RuntimeException e) {
       return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
-    GetProductDTO dto = GetProductDTO.fromProduct(product);
-    return new ResponseEntity<>(dto, HttpStatus.OK);
   }
 
   @GetMapping("/discounted")
@@ -51,8 +53,12 @@ public class ProductController {
 
   @PostMapping("")
   public ResponseEntity<Product> createProduct(@RequestBody @Valid ProductCreationDTO dto) {
-    Product savedProduct = productService.saveProduct(dto);
-    return new ResponseEntity<>(savedProduct, HttpStatus.CREATED);
+    try {
+      Product savedProduct = productService.saveProduct(dto);
+      return new ResponseEntity<>(savedProduct, HttpStatus.CREATED);
+    } catch (IllegalArgumentException e) {
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
   }
 
   @PutMapping("/{id}/discount")
@@ -62,6 +68,8 @@ public class ProductController {
       Product updatedProduct =
           productService.updateProductDiscount(id, discount.getDiscountedPriceInCents());
       return new ResponseEntity<>(updatedProduct, HttpStatus.ACCEPTED);
+    } catch (IllegalArgumentException e) {
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     } catch (RuntimeException e) {
       return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }

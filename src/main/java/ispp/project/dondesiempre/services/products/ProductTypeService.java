@@ -1,4 +1,4 @@
-package ispp.project.dondesiempre.services;
+package ispp.project.dondesiempre.services.products;
 
 import ispp.project.dondesiempre.models.products.ProductType;
 import ispp.project.dondesiempre.repositories.products.ProductTypeRepository;

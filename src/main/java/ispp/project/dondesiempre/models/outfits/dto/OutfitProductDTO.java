@@ -26,7 +26,7 @@ public class OutfitProductDTO {
     this.name = product.getProduct().getName();
     this.description = product.getProduct().getDescription();
 
-    this.priceInCents = (int) (product.getProduct().getPrice() * 100.0);
+    this.priceInCents = product.getProduct().getDiscountedPriceInCents();
     this.type = product.getProduct().getType();
 
     this.index = product.getIndex();
