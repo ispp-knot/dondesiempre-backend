@@ -4,7 +4,6 @@ import ispp.project.dondesiempre.models.outfits.Outfit;
 import ispp.project.dondesiempre.models.outfits.OutfitProduct;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -43,7 +42,7 @@ public class OutfitDTO {
         products.stream()
             .map(product -> new OutfitProductDTO(product))
             .sorted(Comparator.comparing(product -> product.getIndex()))
-            .collect(Collectors.toList());
+            .toList();
     this.priceInCents = this.products.stream().mapToInt(product -> product.getPriceInCents()).sum();
   }
 }

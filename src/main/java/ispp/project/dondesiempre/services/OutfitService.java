@@ -17,7 +17,6 @@ import ispp.project.dondesiempre.repositories.outfits.OutfitRepository;
 import ispp.project.dondesiempre.repositories.outfits.OutfitTagRelationRepository;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -61,7 +60,7 @@ public class OutfitService {
                     outfit,
                     outfitRepository.findOutfitTagsById(outfit.getId()),
                     outfitRepository.findOutfitOutfitProductsById(outfit.getId())))
-        .collect(Collectors.toList());
+        .toList();
   }
 
   @Transactional(rollbackFor = InvalidRequestException.class)
@@ -80,10 +79,8 @@ public class OutfitService {
     if (dto.getProducts() == null || (dto.getProducts() != null && dto.getProducts().size() <= 0)) {
       throw new InvalidRequestException("An outfit cannot be created without products.");
     }
-    outfit.setDiscountedPriceInCents(
-        applicationContext
-            .getBean(OutfitService.class)
-            .calculatePriceOnCreation(dto.getProducts()));
+    outfit.setDiscountedPriceInCents(calculatePriceOnCreation(dto.getProducts()));
+
     outfit = outfitRepository.save(outfit);
     outfitId = outfit.getId();
 
@@ -96,13 +93,11 @@ public class OutfitService {
         outfitRepository.findOutfitOutfitProductsById(outfit.getId()));
   }
 
-  @Transactional(rollbackFor = EntityNotFoundException.class)
   private Integer calculatePriceOnCreation(List<OutfitCreationProductDTO> dtos)
       throws EntityNotFoundException {
     return dtos.stream()
         .mapToDouble(dto -> productService.findById(dto.getId()).getPrice())
-        /* TODO: Temporary until the Product class is modified */
-        .mapToInt(price -> Double.valueOf(price * 100.0).intValue())
+        .mapToInt(price -> (int) (price * 100.0))
         .sum();
   }
 
@@ -134,7 +129,7 @@ public class OutfitService {
 
     try {
       tag = outfitTagService.findByName(tagName);
-    } catch (ResourceNotFoundException e) {
+    } catch (ResourceNotFoundException _) {
       tag = outfitTagService.create(tagName);
     }
     outfitTag = new OutfitTagRelation();

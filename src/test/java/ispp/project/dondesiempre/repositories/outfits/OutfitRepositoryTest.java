@@ -29,7 +29,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = Replace.NONE)
-public class OutfitRepositoryTest {
+class OutfitRepositoryTest {
   @Autowired private OutfitRepository outfitRepository;
 
   @Autowired private StoreRepository storeRepository;
