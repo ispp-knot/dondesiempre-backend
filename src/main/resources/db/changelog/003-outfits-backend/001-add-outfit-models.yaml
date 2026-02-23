@@ -1,0 +1,167 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1771762896941-25
+      author: guill_1goz466 (generated)
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: outfit_outfit_tagsPK
+                  name: id
+                  type: INTEGER
+              - column:
+                  name: version
+                  type: INTEGER
+              - column:
+                  constraints:
+                    nullable: false
+                  name: outfit_id
+                  type: INTEGER
+              - column:
+                  constraints:
+                    nullable: false
+                  name: tag_id
+                  type: INTEGER
+            tableName: outfit_outfit_tags
+  - changeSet:
+      id: 1771762896941-26
+      author: guill_1goz466 (generated)
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: outfit_productsPK
+                  name: id
+                  type: INTEGER
+              - column:
+                  name: version
+                  type: INTEGER
+              - column:
+                  constraints:
+                    nullable: false
+                  name: index
+                  type: INTEGER
+              - column:
+                  constraints:
+                    nullable: false
+                  name: outfit_id
+                  type: INTEGER
+              - column:
+                  constraints:
+                    nullable: false
+                  name: product_id
+                  type: INTEGER
+            tableName: outfit_products
+  - changeSet:
+      id: 1771762896941-27
+      author: guill_1goz466 (generated)
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: outfit_tagsPK
+                  name: id
+                  type: INTEGER
+              - column:
+                  name: version
+                  type: INTEGER
+              - column:
+                  constraints:
+                    nullable: false
+                  name: name
+                  type: VARCHAR(255)
+            tableName: outfit_tags
+  - changeSet:
+      id: 1771762896941-28
+      author: guill_1goz466 (generated)
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: outfitsPK
+                  name: id
+                  type: INTEGER
+              - column:
+                  name: version
+                  type: INTEGER
+              - column:
+                  name: discount
+                  type: FLOAT(53)
+              - column:
+                  name: image
+                  type: VARCHAR(255)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: index
+                  type: INTEGER
+              - column:
+                  constraints:
+                    nullable: false
+                  name: name
+                  type: VARCHAR(255)
+            tableName: outfits
+  - changeSet:
+      id: 1771762896941-29
+      author: guill_1goz466 (generated)
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: outfit_id
+            baseTableName: outfit_products
+            constraintName: FK9wudyo50qvt4rrae8jlq2i1uc
+            deferrable: false
+            initiallyDeferred: false
+            referencedColumnNames: id
+            referencedTableName: outfits
+            validate: true
+  - changeSet:
+      id: 1771762896941-30
+      author: guill_1goz466 (generated)
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: tag_id
+            baseTableName: outfit_outfit_tags
+            constraintName: FKj88b6398nppwyc07t9d2i6bsq
+            deferrable: false
+            initiallyDeferred: false
+            referencedColumnNames: id
+            referencedTableName: outfit_tags
+            validate: true
+  - changeSet:
+      id: 1771762896941-31
+      author: guill_1goz466 (generated)
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: outfit_id
+            baseTableName: outfit_outfit_tags
+            constraintName: FKno2vq5obqncbshkr6odexgwuq
+            deferrable: false
+            initiallyDeferred: false
+            referencedColumnNames: id
+            referencedTableName: outfits
+            validate: true
+  - changeSet:
+      id: 1771762896941-32
+      author: guill_1goz466 (generated)
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: product_id
+            baseTableName: outfit_products
+            constraintName: FKpkb40m85j72f11gekeqf0ke1u
+            deferrable: false
+            initiallyDeferred: false
+            referencedColumnNames: id
+            referencedTableName: products
+            validate: true
