@@ -19,6 +19,7 @@ import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,6 +35,8 @@ public class OutfitService {
 
   private final OutfitTagService outfitTagService;
 
+  private final ApplicationContext applicationContext;
+
   @Transactional(readOnly = true, rollbackFor = ResourceNotFoundException.class)
   public Outfit findById(Integer id) throws ResourceNotFoundException {
     return outfitRepository
@@ -44,7 +47,7 @@ public class OutfitService {
   @Transactional(readOnly = true, rollbackFor = ResourceNotFoundException.class)
   public OutfitDTO findByIdToDTO(Integer id) throws ResourceNotFoundException {
     return new OutfitDTO(
-        findById(id),
+        applicationContext.getBean(OutfitService.class).findById(id),
         outfitRepository.findOutfitTagsById(id),
         outfitRepository.findOutfitOutfitProductsById(id));
   }
@@ -104,7 +107,7 @@ public class OutfitService {
   public OutfitDTO update(Integer id, OutfitUpdateDTO dto) throws ResourceNotFoundException {
     Outfit outfitToUpdate;
 
-    outfitToUpdate = findById(id);
+    outfitToUpdate = applicationContext.getBean(OutfitService.class).findById(id);
 
     outfitToUpdate.setName(dto.getName());
     outfitToUpdate.setDescription(dto.getDescription());
@@ -124,7 +127,7 @@ public class OutfitService {
     OutfitTag tag;
     OutfitTagRelation outfitTag;
 
-    outfit = findById(outfitId);
+    outfit = applicationContext.getBean(OutfitService.class).findById(outfitId);
 
     try {
       tag = outfitTagService.findByName(tagName);
@@ -148,7 +151,7 @@ public class OutfitService {
     List<Product> productsOfOutfit;
     List<Integer> productIndicesOfOutfit;
 
-    outfit = findById(outfitId);
+    outfit = applicationContext.getBean(OutfitService.class).findById(outfitId);
     product = productService.findById(dto.getId());
 
     productsOfOutfit = outfitRepository.findOutfitProductsById(outfitId);
