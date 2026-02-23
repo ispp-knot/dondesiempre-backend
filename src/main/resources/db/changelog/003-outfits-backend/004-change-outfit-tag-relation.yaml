@@ -1,0 +1,74 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1771842551345-32
+      author: guill_1goz466 (generated)
+      changes:
+        - dropForeignKeyConstraint:
+            baseTableName: outfit_outfit_tags
+            constraintName: FKj88b6398nppwyc07t9d2i6bsq
+  - changeSet:
+      id: 1771842551345-33
+      author: guill_1goz466 (generated)
+      changes:
+        - dropForeignKeyConstraint:
+            baseTableName: outfit_outfit_tags
+            constraintName: FKno2vq5obqncbshkr6odexgwuq
+  - changeSet:
+      id: 1771842551345-29
+      author: guill_1goz466 (generated)
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: outfit_tag_relationPK
+                  name: id
+                  type: INTEGER
+              - column:
+                  name: version
+                  type: INTEGER
+              - column:
+                  constraints:
+                    nullable: false
+                  name: outfit_id
+                  type: INTEGER
+              - column:
+                  constraints:
+                    nullable: false
+                  name: tag_id
+                  type: INTEGER
+            tableName: outfit_tag_relation
+  - changeSet:
+      id: 1771842551345-30
+      author: guill_1goz466 (generated)
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: tag_id
+            baseTableName: outfit_tag_relation
+            constraintName: FKfwjl1qt809xlqj0mat57djhlk
+            deferrable: false
+            initiallyDeferred: false
+            referencedColumnNames: id
+            referencedTableName: outfit_tags
+            validate: true
+  - changeSet:
+      id: 1771842551345-31
+      author: guill_1goz466 (generated)
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: outfit_id
+            baseTableName: outfit_tag_relation
+            constraintName: FKiaw37w2sjg9vvix3y4k6hwy58
+            deferrable: false
+            initiallyDeferred: false
+            referencedColumnNames: id
+            referencedTableName: outfits
+            validate: true
+  - changeSet:
+      id: 1771842551345-34
+      author: guill_1goz466 (generated)
+      changes:
+        - dropTable:
+            tableName: outfit_outfit_tags

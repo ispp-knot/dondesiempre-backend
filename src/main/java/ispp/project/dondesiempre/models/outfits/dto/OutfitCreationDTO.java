@@ -8,7 +8,7 @@ import lombok.Setter;
 @Setter
 public class OutfitCreationDTO {
   private Integer index;
-  private Integer storefrontid;
+  private Integer storefrontId;
 
   private String name;
   private String description;

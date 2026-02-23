@@ -5,3 +5,9 @@ databaseChangeLog:
       file: db/changelog/003-outfits-backend/002-add-outfit-discount-constraint.yaml
   - include:
       file: db/changelog/003-outfits-backend/003-add-outfit-description-storefront.yaml
+  - include:
+      file: db/changelog/003-outfits-backend/004-change-outfit-tag-relation.yaml
+  - include:
+      file: db/changelog/003-outfits-backend/005-change-outfit-discount.yaml
+  - include:
+      file: db/changelog/003-outfits-backend/006-change-outfit-description.yaml

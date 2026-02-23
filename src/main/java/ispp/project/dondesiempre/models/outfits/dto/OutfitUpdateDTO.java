@@ -1,6 +1,5 @@
 package ispp.project.dondesiempre.models.outfits.dto;
 
-import java.math.BigDecimal;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,7 +10,7 @@ public class OutfitUpdateDTO {
   private String description;
   private String image;
 
-  private BigDecimal discount;
+  private Integer discountedPriceInCents;
 
   private Integer index;
 }

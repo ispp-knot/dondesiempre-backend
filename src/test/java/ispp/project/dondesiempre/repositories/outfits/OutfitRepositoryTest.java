@@ -14,7 +14,6 @@ import ispp.project.dondesiempre.repositories.products.ProductRepository;
 import ispp.project.dondesiempre.repositories.products.ProductTypeRepository;
 import ispp.project.dondesiempre.repositories.storefronts.StorefrontRepository;
 import ispp.project.dondesiempre.repositories.stores.StoreRepository;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -117,7 +116,7 @@ public class OutfitRepositoryTest {
 
     outfit = new Outfit();
     outfit.setName("Test outfit");
-    outfit.setDiscount(BigDecimal.ZERO);
+    outfit.setDiscountedPriceInCents(100);
     outfit.setIndex(0);
     outfit.setStorefront(storefront);
     outfit = outfitRepository.save(outfit);
@@ -191,21 +190,21 @@ public class OutfitRepositoryTest {
 
     outfit1 = new Outfit();
     outfit1.setName("Test outfit 1");
-    outfit1.setDiscount(BigDecimal.ZERO);
+    outfit1.setDiscountedPriceInCents(100);
     outfit1.setIndex(0);
     outfit1.setStorefront(storefront1);
     outfit1 = outfitRepository.save(outfit1);
 
     outfit2 = new Outfit();
     outfit2.setName("Test outfit 2");
-    outfit2.setDiscount(BigDecimal.ZERO);
+    outfit2.setDiscountedPriceInCents(100);
     outfit2.setIndex(1);
     outfit2.setStorefront(storefront1);
     outfit2 = outfitRepository.save(outfit2);
 
     outfit3 = new Outfit();
     outfit3.setName("Test outfit 3");
-    outfit3.setDiscount(BigDecimal.ZERO);
+    outfit3.setDiscountedPriceInCents(100);
     outfit3.setIndex(0);
     outfit3.setStorefront(storefront2);
     outfit3 = outfitRepository.save(outfit3);

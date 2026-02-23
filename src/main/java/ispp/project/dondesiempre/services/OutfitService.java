@@ -15,10 +15,7 @@ import ispp.project.dondesiempre.models.products.Product;
 import ispp.project.dondesiempre.repositories.outfits.OutfitProductRepository;
 import ispp.project.dondesiempre.repositories.outfits.OutfitRepository;
 import ispp.project.dondesiempre.repositories.outfits.OutfitTagRelationRepository;
-import ispp.project.dondesiempre.repositories.products.ProductRepository;
-import ispp.project.dondesiempre.repositories.storefronts.StorefrontRepository;
 import jakarta.persistence.EntityNotFoundException;
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -32,8 +29,8 @@ public class OutfitService {
   private final OutfitProductRepository outfitProductRepository;
   private final OutfitTagRelationRepository outfitTagRelationRepository;
 
-  private final ProductRepository productRepository;
-  private final StorefrontRepository storefrontRepository;
+  private final ProductService productService;
+  private final StorefrontService storefrontService;
 
   private final OutfitTagService outfitTagService;
 
@@ -75,18 +72,12 @@ public class OutfitService {
     outfit.setDescription(dto.getDescription());
     outfit.setIndex(dto.getIndex());
     outfit.setImage(dto.getImage());
-    outfit.setDiscount(BigDecimal.ZERO);
-    outfit.setStorefront(
-        storefrontRepository
-            .findById(dto.getStorefrontid())
-            .orElseThrow(
-                () ->
-                    new ResourceNotFoundException(
-                        "Storefront with ID" + dto.getStorefrontid() + "not found.")));
+    outfit.setStorefront(storefrontService.findById(dto.getStorefrontId()));
 
     if (dto.getProducts() == null || (dto.getProducts() != null && dto.getProducts().size() <= 0)) {
       throw new InvalidRequestException("An outfit cannot be created without products.");
     }
+    outfit.setDiscountedPriceInCents(calculatePriceOnCreation(dto.getProducts()));
     outfit = outfitRepository.save(outfit);
     outfitId = outfit.getId();
 
@@ -100,6 +91,16 @@ public class OutfitService {
   }
 
   @Transactional
+  private Integer calculatePriceOnCreation(List<OutfitCreationProductDTO> dtos)
+      throws EntityNotFoundException {
+    return dtos.stream()
+        .mapToDouble(dto -> productService.findById(dto.getId()).getPrice())
+        /* TODO: Temporary until the Product class is modified */
+        .mapToInt(price -> Double.valueOf(price * 100.0).intValue())
+        .sum();
+  }
+
+  @Transactional
   public OutfitDTO update(Integer id, OutfitUpdateDTO dto) throws ResourceNotFoundException {
     Outfit outfitToUpdate;
 
@@ -107,7 +108,7 @@ public class OutfitService {
 
     outfitToUpdate.setName(dto.getName());
     outfitToUpdate.setDescription(dto.getDescription());
-    outfitToUpdate.setDiscount(dto.getDiscount());
+    outfitToUpdate.setDiscountedPriceInCents(dto.getDiscountedPriceInCents());
     outfitToUpdate.setImage(dto.getImage());
     outfitToUpdate.setIndex(dto.getIndex());
 
@@ -148,8 +149,7 @@ public class OutfitService {
     List<Integer> productIndicesOfOutfit;
 
     outfit = findById(outfitId);
-    product =
-        productRepository.findById(dto.getId()).orElseThrow(() -> new EntityNotFoundException());
+    product = productService.findById(dto.getId());
 
     productsOfOutfit = outfitRepository.findOutfitProductsById(outfitId);
     productsOfOutfit.add(product);

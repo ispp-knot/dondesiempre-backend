@@ -7,11 +7,9 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import java.math.BigDecimal;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
@@ -33,9 +31,9 @@ public class Outfit extends BaseEntity {
   @Size(max = 255)
   private String name;
 
-  @Column
+  @Column(columnDefinition = "TEXT")
   @Nullable
-  @Size(max = 255)
+  @Size(max = 5000)
   private String description;
 
   @Column @Nullable @URL private String image;
@@ -43,8 +41,7 @@ public class Outfit extends BaseEntity {
   @Column
   @NotNull
   @Min(0)
-  @Max(100)
-  private BigDecimal discount;
+  private Integer discountedPriceInCents;
 
   @NotNull
   @ManyToOne(optional = false)

@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20260223-006-change-outfit-description
+      author: guill_1goz466
+      changes:
+        - modifyDataType:
+            tableName: outfits
+            columnName: description
+            newDataType: TEXT
