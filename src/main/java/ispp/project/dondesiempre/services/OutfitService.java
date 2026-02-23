@@ -34,14 +34,14 @@ public class OutfitService {
 
   private final OutfitTagService outfitTagService;
 
-  @Transactional(readOnly = true)
+  @Transactional(readOnly = true, rollbackFor = ResourceNotFoundException.class)
   public Outfit findById(Integer id) throws ResourceNotFoundException {
     return outfitRepository
         .findById(id)
         .orElseThrow(() -> new ResourceNotFoundException("Outfit with ID " + id + "not found."));
   }
 
-  @Transactional(readOnly = true)
+  @Transactional(readOnly = true, rollbackFor = ResourceNotFoundException.class)
   public OutfitDTO findByIdToDTO(Integer id) throws ResourceNotFoundException {
     return new OutfitDTO(
         findById(id),
@@ -61,7 +61,7 @@ public class OutfitService {
         .collect(Collectors.toList());
   }
 
-  @Transactional
+  @Transactional(rollbackFor = InvalidRequestException.class)
   public OutfitDTO create(OutfitCreationDTO dto) throws InvalidRequestException {
     Outfit outfit;
     Integer outfitId;
@@ -90,7 +90,7 @@ public class OutfitService {
         outfitRepository.findOutfitOutfitProductsById(outfit.getId()));
   }
 
-  @Transactional
+  @Transactional(rollbackFor = EntityNotFoundException.class)
   private Integer calculatePriceOnCreation(List<OutfitCreationProductDTO> dtos)
       throws EntityNotFoundException {
     return dtos.stream()
@@ -100,7 +100,7 @@ public class OutfitService {
         .sum();
   }
 
-  @Transactional
+  @Transactional(rollbackFor = ResourceNotFoundException.class)
   public OutfitDTO update(Integer id, OutfitUpdateDTO dto) throws ResourceNotFoundException {
     Outfit outfitToUpdate;
 
@@ -118,7 +118,7 @@ public class OutfitService {
         outfitRepository.findOutfitOutfitProductsById(id));
   }
 
-  @Transactional
+  @Transactional(rollbackFor = ResourceNotFoundException.class)
   public String addTag(Integer outfitId, String tagName) throws ResourceNotFoundException {
     Outfit outfit;
     OutfitTag tag;
@@ -139,7 +139,7 @@ public class OutfitService {
     return tag.getName();
   }
 
-  @Transactional
+  @Transactional(rollbackFor = {ResourceNotFoundException.class, InvalidRequestException.class})
   public OutfitProductDTO addProduct(Integer outfitId, OutfitCreationProductDTO dto)
       throws ResourceNotFoundException, InvalidRequestException {
     Outfit outfit;
