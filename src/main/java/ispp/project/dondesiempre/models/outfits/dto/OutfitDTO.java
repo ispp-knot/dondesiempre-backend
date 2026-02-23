@@ -1,11 +1,10 @@
 package ispp.project.dondesiempre.models.outfits.dto;
 
+import ispp.project.dondesiempre.models.outfits.Outfit;
+import ispp.project.dondesiempre.models.outfits.OutfitProduct;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import ispp.project.dondesiempre.models.outfits.Outfit;
-import ispp.project.dondesiempre.models.outfits.OutfitProduct;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -40,10 +39,11 @@ public class OutfitDTO {
     this.storefrontId = outfit.getStorefront().getId();
 
     this.tags = tags;
-    this.products = products.stream()
-        .map(product -> new OutfitProductDTO(product))
-        .sorted(Comparator.comparing(product -> product.getIndex()))
-        .collect(Collectors.toList());
+    this.products =
+        products.stream()
+            .map(product -> new OutfitProductDTO(product))
+            .sorted(Comparator.comparing(product -> product.getIndex()))
+            .collect(Collectors.toList());
     this.priceInCents = this.products.stream().mapToInt(product -> product.getPriceInCents()).sum();
   }
 }
