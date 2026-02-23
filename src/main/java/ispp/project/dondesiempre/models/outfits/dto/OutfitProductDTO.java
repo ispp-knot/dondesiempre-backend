@@ -16,6 +16,8 @@ public class OutfitProductDTO {
   private Double price;
 
   private ProductType type;
+
+  private Integer index;
   private Integer storeId;
 
   public OutfitProductDTO(OutfitProduct product) {
@@ -27,6 +29,7 @@ public class OutfitProductDTO {
     this.price = product.getProduct().getPrice();
     this.type = product.getProduct().getType();
 
+    this.index = product.getIndex();
     this.storeId = product.getProduct().getStore().getId();
   }
 }

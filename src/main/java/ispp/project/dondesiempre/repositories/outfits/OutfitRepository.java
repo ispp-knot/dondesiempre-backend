@@ -12,13 +12,13 @@ public interface OutfitRepository extends JpaRepository<Outfit, Integer> {
       "select distinct op.outfit from OutfitProduct op where op.product.store.id = :storeId order by op.outfit.index asc")
   public List<Outfit> findByStoreId(Integer storeId);
 
-  @Query("select op.product from OutfitProduct op where op.outfit.id = :id")
+  @Query("select op.product from OutfitProduct op where op.outfit.id = :id order by op.index asc")
   public List<Product> findOutfitProductsById(Integer id);
 
-  @Query("select op.index from OutfitProduct op where op.outfit.id = :id")
+  @Query("select op.index from OutfitProduct op where op.outfit.id = :id order by op.index asc")
   public List<Integer> findOutfitProductIndicesById(Integer id);
 
-  @Query("select op from OutfitProduct op where op.outfit.id = :id")
+  @Query("select op from OutfitProduct op where op.outfit.id = :id order by op.index asc")
   public List<OutfitProduct> findOutfitOutfitProductsById(Integer id);
 
   @Query("select distinct ot.tag.name from OutfitOutfitTag ot where ot.outfit.id = :id")
