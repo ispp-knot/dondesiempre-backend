@@ -25,12 +25,13 @@ public interface StoreRepository extends JpaRepository<Store, Integer> {
             ST_X(s.location) AS longitude
         FROM stores s
         WHERE s.location && ST_MakeEnvelope(:minLon, :minLat, :maxLon, :maxLat, 4326)
-        LIMIT 500
+        LIMIT :numResults
         """,
       nativeQuery = true)
   List<StoresBoundingBoxDTO> findStoresInBoundingBox(
       @Param("minLon") double minLon,
       @Param("minLat") double minLat,
       @Param("maxLon") double maxLon,
-      @Param("maxLat") double maxLat);
+      @Param("maxLat") double maxLat,
+      @Param("numResults") int numResults);
 }

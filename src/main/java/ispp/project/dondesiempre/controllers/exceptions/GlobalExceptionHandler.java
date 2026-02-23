@@ -1,5 +1,6 @@
 package ispp.project.dondesiempre.controllers.exceptions;
 
+import ispp.project.dondesiempre.exceptions.InvalidBoundingBoxException;
 import ispp.project.dondesiempre.exceptions.InvalidRequestException;
 import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -22,6 +23,13 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(InvalidRequestException.class)
   public ResponseEntity<String> handleInvalidRequestException(
       InvalidRequestException exception, WebRequest request) {
+    return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
+  }
+
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  @ExceptionHandler(InvalidBoundingBoxException.class)
+  public ResponseEntity<String> handleInvalidBoundingBoxException(
+      InvalidBoundingBoxException exception, WebRequest request) {
     return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
   }
 

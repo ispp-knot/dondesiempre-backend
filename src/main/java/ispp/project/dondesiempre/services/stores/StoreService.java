@@ -1,6 +1,6 @@
 package ispp.project.dondesiempre.services.stores;
 
-import ispp.project.dondesiempre.exceptions.InvalidRequestException;
+import ispp.project.dondesiempre.exceptions.InvalidBoundingBoxException;
 import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.models.stores.Store;
 import ispp.project.dondesiempre.models.stores.dto.StoresBoundingBoxDTO;
@@ -26,8 +26,8 @@ public class StoreService {
   public List<StoresBoundingBoxDTO> findStoresInBoundingBox(
       double minLon, double minLat, double maxLon, double maxLat) {
     if (minLon > maxLon || minLat > maxLat)
-      throw new InvalidRequestException(
+      throw new InvalidBoundingBoxException(
           "Invalid bounding box parameters: minimum coordinates cannot be greater than maximum coordinates.");
-    return storeRepository.findStoresInBoundingBox(minLon, minLat, maxLon, maxLat);
+    return storeRepository.findStoresInBoundingBox(minLon, minLat, maxLon, maxLat, 500);
   }
 }

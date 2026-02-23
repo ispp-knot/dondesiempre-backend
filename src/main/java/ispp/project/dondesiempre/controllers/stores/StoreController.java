@@ -18,9 +18,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class StoreController {
   private final StoreService storeService;
 
-  @GetMapping("stores")
+  @GetMapping("/stores")
   @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<List<StoresBoundingBoxDTO>> getById(
+  public ResponseEntity<List<StoresBoundingBoxDTO>> searchStoresInBoundingBox(
       @RequestParam double minLon,
       @RequestParam double minLat,
       @RequestParam double maxLon,

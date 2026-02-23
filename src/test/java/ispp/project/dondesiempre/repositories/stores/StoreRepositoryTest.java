@@ -34,10 +34,6 @@ public class StoreRepositoryTest {
     storeRepository.deleteAll();
   }
 
-  // ==========================================
-  // MÉTODOS AUXILIARES
-  // ==========================================
-
   private Point createPoint(double longitude, double latitude) {
     return geometryFactory.createPoint(new Coordinate(longitude, latitude));
   }
@@ -59,10 +55,6 @@ public class StoreRepositoryTest {
     storeRepository.save(store);
   }
 
-  // ==========================================
-  // TESTS POSITIVOS
-  // ==========================================
-
   @Test
   void shouldReturnStore_whenStoreIsInsideBoundingBox() {
     // Dado: Una tienda en Dos Hermanas (Longitud: -5.93, Latitud: 37.29)
@@ -72,8 +64,8 @@ public class StoreRepositoryTest {
     List<StoresBoundingBoxDTO> result =
         storeRepository.findStoresInBoundingBox(
             -6.000000, 37.000000, // minLon, minLat (Suroeste)
-            -5.800000, 37.500000 // maxLon, maxLat (Noreste)
-            );
+            -5.800000, 37.500000, // maxLon, maxLat (Noreste)
+            500);
 
     // Entonces: Debería encontrarla
     assertEquals(1, result.size());
@@ -87,7 +79,7 @@ public class StoreRepositoryTest {
 
     // Cuando: Recuperamos la tienda
     List<StoresBoundingBoxDTO> result =
-        storeRepository.findStoresInBoundingBox(-6.0, 37.0, -5.8, 37.5);
+        storeRepository.findStoresInBoundingBox(-6.0, 37.0, -5.8, 37.5, 500);
 
     // Entonces: Verificamos que el mapeo nativo de PostgreSQL con comillas dobles funcionó
     assertFalse(result.isEmpty());
@@ -111,7 +103,7 @@ public class StoreRepositoryTest {
     List<StoresBoundingBoxDTO> result =
         storeRepository.findStoresInBoundingBox(
             -5.90, 37.00, // minLon coincide exactamente con la tienda
-            -5.00, 38.00);
+            -5.00, 38.00, 500);
 
     // Entonces: ST_MakeEnvelope es inclusivo (>= y <=), por lo que debe encontrarla
     assertEquals(1, result.size());
@@ -126,19 +118,15 @@ public class StoreRepositoryTest {
 
     // Cuando
     List<StoresBoundingBoxDTO> result =
-        storeRepository.findStoresInBoundingBox(-6.0, 37.0, -5.0, 38.0);
+        storeRepository.findStoresInBoundingBox(-6.0, 37.0, -5.0, 38.0, 500);
 
     // Entonces: Solo trae las 2 de la zona
     assertEquals(2, result.size());
   }
 
-  // ==========================================
-  // TESTS NEGATIVOS
-  // ==========================================
-
   @Test
   void shouldReturnNoStores_whenNoStoresInDatabase() {
-    List<StoresBoundingBoxDTO> result = storeRepository.findStoresInBoundingBox(0, 0, 0, 0);
+    List<StoresBoundingBoxDTO> result = storeRepository.findStoresInBoundingBox(0, 0, 0, 0, 500);
     assertTrue(result.isEmpty());
   }
 
@@ -149,9 +137,7 @@ public class StoreRepositoryTest {
 
     // Cuando: Buscamos en un cuadrado en Madrid (Long: -3.7, Lat: 40.4)
     List<StoresBoundingBoxDTO> result =
-        storeRepository.findStoresInBoundingBox(
-            -4.00, 40.00,
-            -3.00, 41.00);
+        storeRepository.findStoresInBoundingBox(-4.00, 40.00, -3.00, 41.00, 500);
 
     // Entonces: No debe encontrar nada
     assertTrue(result.isEmpty());
