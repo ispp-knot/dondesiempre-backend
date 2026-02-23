@@ -5,9 +5,10 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.List;
-
 import ispp.project.dondesiempre.models.storefronts.Storefront;
+import ispp.project.dondesiempre.models.stores.Store;
+import ispp.project.dondesiempre.models.stores.dto.StoresBoundingBoxDTO;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.locationtech.jts.geom.Coordinate;
@@ -19,140 +20,140 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-import ispp.project.dondesiempre.models.stores.Store;
-import ispp.project.dondesiempre.models.stores.dto.StoresBoundingBoxDTO;
-
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 public class StoreRepositoryTest {
-    
-    @Autowired private StoreRepository storeRepository;
 
-    private final GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
+  @Autowired private StoreRepository storeRepository;
 
-    @BeforeEach
-    void setUp() {
-        // Limpiamos la base de datos antes de cada test para asegurar resultados predecibles
-        storeRepository.deleteAll();
-    }
+  private final GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
 
-    // ==========================================
-    // MÉTODOS AUXILIARES
-    // ==========================================
+  @BeforeEach
+  void setUp() {
+    // Limpiamos la base de datos antes de cada test para asegurar resultados predecibles
+    storeRepository.deleteAll();
+  }
 
-    private Point createPoint(double longitude, double latitude) {
-        return geometryFactory.createPoint(new Coordinate(longitude, latitude));
-    }
+  // ==========================================
+  // MÉTODOS AUXILIARES
+  // ==========================================
 
-    private void createTestStore(String name, double longitude, double latitude) {
-        Store store = new Store();
-        store.setName(name);
-        store.setEmail("test@test.com");
-        store.setStoreID("ST-001");
-        store.setAddress("Direccion de prueba");
-        store.setOpeningHours("09:00-18:00");
-        store.setPhone("123456789");
-        store.setAcceptsShipping(true);
-        store.setLocation(createPoint(longitude, latitude));
+  private Point createPoint(double longitude, double latitude) {
+    return geometryFactory.createPoint(new Coordinate(longitude, latitude));
+  }
 
-        Storefront storefront = new Storefront();
-        store.setStorefront(storefront);
+  private void createTestStore(String name, double longitude, double latitude) {
+    Store store = new Store();
+    store.setName(name);
+    store.setEmail("test@test.com");
+    store.setStoreID("ST-001");
+    store.setAddress("Direccion de prueba");
+    store.setOpeningHours("09:00-18:00");
+    store.setPhone("123456789");
+    store.setAcceptsShipping(true);
+    store.setLocation(createPoint(longitude, latitude));
 
-        storeRepository.save(store);
-    }
+    Storefront storefront = new Storefront();
+    store.setStorefront(storefront);
 
-    // ==========================================
-    // TESTS POSITIVOS
-    // ==========================================
+    storeRepository.save(store);
+  }
 
-    @Test
-    void shouldReturnStore_whenStoreIsInsideBoundingBox() {
-        // Dado: Una tienda en Dos Hermanas (Longitud: -5.93, Latitud: 37.29)
-        createTestStore("Tienda Dos Hermanas", -5.932650, 37.290025);
+  // ==========================================
+  // TESTS POSITIVOS
+  // ==========================================
 
-        // Cuando: Buscamos en un cuadrado amplio que la contiene
-        List<StoresBoundingBoxDTO> result = storeRepository.findStoresInBoundingBox(
-                -6.000000, 37.000000, // minLon, minLat (Suroeste)
-                -5.800000, 37.500000  // maxLon, maxLat (Noreste)
-        );
+  @Test
+  void shouldReturnStore_whenStoreIsInsideBoundingBox() {
+    // Dado: Una tienda en Dos Hermanas (Longitud: -5.93, Latitud: 37.29)
+    createTestStore("Tienda Dos Hermanas", -5.932650, 37.290025);
 
-        // Entonces: Debería encontrarla
-        assertEquals(1, result.size());
-        assertEquals("Tienda Dos Hermanas", result.getFirst().getName());
-    }
+    // Cuando: Buscamos en un cuadrado amplio que la contiene
+    List<StoresBoundingBoxDTO> result =
+        storeRepository.findStoresInBoundingBox(
+            -6.000000, 37.000000, // minLon, minLat (Suroeste)
+            -5.800000, 37.500000 // maxLon, maxLat (Noreste)
+            );
 
-    @Test
-    void shouldMapProjectionAliasesCorrectly() {
-        // Dado: Una tienda guardada
-        createTestStore("Tienda Mapeo", -5.932650, 37.290025);
+    // Entonces: Debería encontrarla
+    assertEquals(1, result.size());
+    assertEquals("Tienda Dos Hermanas", result.getFirst().getName());
+  }
 
-        // Cuando: Recuperamos la tienda
-        List<StoresBoundingBoxDTO> result = storeRepository.findStoresInBoundingBox(-6.0, 37.0, -5.8, 37.5);
+  @Test
+  void shouldMapProjectionAliasesCorrectly() {
+    // Dado: Una tienda guardada
+    createTestStore("Tienda Mapeo", -5.932650, 37.290025);
 
-        // Entonces: Verificamos que el mapeo nativo de PostgreSQL con comillas dobles funcionó
-        assertFalse(result.isEmpty());
-        StoresBoundingBoxDTO dto = result.getFirst();
+    // Cuando: Recuperamos la tienda
+    List<StoresBoundingBoxDTO> result =
+        storeRepository.findStoresInBoundingBox(-6.0, 37.0, -5.8, 37.5);
 
-        assertNotNull(dto.getId());
-        assertEquals("Tienda Mapeo", dto.getName());
-        assertEquals("ST-001", dto.getStoreID());
-        assertEquals("09:00-18:00", dto.getOpeningHours());
-        assertTrue(dto.getAcceptsShipping());
-        assertEquals(37.290025, dto.getLatitude());
-        assertEquals(-5.932650, dto.getLongitude());
-    }
+    // Entonces: Verificamos que el mapeo nativo de PostgreSQL con comillas dobles funcionó
+    assertFalse(result.isEmpty());
+    StoresBoundingBoxDTO dto = result.getFirst();
 
-    @Test
-    void shouldReturnStore_whenStoreIsExactlyOnTheBoundary() {
-        // Dado: Una tienda
-        createTestStore("Tienda Límite", -5.90, 37.30);
+    assertNotNull(dto.getId());
+    assertEquals("Tienda Mapeo", dto.getName());
+    assertEquals("ST-001", dto.getStoreID());
+    assertEquals("09:00-18:00", dto.getOpeningHours());
+    assertTrue(dto.getAcceptsShipping());
+    assertEquals(37.290025, dto.getLatitude());
+    assertEquals(-5.932650, dto.getLongitude());
+  }
 
-        // Cuando: Buscamos donde uno de los bordes del cuadrado toca exactamente la tienda
-        List<StoresBoundingBoxDTO> result = storeRepository.findStoresInBoundingBox(
-                -5.90, 37.00, // minLon coincide exactamente con la tienda
-                -5.00, 38.00
-        );
+  @Test
+  void shouldReturnStore_whenStoreIsExactlyOnTheBoundary() {
+    // Dado: Una tienda
+    createTestStore("Tienda Límite", -5.90, 37.30);
 
-        // Entonces: ST_MakeEnvelope es inclusivo (>= y <=), por lo que debe encontrarla
-        assertEquals(1, result.size());
-    }
+    // Cuando: Buscamos donde uno de los bordes del cuadrado toca exactamente la tienda
+    List<StoresBoundingBoxDTO> result =
+        storeRepository.findStoresInBoundingBox(
+            -5.90, 37.00, // minLon coincide exactamente con la tienda
+            -5.00, 38.00);
 
-    @Test
-    void shouldReturnMultipleStores_whenMultipleInsideBoundingBox() {
-        // Dado: Varias tiendas
-        createTestStore("Tienda 1", -5.91, 37.21);
-        createTestStore("Tienda 2", -5.92, 37.22);
-        createTestStore("Tienda Fuera", 2.17, 41.38); // Esta está en Barcelona, fuera de la caja
+    // Entonces: ST_MakeEnvelope es inclusivo (>= y <=), por lo que debe encontrarla
+    assertEquals(1, result.size());
+  }
 
-        // Cuando
-        List<StoresBoundingBoxDTO> result = storeRepository.findStoresInBoundingBox(-6.0, 37.0, -5.0, 38.0);
+  @Test
+  void shouldReturnMultipleStores_whenMultipleInsideBoundingBox() {
+    // Dado: Varias tiendas
+    createTestStore("Tienda 1", -5.91, 37.21);
+    createTestStore("Tienda 2", -5.92, 37.22);
+    createTestStore("Tienda Fuera", 2.17, 41.38); // Esta está en Barcelona, fuera de la caja
 
-        // Entonces: Solo trae las 2 de la zona
-        assertEquals(2, result.size());
-    }
+    // Cuando
+    List<StoresBoundingBoxDTO> result =
+        storeRepository.findStoresInBoundingBox(-6.0, 37.0, -5.0, 38.0);
 
-    // ==========================================
-    // TESTS NEGATIVOS
-    // ==========================================
+    // Entonces: Solo trae las 2 de la zona
+    assertEquals(2, result.size());
+  }
 
-    @Test
-    void shouldReturnNoStores_whenNoStoresInDatabase() {
-        List<StoresBoundingBoxDTO> result = storeRepository.findStoresInBoundingBox(0, 0, 0, 0);
-        assertTrue(result.isEmpty());
-    }
+  // ==========================================
+  // TESTS NEGATIVOS
+  // ==========================================
 
-    @Test
-    void shouldReturnNoStores_whenStoreIsOutsideBoundingBox() {
-        // Dado: Una tienda en Dos Hermanas
-        createTestStore("Tienda Dos Hermanas", -5.932650, 37.290025);
+  @Test
+  void shouldReturnNoStores_whenNoStoresInDatabase() {
+    List<StoresBoundingBoxDTO> result = storeRepository.findStoresInBoundingBox(0, 0, 0, 0);
+    assertTrue(result.isEmpty());
+  }
 
-        // Cuando: Buscamos en un cuadrado en Madrid (Long: -3.7, Lat: 40.4)
-        List<StoresBoundingBoxDTO> result = storeRepository.findStoresInBoundingBox(
-                -4.00, 40.00,
-                -3.00, 41.00
-        );
+  @Test
+  void shouldReturnNoStores_whenStoreIsOutsideBoundingBox() {
+    // Dado: Una tienda en Dos Hermanas
+    createTestStore("Tienda Dos Hermanas", -5.932650, 37.290025);
 
-        // Entonces: No debe encontrar nada
-        assertTrue(result.isEmpty());
-    }
+    // Cuando: Buscamos en un cuadrado en Madrid (Long: -3.7, Lat: 40.4)
+    List<StoresBoundingBoxDTO> result =
+        storeRepository.findStoresInBoundingBox(
+            -4.00, 40.00,
+            -3.00, 41.00);
+
+    // Entonces: No debe encontrar nada
+    assertTrue(result.isEmpty());
+  }
 }
