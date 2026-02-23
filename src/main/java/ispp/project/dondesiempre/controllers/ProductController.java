@@ -60,8 +60,7 @@ public class ProductController {
       @PathVariable Integer id, @RequestBody DiscountModificationDTO discount) {
     try {
       Product updatedProduct =
-          productService.updateProductDiscount(
-              id, discount.getDiscountedEuros(), discount.getDiscountedCents());
+          productService.updateProductDiscount(id, discount.getDiscountedPriceInCents());
       return new ResponseEntity<>(updatedProduct, HttpStatus.ACCEPTED);
     } catch (RuntimeException e) {
       return new ResponseEntity<>(HttpStatus.NOT_FOUND);

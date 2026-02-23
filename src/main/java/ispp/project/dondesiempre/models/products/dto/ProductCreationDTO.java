@@ -8,10 +8,8 @@ import lombok.Setter;
 public class ProductCreationDTO {
 
   private String name;
-  private Integer priceEuros;
-  private Integer priceCents;
-  private Integer discountEuros;
-  private Integer discountCents;
+  private Integer priceInCents;
+  private Integer discountedPriceInCents;
   private String description;
   private Integer typeId;
 }

@@ -19,10 +19,8 @@ public class ProductService {
   public Product saveProduct(ProductCreationDTO dto) {
     Product product = new Product();
     product.setName(dto.getName());
-    product.setPriceEuros(dto.getPriceEuros());
-    product.setPriceCents(dto.getPriceCents());
-    product.setDiscountedPriceEuros(dto.getDiscountEuros());
-    product.setDiscountedPriceCents(dto.getDiscountCents());
+    product.setPriceInCents(dto.getPriceInCents());
+    product.setDiscountedPriceInCents(dto.getDiscountedPriceInCents());
     product.setDescription(dto.getDescription());
     product.setType(productTypeService.getProductTypeById(dto.getTypeId()));
     return productRepository.save(product);
@@ -43,11 +41,9 @@ public class ProductService {
   }
 
   @Transactional
-  public Product updateProductDiscount(
-      Integer id, Integer discountedEuros, Integer discountedCents) {
+  public Product updateProductDiscount(Integer id, Integer discountedPriceInCents) {
     Product product = getProductById(id);
-    product.setDiscountedPriceEuros(discountedEuros);
-    product.setDiscountedPriceCents(discountedCents);
+    product.setDiscountedPriceInCents(discountedPriceInCents);
     Product updatedProduct = productRepository.save(product);
     return updatedProduct;
   }

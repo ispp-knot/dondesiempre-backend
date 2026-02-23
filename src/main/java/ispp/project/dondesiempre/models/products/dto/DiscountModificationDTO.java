@@ -7,6 +7,5 @@ import lombok.Setter;
 @Setter
 public class DiscountModificationDTO {
 
-  private Integer discountedEuros;
-  private Integer discountedCents;
+  private Integer discountedPriceInCents;
 }

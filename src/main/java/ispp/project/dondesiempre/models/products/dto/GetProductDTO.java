@@ -9,20 +9,16 @@ import lombok.Setter;
 public class GetProductDTO {
 
   private String name;
-  private Integer priceEuros;
-  private Integer priceCents;
-  private Integer discountEuros;
-  private Integer discountCents;
+  private Integer priceInCents;
+  private Integer discountedPriceInCents;
   private String description;
   private Integer typeId;
 
   public static GetProductDTO fromProduct(Product product) {
     GetProductDTO dto = new GetProductDTO();
     dto.setName(product.getName());
-    dto.setPriceEuros(product.getPriceEuros());
-    dto.setPriceCents(product.getPriceCents());
-    dto.setDiscountEuros(product.getDiscountedPriceEuros());
-    dto.setDiscountCents(product.getDiscountedPriceCents());
+    dto.setPriceInCents(product.getPriceInCents());
+    dto.setDiscountedPriceInCents(product.getDiscountedPriceInCents());
     dto.setDescription(product.getDescription());
     dto.setTypeId(product.getType().getId());
     return dto;

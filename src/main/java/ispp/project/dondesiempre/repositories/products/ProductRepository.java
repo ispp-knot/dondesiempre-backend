@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface ProductRepository extends JpaRepository<Product, Integer> {
 
-  @Query(
-      "SELECT p FROM Product p WHERE p.discountedPriceEuros != p.priceEuros OR p.discountedPriceCents != p.priceCents")
+  @Query("SELECT p FROM Product p WHERE p.discountedPriceInCents != p.priceInCents")
   public List<Product> findAllDiscountedProducts();
 }
