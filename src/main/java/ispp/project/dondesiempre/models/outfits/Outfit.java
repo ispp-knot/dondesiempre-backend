@@ -11,6 +11,7 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import java.math.BigDecimal;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
@@ -43,7 +44,7 @@ public class Outfit extends BaseEntity {
   @NotNull
   @Min(0)
   @Max(100)
-  private Double discount;
+  private BigDecimal discount;
 
   @NotNull
   @ManyToOne(optional = false)

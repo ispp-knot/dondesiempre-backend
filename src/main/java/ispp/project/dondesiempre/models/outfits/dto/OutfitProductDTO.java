@@ -2,6 +2,7 @@ package ispp.project.dondesiempre.models.outfits.dto;
 
 import ispp.project.dondesiempre.models.outfits.OutfitProduct;
 import ispp.project.dondesiempre.models.products.ProductType;
+import java.math.BigDecimal;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,7 +14,7 @@ public class OutfitProductDTO {
   private String name;
   private String description;
 
-  private Double price;
+  private BigDecimal price;
 
   private ProductType type;
 
@@ -26,7 +27,7 @@ public class OutfitProductDTO {
     this.name = product.getProduct().getName();
     this.description = product.getProduct().getDescription();
 
-    this.price = product.getProduct().getPrice();
+    this.price = new BigDecimal(product.getProduct().getPrice());
     this.type = product.getProduct().getType();
 
     this.index = product.getIndex();

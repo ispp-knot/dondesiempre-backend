@@ -18,6 +18,7 @@ import ispp.project.dondesiempre.repositories.outfits.OutfitRepository;
 import ispp.project.dondesiempre.repositories.products.ProductRepository;
 import ispp.project.dondesiempre.repositories.storefronts.StorefrontRepository;
 import jakarta.persistence.EntityNotFoundException;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,7 +92,7 @@ public class OutfitService {
     outfit.setDescription(dto.getDescription());
     outfit.setIndex(dto.getIndex());
     outfit.setImage(dto.getImage());
-    outfit.setDiscount(0.0);
+    outfit.setDiscount(BigDecimal.ZERO);
     outfit.setStorefront(
         storefrontRepository
             .findById(dto.getStorefrontid())

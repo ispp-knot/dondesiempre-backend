@@ -2,6 +2,7 @@ package ispp.project.dondesiempre.models.outfits.dto;
 
 import ispp.project.dondesiempre.models.outfits.Outfit;
 import ispp.project.dondesiempre.models.outfits.OutfitProduct;
+import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,8 +18,8 @@ public class OutfitDTO {
   private String description;
   private String image;
 
-  private Double price;
-  private Double discount;
+  private BigDecimal price;
+  private BigDecimal discount;
 
   private Integer index;
   private Integer storefrontId;
@@ -44,6 +45,10 @@ public class OutfitDTO {
             .map(product -> new OutfitProductDTO(product))
             .sorted(Comparator.comparing(product -> product.getIndex()))
             .collect(Collectors.toList());
-    this.price = this.products.stream().mapToDouble(product -> product.getPrice()).sum();
+    this.price =
+        this.products.stream()
+            .map(product -> product.getPrice())
+            .reduce((a, b) -> a.add(b))
+            .orElse(BigDecimal.ZERO);
   }
 }

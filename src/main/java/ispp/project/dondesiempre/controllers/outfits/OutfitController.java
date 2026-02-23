@@ -34,10 +34,10 @@ public class OutfitController {
     return new ResponseEntity<>(outfitService.findByIdToDTO(id), HttpStatus.OK);
   }
 
-  @GetMapping("store/{storeId}")
+  @GetMapping("/stores/{storeId}/outfits")
   @ResponseStatus(HttpStatus.FOUND)
   public ResponseEntity<List<OutfitDTO>> getByStoreId(@PathVariable("storeId") Integer storeId) {
-    return new ResponseEntity<>(outfitService.findByStore(storeId), HttpStatus.FOUND);
+    return new ResponseEntity<>(outfitService.findByStore(storeId), HttpStatus.OK);
   }
 
   @PostMapping("")
