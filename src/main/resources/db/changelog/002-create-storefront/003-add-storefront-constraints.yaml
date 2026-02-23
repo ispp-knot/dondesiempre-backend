@@ -1,0 +1,15 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20260222-003-storefront-constraints
+      author: mquirosq
+      changes:
+        - addUniqueConstraint:
+            tableName: stores
+            columnNames: storefront_id
+            constraintName: UC_STORESSTOREFRONT_ID_COL
+        - addForeignKeyConstraint:
+            baseTableName: stores
+            baseColumnNames: storefront_id
+            referencedTableName: storefronts
+            referencedColumnNames: id
+            constraintName: FK1c6eow18e7vf8i1obosv2auq6

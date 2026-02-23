@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - include:
+      file: db/changelog/002-create-storefront/001-create-storefronts.yaml
+  - include:
+      file: db/changelog/002-create-storefront/002-add-storefront-id-column.yaml
+  - include:
+      file: db/changelog/002-create-storefront/003-add-storefront-constraints.yaml
+  - include:
+      file: db/changelog/002-create-storefront/004-storefront-id-notnull.yaml
