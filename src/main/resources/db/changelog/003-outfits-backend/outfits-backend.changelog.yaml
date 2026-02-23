@@ -3,3 +3,5 @@ databaseChangeLog:
       file: db/changelog/003-outfits-backend/001-add-outfit-models.yaml
   - include:
       file: db/changelog/003-outfits-backend/002-add-outfit-discount-constraint.yaml
+  - include:
+      file: db/changelog/003-outfits-backend/003-add-outfit-description-storefront.yaml
