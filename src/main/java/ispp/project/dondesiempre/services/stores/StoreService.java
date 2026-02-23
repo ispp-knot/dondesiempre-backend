@@ -1,11 +1,16 @@
 package ispp.project.dondesiempre.services.stores;
 
-import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
-import ispp.project.dondesiempre.models.stores.Store;
-import ispp.project.dondesiempre.repositories.stores.StoreRepository;
-import lombok.RequiredArgsConstructor;
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import ispp.project.dondesiempre.exceptions.InvalidRequestException;
+import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
+import ispp.project.dondesiempre.models.stores.Store;
+import ispp.project.dondesiempre.models.stores.dto.StoresBoundingBoxDTO;
+import ispp.project.dondesiempre.repositories.stores.StoreRepository;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -17,5 +22,12 @@ public class StoreService {
     return storeRepository
         .findById(id)
         .orElseThrow(() -> new ResourceNotFoundException("Store with ID " + id + " not found."));
+  }
+
+  @Transactional(readOnly=true)
+  public List<StoresBoundingBoxDTO> findStoresInBoundingBox(double minLon, double minLat, double maxLon, double maxLat) {
+        if (minLon > maxLon || minLat > maxLat) 
+          throw new InvalidRequestException("Invalid bounding box parameters: minimum coordinates cannot be greater than maximum coordinates.");
+        return storeRepository.findStoresInBoundingBox(minLon, minLat, maxLon, maxLat);
   }
 }
