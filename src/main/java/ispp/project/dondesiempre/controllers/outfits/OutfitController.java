@@ -1,7 +1,16 @@
 package ispp.project.dondesiempre.controllers.outfits;
 
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import ispp.project.dondesiempre.models.outfits.dto.OutfitCreationDTO;
+import ispp.project.dondesiempre.models.outfits.dto.OutfitCreationProductDTO;
+import ispp.project.dondesiempre.models.outfits.dto.OutfitDTO;
+import ispp.project.dondesiempre.models.outfits.dto.OutfitProductDTO;
+import ispp.project.dondesiempre.models.outfits.dto.OutfitUpdateDTO;
+import ispp.project.dondesiempre.services.outfits.OutfitService;
+import ispp.project.dondesiempre.services.stores.StoreService;
+import jakarta.validation.Valid;
 import java.util.List;
-
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -13,21 +22,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
-import ispp.project.dondesiempre.models.outfits.dto.OutfitCreationDTO;
-import ispp.project.dondesiempre.models.outfits.dto.OutfitCreationProductDTO;
-import ispp.project.dondesiempre.models.outfits.dto.OutfitDTO;
-import ispp.project.dondesiempre.models.outfits.dto.OutfitProductDTO;
-import ispp.project.dondesiempre.models.outfits.dto.OutfitUpdateDTO;
-import ispp.project.dondesiempre.services.OutfitService;
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-
 @RestController
 @RequestMapping("/api/v1")
 @RequiredArgsConstructor
 public class OutfitController {
   private final OutfitService outfitService;
+  private final StoreService storeService;
 
   @GetMapping("outfits/{id}")
   @ResponseStatus(HttpStatus.OK)
@@ -38,7 +38,8 @@ public class OutfitController {
   @GetMapping("stores/{storeId}/outfits")
   @ResponseStatus(HttpStatus.FOUND)
   public ResponseEntity<List<OutfitDTO>> getByStoreId(@PathVariable("storeId") Integer storeId) {
-    return new ResponseEntity<>(outfitService.findByStore(storeId), HttpStatus.OK);
+    return new ResponseEntity<>(
+        outfitService.findByStore(storeService.findById(storeId)), HttpStatus.OK);
   }
 
   @PostMapping("outfits")

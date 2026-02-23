@@ -1,4 +1,4 @@
-package ispp.project.dondesiempre.services;
+package ispp.project.dondesiempre.services.outfits;
 
 import ispp.project.dondesiempre.exceptions.InvalidRequestException;
 import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
@@ -12,9 +12,12 @@ import ispp.project.dondesiempre.models.outfits.dto.OutfitDTO;
 import ispp.project.dondesiempre.models.outfits.dto.OutfitProductDTO;
 import ispp.project.dondesiempre.models.outfits.dto.OutfitUpdateDTO;
 import ispp.project.dondesiempre.models.products.Product;
+import ispp.project.dondesiempre.models.stores.Store;
 import ispp.project.dondesiempre.repositories.outfits.OutfitProductRepository;
 import ispp.project.dondesiempre.repositories.outfits.OutfitRepository;
 import ispp.project.dondesiempre.repositories.outfits.OutfitTagRelationRepository;
+import ispp.project.dondesiempre.services.products.ProductService;
+import ispp.project.dondesiempre.services.storefronts.StorefrontService;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -52,8 +55,8 @@ public class OutfitService {
   }
 
   @Transactional(readOnly = true)
-  public List<OutfitDTO> findByStore(Integer storeId) {
-    return outfitRepository.findByStoreId(storeId).stream()
+  public List<OutfitDTO> findByStore(Store store) {
+    return outfitRepository.findByStoreId(store.getId()).stream()
         .map(
             outfit ->
                 new OutfitDTO(
