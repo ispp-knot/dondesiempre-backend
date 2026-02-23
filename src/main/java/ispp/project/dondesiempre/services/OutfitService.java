@@ -80,7 +80,10 @@ public class OutfitService {
     if (dto.getProducts() == null || (dto.getProducts() != null && dto.getProducts().size() <= 0)) {
       throw new InvalidRequestException("An outfit cannot be created without products.");
     }
-    outfit.setDiscountedPriceInCents(calculatePriceOnCreation(dto.getProducts()));
+    outfit.setDiscountedPriceInCents(
+        applicationContext
+            .getBean(OutfitService.class)
+            .calculatePriceOnCreation(dto.getProducts()));
     outfit = outfitRepository.save(outfit);
     outfitId = outfit.getId();
 
