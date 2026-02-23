@@ -187,4 +187,43 @@ class CategoryControllerTest {
 
     mockMvc.perform(delete("/api/v1/categories/99")).andExpect(status().isNotFound());
   }
+
+  @Test
+  void testGetByStore_empty() throws Exception {
+    when(categoryRepository.findByStoreId(anyInt())).thenReturn(List.of());
+
+    mockMvc
+        .perform(get("/api/v1/categories/store/99"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$").isArray())
+        .andExpect(jsonPath("$").isEmpty());
+  }
+
+  @Test
+  void testCreate_sameNameDifferentStore() throws Exception {
+    Store store2 = new Store();
+    store2.setId(2);
+    store2.setName("Tienda Test 2");
+
+    CategoryRequestDTO dto = new CategoryRequestDTO();
+    dto.setName("Camisetas");
+    dto.setStoreId(2);
+
+    Category cat2 = new Category();
+    cat2.setId(2);
+    cat2.setName("Camisetas");
+    cat2.setStore(store2);
+
+    when(storeRepository.findById(2)).thenReturn(Optional.of(store2));
+    when(categoryRepository.existsByNameAndStoreId("Camisetas", 2)).thenReturn(false);
+    when(categoryRepository.save(any())).thenReturn(cat2);
+
+    mockMvc
+        .perform(
+            post("/api/v1/categories")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)))
+        .andExpect(status().isCreated())
+        .andExpect(jsonPath("$.name").value("Camisetas"));
+  }
 }
