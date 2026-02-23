@@ -57,11 +57,7 @@ public class StoreServiceTest {
   void shouldThrowResourceNotFoundException_whenFindByIdDoesNotExist() {
     when(storeRepository.findById(99)).thenReturn(Optional.empty());
 
-    assertThrows(
-        ResourceNotFoundException.class,
-        () -> {
-          storeService.findById(99);
-        });
+    assertThrows(ResourceNotFoundException.class, () -> storeService.findById(99));
 
     verify(storeRepository, times(1)).findById(99);
   }
@@ -87,9 +83,7 @@ public class StoreServiceTest {
     // minLon (-5.0) es mayor que maxLon (-6.0)
     assertThrows(
         InvalidBoundingBoxException.class,
-        () -> {
-          storeService.findStoresInBoundingBox(-5.0, 37.0, -6.0, 38.0);
-        });
+        () -> storeService.findStoresInBoundingBox(-5.0, 37.0, -6.0, 38.0));
 
     // Verificamos que NUNCA se llama al repositorio si la validación falla
     verify(storeRepository, times(0))
@@ -101,9 +95,7 @@ public class StoreServiceTest {
     // minLat (38.0) es mayor que maxLat (37.0)
     assertThrows(
         InvalidBoundingBoxException.class,
-        () -> {
-          storeService.findStoresInBoundingBox(-6.0, 38.0, -5.0, 37.0);
-        });
+        () -> storeService.findStoresInBoundingBox(-6.0, 38.0, -5.0, 37.0));
 
     verify(storeRepository, times(0))
         .findStoresInBoundingBox(anyDouble(), anyDouble(), anyDouble(), anyDouble(), anyInt());
