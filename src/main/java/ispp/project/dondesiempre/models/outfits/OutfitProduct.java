@@ -16,7 +16,7 @@ import org.hibernate.annotations.OnDeleteAction;
 @Entity
 @Getter
 @Setter
-@Table(name = "outfitProducts")
+@Table(name = "outfit_products")
 public class OutfitProduct extends BaseEntity {
   @Column
   @NotNull

@@ -12,7 +12,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-@Table(name = "outfitTags")
+@Table(name = "outfit_tags")
 public class OutfitTag extends BaseEntity {
   @Column
   @NotNull
