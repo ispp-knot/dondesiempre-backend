@@ -1,5 +1,6 @@
 package ispp.project.dondesiempre.services;
 
+import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.models.outfits.OutfitTag;
 import ispp.project.dondesiempre.repositories.outfits.OutfitTagRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,17 +16,19 @@ public class OutfitTagService {
     this.outfitTagRepository = outfitTagRepository;
   }
 
+  @Transactional(readOnly = true)
+  public OutfitTag findByName(String tagName) throws ResourceNotFoundException {
+    return outfitTagRepository
+        .findByName(tagName)
+        .orElseThrow(() -> new ResourceNotFoundException("Tag '" + tagName + "' not found."));
+  }
+
   @Transactional
-  public OutfitTag findOrCreateTag(String name) {
+  public OutfitTag create(String tagName) {
     OutfitTag tag;
 
-    tag = outfitTagRepository.findByName(name);
-
-    if (tag != null) {
-      tag = new OutfitTag();
-      tag.setName(name);
-      tag = outfitTagRepository.save(tag);
-    }
-    return tag;
+    tag = new OutfitTag();
+    tag.setName(tagName);
+    return outfitTagRepository.save(tag);
   }
 }

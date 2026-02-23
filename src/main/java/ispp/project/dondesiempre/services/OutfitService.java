@@ -124,8 +124,12 @@ public class OutfitService {
     OutfitTagRelation outfitTag;
 
     outfit = findById(outfitId);
-    tag = outfitTagService.findOrCreateTag(tagName);
 
+    try {
+      tag = outfitTagService.findByName(tagName);
+    } catch (ResourceNotFoundException e) {
+      tag = outfitTagService.create(tagName);
+    }
     outfitTag = new OutfitTagRelation();
     outfitTag.setOutfit(outfit);
     outfitTag.setTag(tag);
