@@ -1,20 +1,17 @@
 package ispp.project.dondesiempre.services;
 
-import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
-import ispp.project.dondesiempre.models.storefronts.Storefront;
-import ispp.project.dondesiempre.repositories.storefronts.StorefrontRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
+import ispp.project.dondesiempre.models.storefronts.Storefront;
+import ispp.project.dondesiempre.repositories.storefronts.StorefrontRepository;
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class StorefrontService {
   private final StorefrontRepository storefrontRepository;
-
-  @Autowired
-  public StorefrontService(StorefrontRepository storefrontRepository) {
-    this.storefrontRepository = storefrontRepository;
-  }
 
   @Transactional(readOnly = true)
   public Storefront findById(Integer id) throws ResourceNotFoundException {
