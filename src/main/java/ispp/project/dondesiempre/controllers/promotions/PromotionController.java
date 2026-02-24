@@ -1,7 +1,10 @@
 package ispp.project.dondesiempre.controllers.promotions;
 
+import ispp.project.dondesiempre.models.promotions.Promotion;
+import ispp.project.dondesiempre.models.promotions.dto.PromotionCreationDTO;
+import ispp.project.dondesiempre.services.promotions.PromotionService;
 import java.util.List;
-
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,11 +15,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import ispp.project.dondesiempre.models.promotions.Promotion;
-import ispp.project.dondesiempre.models.promotions.dto.PromotionCreationDTO;
-import ispp.project.dondesiempre.services.promotions.PromotionService;
-import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/promotions")
@@ -43,11 +41,9 @@ public class PromotionController {
 
   @PatchMapping("/{id}/discount")
   public ResponseEntity<Promotion> updateDiscount(
-      @PathVariable Integer id,
-      @RequestParam Integer discountPercentage) {
+      @PathVariable Integer id, @RequestParam Integer discountPercentage) {
 
-    Promotion promotion =
-        promotionService.updatePromotionDiscount(id, discountPercentage);
+    Promotion promotion = promotionService.updatePromotionDiscount(id, discountPercentage);
     return ResponseEntity.ok(promotion);
   }
 

@@ -11,3 +11,5 @@ databaseChangeLog:
       file: db/changelog/005-entities-renaming-and-refactoring/entities-renaming-and-refactoring.changelog.yaml
   - include:
       file: db/changelog/006-discounts-on-products/discounts-on-product.changelog.yaml
+  - include:
+      file: db/changelog/008-promotions-on-products/promotions-on-products.changelog.yaml
