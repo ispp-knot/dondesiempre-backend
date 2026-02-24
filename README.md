@@ -59,7 +59,7 @@ docker compose down
 
 ## Swagger
 
-La interfaz de Swagger está disponible en el perfil de desarrollo en <http://localhost:8080/api/v1/swagger>.
+La interfaz de Swagger está disponible en el perfil de desarrollo en <http://localhost:8080/api/v1/swagger-ui/index.html>.
 
 ## Para Testear
 
@@ -71,7 +71,7 @@ Seleccionar la opcion de _Binary Zip archive_ y descomprimir el archivo en una c
 Luego de tener instalado maven, ejecutar la base de datos de pruebas en un contenedor de docker
 
 ```bash
-docker compose -f docker-compose.test.yml up
+docker compose up -d
 ```
 
 ### Windows
