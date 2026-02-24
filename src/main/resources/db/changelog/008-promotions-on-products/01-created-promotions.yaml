@@ -1,0 +1,62 @@
+databaseChangeLog:
+- changeSet:
+    id: 1771953402647-31
+    author: lunaf (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: promotionsPK
+            name: id
+            type: INTEGER
+        - column:
+            name: version
+            type: INTEGER
+        - column:
+            name: description
+            type: TEXT
+        - column:
+            constraints:
+              nullable: false
+            name: discount_percentage
+            type: INTEGER
+        - column:
+            constraints:
+              nullable: false
+            name: is_active
+            type: BOOLEAN
+        - column:
+            constraints:
+              nullable: false
+            name: name
+            type: VARCHAR(255)
+        tableName: promotions
+- changeSet:
+    id: 1771953402647-32
+    author: lunaf (generated)
+    changes:
+    - addColumn:
+        columns:
+        - column:
+            name: promotion_id
+            type: INTEGER
+        tableName: products
+- changeSet:
+    id: 1771953402647-33
+    author: lunaf (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: promotion_id
+        baseTableName: products
+        constraintName: FK58vr973hp8g47ful3ukryaeff
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: promotions
+        validate: true
+
+
+
