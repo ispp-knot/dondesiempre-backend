@@ -1,5 +1,8 @@
 package ispp.project.dondesiempre.services;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import ispp.project.dondesiempre.exceptions.InvalidRequestException;
 import ispp.project.dondesiempre.models.products.Product;
 import ispp.project.dondesiempre.models.products.ProductType;
 import ispp.project.dondesiempre.models.products.dto.ProductCreationDTO;
@@ -104,12 +107,11 @@ public class ProductServiceTest {
     dto.setTypeId(savedProductType.getId());
     dto.setStoreId(saved_store.getId());
 
-    try {
-      productService.saveProduct(dto);
-      assert false; // Should not reach here
-    } catch (IllegalArgumentException e) {
-      assert e.getMessage().equals("Discounted price cannot be greater than original price");
-    }
+    assertThrows(
+        InvalidRequestException.class,
+        () -> {
+          productService.saveProduct(dto);
+        });
   }
 
   @Test
@@ -188,11 +190,12 @@ public class ProductServiceTest {
     dto.setStoreId(saved_store.getId());
 
     Product product = productService.saveProduct(dto);
-    try {
-      productService.updateProductDiscount(product.getId(), 1200);
-    } catch (IllegalArgumentException e) {
-      assert e.getMessage().equals("Discounted price cannot be greater than original price");
-    }
+    assertThrows(
+        InvalidRequestException.class,
+        () -> {
+          productService.updateProductDiscount(
+              product.getId(), 1200); // This is greater than the original price
+        });
   }
 
   @Test
