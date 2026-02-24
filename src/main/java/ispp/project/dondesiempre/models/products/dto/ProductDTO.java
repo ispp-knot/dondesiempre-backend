@@ -6,7 +6,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class GetProductDTO {
+public class ProductDTO {
 
   private String name;
   private Integer priceInCents;
@@ -15,8 +15,8 @@ public class GetProductDTO {
   private Integer typeId;
   private Integer storeId;
 
-  public static GetProductDTO fromProduct(Product product) {
-    GetProductDTO dto = new GetProductDTO();
+  public static ProductDTO fromProduct(Product product) {
+    ProductDTO dto = new ProductDTO();
     dto.setName(product.getName());
     dto.setPriceInCents(product.getPriceInCents());
     dto.setDiscountedPriceInCents(product.getDiscountedPriceInCents());

@@ -3,8 +3,8 @@ package ispp.project.dondesiempre.controllers;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import ispp.project.dondesiempre.models.products.Product;
 import ispp.project.dondesiempre.models.products.dto.DiscountModificationDTO;
-import ispp.project.dondesiempre.models.products.dto.GetProductDTO;
 import ispp.project.dondesiempre.models.products.dto.ProductCreationDTO;
+import ispp.project.dondesiempre.models.products.dto.ProductDTO;
 import ispp.project.dondesiempre.services.products.ProductService;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -26,52 +26,37 @@ public class ProductController {
   private final ProductService productService;
 
   @GetMapping("")
-  public ResponseEntity<List<GetProductDTO>> getAllProducts() {
+  public ResponseEntity<List<ProductDTO>> getAllProducts() {
     List<Product> products = productService.getAllProducts();
-    List<GetProductDTO> dtos = products.stream().map(GetProductDTO::fromProduct).toList();
+    List<ProductDTO> dtos = products.stream().map(ProductDTO::fromProduct).toList();
     return new ResponseEntity<>(dtos, HttpStatus.OK);
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<GetProductDTO> getProductById(@PathVariable Integer id) {
-
-    try {
-      Product product = productService.getProductById(id);
-      GetProductDTO dto = GetProductDTO.fromProduct(product);
-      return new ResponseEntity<>(dto, HttpStatus.OK);
-    } catch (RuntimeException e) {
-      return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
+  public ResponseEntity<ProductDTO> getProductById(@PathVariable Integer id) {
+    Product product = productService.getProductById(id);
+    ProductDTO dto = ProductDTO.fromProduct(product);
+    return new ResponseEntity<>(dto, HttpStatus.OK);
   }
 
   @GetMapping("/discounted")
-  public ResponseEntity<List<GetProductDTO>> getDiscountedProducts() {
+  public ResponseEntity<List<ProductDTO>> getDiscountedProducts() {
     List<Product> products = productService.getAllDiscountedProducts();
-    List<GetProductDTO> dtos = products.stream().map(GetProductDTO::fromProduct).toList();
+    List<ProductDTO> dtos = products.stream().map(ProductDTO::fromProduct).toList();
     return new ResponseEntity<>(dtos, HttpStatus.OK);
   }
 
   @PostMapping("")
   public ResponseEntity<Product> createProduct(@RequestBody @Valid ProductCreationDTO dto) {
-    try {
-      Product savedProduct = productService.saveProduct(dto);
-      return new ResponseEntity<>(savedProduct, HttpStatus.CREATED);
-    } catch (IllegalArgumentException e) {
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    }
+    Product savedProduct = productService.saveProduct(dto);
+    return new ResponseEntity<>(savedProduct, HttpStatus.CREATED);
   }
 
   @PutMapping("/{id}/discount")
   public ResponseEntity<Product> updateDiscount(
       @PathVariable Integer id, @RequestBody DiscountModificationDTO discount) {
-    try {
-      Product updatedProduct =
-          productService.updateProductDiscount(id, discount.getDiscountedPriceInCents());
-      return new ResponseEntity<>(updatedProduct, HttpStatus.ACCEPTED);
-    } catch (IllegalArgumentException e) {
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    } catch (RuntimeException e) {
-      return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
+    Product updatedProduct =
+        productService.updateProductDiscount(id, discount.getDiscountedPriceInCents());
+    return new ResponseEntity<>(updatedProduct, HttpStatus.ACCEPTED);
   }
 }

@@ -1,5 +1,7 @@
 package ispp.project.dondesiempre.services.products;
 
+import ispp.project.dondesiempre.exceptions.InvalidRequestException;
+import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.models.products.Product;
 import ispp.project.dondesiempre.models.products.dto.ProductCreationDTO;
 import ispp.project.dondesiempre.repositories.products.ProductRepository;
@@ -20,7 +22,7 @@ public class ProductService {
   @Transactional
   public Product saveProduct(ProductCreationDTO dto) {
     if (dto.getDiscountedPriceInCents() > dto.getPriceInCents()) {
-      throw new IllegalArgumentException("Discounted price cannot be greater than original price");
+      throw new InvalidRequestException("Discounted price cannot be greater than original price");
     }
     Product product = new Product();
     product.setName(dto.getName());
@@ -34,7 +36,9 @@ public class ProductService {
 
   public Product getProductById(Integer id) {
     Product product =
-        productRepository.findById(id).orElseThrow(() -> new RuntimeException("Product not found"));
+        productRepository
+            .findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
     return product;
   }
 
@@ -49,7 +53,7 @@ public class ProductService {
   @Transactional
   public Product updateProductDiscount(Integer id, Integer discountedPriceInCents) {
     if (discountedPriceInCents > getProductById(id).getPriceInCents()) {
-      throw new IllegalArgumentException("Discounted price cannot be greater than original price");
+      throw new InvalidRequestException("Discounted price cannot be greater than original price");
     }
     Product product = getProductById(id);
     product.setDiscountedPriceInCents(discountedPriceInCents);

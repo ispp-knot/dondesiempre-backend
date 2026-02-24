@@ -1,10 +1,14 @@
 package ispp.project.dondesiempre.controllers;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import ispp.project.dondesiempre.exceptions.InvalidRequestException;
+import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.models.products.Product;
 import ispp.project.dondesiempre.models.products.ProductType;
 import ispp.project.dondesiempre.models.products.dto.DiscountModificationDTO;
-import ispp.project.dondesiempre.models.products.dto.GetProductDTO;
 import ispp.project.dondesiempre.models.products.dto.ProductCreationDTO;
+import ispp.project.dondesiempre.models.products.dto.ProductDTO;
 import ispp.project.dondesiempre.models.storefronts.Storefront;
 import ispp.project.dondesiempre.models.stores.Store;
 import ispp.project.dondesiempre.repositories.products.ProductTypeRepository;
@@ -74,7 +78,7 @@ public class ProductControllerTest {
   }
 
   @Test
-  public void shouldReturnBadRequest_WhenDiscountedPriceIsGreaterThanOriginalPrice() {
+  public void shouldThrowInvalidRequestException_WhenDiscountedPriceIsGreaterThanOriginalPrice() {
     // Create and save a product type
 
     Storefront storefront = new Storefront();
@@ -109,8 +113,11 @@ public class ProductControllerTest {
     dto.setTypeId(savedProductType.getId());
     dto.setStoreId(saved_store.getId());
 
-    ResponseEntity<Product> response = productController.createProduct(dto);
-    assert response.getStatusCode() == HttpStatus.BAD_REQUEST;
+    assertThrows(
+        InvalidRequestException.class,
+        () -> {
+          productController.createProduct(dto);
+        });
   }
 
   @Test
@@ -160,15 +167,18 @@ public class ProductControllerTest {
   }
 
   @Test
-  public void shouldReturnNotFound_WhenUpdatingDiscountForNonExistentProduct() {
+  public void shouldThrowResourceNotFoundException_WhenUpdatingDiscountForNonExistentProduct() {
     DiscountModificationDTO discount = new DiscountModificationDTO();
     discount.setDiscountedPriceInCents(500);
-    ResponseEntity<Product> response = productController.updateDiscount(9999, discount);
-    assert response.getStatusCode() == HttpStatus.NOT_FOUND;
+    assertThrows(
+        ResourceNotFoundException.class,
+        () -> {
+          productController.updateDiscount(9999, discount);
+        });
   }
 
   @Test
-  public void shouldReturnBadRequest_WhenUpdatingDiscountToGreaterThanOriginalPrice() {
+  public void shouldThrowInvalidRequestException_WhenUpdatingDiscountToGreaterThanOriginalPrice() {
     Storefront storefront = new Storefront();
     storefront.setIsFirstCollections(true);
     storefront.setPrimaryColor("#c65a3a");
@@ -204,14 +214,20 @@ public class ProductControllerTest {
     Product product = productController.createProduct(dto).getBody();
     DiscountModificationDTO discount = new DiscountModificationDTO();
     discount.setDiscountedPriceInCents(1200); // Invalid discounted price
-    ResponseEntity<Product> response = productController.updateDiscount(product.getId(), discount);
-    assert response.getStatusCode() == HttpStatus.BAD_REQUEST;
+    assertThrows(
+        InvalidRequestException.class,
+        () -> {
+          productController.updateDiscount(product.getId(), discount);
+        });
   }
 
   @Test
-  public void shouldReturnNotFound_WhenGettingNonExistentProduct() {
-    ResponseEntity<GetProductDTO> response = productController.getProductById(9999);
-    assert response.getStatusCode() == HttpStatus.NOT_FOUND;
+  public void shouldThrowResourceNotFoundException_WhenGettingNonExistentProduct() {
+    assertThrows(
+        ResourceNotFoundException.class,
+        () -> {
+          productController.getProductById(9999);
+        });
   }
 
   @Test
@@ -250,9 +266,9 @@ public class ProductControllerTest {
 
     Product product = productController.createProduct(dto).getBody();
 
-    ResponseEntity<GetProductDTO> response = productController.getProductById(product.getId());
+    ResponseEntity<ProductDTO> response = productController.getProductById(product.getId());
     assert response.getStatusCode() == HttpStatus.OK;
-    GetProductDTO productDTO = response.getBody();
+    ProductDTO productDTO = response.getBody();
     assert productDTO != null;
     assert productDTO.getName().equals(dto.getName());
   }
@@ -296,9 +312,9 @@ public class ProductControllerTest {
     dto.setName("Test Product 2");
     productController.createProduct(dto);
 
-    ResponseEntity<List<GetProductDTO>> response = productController.getAllProducts();
+    ResponseEntity<List<ProductDTO>> response = productController.getAllProducts();
     assert response.getStatusCode() == HttpStatus.OK;
-    List<GetProductDTO> products = response.getBody();
+    List<ProductDTO> products = response.getBody();
     assert products != null;
     assert products.size() >= 2;
   }
@@ -343,9 +359,9 @@ public class ProductControllerTest {
     dto.setDiscountedPriceInCents(1000);
     productController.createProduct(dto);
 
-    ResponseEntity<List<GetProductDTO>> response = productController.getDiscountedProducts();
+    ResponseEntity<List<ProductDTO>> response = productController.getDiscountedProducts();
     assert response.getStatusCode() == HttpStatus.OK;
-    List<GetProductDTO> products = response.getBody();
+    List<ProductDTO> products = response.getBody();
     assert products != null;
     assert products.size() >= 1;
   }
