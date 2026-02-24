@@ -1,0 +1,32 @@
+databaseChangeLog:
+- changeSet:
+    id: 1771847339416-23
+    author: roth (generated)
+    changes:
+    - addColumn:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: discounted_price_in_cents
+            type: INTEGER
+        tableName: products
+- changeSet:
+    id: 1771847339416-24
+    author: roth (generated)
+    changes:
+    - addColumn:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: price_in_cents
+            type: INTEGER
+        tableName: products
+- changeSet:
+    id: 1771847339416-25
+    author: roth (generated)
+    changes:
+    - dropColumn:
+        columnName: price
+        tableName: products

@@ -109,7 +109,8 @@ class OutfitRepositoryTest {
 
     product = new Product();
     product.setName("Test product");
-    product.setPrice(10.0);
+    product.setPriceInCents(1000);
+    product.setDiscountedPriceInCents(1000);
     product.setType(type);
     product.setStore(store);
     product = productRepository.save(product);
@@ -217,7 +218,8 @@ class OutfitRepositoryTest {
 
       product = new Product();
       product.setName("Test product" + i);
-      product.setPrice(10.0);
+      product.setPriceInCents(i * 1000); // Set price in cents (e.g., 1000 = $10.00)
+      product.setDiscountedPriceInCents(i * 1000); // Set discounted price in cents
       product.setType(type);
       product = productRepository.save(product);
 
