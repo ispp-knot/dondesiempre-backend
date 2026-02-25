@@ -2,7 +2,9 @@ package ispp.project.dondesiempre.controllers;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -12,20 +14,22 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import ispp.project.dondesiempre.dto.category.CategoryRequestDTO;
-import ispp.project.dondesiempre.models.products.Category;
+import ispp.project.dondesiempre.dto.category.CategoryCreationDTO;
+import ispp.project.dondesiempre.dto.category.CategoryResponseDTO;
+import ispp.project.dondesiempre.dto.category.CategoryUpdateDTO;
+import ispp.project.dondesiempre.models.products.ProductCategory;
 import ispp.project.dondesiempre.models.stores.Store;
-import ispp.project.dondesiempre.repositories.products.CategoryRepository;
-import ispp.project.dondesiempre.repositories.stores.StoreRepository;
+import ispp.project.dondesiempre.services.CategoryService;
 import java.util.List;
-import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.server.ResponseStatusException;
 
 @WebMvcTest(CategoryController.class)
 class CategoryControllerTest {
@@ -34,32 +38,31 @@ class CategoryControllerTest {
 
   @Autowired private ObjectMapper objectMapper;
 
-  @MockitoBean private CategoryRepository categoryRepository;
+  @MockitoBean private CategoryService categoryService;
 
-  @MockitoBean private StoreRepository storeRepository;
-
-  private Store store;
-  private Category category;
+  private CategoryResponseDTO categoryResponse;
 
   @BeforeEach
   void setUp() {
-    store = new Store();
+    Store store = new Store();
     store.setId(1);
     store.setName("Tienda Test");
 
-    category = new Category();
+    ProductCategory category = new ProductCategory();
     category.setId(1);
     category.setName("Camisetas");
     category.setDescription("Ropa de verano");
     category.setStore(store);
+
+    categoryResponse = new CategoryResponseDTO(category);
   }
 
   @Test
   void testGetByStore() throws Exception {
-    when(categoryRepository.findByStoreId(1)).thenReturn(List.of(category));
+    when(categoryService.getByStore(1)).thenReturn(List.of(categoryResponse));
 
     mockMvc
-        .perform(get("/api/v1/categories/store/1"))
+        .perform(get("/api/v1/store/1/categories"))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$[0].name").value("Camisetas"))
         .andExpect(jsonPath("$[0].storeId").value(1));
@@ -67,7 +70,7 @@ class CategoryControllerTest {
 
   @Test
   void testGetById_found() throws Exception {
-    when(categoryRepository.findById(1)).thenReturn(Optional.of(category));
+    when(categoryService.getById(1)).thenReturn(categoryResponse);
 
     mockMvc
         .perform(get("/api/v1/categories/1"))
@@ -77,25 +80,24 @@ class CategoryControllerTest {
 
   @Test
   void testGetById_notFound() throws Exception {
-    when(categoryRepository.findById(anyInt())).thenReturn(Optional.empty());
+    when(categoryService.getById(anyInt()))
+        .thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
 
     mockMvc.perform(get("/api/v1/categories/99")).andExpect(status().isNotFound());
   }
 
   @Test
   void testCreate_ok() throws Exception {
-    CategoryRequestDTO dto = new CategoryRequestDTO();
+    CategoryCreationDTO dto = new CategoryCreationDTO();
     dto.setName("Camisetas");
     dto.setDescription("Ropa de verano");
-    dto.setStoreId(1);
 
-    when(storeRepository.findById(1)).thenReturn(Optional.of(store));
-    when(categoryRepository.existsByNameAndStoreId(anyString(), anyInt())).thenReturn(false);
-    when(categoryRepository.save(any())).thenReturn(category);
+    when(categoryService.create(eq(1), any(CategoryCreationDTO.class)))
+        .thenReturn(categoryResponse);
 
     mockMvc
         .perform(
-            post("/api/v1/categories")
+            post("/api/v1/store/1/categories")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto)))
         .andExpect(status().isCreated())
@@ -104,32 +106,31 @@ class CategoryControllerTest {
 
   @Test
   void testCreate_storeNotFound() throws Exception {
-    CategoryRequestDTO dto = new CategoryRequestDTO();
+    CategoryCreationDTO dto = new CategoryCreationDTO();
     dto.setName("Camisetas");
-    dto.setStoreId(99);
 
-    when(storeRepository.findById(99)).thenReturn(Optional.empty());
+    when(categoryService.create(eq(99), any(CategoryCreationDTO.class)))
+        .thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
 
     mockMvc
         .perform(
-            post("/api/v1/categories")
+            post("/api/v1/store/99/categories")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto)))
-        .andExpect(status().isBadRequest());
+        .andExpect(status().isNotFound());
   }
 
   @Test
   void testCreate_conflict() throws Exception {
-    CategoryRequestDTO dto = new CategoryRequestDTO();
+    CategoryCreationDTO dto = new CategoryCreationDTO();
     dto.setName("Camisetas");
-    dto.setStoreId(1);
 
-    when(storeRepository.findById(1)).thenReturn(Optional.of(store));
-    when(categoryRepository.existsByNameAndStoreId("Camisetas", 1)).thenReturn(true);
+    when(categoryService.create(eq(1), any(CategoryCreationDTO.class)))
+        .thenThrow(new ResponseStatusException(HttpStatus.CONFLICT));
 
     mockMvc
         .perform(
-            post("/api/v1/categories")
+            post("/api/v1/store/1/categories")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto)))
         .andExpect(status().isConflict());
@@ -137,17 +138,16 @@ class CategoryControllerTest {
 
   @Test
   void testUpdate_ok() throws Exception {
-    CategoryRequestDTO dto = new CategoryRequestDTO();
+    CategoryUpdateDTO dto = new CategoryUpdateDTO();
     dto.setName("Zapatillas");
-    dto.setStoreId(1);
 
-    Category updated = new Category();
+    CategoryResponseDTO updated = new CategoryResponseDTO();
     updated.setId(1);
     updated.setName("Zapatillas");
-    updated.setStore(store);
+    updated.setStoreId(1);
+    updated.setStoreName("Tienda Test");
 
-    when(categoryRepository.findById(1)).thenReturn(Optional.of(category));
-    when(categoryRepository.save(any())).thenReturn(updated);
+    when(categoryService.update(eq(1), any(CategoryUpdateDTO.class))).thenReturn(updated);
 
     mockMvc
         .perform(
@@ -160,11 +160,11 @@ class CategoryControllerTest {
 
   @Test
   void testUpdate_notFound() throws Exception {
-    CategoryRequestDTO dto = new CategoryRequestDTO();
+    CategoryUpdateDTO dto = new CategoryUpdateDTO();
     dto.setName("Zapatillas");
-    dto.setStoreId(1);
 
-    when(categoryRepository.findById(anyInt())).thenReturn(Optional.empty());
+    when(categoryService.update(eq(99), any(CategoryUpdateDTO.class)))
+        .thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
 
     mockMvc
         .perform(
@@ -176,24 +176,24 @@ class CategoryControllerTest {
 
   @Test
   void testDelete_ok() throws Exception {
-    when(categoryRepository.existsById(1)).thenReturn(true);
+    doNothing().when(categoryService).delete(1);
 
     mockMvc.perform(delete("/api/v1/categories/1")).andExpect(status().isNoContent());
   }
 
   @Test
   void testDelete_notFound() throws Exception {
-    when(categoryRepository.existsById(anyInt())).thenReturn(false);
+    doThrow(new ResponseStatusException(HttpStatus.NOT_FOUND)).when(categoryService).delete(99);
 
     mockMvc.perform(delete("/api/v1/categories/99")).andExpect(status().isNotFound());
   }
 
   @Test
   void testGetByStore_empty() throws Exception {
-    when(categoryRepository.findByStoreId(anyInt())).thenReturn(List.of());
+    when(categoryService.getByStore(anyInt())).thenReturn(List.of());
 
     mockMvc
-        .perform(get("/api/v1/categories/store/99"))
+        .perform(get("/api/v1/store/99/categories"))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$").isArray())
         .andExpect(jsonPath("$").isEmpty());
@@ -201,26 +201,20 @@ class CategoryControllerTest {
 
   @Test
   void testCreate_sameNameDifferentStore() throws Exception {
-    Store store2 = new Store();
-    store2.setId(2);
-    store2.setName("Tienda Test 2");
-
-    CategoryRequestDTO dto = new CategoryRequestDTO();
+    CategoryCreationDTO dto = new CategoryCreationDTO();
     dto.setName("Camisetas");
-    dto.setStoreId(2);
 
-    Category cat2 = new Category();
-    cat2.setId(2);
-    cat2.setName("Camisetas");
-    cat2.setStore(store2);
+    CategoryResponseDTO categoryStore2 = new CategoryResponseDTO();
+    categoryStore2.setId(2);
+    categoryStore2.setName("Camisetas");
+    categoryStore2.setStoreId(2);
+    categoryStore2.setStoreName("Tienda Test 2");
 
-    when(storeRepository.findById(2)).thenReturn(Optional.of(store2));
-    when(categoryRepository.existsByNameAndStoreId("Camisetas", 2)).thenReturn(false);
-    when(categoryRepository.save(any())).thenReturn(cat2);
+    when(categoryService.create(eq(2), any(CategoryCreationDTO.class))).thenReturn(categoryStore2);
 
     mockMvc
         .perform(
-            post("/api/v1/categories")
+            post("/api/v1/store/2/categories")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto)))
         .andExpect(status().isCreated())
