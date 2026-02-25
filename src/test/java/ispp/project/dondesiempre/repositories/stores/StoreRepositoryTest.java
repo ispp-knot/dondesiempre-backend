@@ -8,6 +8,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import ispp.project.dondesiempre.models.storefronts.Storefront;
 import ispp.project.dondesiempre.models.stores.Store;
 import java.util.List;
+
+import ispp.project.dondesiempre.repositories.products.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.locationtech.jts.geom.Coordinate;
@@ -25,11 +27,14 @@ public class StoreRepositoryTest {
 
   @Autowired private StoreRepository storeRepository;
 
+  @Autowired private ProductRepository productRepository;
+
   private final GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
 
   @BeforeEach
   void setUp() {
     // Limpiamos la base de datos antes de cada test para asegurar resultados predecibles
+    productRepository.deleteAll();
     storeRepository.deleteAll();
   }
 
