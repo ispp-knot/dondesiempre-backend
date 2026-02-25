@@ -6,9 +6,11 @@ import ispp.project.dondesiempre.models.products.Product;
 import ispp.project.dondesiempre.models.promotions.Promotion;
 import ispp.project.dondesiempre.models.promotions.PromotionProduct;
 import ispp.project.dondesiempre.models.promotions.dto.PromotionCreationDTO;
+import ispp.project.dondesiempre.models.stores.Store;
 import ispp.project.dondesiempre.repositories.products.ProductRepository;
 import ispp.project.dondesiempre.repositories.promotions.PromotionProductRepository;
 import ispp.project.dondesiempre.repositories.promotions.PromotionRepository;
+import ispp.project.dondesiempre.repositories.stores.StoreRepository;
 import java.util.List;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +24,7 @@ public class PromotionService {
   private final PromotionRepository promotionRepository;
   private final ProductRepository productRepository;
   private final PromotionProductRepository promotionProductRepository;
+  private final StoreRepository storeRepository;
 
   @Transactional
   public Promotion savePromotion(PromotionCreationDTO dto) {
@@ -33,6 +36,14 @@ public class PromotionService {
     promotion.setActive(dto.isActive());
     promotion.setDiscountPercentage(dto.getDiscountPercentage());
     promotion.setDescription(dto.getDescription());
+
+    Store store =
+        storeRepository
+            .findById(dto.getStoreId())
+            .orElseThrow(
+                () ->
+                    new ResourceNotFoundException("Store not found with id: " + dto.getStoreId()));
+    promotion.setStore(store);
 
     Set<Product> products =
         dto.getProductIds().stream()
@@ -114,6 +125,7 @@ public class PromotionService {
   @Transactional
   public void deletePromotion(Integer id) {
     Promotion promotion = getPromotionById(id);
+    promotionProductRepository.findByPromotionId(id).forEach(promotionProductRepository::delete);
     promotionRepository.delete(promotion);
   }
 

@@ -79,6 +79,7 @@ public class PromotionControllerTest {
     promotionCreationDTO.setDiscountPercentage(20);
     promotionCreationDTO.setActive(true);
     promotionCreationDTO.setProductIds(List.of(product.getId()));
+    promotionCreationDTO.setStoreId(saved_store.getId());
     ResponseEntity<?> response = promotionController.createPromotion(promotionCreationDTO);
     assert response.getStatusCode().isSameCodeAs(HttpStatus.OK);
   }
@@ -130,6 +131,8 @@ public class PromotionControllerTest {
     promotionCreationDTO.setDiscountPercentage(20);
     promotionCreationDTO.setActive(true);
     promotionCreationDTO.setProductIds(List.of(product.getId()));
+    promotionCreationDTO.setStoreId(saved_store.getId());
+
     Promotion promotion = promotionService.savePromotion(promotionCreationDTO);
 
     ResponseEntity<?> response = promotionController.getPromotionById(promotion.getId());
@@ -177,6 +180,7 @@ public class PromotionControllerTest {
     promotionCreationDTO.setDiscountPercentage(20);
     promotionCreationDTO.setActive(true);
     promotionCreationDTO.setProductIds(List.of(product.getId()));
+    promotionCreationDTO.setStoreId(saved_store.getId());
     Promotion promotion = promotionService.savePromotion(promotionCreationDTO);
 
     ResponseEntity<?> response = promotionController.updateDiscount(promotion.getId(), 30);
@@ -224,6 +228,7 @@ public class PromotionControllerTest {
     promotionCreationDTO.setDiscountPercentage(20);
     promotionCreationDTO.setActive(true);
     promotionCreationDTO.setProductIds(List.of(product.getId()));
+    promotionCreationDTO.setStoreId(saved_store.getId());
     Promotion promotion = promotionService.savePromotion(promotionCreationDTO);
     ResponseEntity<?> response = promotionController.deletePromotion(promotion.getId());
     assert response.getStatusCode().isSameCodeAs(HttpStatus.NO_CONTENT);
