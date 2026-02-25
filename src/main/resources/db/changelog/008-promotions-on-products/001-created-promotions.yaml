@@ -1,7 +1,34 @@
 databaseChangeLog:
 - changeSet:
-    id: 1771953402647-31
-    author: lunaf (generated)
+    id: 1772018876642-31
+    author: roth (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: promotion_productsPK
+            name: id
+            type: INTEGER
+        - column:
+            name: version
+            type: INTEGER
+        - column:
+            constraints:
+              nullable: false
+            name: product_id
+            type: INTEGER
+        - column:
+            constraints:
+              nullable: false
+            name: promotion_id
+            type: INTEGER
+        tableName: promotion_products
+- changeSet:
+    id: 1772018876642-32
+    author: roth (generated)
     changes:
     - createTable:
         columns:
@@ -33,30 +60,48 @@ databaseChangeLog:
               nullable: false
             name: name
             type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: store_id
+            type: INTEGER
         tableName: promotions
 - changeSet:
-    id: 1771953402647-32
-    author: lunaf (generated)
+    id: 1772018876642-33
+    author: roth (generated)
     changes:
-    - addColumn:
-        columns:
-        - column:
-            name: promotion_id
-            type: INTEGER
-        tableName: products
+    - addForeignKeyConstraint:
+        baseColumnNames: product_id
+        baseTableName: promotion_products
+        constraintName: FK9rm5m4rnoamh56kxetmoe1kk9
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: products
+        validate: true
 - changeSet:
-    id: 1771953402647-33
-    author: lunaf (generated)
+    id: 1772018876642-34
+    author: roth (generated)
     changes:
     - addForeignKeyConstraint:
         baseColumnNames: promotion_id
-        baseTableName: products
-        constraintName: FK58vr973hp8g47ful3ukryaeff
+        baseTableName: promotion_products
+        constraintName: FKkn7hllhf1o8jjrolro4rqmxt7
         deferrable: false
         initiallyDeferred: false
         referencedColumnNames: id
         referencedTableName: promotions
         validate: true
-
-
-
+- changeSet:
+    id: 1772018876642-35
+    author: roth (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: store_id
+        baseTableName: promotions
+        constraintName: FKom2fn577fpuiddjbssbq16wyu
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: stores
+        validate: true
