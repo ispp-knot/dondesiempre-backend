@@ -1,15 +1,11 @@
 package ispp.project.dondesiempre.controllers;
 
-import ispp.project.dondesiempre.dto.category.CategoryMapper;
-import ispp.project.dondesiempre.dto.category.CategoryRequestDTO;
+import ispp.project.dondesiempre.dto.category.CategoryCreationDTO;
 import ispp.project.dondesiempre.dto.category.CategoryResponseDTO;
-import ispp.project.dondesiempre.models.products.Category;
-import ispp.project.dondesiempre.models.stores.Store;
-import ispp.project.dondesiempre.repositories.products.CategoryRepository;
-import ispp.project.dondesiempre.repositories.stores.StoreRepository;
+import ispp.project.dondesiempre.dto.category.CategoryUpdateDTO;
+import ispp.project.dondesiempre.services.CategoryService;
 import jakarta.validation.Valid;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,64 +19,37 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/categories")
+@RequestMapping("/api/v1")
 @RequiredArgsConstructor
 public class CategoryController {
 
-  private final CategoryRepository categoryRepository;
-  private final StoreRepository storeRepository;
+  private final CategoryService categoryService;
 
-  @GetMapping("/store/{storeId}")
+  @GetMapping("/store/{storeId}/categories")
   public ResponseEntity<List<CategoryResponseDTO>> getByStore(@PathVariable Integer storeId) {
-    List<CategoryResponseDTO> categories =
-        categoryRepository.findByStoreId(storeId).stream()
-            .map(CategoryMapper::toDTO)
-            .collect(Collectors.toList());
-    return ResponseEntity.ok(categories);
+    return ResponseEntity.ok(categoryService.getByStore(storeId));
   }
 
-  @GetMapping("/{id}")
+  @GetMapping("/categories/{id}")
   public ResponseEntity<CategoryResponseDTO> getById(@PathVariable Integer id) {
-    return categoryRepository
-        .findById(id)
-        .map(CategoryMapper::toDTO)
-        .map(ResponseEntity::ok)
-        .orElse(ResponseEntity.notFound().build());
+    return ResponseEntity.ok(categoryService.getById(id));
   }
 
-  @PostMapping
-  public ResponseEntity<CategoryResponseDTO> create(@Valid @RequestBody CategoryRequestDTO dto) {
-    Store store = storeRepository.findById(dto.getStoreId()).orElse(null);
-    if (store == null) return ResponseEntity.badRequest().build();
-
-    if (categoryRepository.existsByNameAndStoreId(dto.getName(), dto.getStoreId())) {
-      return ResponseEntity.status(HttpStatus.CONFLICT).build();
-    }
-
-    Category category = CategoryMapper.toEntity(dto);
-    category.setStore(store);
-    return ResponseEntity.status(HttpStatus.CREATED)
-        .body(CategoryMapper.toDTO(categoryRepository.save(category)));
+  @PostMapping("/store/{storeId}/categories")
+  public ResponseEntity<CategoryResponseDTO> create(
+      @PathVariable Integer storeId, @Valid @RequestBody CategoryCreationDTO dto) {
+    return ResponseEntity.status(HttpStatus.CREATED).body(categoryService.create(storeId, dto));
   }
 
-  @PutMapping("/{id}")
+  @PutMapping("/categories/{id}")
   public ResponseEntity<CategoryResponseDTO> update(
-      @PathVariable Integer id, @Valid @RequestBody CategoryRequestDTO dto) {
-    return categoryRepository
-        .findById(id)
-        .map(
-            category -> {
-              category.setName(dto.getName());
-              category.setDescription(dto.getDescription());
-              return ResponseEntity.ok(CategoryMapper.toDTO(categoryRepository.save(category)));
-            })
-        .orElse(ResponseEntity.notFound().build());
+      @PathVariable Integer id, @Valid @RequestBody CategoryUpdateDTO dto) {
+    return ResponseEntity.ok(categoryService.update(id, dto));
   }
 
-  @DeleteMapping("/{id}")
+  @DeleteMapping("/categories/{id}")
   public ResponseEntity<Void> delete(@PathVariable Integer id) {
-    if (!categoryRepository.existsById(id)) return ResponseEntity.notFound().build();
-    categoryRepository.deleteById(id);
+    categoryService.delete(id);
     return ResponseEntity.noContent().build();
   }
 }
