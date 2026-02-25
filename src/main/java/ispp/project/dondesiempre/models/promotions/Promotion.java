@@ -1,17 +1,15 @@
 package ispp.project.dondesiempre.models.promotions;
 
 import ispp.project.dondesiempre.models.BaseEntity;
-import ispp.project.dondesiempre.models.products.Product;
+import ispp.project.dondesiempre.models.stores.Store;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import java.util.HashSet;
-import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -34,8 +32,9 @@ public class Promotion extends BaseEntity {
 
   @Column @NotNull private boolean isActive;
 
-  @OneToMany(mappedBy = "promotion")
-  private Set<Product> products = new HashSet<>();
+  @ManyToOne(optional = false)
+  @NotNull
+  private Store store;
 
   @Column(columnDefinition = "TEXT")
   private String description;

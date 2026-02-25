@@ -1,7 +1,6 @@
 package ispp.project.dondesiempre.models.products;
 
 import ispp.project.dondesiempre.models.BaseEntity;
-import ispp.project.dondesiempre.models.promotions.Promotion;
 import ispp.project.dondesiempre.models.stores.Store;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -49,6 +48,4 @@ public class Product extends BaseEntity {
   @ManyToOne(optional = false)
   @OnDelete(action = OnDeleteAction.CASCADE)
   private Store store;
-
-  @ManyToOne private Promotion promotion;
 }

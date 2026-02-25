@@ -2,6 +2,7 @@ package ispp.project.dondesiempre.controllers.promotions;
 
 import ispp.project.dondesiempre.models.promotions.Promotion;
 import ispp.project.dondesiempre.models.promotions.dto.PromotionCreationDTO;
+import ispp.project.dondesiempre.models.promotions.dto.PromotionDTO;
 import ispp.project.dondesiempre.services.promotions.PromotionService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -17,39 +18,65 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/promotions")
+@RequestMapping("/api/v1/promotions")
 @RequiredArgsConstructor
 public class PromotionController {
 
   private final PromotionService promotionService;
 
   @PostMapping
-  public ResponseEntity<Promotion> createPromotion(@RequestBody PromotionCreationDTO dto) {
+  public ResponseEntity<PromotionDTO> createPromotion(@RequestBody PromotionCreationDTO dto) {
     Promotion promotion = promotionService.savePromotion(dto);
-    return ResponseEntity.ok(promotion);
+    PromotionDTO promotionDTO =
+        PromotionDTO.fromPromotion(
+            promotion, promotionService.getAllProductsByPromotionId(promotion.getId()));
+    return ResponseEntity.ok(promotionDTO);
   }
 
   @GetMapping
-  public ResponseEntity<List<Promotion>> getAllPromotions() {
-    return ResponseEntity.ok(promotionService.getAllPromotions());
+  public ResponseEntity<List<PromotionDTO>> getAllPromotions() {
+    return ResponseEntity.ok(
+        promotionService.getAllPromotions().stream()
+            .map(
+                promotion ->
+                    PromotionDTO.fromPromotion(
+                        promotion, promotionService.getAllProductsByPromotionId(promotion.getId())))
+            .toList());
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<Promotion> getPromotionById(@PathVariable Integer id) {
-    return ResponseEntity.ok(promotionService.getPromotionById(id));
+  public ResponseEntity<PromotionDTO> getPromotionById(@PathVariable Integer id) {
+    Promotion promotion = promotionService.getPromotionById(id);
+    PromotionDTO promotionDTO =
+        PromotionDTO.fromPromotion(
+            promotion, promotionService.getAllProductsByPromotionId(promotion.getId()));
+    return ResponseEntity.ok(promotionDTO);
   }
 
   @PatchMapping("/{id}/discount")
-  public ResponseEntity<Promotion> updateDiscount(
+  public ResponseEntity<PromotionDTO> updateDiscount(
       @PathVariable Integer id, @RequestParam Integer discountPercentage) {
 
     Promotion promotion = promotionService.updatePromotionDiscount(id, discountPercentage);
-    return ResponseEntity.ok(promotion);
+    return ResponseEntity.ok(
+        PromotionDTO.fromPromotion(
+            promotion, promotionService.getAllProductsByPromotionId(promotion.getId())));
   }
 
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> deletePromotion(@PathVariable Integer id) {
     promotionService.deletePromotion(id);
     return ResponseEntity.noContent().build();
+  }
+
+  @GetMapping("/stores/{storeId}")
+  public ResponseEntity<List<PromotionDTO>> getPromotionsByStoreId(@PathVariable Integer storeId) {
+    return ResponseEntity.ok(
+        promotionService.getPromotionsByStoreId(storeId).stream()
+            .map(
+                promotion ->
+                    PromotionDTO.fromPromotion(
+                        promotion, promotionService.getAllProductsByPromotionId(promotion.getId())))
+            .toList());
   }
 }

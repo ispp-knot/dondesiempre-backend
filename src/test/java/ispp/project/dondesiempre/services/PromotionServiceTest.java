@@ -86,7 +86,9 @@ public class PromotionServiceTest {
     assertEquals(promotionCreationDTO.getName(), promotion.getName());
     assertEquals(promotionCreationDTO.getDiscountPercentage(), promotion.getDiscountPercentage());
     assertEquals(promotionCreationDTO.isActive(), promotion.isActive());
-    assertEquals(promotionCreationDTO.getProductIds().size(), promotion.getProducts().size());
+    assertEquals(
+        promotionCreationDTO.getProductIds().size(),
+        promotionService.getAllProductsByPromotionId(promotion.getId()).size());
   }
 
   @Test

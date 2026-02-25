@@ -6,6 +6,7 @@ import ispp.project.dondesiempre.models.products.ProductType;
 import ispp.project.dondesiempre.models.products.dto.ProductCreationDTO;
 import ispp.project.dondesiempre.models.promotions.Promotion;
 import ispp.project.dondesiempre.models.promotions.dto.PromotionCreationDTO;
+import ispp.project.dondesiempre.models.promotions.dto.PromotionDTO;
 import ispp.project.dondesiempre.models.storefronts.Storefront;
 import ispp.project.dondesiempre.models.stores.Store;
 import ispp.project.dondesiempre.repositories.products.ProductTypeRepository;
@@ -84,7 +85,7 @@ public class PromotionControllerTest {
 
   @Test
   public void shouldGetAllPromotions() {
-    ResponseEntity<List<Promotion>> response = promotionController.getAllPromotions();
+    ResponseEntity<List<PromotionDTO>> response = promotionController.getAllPromotions();
     assert response.getStatusCode().isSameCodeAs(HttpStatus.OK);
   }
 

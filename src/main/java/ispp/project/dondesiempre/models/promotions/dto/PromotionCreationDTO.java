@@ -26,5 +26,7 @@ public class PromotionCreationDTO {
 
   @NotEmpty private List<Integer> productIds;
 
+  @NotNull private Integer storeId;
+
   private String description;
 }
