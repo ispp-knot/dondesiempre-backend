@@ -18,7 +18,7 @@ import org.hibernate.annotations.OnDeleteAction;
 @Getter
 @Setter
 @Table(name = "categories")
-public class Category extends BaseEntity {
+public class ProductCategory extends BaseEntity {
 
   @Column
   @NotBlank

@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import ispp.project.dondesiempre.models.products.Category;
+import ispp.project.dondesiempre.models.products.ProductCategory;
 import ispp.project.dondesiempre.models.storefronts.Storefront;
 import ispp.project.dondesiempre.models.stores.Store;
 import ispp.project.dondesiempre.repositories.products.CategoryRepository;
@@ -55,12 +55,12 @@ class CategoryRepositoryTest {
   @Test
   void testCreate() {
     Store store = crearStore();
-    Category category = new Category();
+    ProductCategory category = new ProductCategory();
     category.setName("Camisetas");
     category.setDescription("Ropa de verano");
     category.setStore(store);
 
-    Category saved = categoryRepository.save(category);
+    ProductCategory saved = categoryRepository.save(category);
 
     assertNotNull(saved.getId());
     assertEquals("Camisetas", saved.getName());
@@ -69,12 +69,12 @@ class CategoryRepositoryTest {
   @Test
   void testRead() {
     Store store = crearStore();
-    Category category = new Category();
+    ProductCategory category = new ProductCategory();
     category.setName("Pantalones");
     category.setStore(store);
-    Category saved = categoryRepository.save(category);
+    ProductCategory saved = categoryRepository.save(category);
 
-    Category found = categoryRepository.findById(saved.getId()).orElse(null);
+    ProductCategory found = categoryRepository.findById(saved.getId()).orElse(null);
 
     assertNotNull(found);
     assertEquals(saved.getId(), found.getId());
@@ -84,13 +84,13 @@ class CategoryRepositoryTest {
   @Test
   void testUpdate() {
     Store store = crearStore();
-    Category category = new Category();
+    ProductCategory category = new ProductCategory();
     category.setName("Zapatos");
     category.setStore(store);
-    Category saved = categoryRepository.save(category);
+    ProductCategory saved = categoryRepository.save(category);
 
     saved.setName("Zapatillas");
-    Category updated = categoryRepository.save(saved);
+    ProductCategory updated = categoryRepository.save(saved);
 
     assertEquals("Zapatillas", updated.getName());
     assertEquals(saved.getId(), updated.getId());
@@ -99,10 +99,10 @@ class CategoryRepositoryTest {
   @Test
   void testDelete() {
     Store store = crearStore();
-    Category category = new Category();
+    ProductCategory category = new ProductCategory();
     category.setName("Abrigos");
     category.setStore(store);
-    Category saved = categoryRepository.save(category);
+    ProductCategory saved = categoryRepository.save(category);
     Integer id = saved.getId();
 
     categoryRepository.deleteById(id);
@@ -113,12 +113,12 @@ class CategoryRepositoryTest {
   @Test
   void testFindByStoreId() {
     Store store = crearStore();
-    Category category = new Category();
+    ProductCategory category = new ProductCategory();
     category.setName("Vestidos");
     category.setStore(store);
     categoryRepository.save(category);
 
-    List<Category> categories = categoryRepository.findByStoreId(store.getId());
+    List<ProductCategory> categories = categoryRepository.findByStoreId(store.getId());
 
     assertFalse(categories.isEmpty());
     assertTrue(categories.stream().allMatch(c -> c.getStore().getId().equals(store.getId())));
@@ -127,7 +127,7 @@ class CategoryRepositoryTest {
   @Test
   void testExistsByNameAndStoreId_true() {
     Store store = crearStore();
-    Category category = new Category();
+    ProductCategory category = new ProductCategory();
     category.setName("Accesorios");
     category.setStore(store);
     categoryRepository.save(category);
@@ -147,12 +147,12 @@ class CategoryRepositoryTest {
     Store store1 = crearStore();
     Store store2 = crearStore();
 
-    Category cat1 = new Category();
+    ProductCategory cat1 = new ProductCategory();
     cat1.setName("Camisetas");
     cat1.setStore(store1);
     categoryRepository.save(cat1);
 
-    Category cat2 = new Category();
+    ProductCategory cat2 = new ProductCategory();
     cat2.setName("Camisetas");
     cat2.setStore(store2);
     categoryRepository.save(cat2);
@@ -165,7 +165,7 @@ class CategoryRepositoryTest {
   void testFindByStoreId_empty() {
     Store store2 = crearStore();
 
-    List<Category> categories = categoryRepository.findByStoreId(store2.getId());
+    List<ProductCategory> categories = categoryRepository.findByStoreId(store2.getId());
 
     assertNotNull(categories);
     assertTrue(categories.isEmpty());

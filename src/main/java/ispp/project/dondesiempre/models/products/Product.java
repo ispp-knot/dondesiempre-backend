@@ -48,5 +48,5 @@ public class Product extends BaseEntity {
   @ManyToOne(optional = true)
   @OnDelete(action = OnDeleteAction.SET_NULL)
   @JoinColumn(name = "category_id")
-  private Category category;
+  private ProductCategory category;
 }
