@@ -12,7 +12,7 @@ public interface StoreRepository extends JpaRepository<Store, Integer> {
       value =
           """
         SELECT
-            s
+            *
         FROM stores s
         WHERE s.location && ST_MakeEnvelope(:minLon, :minLat, :maxLon, :maxLat, 4326)
         LIMIT :numResults
