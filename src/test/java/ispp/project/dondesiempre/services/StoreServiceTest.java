@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -12,7 +11,7 @@ import static org.mockito.Mockito.when;
 import ispp.project.dondesiempre.exceptions.InvalidBoundingBoxException;
 import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.models.stores.Store;
-import ispp.project.dondesiempre.models.stores.dto.StoresBoundingBoxDTO;
+import ispp.project.dondesiempre.models.stores.dto.StoreDTO;
 import ispp.project.dondesiempre.repositories.stores.StoreRepository;
 import ispp.project.dondesiempre.services.stores.StoreService;
 import java.util.List;
@@ -32,15 +31,12 @@ public class StoreServiceTest {
   @InjectMocks private StoreService storeService;
 
   private Store store;
-  private StoresBoundingBoxDTO mockDto;
 
   @BeforeEach
   void setUp() {
     store = new Store();
     store.setId(1);
     store.setName("Tienda de Prueba");
-
-    mockDto = mock(StoresBoundingBoxDTO.class);
   }
 
   @Test
@@ -67,11 +63,10 @@ public class StoreServiceTest {
     // Dado
     double minLon = -6.0, minLat = 37.0, maxLon = -5.0, maxLat = 38.0;
     when(storeRepository.findStoresInBoundingBox(minLon, minLat, maxLon, maxLat, 500))
-        .thenReturn(List.of(mockDto));
+        .thenReturn(List.of(store));
 
     // Cuando
-    List<StoresBoundingBoxDTO> result =
-        storeService.findStoresInBoundingBox(minLon, minLat, maxLon, maxLat);
+    List<StoreDTO> result = storeService.findStoresInBoundingBox(minLon, minLat, maxLon, maxLat);
 
     // Entonces
     assertEquals(1, result.size());

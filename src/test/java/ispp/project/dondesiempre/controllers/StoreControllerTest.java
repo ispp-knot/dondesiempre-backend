@@ -7,7 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import ispp.project.dondesiempre.controllers.exceptions.GlobalExceptionHandler;
 import ispp.project.dondesiempre.controllers.stores.StoreController;
-import ispp.project.dondesiempre.models.stores.dto.StoresBoundingBoxDTO;
+import ispp.project.dondesiempre.models.stores.dto.StoreDTO;
 import ispp.project.dondesiempre.services.stores.StoreService;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -30,31 +30,18 @@ public class StoreControllerTest {
 
   @MockitoBean private StoreService storeService;
 
-  @lombok.Getter
-  @lombok.Builder
-  static class MockStoreDTO implements StoresBoundingBoxDTO {
-    private Integer id;
-    private String name;
-    private String email;
-    private String storeID;
-    private String address;
-    private String openingHours;
-    private String phone;
-    private Boolean acceptsShipping;
-    private Double latitude;
-    private Double longitude;
-  }
-
   @Test
   void shouldReturnOkAndListOfStores_whenValidParamsProvided() throws Exception {
     // Dado
     double minLon = -6.0, minLat = 37.0, maxLon = -5.0, maxLat = 38.0;
 
-    StoresBoundingBoxDTO mockDto =
-        MockStoreDTO.builder().name("Tienda Centro").latitude(37.5).longitude(-5.5).build();
+    StoreDTO store = new StoreDTO();
+    store.setName("Tienda Centro");
+    store.setLatitude(37.5);
+    store.setLongitude(-5.5);
 
     when(storeService.findStoresInBoundingBox(minLon, minLat, maxLon, maxLat))
-        .thenReturn(List.of(mockDto));
+        .thenReturn(List.of(store));
 
     mockMvc
         .perform(

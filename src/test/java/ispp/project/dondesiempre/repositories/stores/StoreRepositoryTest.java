@@ -7,7 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import ispp.project.dondesiempre.models.storefronts.Storefront;
 import ispp.project.dondesiempre.models.stores.Store;
-import ispp.project.dondesiempre.models.stores.dto.StoresBoundingBoxDTO;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -61,7 +60,7 @@ public class StoreRepositoryTest {
     createTestStore("Tienda Dos Hermanas", -5.932650, 37.290025);
 
     // Cuando: Buscamos en un cuadrado amplio que la contiene
-    List<StoresBoundingBoxDTO> result =
+    List<Store> result =
         storeRepository.findStoresInBoundingBox(
             -6.000000, 37.000000, // minLon, minLat (Suroeste)
             -5.800000, 37.500000, // maxLon, maxLat (Noreste)
@@ -78,20 +77,19 @@ public class StoreRepositoryTest {
     createTestStore("Tienda Mapeo", -5.932650, 37.290025);
 
     // Cuando: Recuperamos la tienda
-    List<StoresBoundingBoxDTO> result =
-        storeRepository.findStoresInBoundingBox(-6.0, 37.0, -5.8, 37.5, 500);
+    List<Store> result = storeRepository.findStoresInBoundingBox(-6.0, 37.0, -5.8, 37.5, 500);
 
     // Entonces: Verificamos que el mapeo nativo de PostgreSQL con comillas dobles funcionó
     assertFalse(result.isEmpty());
-    StoresBoundingBoxDTO dto = result.getFirst();
+    Store store = result.getFirst();
 
-    assertNotNull(dto.getId());
-    assertEquals("Tienda Mapeo", dto.getName());
-    assertEquals("ST-001", dto.getStoreID());
-    assertEquals("09:00-18:00", dto.getOpeningHours());
-    assertTrue(dto.getAcceptsShipping());
-    assertEquals(37.290025, dto.getLatitude());
-    assertEquals(-5.932650, dto.getLongitude());
+    assertNotNull(store.getId());
+    assertEquals("Tienda Mapeo", store.getName());
+    assertEquals("ST-001", store.getStoreID());
+    assertEquals("09:00-18:00", store.getOpeningHours());
+    assertTrue(store.getAcceptsShipping());
+    assertEquals(37.290025, store.getLocation().getY());
+    assertEquals(-5.932650, store.getLocation().getX());
   }
 
   @Test
@@ -100,7 +98,7 @@ public class StoreRepositoryTest {
     createTestStore("Tienda Límite", -5.90, 37.30);
 
     // Cuando: Buscamos donde uno de los bordes del cuadrado toca exactamente la tienda
-    List<StoresBoundingBoxDTO> result =
+    List<Store> result =
         storeRepository.findStoresInBoundingBox(
             -5.90, 37.00, // minLon coincide exactamente con la tienda
             -5.00, 38.00, 500);
@@ -117,8 +115,7 @@ public class StoreRepositoryTest {
     createTestStore("Tienda Fuera", 2.17, 41.38); // Esta está en Barcelona, fuera de la caja
 
     // Cuando
-    List<StoresBoundingBoxDTO> result =
-        storeRepository.findStoresInBoundingBox(-6.0, 37.0, -5.0, 38.0, 500);
+    List<Store> result = storeRepository.findStoresInBoundingBox(-6.0, 37.0, -5.0, 38.0, 500);
 
     // Entonces: Solo trae las 2 de la zona
     assertEquals(2, result.size());
@@ -126,7 +123,7 @@ public class StoreRepositoryTest {
 
   @Test
   void shouldReturnNoStores_whenNoStoresInDatabase() {
-    List<StoresBoundingBoxDTO> result = storeRepository.findStoresInBoundingBox(0, 0, 0, 0, 500);
+    List<Store> result = storeRepository.findStoresInBoundingBox(0, 0, 0, 0, 500);
     assertTrue(result.isEmpty());
   }
 
@@ -136,8 +133,7 @@ public class StoreRepositoryTest {
     createTestStore("Tienda Dos Hermanas", -5.932650, 37.290025);
 
     // Cuando: Buscamos en un cuadrado en Madrid (Long: -3.7, Lat: 40.4)
-    List<StoresBoundingBoxDTO> result =
-        storeRepository.findStoresInBoundingBox(-4.00, 40.00, -3.00, 41.00, 500);
+    List<Store> result = storeRepository.findStoresInBoundingBox(-4.00, 40.00, -3.00, 41.00, 500);
 
     // Entonces: No debe encontrar nada
     assertTrue(result.isEmpty());

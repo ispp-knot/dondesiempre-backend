@@ -1,6 +1,6 @@
 package ispp.project.dondesiempre.controllers.stores;
 
-import ispp.project.dondesiempre.models.stores.dto.StoresBoundingBoxDTO;
+import ispp.project.dondesiempre.models.stores.dto.StoreDTO;
 import ispp.project.dondesiempre.services.stores.StoreService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +20,7 @@ public class StoreController {
 
   @GetMapping("/stores")
   @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<List<StoresBoundingBoxDTO>> searchStoresInBoundingBox(
+  public ResponseEntity<List<StoreDTO>> searchStoresInBoundingBox(
       @RequestParam double minLon,
       @RequestParam double minLat,
       @RequestParam double maxLon,
