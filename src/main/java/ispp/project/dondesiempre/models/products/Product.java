@@ -28,7 +28,12 @@ public class Product extends BaseEntity {
   @Column
   @NotNull
   @Min(0)
-  Double price;
+  Integer priceInCents;
+
+  @Column
+  @NotNull
+  @Min(0)
+  Integer discountedPriceInCents;
 
   @Column(columnDefinition = "TEXT")
   @Size(max = 5000)
