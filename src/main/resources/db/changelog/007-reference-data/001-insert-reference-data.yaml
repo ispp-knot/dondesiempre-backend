@@ -1,0 +1,27 @@
+databaseChangeLog:
+  - changeSet:
+      id: 007-insert-reference-data
+      author: dev
+      changes:
+        - sql:
+            sql: |
+              INSERT INTO social_networks (id, version, name) VALUES
+                (1, 0, 'Instagram'), (2, 0, 'Facebook'), (3, 0, 'TikTok'),
+                (4, 0, 'X'), (5, 0, 'WhatsApp');
+
+              INSERT INTO product_types (id, version, type) VALUES
+                (0, 0, 'Camiseta'), (1, 0, 'Pantalón'), (2, 0, 'Vestido'),
+                (3, 0, 'Chaqueta'), (4, 0, 'Zapatos'), (5, 0, 'Accesorio');
+
+              INSERT INTO product_colors (id, version, color) VALUES
+                (0, 0, 'Negro'), (1, 0, 'Blanco'), (2, 0, 'Rojo'),
+                (3, 0, 'Azul'), (4, 0, 'Verde'), (5, 0, 'Rosa'),
+                (6, 0, 'Gris'), (7, 0, 'Beige');
+
+              INSERT INTO product_sizes (id, version, size) VALUES
+                (0, 0, 'XS'), (1, 0, 'S'), (2, 0, 'M'),
+                (3, 0, 'L'), (4, 0, 'XL'), (5, 0, 'XXL');
+
+              INSERT INTO outfit_tags (id, version, name) VALUES
+                (0, 0, 'Verano'), (1, 0, 'Invierno'), (2, 0, 'Casual'),
+                (3, 0, 'Formal'), (4, 0, 'Deportivo'), (5, 0, 'Elegante');
