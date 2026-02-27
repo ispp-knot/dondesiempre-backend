@@ -1,0 +1,14 @@
+spring:
+  config:
+    activate:
+      on-profile: seed
+  main:
+    web-application-type: none
+
+seed:
+  random-seed: 42
+  store-count: 5
+  products-per-store: 6
+  social-networks-per-store: 2
+  outfits-per-store: 2
+  client-count: 10
