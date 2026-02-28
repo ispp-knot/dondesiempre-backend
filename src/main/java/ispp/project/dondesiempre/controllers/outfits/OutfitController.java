@@ -36,11 +36,11 @@ public class OutfitController {
     return new ResponseEntity<>(outfitService.findByIdToDTO(id), HttpStatus.OK);
   }
 
-  @GetMapping("stores/{storeId}/outfits")
+  @GetMapping("stores/{id}/outfits")
   @ResponseStatus(HttpStatus.FOUND)
-  public ResponseEntity<List<OutfitDTO>> getByStoreId(@PathVariable("storeId") UUID storeId) {
+  public ResponseEntity<List<OutfitDTO>> getByStoreId(@PathVariable("id") UUID id) {
     return new ResponseEntity<>(
-        outfitService.findByStore(storeService.findById(storeId)), HttpStatus.OK);
+        outfitService.findByStore(storeService.findById(id)), HttpStatus.OK);
   }
 
   @PostMapping("outfits")

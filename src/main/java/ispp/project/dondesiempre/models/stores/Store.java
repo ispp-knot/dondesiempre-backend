@@ -32,6 +32,7 @@ public class Store extends BaseEntity {
 
   @Column @NotBlank @Email String email;
 
+  // NIF
   @Column
   @NotBlank
   @Size(max = 255)
