@@ -70,7 +70,7 @@ public class PromotionController {
     return ResponseEntity.noContent().build();
   }
 
-  @GetMapping("/stores/{storeId}")
+  @GetMapping("/api/v1/stores/{storeId}/promotions")
   public ResponseEntity<List<PromotionDTO>> getPromotionsByStoreId(@PathVariable UUID storeId) {
     return ResponseEntity.ok(
         promotionService.getPromotionsByStoreId(storeId).stream()
