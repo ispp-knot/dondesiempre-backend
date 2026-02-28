@@ -1,39 +1,54 @@
 package ispp.project.dondesiempre.controllers.outfits;
 
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import java.util.List;
+import java.util.UUID;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+
 import ispp.project.dondesiempre.models.outfits.dto.OutfitCreationDTO;
 import ispp.project.dondesiempre.models.outfits.dto.OutfitCreationProductDTO;
 import ispp.project.dondesiempre.models.outfits.dto.OutfitDTO;
 import ispp.project.dondesiempre.models.outfits.dto.OutfitProductDTO;
 import ispp.project.dondesiempre.models.outfits.dto.OutfitUpdateDTO;
 import ispp.project.dondesiempre.services.outfits.OutfitService;
+import ispp.project.dondesiempre.services.products.ProductService;
+import ispp.project.dondesiempre.services.storefronts.StorefrontService;
 import ispp.project.dondesiempre.services.stores.StoreService;
 import jakarta.validation.Valid;
-import java.util.List;
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1")
 @RequiredArgsConstructor
 public class OutfitController {
   private final OutfitService outfitService;
+  private final ProductService productService;
   private final StoreService storeService;
+  private final StorefrontService storefrontService;
 
   @GetMapping("outfits/{id}")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<OutfitDTO> getById(@PathVariable("id") UUID id) {
     return new ResponseEntity<>(outfitService.findByIdToDTO(id), HttpStatus.OK);
+  }
+
+  @GetMapping("storefronts/{storefrontId}/outfits")
+  @ResponseStatus(HttpStatus.FOUND)
+  public ResponseEntity<List<OutfitDTO>> getByStorefrontId(
+      @PathVariable("storefrontId") UUID storefrontId) {
+    return new ResponseEntity<>(
+        outfitService.findByStorefront(storefrontService.findById(storefrontId)), HttpStatus.OK);
   }
 
   @GetMapping("stores/{id}/outfits")
@@ -62,6 +77,13 @@ public class OutfitController {
     return new ResponseEntity<>(outfitService.addTag(id, tag), HttpStatus.CREATED);
   }
 
+  @DeleteMapping("outfits/{id}/tags")
+  @ResponseStatus(HttpStatus.OK)
+  public ResponseEntity<String> removeTag(@PathVariable("id") UUID id, @RequestBody String tag) {
+    outfitService.removeTag(id, tag);
+    return new ResponseEntity<>("Tag successfully removed from outfit.", HttpStatus.OK);
+  }
+
   @PostMapping("outfits/{id}/products")
   @ResponseStatus(HttpStatus.CREATED)
   public ResponseEntity<OutfitProductDTO> addProduct(
@@ -69,9 +91,26 @@ public class OutfitController {
     return new ResponseEntity<>(outfitService.addProduct(id, dto), HttpStatus.CREATED);
   }
 
+  @DeleteMapping("outfits/{id}/products/{productId}")
+  @ResponseStatus(HttpStatus.OK)
+  public ResponseEntity<String> removeProduct(
+      @PathVariable("id") UUID id, @PathVariable("productId") UUID productId) {
+    outfitService.removeProduct(id, productService.getProductById(productId));
+    return new ResponseEntity<>("Product successfully removed from outfit.", HttpStatus.CREATED);
+  }
+
+  @PatchMapping("outfits/{id}/products/sort")
+  @ResponseStatus(HttpStatus.OK)
+  public ResponseEntity<String> sortProducts(
+      @PathVariable("id") UUID id, @RequestBody List<OutfitCreationProductDTO> products) {
+    outfitService.sortProducts(id, products);
+    return new ResponseEntity<>("Products successfully sorted.", HttpStatus.OK);
+  }
+
   @DeleteMapping("outfits/{id}")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<String> delete(@PathVariable("id") UUID id) {
+    outfitService.delete(id);
     return new ResponseEntity<>("Outfit successfully deleted.", HttpStatus.OK);
   }
 }

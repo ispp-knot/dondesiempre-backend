@@ -12,6 +12,7 @@ import ispp.project.dondesiempre.models.outfits.dto.OutfitDTO;
 import ispp.project.dondesiempre.models.outfits.dto.OutfitProductDTO;
 import ispp.project.dondesiempre.models.outfits.dto.OutfitUpdateDTO;
 import ispp.project.dondesiempre.models.products.Product;
+import ispp.project.dondesiempre.models.storefronts.Storefront;
 import ispp.project.dondesiempre.models.stores.Store;
 import ispp.project.dondesiempre.repositories.outfits.OutfitProductRepository;
 import ispp.project.dondesiempre.repositories.outfits.OutfitRepository;
@@ -58,6 +59,18 @@ public class OutfitService {
   @Transactional(readOnly = true)
   public List<OutfitDTO> findByStore(Store store) {
     return outfitRepository.findByStoreId(store.getId()).stream()
+        .map(
+            outfit ->
+                new OutfitDTO(
+                    outfit,
+                    outfitRepository.findOutfitTagsById(outfit.getId()),
+                    outfitRepository.findOutfitOutfitProductsById(outfit.getId())))
+        .toList();
+  }
+
+  @Transactional(readOnly = true)
+  public List<OutfitDTO> findByStorefront(Storefront storefront) {
+    return outfitRepository.findByStorefrontId(storefront.getId()).stream()
         .map(
             outfit ->
                 new OutfitDTO(
@@ -129,18 +142,31 @@ public class OutfitService {
     OutfitTagRelation outfitTag;
 
     outfit = applicationContext.getBean(OutfitService.class).findById(outfitId);
+    tag = outfitTagService.findOrCreate(tagName);
 
-    try {
-      tag = outfitTagService.findByName(tagName);
-    } catch (ResourceNotFoundException _) {
-      tag = outfitTagService.create(tagName);
-    }
     outfitTag = new OutfitTagRelation();
     outfitTag.setOutfit(outfit);
     outfitTag.setTag(tag);
     outfitTagRelationRepository.save(outfitTag);
 
     return tag.getName();
+  }
+
+  @Transactional(rollbackFor = ResourceNotFoundException.class)
+  public void removeTag(UUID outfitId, String tagName) throws ResourceNotFoundException {
+    Outfit outfit;
+    OutfitTag tag;
+    OutfitTagRelation relation;
+
+    outfit = applicationContext.getBean(OutfitService.class).findById(outfitId);
+    tag = outfitTagService.findByName(tagName);
+
+    relation =
+        outfitRepository
+            .findTagRelation(outfit.getId(), tag.getId())
+            .orElseThrow(
+                () -> new ResourceNotFoundException("Requested tag does not belong to outfit."));
+    outfitTagRelationRepository.delete(relation);
   }
 
   @Transactional(rollbackFor = {ResourceNotFoundException.class, InvalidRequestException.class})
@@ -176,8 +202,50 @@ public class OutfitService {
     return new OutfitProductDTO(outfitProduct);
   }
 
+  @Transactional(rollbackFor = ResourceNotFoundException.class)
+  public void removeProduct(UUID outfitId, Product product) throws ResourceNotFoundException {
+    Outfit outfit;
+    OutfitProduct relation;
+
+    outfit = applicationContext.getBean(OutfitService.class).findById(outfitId);
+    relation =
+        outfitRepository
+            .findProductRelation(outfit.getId(), product.getId())
+            .orElseThrow(
+                () ->
+                    new ResourceNotFoundException("Requested product does not belong to outfit."));
+    outfitProductRepository.delete(relation);
+  }
+
+  @Transactional(rollbackFor = ResourceNotFoundException.class)
+  public void sortProducts(UUID outfitId, List<OutfitCreationProductDTO> products)
+      throws ResourceNotFoundException {
+    List<OutfitProduct> relations;
+
+    relations = outfitRepository.findOutfitOutfitProductsById(outfitId);
+
+    for (OutfitProduct relation : relations) {
+      OutfitCreationProductDTO product;
+
+      product =
+          products.stream()
+              .filter(p -> relation.getProduct().getId().equals(p.getId()))
+              .findFirst()
+              .orElseThrow(
+                  () ->
+                      new ResourceNotFoundException(
+                          "Could not find association entity between requested outift and product."));
+      relation.setIndex(product.getIndex());
+    }
+    outfitProductRepository.saveAll(relations);
+  }
+
   @Transactional
   public void delete(UUID id) {
+    outfitRepository.findOutfitOutfitProductsById(id).stream()
+        .forEach(p -> outfitProductRepository.deleteById(p.getId()));
+    outfitRepository.findOutfitOutfitTagsById(id).stream()
+        .forEach(t -> outfitTagRelationRepository.deleteById(t.getId()));
     outfitRepository.deleteById(id);
   }
 }
