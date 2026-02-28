@@ -10,6 +10,7 @@ import ispp.project.dondesiempre.services.products.ProductService;
 import ispp.project.dondesiempre.services.storefronts.StorefrontService;
 import jakarta.validation.Valid;
 import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,7 +37,8 @@ public class ProductController {
   }
 
   @GetMapping("products/{id}")
-  public ResponseEntity<ProductDTO> getProductById(@PathVariable Integer id) {
+  public ResponseEntity<ProductDTO> getProductById(@PathVariable UUID id) {
+
     Product product = productService.getProductById(id);
     ProductDTO dto = ProductDTO.fromProduct(product);
     return new ResponseEntity<>(dto, HttpStatus.OK);
@@ -57,7 +59,7 @@ public class ProductController {
 
   @PutMapping("products/{id}/discount")
   public ResponseEntity<Product> updateDiscount(
-      @PathVariable Integer id, @RequestBody DiscountModificationDTO discount) {
+      @PathVariable UUID id, @RequestBody DiscountModificationDTO discount) {
     Product updatedProduct =
         productService.updateProductDiscount(id, discount.getDiscountedPriceInCents());
     return new ResponseEntity<>(updatedProduct, HttpStatus.ACCEPTED);

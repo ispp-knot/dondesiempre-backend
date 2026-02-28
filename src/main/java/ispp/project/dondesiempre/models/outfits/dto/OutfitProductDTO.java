@@ -2,13 +2,14 @@ package ispp.project.dondesiempre.models.outfits.dto;
 
 import ispp.project.dondesiempre.models.outfits.OutfitProduct;
 import ispp.project.dondesiempre.models.products.ProductType;
+import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
 public class OutfitProductDTO {
-  private Integer id;
+  private UUID id;
 
   private String name;
   private String description;
@@ -19,7 +20,7 @@ public class OutfitProductDTO {
   private ProductType type;
 
   private Integer index;
-  private Integer storeId;
+  private UUID storeId;
 
   public OutfitProductDTO(OutfitProduct product) {
     this.id = product.getProduct().getId();
