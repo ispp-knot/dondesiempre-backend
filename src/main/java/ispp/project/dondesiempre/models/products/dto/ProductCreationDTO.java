@@ -16,5 +16,4 @@ public class ProductCreationDTO {
 
   private UUID typeId;
   private UUID storeId;
-
 }

@@ -66,7 +66,7 @@ public class ProductController {
   }
 
   @GetMapping("/storefronts/{storefrontId}/products")
-  public ResponseEntity<List<ProductDTO>> getByStorefrontId(@PathVariable Integer storefrontId) {
+  public ResponseEntity<List<ProductDTO>> getByStorefrontId(@PathVariable UUID storefrontId) {
     Storefront storefront;
 
     storefront = storefrontService.findById(storefrontId);

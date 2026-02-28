@@ -27,11 +27,11 @@ public interface OutfitRepository extends JpaRepository<Outfit, UUID> {
   public List<String> findOutfitTagsById(UUID id);
 
   @Query("select o from Outfit o where o.storefront.id = :storefrontId")
-  public List<Outfit> findByStorefrontId(Integer storefrontId);
+  public List<Outfit> findByStorefrontId(UUID storefrontId);
 
   @Query("select ot from OutfitTagRelation ot where ot.outfit.id = :id and ot.tag.id = :tagId")
-  public Optional<OutfitTagRelation> findTagRelation(Integer id, Integer tagId);
+  public Optional<OutfitTagRelation> findTagRelation(UUID id, UUID tagId);
 
   @Query("select op from OutfitProduct op where op.outfit.id = :id and op.product.id = :productId")
-  public Optional<OutfitProduct> findProductRelation(Integer id, Integer productId);
+  public Optional<OutfitProduct> findProductRelation(UUID id, UUID productId);
 }
