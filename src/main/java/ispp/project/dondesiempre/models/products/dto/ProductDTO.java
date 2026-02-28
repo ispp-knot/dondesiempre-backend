@@ -8,19 +8,23 @@ import lombok.Setter;
 @Setter
 public class ProductDTO {
 
+  private Integer id;
   private String name;
   private Integer priceInCents;
   private Integer discountedPriceInCents;
   private String description;
+  private String image;
   private Integer typeId;
   private Integer storeId;
 
   public static ProductDTO fromProduct(Product product) {
     ProductDTO dto = new ProductDTO();
+    dto.setId(product.getId());
     dto.setName(product.getName());
     dto.setPriceInCents(product.getPriceInCents());
     dto.setDiscountedPriceInCents(product.getDiscountedPriceInCents());
     dto.setDescription(product.getDescription());
+    dto.setImage(product.getImage());
     dto.setTypeId(product.getType().getId());
     dto.setStoreId(product.getStore().getId());
     return dto;

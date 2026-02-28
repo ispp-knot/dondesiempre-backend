@@ -11,6 +11,7 @@ public class ProductCreationDTO {
   private Integer priceInCents;
   private Integer discountedPriceInCents;
   private String description;
+  private String image;
   private Integer typeId;
   private Integer storeId;
 }

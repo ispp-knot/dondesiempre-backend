@@ -29,6 +29,7 @@ public class ProductService {
     product.setPriceInCents(dto.getPriceInCents());
     product.setDiscountedPriceInCents(dto.getDiscountedPriceInCents());
     product.setDescription(dto.getDescription());
+    product.setImage(dto.getImage());
     product.setType(productTypeService.getProductTypeById(dto.getTypeId()));
     product.setStore(storeRepository.getReferenceById(dto.getStoreId()));
     return productRepository.save(product);
