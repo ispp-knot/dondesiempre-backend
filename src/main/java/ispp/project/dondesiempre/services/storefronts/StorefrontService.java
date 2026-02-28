@@ -3,6 +3,7 @@ package ispp.project.dondesiempre.services.storefronts;
 import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.models.storefronts.Storefront;
 import ispp.project.dondesiempre.repositories.storefronts.StorefrontRepository;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,7 +14,7 @@ public class StorefrontService {
   private final StorefrontRepository storefrontRepository;
 
   @Transactional(readOnly = true, rollbackFor = ResourceNotFoundException.class)
-  public Storefront findById(Integer id) throws ResourceNotFoundException {
+  public Storefront findById(UUID id) throws ResourceNotFoundException {
     return storefrontRepository
         .findById(id)
         .orElseThrow(

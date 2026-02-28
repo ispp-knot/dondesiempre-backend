@@ -8,4 +8,4 @@ databaseChangeLog:
             columns:
               - column:
                   name: storefront_id
-                  type: INTEGER
+                  type: UUID

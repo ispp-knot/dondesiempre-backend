@@ -11,6 +11,7 @@ import ispp.project.dondesiempre.services.storefronts.StorefrontService;
 import ispp.project.dondesiempre.services.stores.StoreService;
 import jakarta.validation.Valid;
 import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,7 +37,7 @@ public class OutfitController {
 
   @GetMapping("outfits/{id}")
   @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<OutfitDTO> getById(@PathVariable("id") Integer id) {
+  public ResponseEntity<OutfitDTO> getById(@PathVariable("id") UUID id) {
     return new ResponseEntity<>(outfitService.findByIdToDTO(id), HttpStatus.OK);
   }
 
@@ -50,7 +51,7 @@ public class OutfitController {
 
   @GetMapping("stores/{storeId}/outfits")
   @ResponseStatus(HttpStatus.FOUND)
-  public ResponseEntity<List<OutfitDTO>> getByStoreId(@PathVariable("storeId") Integer storeId) {
+  public ResponseEntity<List<OutfitDTO>> getByStoreId(@PathVariable("storeId") UUID storeId) {
     return new ResponseEntity<>(
         outfitService.findByStore(storeService.findById(storeId)), HttpStatus.OK);
   }
@@ -64,13 +65,13 @@ public class OutfitController {
   @PutMapping("outfits/{id}")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<OutfitDTO> update(
-      @PathVariable("id") Integer id, @RequestBody @Valid OutfitUpdateDTO dto) {
+      @PathVariable("id") UUID id, @RequestBody @Valid OutfitUpdateDTO dto) {
     return new ResponseEntity<>(outfitService.update(id, dto), HttpStatus.OK);
   }
 
   @PostMapping("outfits/{id}/tags")
   @ResponseStatus(HttpStatus.CREATED)
-  public ResponseEntity<String> addTag(@PathVariable("id") Integer id, @RequestBody String tag) {
+  public ResponseEntity<String> addTag(@PathVariable("id") UUID id, @RequestBody String tag) {
     return new ResponseEntity<>(outfitService.addTag(id, tag), HttpStatus.CREATED);
   }
 
@@ -84,7 +85,7 @@ public class OutfitController {
   @PostMapping("outfits/{id}/products")
   @ResponseStatus(HttpStatus.CREATED)
   public ResponseEntity<OutfitProductDTO> addProduct(
-      @PathVariable("id") Integer id, @RequestBody OutfitCreationProductDTO dto) {
+      @PathVariable("id") UUID id, @RequestBody OutfitCreationProductDTO dto) {
     return new ResponseEntity<>(outfitService.addProduct(id, dto), HttpStatus.CREATED);
   }
 
@@ -106,7 +107,7 @@ public class OutfitController {
 
   @DeleteMapping("outfits/{id}")
   @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<String> delete(@PathVariable("id") Integer id) {
+  public ResponseEntity<String> delete(@PathVariable("id") UUID id) {
     outfitService.delete(id);
     return new ResponseEntity<>("Outfit successfully deleted.", HttpStatus.OK);
   }

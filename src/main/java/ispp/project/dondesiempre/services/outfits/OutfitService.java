@@ -21,6 +21,7 @@ import ispp.project.dondesiempre.services.products.ProductService;
 import ispp.project.dondesiempre.services.storefronts.StorefrontService;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -41,14 +42,14 @@ public class OutfitService {
   private final ApplicationContext applicationContext;
 
   @Transactional(readOnly = true, rollbackFor = ResourceNotFoundException.class)
-  public Outfit findById(Integer id) throws ResourceNotFoundException {
+  public Outfit findById(UUID id) throws ResourceNotFoundException {
     return outfitRepository
         .findById(id)
         .orElseThrow(() -> new ResourceNotFoundException("Outfit with ID " + id + "not found."));
   }
 
   @Transactional(readOnly = true, rollbackFor = ResourceNotFoundException.class)
-  public OutfitDTO findByIdToDTO(Integer id) throws ResourceNotFoundException {
+  public OutfitDTO findByIdToDTO(UUID id) throws ResourceNotFoundException {
     return new OutfitDTO(
         applicationContext.getBean(OutfitService.class).findById(id),
         outfitRepository.findOutfitTagsById(id),
@@ -82,7 +83,7 @@ public class OutfitService {
   @Transactional(rollbackFor = InvalidRequestException.class)
   public OutfitDTO create(OutfitCreationDTO dto) throws InvalidRequestException {
     Outfit outfit;
-    Integer outfitId;
+    UUID outfitId;
 
     outfit = new Outfit();
 
@@ -117,7 +118,7 @@ public class OutfitService {
   }
 
   @Transactional(rollbackFor = ResourceNotFoundException.class)
-  public OutfitDTO update(Integer id, OutfitUpdateDTO dto) throws ResourceNotFoundException {
+  public OutfitDTO update(UUID id, OutfitUpdateDTO dto) throws ResourceNotFoundException {
     Outfit outfitToUpdate;
 
     outfitToUpdate = applicationContext.getBean(OutfitService.class).findById(id);
@@ -135,7 +136,7 @@ public class OutfitService {
   }
 
   @Transactional(rollbackFor = ResourceNotFoundException.class)
-  public String addTag(Integer outfitId, String tagName) throws ResourceNotFoundException {
+  public String addTag(UUID outfitId, String tagName) throws ResourceNotFoundException {
     Outfit outfit;
     OutfitTag tag;
     OutfitTagRelation outfitTag;
@@ -169,7 +170,7 @@ public class OutfitService {
   }
 
   @Transactional(rollbackFor = {ResourceNotFoundException.class, InvalidRequestException.class})
-  public OutfitProductDTO addProduct(Integer outfitId, OutfitCreationProductDTO dto)
+  public OutfitProductDTO addProduct(UUID outfitId, OutfitCreationProductDTO dto)
       throws ResourceNotFoundException, InvalidRequestException {
     Outfit outfit;
     Product product;
@@ -183,8 +184,7 @@ public class OutfitService {
     productsOfOutfit = outfitRepository.findOutfitProductsById(outfitId);
     productsOfOutfit.add(product);
 
-    if (productsOfOutfit.stream().mapToInt(prod -> prod.getStore().getId()).distinct().count()
-        > 1L) {
+    if (productsOfOutfit.stream().map(prod -> prod.getStore().getId()).distinct().count() > 1L) {
       throw new InvalidRequestException("All products in an outfit must belong to the same store.");
     }
     productIndicesOfOutfit = outfitRepository.findOutfitProductIndicesById(outfitId);
@@ -241,7 +241,7 @@ public class OutfitService {
   }
 
   @Transactional
-  public void delete(Integer id) {
+  public void delete(UUID id) {
     outfitRepository.deleteById(id);
   }
 }

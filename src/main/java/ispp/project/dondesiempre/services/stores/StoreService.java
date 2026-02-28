@@ -6,6 +6,7 @@ import ispp.project.dondesiempre.models.stores.Store;
 import ispp.project.dondesiempre.models.stores.dto.StoreDTO;
 import ispp.project.dondesiempre.repositories.stores.StoreRepository;
 import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,7 +17,7 @@ public class StoreService {
   private final StoreRepository storeRepository;
 
   @Transactional(readOnly = true, rollbackFor = ResourceNotFoundException.class)
-  public Store findById(Integer id) throws ResourceNotFoundException {
+  public Store findById(UUID id) throws ResourceNotFoundException {
     return storeRepository
         .findById(id)
         .orElseThrow(() -> new ResourceNotFoundException("Store with ID " + id + " not found."));
