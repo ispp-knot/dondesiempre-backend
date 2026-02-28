@@ -1,7 +1,0 @@
-databaseChangeLog:
-  - include:
-      file: db/changelog/010-users/001-create-users-table.yaml
-  - include:
-      file: db/changelog/010-users/002-add-user-id-to-stores.yaml
-  - include:
-      file: db/changelog/010-users/003-add-user-id-to-clients.yaml
