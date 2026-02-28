@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import ispp.project.dondesiempre.exceptions.InvalidRequestException;
 import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
+import ispp.project.dondesiempre.models.User;
 import ispp.project.dondesiempre.models.products.Product;
 import ispp.project.dondesiempre.models.products.ProductType;
 import ispp.project.dondesiempre.models.products.dto.DiscountModificationDTO;
@@ -11,9 +12,12 @@ import ispp.project.dondesiempre.models.products.dto.ProductCreationDTO;
 import ispp.project.dondesiempre.models.products.dto.ProductDTO;
 import ispp.project.dondesiempre.models.storefronts.Storefront;
 import ispp.project.dondesiempre.models.stores.Store;
+import ispp.project.dondesiempre.repositories.UserRepository;
 import ispp.project.dondesiempre.repositories.products.ProductTypeRepository;
 import ispp.project.dondesiempre.repositories.stores.StoreRepository;
+import ispp.project.dondesiempre.services.UserService;
 import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
@@ -26,14 +30,33 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
 @AutoConfigureTestDatabase(replace = Replace.NONE)
+@Transactional
 public class ProductControllerTest {
 
   @Autowired private ProductController productController;
   @Autowired private ProductTypeRepository productTypeRepository;
   @Autowired private StoreRepository storeRepository;
+  @Autowired private UserRepository userRepository;
+  @MockitoBean private UserService userService;
+
+  private User testUser;
+
+  @BeforeEach
+  void setUp() {
+    User user = new User();
+    user.setEmail("test-owner@test.com");
+    user.setPassword("password");
+    testUser = userRepository.save(user);
+  }
+
+  private User getTestUser() {
+    return testUser;
+  }
 
   @Test
   public void shouldCreateNewProduct() {
@@ -56,6 +79,7 @@ public class ProductControllerTest {
     store.setOpeningHours("9am - 5pm");
     store.setAcceptsShipping(true);
     store.setStorefront(storefront);
+    store.setUser(getTestUser());
 
     Store saved_store = storeRepository.save(store);
 
@@ -98,6 +122,7 @@ public class ProductControllerTest {
     store.setOpeningHours("9am - 5pm");
     store.setAcceptsShipping(true);
     store.setStorefront(storefront);
+    store.setUser(getTestUser());
 
     Store saved_store = storeRepository.save(store);
 
@@ -140,6 +165,7 @@ public class ProductControllerTest {
     store.setOpeningHours("9am - 5pm");
     store.setAcceptsShipping(true);
     store.setStorefront(storefront);
+    store.setUser(getTestUser());
 
     Store saved_store = storeRepository.save(store);
 
@@ -196,6 +222,7 @@ public class ProductControllerTest {
     store.setOpeningHours("9am - 5pm");
     store.setAcceptsShipping(true);
     store.setStorefront(storefront);
+    store.setUser(getTestUser());
 
     Store saved_store = storeRepository.save(store);
 
@@ -249,6 +276,7 @@ public class ProductControllerTest {
     store.setOpeningHours("9am - 5pm");
     store.setAcceptsShipping(true);
     store.setStorefront(storefront);
+    store.setUser(getTestUser());
 
     Store saved_store = storeRepository.save(store);
 
@@ -293,6 +321,7 @@ public class ProductControllerTest {
     store.setOpeningHours("9am - 5pm");
     store.setAcceptsShipping(true);
     store.setStorefront(storefront);
+    store.setUser(getTestUser());
 
     Store saved_store = storeRepository.save(store);
 
@@ -339,6 +368,7 @@ public class ProductControllerTest {
     store.setOpeningHours("9am - 5pm");
     store.setAcceptsShipping(true);
     store.setStorefront(storefront);
+    store.setUser(getTestUser());
 
     Store saved_store = storeRepository.save(store);
 

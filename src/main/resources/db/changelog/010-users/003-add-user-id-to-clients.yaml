@@ -1,0 +1,16 @@
+databaseChangeLog:
+  - changeSet:
+      id: 008-003-add-user-id-to-clients
+      author: dev
+      changes:
+        - addColumn:
+            tableName: clients
+            columns:
+              - column:
+                  name: user_id
+                  type: INTEGER
+                  constraints:
+                    nullable: false
+                    unique: true
+                    foreignKeyName: fk_clients_user
+                    references: users(id)

@@ -1,6 +1,7 @@
 package ispp.project.dondesiempre.models.stores;
 
 import ispp.project.dondesiempre.models.BaseEntity;
+import ispp.project.dondesiempre.models.User;
 import ispp.project.dondesiempre.models.storefronts.Storefront;
 import ispp.project.dondesiempre.validators.Phone;
 import jakarta.persistence.CascadeType;
@@ -63,4 +64,9 @@ public class Store extends BaseEntity {
   @OneToOne(cascade = CascadeType.ALL)
   @JoinColumn(name = "storefront_id", referencedColumnName = "id", nullable = false)
   private Storefront storefront;
+
+  @NotNull
+  @OneToOne(optional = false)
+  @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
+  private User user;
 }

@@ -12,10 +12,12 @@ import ispp.project.dondesiempre.models.outfits.dto.OutfitDTO;
 import ispp.project.dondesiempre.models.outfits.dto.OutfitProductDTO;
 import ispp.project.dondesiempre.models.outfits.dto.OutfitUpdateDTO;
 import ispp.project.dondesiempre.models.products.Product;
+import ispp.project.dondesiempre.models.storefronts.Storefront;
 import ispp.project.dondesiempre.models.stores.Store;
 import ispp.project.dondesiempre.repositories.outfits.OutfitProductRepository;
 import ispp.project.dondesiempre.repositories.outfits.OutfitRepository;
 import ispp.project.dondesiempre.repositories.outfits.OutfitTagRelationRepository;
+import ispp.project.dondesiempre.services.UserService;
 import ispp.project.dondesiempre.services.products.ProductService;
 import ispp.project.dondesiempre.services.storefronts.StorefrontService;
 import jakarta.persistence.EntityNotFoundException;
@@ -34,6 +36,7 @@ public class OutfitService {
 
   private final ProductService productService;
   private final StorefrontService storefrontService;
+  private final UserService userService;
 
   private final OutfitTagService outfitTagService;
 
@@ -77,7 +80,9 @@ public class OutfitService {
     outfit.setDescription(dto.getDescription());
     outfit.setIndex(dto.getIndex());
     outfit.setImage(dto.getImage());
-    outfit.setStorefront(storefrontService.findById(dto.getStorefrontId()));
+    Storefront storefront = storefrontService.findById(dto.getStorefrontId());
+    userService.assertUserOwnsStore(storefront.getStore());
+    outfit.setStorefront(storefront);
 
     if (dto.getProducts() == null || (dto.getProducts() != null && dto.getProducts().size() <= 0)) {
       throw new InvalidRequestException("An outfit cannot be created without products.");
@@ -108,6 +113,7 @@ public class OutfitService {
     Outfit outfitToUpdate;
 
     outfitToUpdate = applicationContext.getBean(OutfitService.class).findById(id);
+    userService.assertUserOwnsStore(outfitToUpdate.getStorefront().getStore());
 
     outfitToUpdate.setName(dto.getName());
     outfitToUpdate.setDescription(dto.getDescription());
@@ -178,6 +184,8 @@ public class OutfitService {
 
   @Transactional
   public void delete(Integer id) {
+    Outfit outfit = applicationContext.getBean(OutfitService.class).findById(id);
+    userService.assertUserOwnsStore(outfit.getStorefront().getStore());
     outfitRepository.deleteById(id);
   }
 }

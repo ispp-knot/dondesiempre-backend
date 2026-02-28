@@ -4,8 +4,10 @@ import ispp.project.dondesiempre.exceptions.InvalidRequestException;
 import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.models.products.Product;
 import ispp.project.dondesiempre.models.products.dto.ProductCreationDTO;
+import ispp.project.dondesiempre.models.stores.Store;
 import ispp.project.dondesiempre.repositories.products.ProductRepository;
 import ispp.project.dondesiempre.repositories.stores.StoreRepository;
+import ispp.project.dondesiempre.services.UserService;
 import jakarta.transaction.Transactional;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -18,19 +20,28 @@ public class ProductService {
   private final ProductRepository productRepository;
   private final StoreRepository storeRepository;
   private final ProductTypeService productTypeService;
+  private final UserService userService;
 
   @Transactional
   public Product saveProduct(ProductCreationDTO dto) {
     if (dto.getDiscountedPriceInCents() > dto.getPriceInCents()) {
       throw new InvalidRequestException("Discounted price cannot be greater than original price");
     }
+    Store store =
+        storeRepository
+            .findById(dto.getStoreId())
+            .orElseThrow(
+                () ->
+                    new ResourceNotFoundException(
+                        "Store with ID " + dto.getStoreId() + " not found."));
+    userService.assertUserOwnsStore(store);
     Product product = new Product();
     product.setName(dto.getName());
     product.setPriceInCents(dto.getPriceInCents());
     product.setDiscountedPriceInCents(dto.getDiscountedPriceInCents());
     product.setDescription(dto.getDescription());
     product.setType(productTypeService.getProductTypeById(dto.getTypeId()));
-    product.setStore(storeRepository.getReferenceById(dto.getStoreId()));
+    product.setStore(store);
     return productRepository.save(product);
   }
 
@@ -52,12 +63,12 @@ public class ProductService {
 
   @Transactional
   public Product updateProductDiscount(Integer id, Integer discountedPriceInCents) {
-    if (discountedPriceInCents > getProductById(id).getPriceInCents()) {
+    Product product = getProductById(id);
+    userService.assertUserOwnsStore(product.getStore());
+    if (discountedPriceInCents > product.getPriceInCents()) {
       throw new InvalidRequestException("Discounted price cannot be greater than original price");
     }
-    Product product = getProductById(id);
     product.setDiscountedPriceInCents(discountedPriceInCents);
-    Product updatedProduct = productRepository.save(product);
-    return updatedProduct;
+    return productRepository.save(product);
   }
 }
