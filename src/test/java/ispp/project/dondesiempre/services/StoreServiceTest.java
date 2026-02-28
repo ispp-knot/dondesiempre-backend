@@ -16,6 +16,7 @@ import ispp.project.dondesiempre.repositories.stores.StoreRepository;
 import ispp.project.dondesiempre.services.stores.StoreService;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,31 +32,34 @@ public class StoreServiceTest {
   @InjectMocks private StoreService storeService;
 
   private Store store;
+  private UUID storeId;
 
   @BeforeEach
   void setUp() {
     store = new Store();
-    store.setId(1);
+    storeId = UUID.randomUUID();
+    store.setId(storeId);
     store.setName("Tienda de Prueba");
   }
 
   @Test
   void shouldReturnStore_whenFindByIdExists() {
-    when(storeRepository.findById(1)).thenReturn(Optional.of(store));
+    when(storeRepository.findById(storeId)).thenReturn(Optional.of(store));
 
-    Store result = storeService.findById(1);
+    Store result = storeService.findById(storeId);
 
     assertEquals("Tienda de Prueba", result.getName());
-    verify(storeRepository, times(1)).findById(1);
+    verify(storeRepository, times(1)).findById(storeId);
   }
 
   @Test
   void shouldThrowResourceNotFoundException_whenFindByIdDoesNotExist() {
-    when(storeRepository.findById(99)).thenReturn(Optional.empty());
+    UUID nonExistentId = UUID.randomUUID();
+    when(storeRepository.findById(nonExistentId)).thenReturn(Optional.empty());
 
-    assertThrows(ResourceNotFoundException.class, () -> storeService.findById(99));
+    assertThrows(ResourceNotFoundException.class, () -> storeService.findById(nonExistentId));
 
-    verify(storeRepository, times(1)).findById(99);
+    verify(storeRepository, times(1)).findById(nonExistentId);
   }
 
   @Test

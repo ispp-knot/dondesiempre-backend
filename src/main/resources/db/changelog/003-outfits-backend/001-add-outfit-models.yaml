@@ -11,7 +11,7 @@ databaseChangeLog:
                     primaryKey: true
                     primaryKeyName: outfit_outfit_tagsPK
                   name: id
-                  type: INTEGER
+                  type: UUID
               - column:
                   name: version
                   type: INTEGER
@@ -19,12 +19,12 @@ databaseChangeLog:
                   constraints:
                     nullable: false
                   name: outfit_id
-                  type: INTEGER
+                  type: UUID
               - column:
                   constraints:
                     nullable: false
                   name: tag_id
-                  type: INTEGER
+                  type: UUID
             tableName: outfit_outfit_tags
   - changeSet:
       id: 1771762896941-26
@@ -38,7 +38,7 @@ databaseChangeLog:
                     primaryKey: true
                     primaryKeyName: outfit_productsPK
                   name: id
-                  type: INTEGER
+                  type: UUID
               - column:
                   name: version
                   type: INTEGER
@@ -51,12 +51,12 @@ databaseChangeLog:
                   constraints:
                     nullable: false
                   name: outfit_id
-                  type: INTEGER
+                  type: UUID
               - column:
                   constraints:
                     nullable: false
                   name: product_id
-                  type: INTEGER
+                  type: UUID
             tableName: outfit_products
   - changeSet:
       id: 1771762896941-27
@@ -70,7 +70,7 @@ databaseChangeLog:
                     primaryKey: true
                     primaryKeyName: outfit_tagsPK
                   name: id
-                  type: INTEGER
+                  type: UUID
               - column:
                   name: version
                   type: INTEGER
@@ -92,7 +92,7 @@ databaseChangeLog:
                     primaryKey: true
                     primaryKeyName: outfitsPK
                   name: id
-                  type: INTEGER
+                  type: UUID
               - column:
                   name: version
                   type: INTEGER

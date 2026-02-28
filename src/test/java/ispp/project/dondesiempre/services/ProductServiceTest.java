@@ -11,6 +11,7 @@ import ispp.project.dondesiempre.models.stores.Store;
 import ispp.project.dondesiempre.repositories.products.ProductTypeRepository;
 import ispp.project.dondesiempre.repositories.stores.StoreRepository;
 import ispp.project.dondesiempre.services.products.ProductService;
+import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
@@ -242,8 +243,8 @@ public class ProductServiceTest {
   @Test
   public void shouldThrowException_WhenGettingNonExistentProduct() {
     try {
-      productService.getProductById(9999); // Assuming this ID does not exist
-      assert false; // Should not reach here
+      productService.getProductById(UUID.randomUUID());
+      assert false;
     } catch (RuntimeException e) {
       assert e.getMessage().equals("Product not found");
     }
