@@ -242,6 +242,10 @@ public class OutfitService {
 
   @Transactional
   public void delete(UUID id) {
+    outfitRepository.findOutfitOutfitProductsById(id).stream()
+        .forEach(p -> outfitProductRepository.deleteById(p.getId()));
+    outfitRepository.findOutfitOutfitTagsById(id).stream()
+        .forEach(t -> outfitTagRelationRepository.deleteById(t.getId()));
     outfitRepository.deleteById(id);
   }
 }

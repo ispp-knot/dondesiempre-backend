@@ -24,7 +24,11 @@ public interface OutfitRepository extends JpaRepository<Outfit, UUID> {
   @Query("select op from OutfitProduct op where op.outfit.id = :id order by op.index asc")
   public List<OutfitProduct> findOutfitOutfitProductsById(UUID id);
 
+  @Query("select ot.tag.name from OutfitTagRelation ot where ot.outfit.id = :id")
   public List<String> findOutfitTagsById(UUID id);
+
+  @Query("select ot from OutfitTagRelation ot where ot.outfit.id = :id")
+  public List<OutfitTagRelation> findOutfitOutfitTagsById(UUID id);
 
   @Query("select o from Outfit o where o.storefront.id = :storefrontId")
   public List<Outfit> findByStorefrontId(UUID storefrontId);
