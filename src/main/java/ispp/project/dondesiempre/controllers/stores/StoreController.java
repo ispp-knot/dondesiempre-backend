@@ -1,6 +1,5 @@
 package ispp.project.dondesiempre.controllers.stores;
 
-import ispp.project.dondesiempre.models.stores.StoreFollower;
 import ispp.project.dondesiempre.models.stores.dto.StoreDTO;
 import ispp.project.dondesiempre.services.stores.StoreService;
 import java.util.List;
