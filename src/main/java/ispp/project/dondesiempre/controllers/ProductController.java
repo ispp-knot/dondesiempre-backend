@@ -67,9 +67,9 @@ public class ProductController {
 
   @GetMapping("/storefronts/{storefrontId}/products")
   public ResponseEntity<List<ProductDTO>> getByStorefrontId(@PathVariable UUID storefrontId) {
-    Storefront storefront;
-
-    storefront = storefrontService.findById(storefrontId);
-    return new ResponseEntity<>(productService.findByStorefront(storefront), HttpStatus.OK);
+    Storefront storefront = storefrontService.findById(storefrontId);
+    List<ProductDTO> dtos =
+        productService.findByStorefront(storefront).stream().map(ProductDTO::fromProduct).toList();
+    return new ResponseEntity<>(dtos, HttpStatus.OK);
   }
 }

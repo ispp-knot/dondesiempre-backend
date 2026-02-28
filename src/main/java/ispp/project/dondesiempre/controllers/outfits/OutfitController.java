@@ -1,5 +1,6 @@
 package ispp.project.dondesiempre.controllers.outfits;
 
+import ispp.project.dondesiempre.models.outfits.Outfit;
 import ispp.project.dondesiempre.models.outfits.dto.OutfitCreationDTO;
 import ispp.project.dondesiempre.models.outfits.dto.OutfitCreationProductDTO;
 import ispp.project.dondesiempre.models.outfits.dto.OutfitDTO;
@@ -38,35 +39,69 @@ public class OutfitController {
   @GetMapping("outfits/{id}")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<OutfitDTO> getById(@PathVariable("id") UUID id) {
-    return new ResponseEntity<>(outfitService.findByIdToDTO(id), HttpStatus.OK);
+    Outfit outfit = outfitService.findById(id);
+    OutfitDTO dto =
+        OutfitDTO.from(
+            outfit,
+            outfitService.findTagsByOutfitId(id),
+            outfitService.findOutfitProductsByOutfitId(id));
+    return new ResponseEntity<>(dto, HttpStatus.OK);
   }
 
   @GetMapping("storefronts/{storefrontId}/outfits")
   @ResponseStatus(HttpStatus.FOUND)
   public ResponseEntity<List<OutfitDTO>> getByStorefrontId(
       @PathVariable("storefrontId") UUID storefrontId) {
-    return new ResponseEntity<>(
-        outfitService.findByStorefront(storefrontService.findById(storefrontId)), HttpStatus.OK);
+    List<OutfitDTO> dtos =
+        outfitService.findByStorefront(storefrontService.findById(storefrontId)).stream()
+            .map(
+                outfit ->
+                    OutfitDTO.from(
+                        outfit,
+                        outfitService.findTagsByOutfitId(outfit.getId()),
+                        outfitService.findOutfitProductsByOutfitId(outfit.getId())))
+            .toList();
+    return new ResponseEntity<>(dtos, HttpStatus.OK);
   }
 
   @GetMapping("stores/{storeId}/outfits")
   @ResponseStatus(HttpStatus.FOUND)
   public ResponseEntity<List<OutfitDTO>> getByStoreId(@PathVariable("storeId") UUID storeId) {
-    return new ResponseEntity<>(
-        outfitService.findByStore(storeService.findById(storeId)), HttpStatus.OK);
+    List<OutfitDTO> dtos =
+        outfitService.findByStore(storeService.findById(storeId)).stream()
+            .map(
+                outfit ->
+                    OutfitDTO.from(
+                        outfit,
+                        outfitService.findTagsByOutfitId(outfit.getId()),
+                        outfitService.findOutfitProductsByOutfitId(outfit.getId())))
+            .toList();
+    return new ResponseEntity<>(dtos, HttpStatus.OK);
   }
 
   @PostMapping("outfits")
   @ResponseStatus(HttpStatus.CREATED)
   public ResponseEntity<OutfitDTO> create(@RequestBody @Valid OutfitCreationDTO dto) {
-    return new ResponseEntity<>(outfitService.create(dto), HttpStatus.CREATED);
+    Outfit outfit = outfitService.create(dto);
+    OutfitDTO outfitDTO =
+        OutfitDTO.from(
+            outfit,
+            outfitService.findTagsByOutfitId(outfit.getId()),
+            outfitService.findOutfitProductsByOutfitId(outfit.getId()));
+    return new ResponseEntity<>(outfitDTO, HttpStatus.CREATED);
   }
 
   @PutMapping("outfits/{id}")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<OutfitDTO> update(
       @PathVariable("id") UUID id, @RequestBody @Valid OutfitUpdateDTO dto) {
-    return new ResponseEntity<>(outfitService.update(id, dto), HttpStatus.OK);
+    Outfit outfit = outfitService.update(id, dto);
+    OutfitDTO outfitDTO =
+        OutfitDTO.from(
+            outfit,
+            outfitService.findTagsByOutfitId(id),
+            outfitService.findOutfitProductsByOutfitId(id));
+    return new ResponseEntity<>(outfitDTO, HttpStatus.OK);
   }
 
   @PostMapping("outfits/{id}/tags")
@@ -86,7 +121,8 @@ public class OutfitController {
   @ResponseStatus(HttpStatus.CREATED)
   public ResponseEntity<OutfitProductDTO> addProduct(
       @PathVariable("id") UUID id, @RequestBody OutfitCreationProductDTO dto) {
-    return new ResponseEntity<>(outfitService.addProduct(id, dto), HttpStatus.CREATED);
+    return new ResponseEntity<>(
+        OutfitProductDTO.from(outfitService.addProduct(id, dto)), HttpStatus.CREATED);
   }
 
   @DeleteMapping("outfits/{id}/products/{productId}")

@@ -4,12 +4,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import ispp.project.dondesiempre.models.User;
 import ispp.project.dondesiempre.models.outfits.Outfit;
 import ispp.project.dondesiempre.models.outfits.OutfitProduct;
 import ispp.project.dondesiempre.models.products.Product;
 import ispp.project.dondesiempre.models.products.ProductType;
 import ispp.project.dondesiempre.models.storefronts.Storefront;
 import ispp.project.dondesiempre.models.stores.Store;
+import ispp.project.dondesiempre.repositories.UserRepository;
 import ispp.project.dondesiempre.repositories.products.ProductRepository;
 import ispp.project.dondesiempre.repositories.products.ProductTypeRepository;
 import ispp.project.dondesiempre.repositories.storefronts.StorefrontRepository;
@@ -31,16 +33,21 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 class OutfitRepositoryTest {
   @Autowired private OutfitRepository outfitRepository;
-
   @Autowired private StoreRepository storeRepository;
-
   @Autowired private StorefrontRepository storefrontRepository;
-
   @Autowired private ProductRepository productRepository;
-
   @Autowired private OutfitProductRepository outfitProductRepository;
-
   @Autowired private ProductTypeRepository typeRepository;
+  @Autowired private UserRepository userRepository;
+
+  private int testUserIndex = 0;
+
+  private User createTestUser() {
+    User user = new User();
+    user.setEmail("testuser" + (testUserIndex++) + "@test.com");
+    user.setPassword("testpassword");
+    return userRepository.save(user);
+  }
 
   @Test
   void shouldReturnNoOutfits_whenStoreHasNoOutfits() {
@@ -65,6 +72,7 @@ class OutfitRepositoryTest {
     store.setEmail("test@test.com");
     store.setStoreID("testStoreID");
     store.setAcceptsShipping(false);
+    store.setUser(createTestUser());
     store = storeRepository.save(store);
 
     result = outfitRepository.findByStoreId(store.getId());
@@ -101,6 +109,7 @@ class OutfitRepositoryTest {
     store.setEmail("test@test.com");
     store.setStoreID("testStoreID");
     store.setAcceptsShipping(false);
+    store.setUser(createTestUser());
     store = storeRepository.save(store);
 
     type = new ProductType();
@@ -168,6 +177,7 @@ class OutfitRepositoryTest {
     store1.setEmail("test@test.com");
     store1.setStoreID("testStoreID");
     store1.setAcceptsShipping(false);
+    store1.setUser(createTestUser());
     store1 = storeRepository.save(store1);
 
     store2 = new Store();
@@ -183,6 +193,7 @@ class OutfitRepositoryTest {
     store2.setEmail("test@test.com");
     store2.setStoreID("testStoreID");
     store2.setAcceptsShipping(false);
+    store2.setUser(createTestUser());
     store2 = storeRepository.save(store2);
 
     type = new ProductType();
