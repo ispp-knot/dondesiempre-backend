@@ -21,7 +21,7 @@ databaseChangeLog:
             columns:
               - column:
                   name: store_id
-                  type: INTEGER
+                  type: UUID
             tableName: products
   - changeSet:
       id: 1771784370586-24

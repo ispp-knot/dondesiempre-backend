@@ -9,7 +9,6 @@ import ispp.project.dondesiempre.models.User;
 import ispp.project.dondesiempre.models.storefronts.Storefront;
 import ispp.project.dondesiempre.models.stores.Store;
 import ispp.project.dondesiempre.repositories.UserRepository;
-import ispp.project.dondesiempre.repositories.products.ProductRepository;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,7 +26,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 public class StoreRepositoryTest {
 
   @Autowired private StoreRepository storeRepository;
-  @Autowired private ProductRepository productRepository;
   @Autowired private UserRepository userRepository;
 
   private final GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
@@ -35,10 +33,6 @@ public class StoreRepositoryTest {
 
   @BeforeEach
   void setUp() {
-    // Limpiamos la base de datos antes de cada test para asegurar resultados predecibles
-    productRepository.deleteAll();
-    storeRepository.deleteAll();
-    userRepository.deleteAll();
     testUserIndex = 0;
   }
 

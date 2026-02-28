@@ -1,6 +1,7 @@
 package ispp.project.dondesiempre.models.outfits.dto;
 
 import java.util.List;
+import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,7 +9,7 @@ import lombok.Setter;
 @Setter
 public class OutfitCreationDTO {
   private Integer index;
-  private Integer storefrontId;
+  private UUID storefrontId;
 
   private String name;
   private String description;

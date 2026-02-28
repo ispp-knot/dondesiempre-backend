@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import ispp.project.dondesiempre.models.Client;
 import ispp.project.dondesiempre.models.User;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +51,7 @@ class ClientRepositoryTest {
   @Test
   void testUpdate() {
     Client saved = clientRepository.save(newClientWithUser());
-    Integer originalId = saved.getId();
+    UUID originalId = saved.getId();
     Client updated = clientRepository.save(saved);
     assertEquals(originalId, updated.getId());
   }
@@ -58,7 +59,7 @@ class ClientRepositoryTest {
   @Test
   void testDelete() {
     Client saved = clientRepository.save(newClientWithUser());
-    Integer id = saved.getId();
+    UUID id = saved.getId();
     clientRepository.deleteById(id);
     assertTrue(clientRepository.findById(id).isEmpty());
   }

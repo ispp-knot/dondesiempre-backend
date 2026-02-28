@@ -10,6 +10,7 @@ import ispp.project.dondesiempre.repositories.stores.StoreRepository;
 import ispp.project.dondesiempre.services.UserService;
 import jakarta.transaction.Transactional;
 import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -45,7 +46,7 @@ public class ProductService {
     return productRepository.save(product);
   }
 
-  public Product getProductById(Integer id) {
+  public Product getProductById(UUID id) {
     Product product =
         productRepository
             .findById(id)
@@ -62,7 +63,7 @@ public class ProductService {
   }
 
   @Transactional
-  public Product updateProductDiscount(Integer id, Integer discountedPriceInCents) {
+  public Product updateProductDiscount(UUID id, Integer discountedPriceInCents) {
     Product product = getProductById(id);
     userService.assertUserOwnsStore(product.getStore());
     if (discountedPriceInCents > product.getPriceInCents()) {

@@ -8,7 +8,7 @@ databaseChangeLog:
             columns:
               - column:
                   name: user_id
-                  type: INTEGER
+                  type: UUID
                   constraints:
                     nullable: false
                     unique: true

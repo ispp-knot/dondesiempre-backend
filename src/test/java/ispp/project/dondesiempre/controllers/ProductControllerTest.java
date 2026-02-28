@@ -17,6 +17,7 @@ import ispp.project.dondesiempre.repositories.products.ProductTypeRepository;
 import ispp.project.dondesiempre.repositories.stores.StoreRepository;
 import ispp.project.dondesiempre.services.UserService;
 import java.util.List;
+import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.locationtech.jts.geom.Coordinate;
@@ -196,10 +197,13 @@ public class ProductControllerTest {
   public void shouldThrowResourceNotFoundException_WhenUpdatingDiscountForNonExistentProduct() {
     DiscountModificationDTO discount = new DiscountModificationDTO();
     discount.setDiscountedPriceInCents(500);
+
+    UUID nonExistentId = UUID.randomUUID();
+
     assertThrows(
         ResourceNotFoundException.class,
         () -> {
-          productController.updateDiscount(9999, discount);
+          productController.updateDiscount(nonExistentId, discount);
         });
   }
 
@@ -250,10 +254,11 @@ public class ProductControllerTest {
 
   @Test
   public void shouldThrowResourceNotFoundException_WhenGettingNonExistentProduct() {
+    UUID nonExistentId = UUID.randomUUID();
     assertThrows(
         ResourceNotFoundException.class,
         () -> {
-          productController.getProductById(9999);
+          productController.getProductById(nonExistentId);
         });
   }
 

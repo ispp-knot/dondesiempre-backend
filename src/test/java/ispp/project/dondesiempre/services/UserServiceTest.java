@@ -11,6 +11,7 @@ import ispp.project.dondesiempre.models.User;
 import ispp.project.dondesiempre.models.stores.Store;
 import ispp.project.dondesiempre.repositories.UserRepository;
 import java.util.Optional;
+import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,7 +35,7 @@ class UserServiceTest {
   @Test
   void getCurrentUser_shouldReturnUser_whenFound() {
     User user = new User();
-    user.setId(1);
+    user.setId(UUID.randomUUID());
     user.setEmail(UserService.SEED_USER_EMAIL);
     when(userRepository.findByEmail(UserService.SEED_USER_EMAIL)).thenReturn(Optional.of(user));
 
@@ -53,7 +54,7 @@ class UserServiceTest {
   @Test
   void assertUserOwnsStore_shouldNotThrow_whenUserOwnsStore() {
     User user = new User();
-    user.setId(1);
+    user.setId(UUID.randomUUID());
     when(userRepository.findByEmail(UserService.SEED_USER_EMAIL)).thenReturn(Optional.of(user));
 
     Store store = new Store();
@@ -65,12 +66,12 @@ class UserServiceTest {
   @Test
   void assertUserOwnsStore_shouldThrowUnauthorizedException_whenUserDoesNotOwnStore() {
     User currentUser = new User();
-    currentUser.setId(1);
+    currentUser.setId(UUID.randomUUID());
     when(userRepository.findByEmail(UserService.SEED_USER_EMAIL))
         .thenReturn(Optional.of(currentUser));
 
     User otherUser = new User();
-    otherUser.setId(2);
+    otherUser.setId(UUID.randomUUID());
 
     Store store = new Store();
     store.setUser(otherUser);
