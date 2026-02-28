@@ -71,4 +71,12 @@ public class StoreService {
 
     storeFollowerRepository.delete(follow);
   }
+
+  @Transactional(readOnly = true)
+  public List<StoreDTO> getMyFollowedStores() {
+    Client currentUser = mockCurrentUser();
+    return storeFollowerRepository.findByClientId(currentUser.getId()).stream()
+        .map(follower -> new StoreDTO(follower.getStore()))
+        .toList();
+  }
 }

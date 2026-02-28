@@ -47,4 +47,11 @@ public class StoreController {
     storeService.unfollowStore(storeId);
     return new ResponseEntity<>("Store unfollowed successfully.", HttpStatus.OK);
   }
+
+  @GetMapping("/clients/me/followed-stores")
+  @ResponseStatus(HttpStatus.OK)
+  public ResponseEntity<List<StoreDTO>> getMyFollowedStores() {
+    List<StoreDTO> followedStores = storeService.getMyFollowedStores();
+    return new ResponseEntity<>(followedStores, HttpStatus.OK);
+  }
 }
