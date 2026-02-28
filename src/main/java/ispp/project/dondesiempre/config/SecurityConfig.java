@@ -26,7 +26,13 @@ public class SecurityConfig implements WebMvcConfigurer {
     http.csrf(AbstractHttpConfigurer::disable)
         .cors(Customizer.withDefaults())
         .authorizeHttpRequests(
-            auth -> auth.requestMatchers("/api/v1/health").permitAll().anyRequest().permitAll());
+            auth ->
+                auth.requestMatchers("/api/v1/health")
+                    .permitAll()
+                    .requestMatchers("/api/v1/stores/*/followers/**")
+                    .authenticated()
+                    .anyRequest()
+                    .permitAll());
 
     return http.build();
   }
