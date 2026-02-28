@@ -33,4 +33,9 @@ public class StoreService {
         storeRepository.findStoresInBoundingBox(minLon, minLat, maxLon, maxLat, 500);
     return stores.stream().map(StoreDTO::new).toList();
   }
+
+  public StoreDTO findByIdToDTO(UUID id) {
+    Store store = findById(id);
+    return new StoreDTO(store);
+  }
 }
