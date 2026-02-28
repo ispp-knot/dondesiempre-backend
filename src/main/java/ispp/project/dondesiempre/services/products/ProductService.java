@@ -1,7 +1,5 @@
 package ispp.project.dondesiempre.services.products;
 
-import java.util.UUID;
-
 import ispp.project.dondesiempre.exceptions.InvalidRequestException;
 import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.models.products.Product;
@@ -10,6 +8,7 @@ import ispp.project.dondesiempre.repositories.products.ProductRepository;
 import ispp.project.dondesiempre.repositories.stores.StoreRepository;
 import jakarta.transaction.Transactional;
 import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

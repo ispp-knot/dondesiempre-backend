@@ -1,8 +1,7 @@
 package ispp.project.dondesiempre.models.stores.dto;
 
-import java.util.UUID;
-
 import ispp.project.dondesiempre.models.stores.Store;
+import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
 

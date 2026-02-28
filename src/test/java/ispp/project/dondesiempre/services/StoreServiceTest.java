@@ -1,7 +1,5 @@
 package ispp.project.dondesiempre.services;
 
-import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyDouble;
@@ -18,6 +16,7 @@ import ispp.project.dondesiempre.repositories.stores.StoreRepository;
 import ispp.project.dondesiempre.services.stores.StoreService;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

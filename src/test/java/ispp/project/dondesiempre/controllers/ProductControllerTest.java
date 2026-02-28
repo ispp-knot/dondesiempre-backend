@@ -1,7 +1,5 @@
 package ispp.project.dondesiempre.controllers;
 
-import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import ispp.project.dondesiempre.exceptions.InvalidRequestException;
@@ -16,6 +14,7 @@ import ispp.project.dondesiempre.models.stores.Store;
 import ispp.project.dondesiempre.repositories.products.ProductTypeRepository;
 import ispp.project.dondesiempre.repositories.stores.StoreRepository;
 import java.util.List;
+import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
@@ -170,16 +169,16 @@ public class ProductControllerTest {
 
   @Test
   public void shouldThrowResourceNotFoundException_WhenUpdatingDiscountForNonExistentProduct() {
-      DiscountModificationDTO discount = new DiscountModificationDTO();
-      discount.setDiscountedPriceInCents(500);
-      
-      UUID nonExistentId = UUID.randomUUID();
+    DiscountModificationDTO discount = new DiscountModificationDTO();
+    discount.setDiscountedPriceInCents(500);
 
-      assertThrows(
-          ResourceNotFoundException.class,
-          () -> {
-              productController.updateDiscount(nonExistentId, discount);
-          });
+    UUID nonExistentId = UUID.randomUUID();
+
+    assertThrows(
+        ResourceNotFoundException.class,
+        () -> {
+          productController.updateDiscount(nonExistentId, discount);
+        });
   }
 
   @Test

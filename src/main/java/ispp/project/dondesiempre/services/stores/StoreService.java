@@ -1,13 +1,12 @@
 package ispp.project.dondesiempre.services.stores;
 
-import java.util.UUID;
-
 import ispp.project.dondesiempre.exceptions.InvalidBoundingBoxException;
 import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.models.stores.Store;
 import ispp.project.dondesiempre.models.stores.dto.StoreDTO;
 import ispp.project.dondesiempre.repositories.stores.StoreRepository;
 import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

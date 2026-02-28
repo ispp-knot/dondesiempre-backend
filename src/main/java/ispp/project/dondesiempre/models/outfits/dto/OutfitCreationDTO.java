@@ -1,8 +1,7 @@
 package ispp.project.dondesiempre.models.outfits.dto;
 
-import java.util.UUID;
-
 import java.util.List;
+import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
 

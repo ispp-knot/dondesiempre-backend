@@ -1,7 +1,5 @@
 package ispp.project.dondesiempre.services.outfits;
 
-import java.util.UUID;
-
 import ispp.project.dondesiempre.exceptions.InvalidRequestException;
 import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.models.outfits.Outfit;
@@ -22,6 +20,7 @@ import ispp.project.dondesiempre.services.products.ProductService;
 import ispp.project.dondesiempre.services.storefronts.StorefrontService;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -159,12 +158,9 @@ public class OutfitService {
     productsOfOutfit = outfitRepository.findOutfitProductsById(outfitId);
     productsOfOutfit.add(product);
 
-    if (productsOfOutfit.stream()
-        .map(prod -> prod.getStore().getId())
-        .distinct()
-        .count() > 1L) {
-    throw new InvalidRequestException("All products in an outfit must belong to the same store.");
-    }   
+    if (productsOfOutfit.stream().map(prod -> prod.getStore().getId()).distinct().count() > 1L) {
+      throw new InvalidRequestException("All products in an outfit must belong to the same store.");
+    }
     productIndicesOfOutfit = outfitRepository.findOutfitProductIndicesById(outfitId);
     productIndicesOfOutfit.add(dto.getIndex());
 

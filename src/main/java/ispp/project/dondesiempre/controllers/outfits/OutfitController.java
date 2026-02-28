@@ -1,7 +1,5 @@
 package ispp.project.dondesiempre.controllers.outfits;
 
-import java.util.UUID;
-
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import ispp.project.dondesiempre.models.outfits.dto.OutfitCreationDTO;
 import ispp.project.dondesiempre.models.outfits.dto.OutfitCreationProductDTO;
@@ -12,6 +10,7 @@ import ispp.project.dondesiempre.services.outfits.OutfitService;
 import ispp.project.dondesiempre.services.stores.StoreService;
 import jakarta.validation.Valid;
 import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

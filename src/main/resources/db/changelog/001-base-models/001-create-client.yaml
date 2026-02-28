@@ -19,7 +19,7 @@ databaseChangeLog:
                     primaryKey: true
                     primaryKeyName: clientsPK
                   name: id
-                  type: INTEGER
+                  type: UUID
               - column:
                   name: version
                   type: INTEGER
