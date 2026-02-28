@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import ispp.project.dondesiempre.models.storefronts.Storefront;
 import ispp.project.dondesiempre.models.stores.Store;
-import ispp.project.dondesiempre.repositories.products.ProductRepository;
+import jakarta.persistence.EntityManager;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,16 +26,17 @@ public class StoreRepositoryTest {
 
   @Autowired private StoreRepository storeRepository;
 
-  @Autowired private ProductRepository productRepository;
-
-  private final GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
+  @Autowired private EntityManager entityManager;
 
   @BeforeEach
-  void setUp() {
-    // Limpiamos la base de datos antes de cada test para asegurar resultados predecibles
-    productRepository.deleteAll();
-    storeRepository.deleteAll();
+  void cleanDatabase() {
+    entityManager.createNativeQuery("DELETE FROM promotion_products").executeUpdate();
+    entityManager.createNativeQuery("DELETE FROM products").executeUpdate();
+    entityManager.createNativeQuery("DELETE FROM promotions").executeUpdate();
+    entityManager.createNativeQuery("DELETE FROM stores").executeUpdate();
   }
+
+  private final GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
 
   private Point createPoint(double longitude, double latitude) {
     return geometryFactory.createPoint(new Coordinate(longitude, latitude));

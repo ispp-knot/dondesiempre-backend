@@ -2,6 +2,7 @@ package ispp.project.dondesiempre.models.promotions.dto;
 
 import ispp.project.dondesiempre.models.promotions.Promotion;
 import java.util.List;
+import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,15 +10,15 @@ import lombok.Setter;
 @Setter
 public class PromotionDTO {
 
-  private Integer id;
+  private UUID id;
   private String name;
   private Integer discountPercentage;
   private boolean isActive;
   private String description;
-  private Integer storeId;
-  private List<Integer> productIds;
+  private UUID storeId;
+  private List<UUID> productIds;
 
-  public static PromotionDTO fromPromotion(Promotion promotion, List<Integer> productIds) {
+  public static PromotionDTO fromPromotion(Promotion promotion, List<UUID> productIds) {
     PromotionDTO dto = new PromotionDTO();
     dto.setId(promotion.getId());
     dto.setName(promotion.getName());

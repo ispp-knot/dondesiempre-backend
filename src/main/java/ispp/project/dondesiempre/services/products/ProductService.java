@@ -6,11 +6,11 @@ import ispp.project.dondesiempre.models.products.Product;
 import ispp.project.dondesiempre.models.products.dto.ProductCreationDTO;
 import ispp.project.dondesiempre.repositories.products.ProductRepository;
 import ispp.project.dondesiempre.repositories.stores.StoreRepository;
-import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -35,6 +35,7 @@ public class ProductService {
     return productRepository.save(product);
   }
 
+  @Transactional(readOnly = true)
   public Product getProductById(UUID id) {
     Product product =
         productRepository
@@ -43,10 +44,12 @@ public class ProductService {
     return product;
   }
 
+  @Transactional(readOnly = true)
   public List<Product> getAllProducts() {
     return productRepository.findAll();
   }
 
+  @Transactional(readOnly = true)
   public List<Product> getAllDiscountedProducts() {
     return productRepository.findAllDiscountedProducts();
   }

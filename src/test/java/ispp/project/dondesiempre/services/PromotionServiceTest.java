@@ -20,6 +20,7 @@ import ispp.project.dondesiempre.repositories.stores.StoreRepository;
 import ispp.project.dondesiempre.services.products.ProductService;
 import ispp.project.dondesiempre.services.promotions.PromotionService;
 import java.util.List;
+import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
@@ -102,7 +103,9 @@ public class PromotionServiceTest {
     promotionCreationDTO.setDiscountPercentage(150); // Invalid discount percentage
     promotionCreationDTO.setActive(true);
     promotionCreationDTO.setProductIds(
-        List.of(1, 2, 3)); // Should not reach this check because of invalid discount
+        List.of(
+            UUID.randomUUID(),
+            UUID.randomUUID())); // Should not reach this check because of invalid discount
 
     assertThrows(
         InvalidRequestException.class, () -> promotionService.savePromotion(promotionCreationDTO));
@@ -136,7 +139,8 @@ public class PromotionServiceTest {
     promotionCreationDTO.setDiscountPercentage(20);
     promotionCreationDTO.setActive(true);
     promotionCreationDTO.setStoreId(saved_store.getId());
-    promotionCreationDTO.setProductIds(List.of(99999, 22222)); // Non-existent product IDs
+    promotionCreationDTO.setProductIds(
+        List.of(UUID.randomUUID(), UUID.randomUUID())); // Non-existent product IDs
 
     assertThrows(
         ResourceNotFoundException.class,
@@ -288,7 +292,7 @@ public class PromotionServiceTest {
     promotionCreationDTO.setStoreId(saved_store.getId());
     Promotion promotion = promotionService.savePromotion(promotionCreationDTO);
 
-    Integer expectedId = promotion.getId();
+    UUID expectedId = promotion.getId();
     Promotion foundPromotion = promotionService.getPromotionById(expectedId);
     assertNotNull(foundPromotion);
     assertEquals(expectedId, foundPromotion.getId());
@@ -296,7 +300,7 @@ public class PromotionServiceTest {
 
   @Test
   public void shouldThrowResourceNotFoundException_WhenGettingPromotionByNonExistentId() {
-    Integer nonExistentId = 99999;
+    UUID nonExistentId = UUID.randomUUID();
     assertThrows(
         ResourceNotFoundException.class, () -> promotionService.getPromotionById(nonExistentId));
   }
@@ -351,7 +355,7 @@ public class PromotionServiceTest {
 
     promotionCreationDTO.setProductIds(List.of(product.getId()));
     Promotion promotion = promotionService.savePromotion(promotionCreationDTO);
-    Integer promotionId = promotion.getId();
+    UUID promotionId = promotion.getId();
     Integer newDiscount = 30;
     Promotion updatedPromotion = promotionService.updatePromotionDiscount(promotionId, newDiscount);
     assertNotNull(updatedPromotion);
@@ -402,7 +406,7 @@ public class PromotionServiceTest {
     promotionCreationDTO.setProductIds(List.of(product.getId()));
     promotionCreationDTO.setStoreId(saved_store.getId());
     Promotion promotion = promotionService.savePromotion(promotionCreationDTO);
-    Integer promotionId = promotion.getId();
+    UUID promotionId = promotion.getId();
     Integer invalidDiscount = 150; // Invalid discount percentage
     assertThrows(
         InvalidRequestException.class,
@@ -453,7 +457,7 @@ public class PromotionServiceTest {
     promotionCreationDTO.setStoreId(saved_store.getId());
     Promotion promotion = promotionService.savePromotion(promotionCreationDTO);
 
-    Integer promotionId = promotion.getId();
+    UUID promotionId = promotion.getId();
     promotionService.deletePromotion(promotionId);
     assertThrows(
         ResourceNotFoundException.class, () -> promotionService.getPromotionById(promotionId));
@@ -506,7 +510,7 @@ public class PromotionServiceTest {
     promotionCreationDTO.setProductIds(List.of(product.getId()));
     promotionCreationDTO.setStoreId(saved_store.getId());
     Promotion promotion = promotionService.savePromotion(promotionCreationDTO);
-    Integer promotionId = promotion.getId();
+    UUID promotionId = promotion.getId();
     PromotionProduct promotionProduct = promotionService.addProduct(promotionId, product2.getId());
 
     assertNotNull(promotionProduct);
@@ -557,9 +561,10 @@ public class PromotionServiceTest {
     promotionCreationDTO.setProductIds(List.of(product.getId()));
     promotionCreationDTO.setStoreId(saved_store.getId());
     Promotion promotion = promotionService.savePromotion(promotionCreationDTO);
-    Integer promotionId = promotion.getId();
+    UUID promotionId = promotion.getId();
 
     assertThrows(
-        ResourceNotFoundException.class, () -> promotionService.addProduct(promotionId, 99999));
+        ResourceNotFoundException.class,
+        () -> promotionService.addProduct(promotionId, UUID.randomUUID()));
   }
 }

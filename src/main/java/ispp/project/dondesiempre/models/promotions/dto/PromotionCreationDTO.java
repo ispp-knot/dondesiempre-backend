@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.util.List;
+import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -24,9 +25,9 @@ public class PromotionCreationDTO {
 
   @NotNull private boolean isActive;
 
-  @NotEmpty private List<Integer> productIds;
+  @NotEmpty private List<UUID> productIds;
 
-  @NotNull private Integer storeId;
+  @NotNull private UUID storeId;
 
   private String description;
 }

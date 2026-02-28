@@ -5,6 +5,7 @@ import ispp.project.dondesiempre.models.promotions.dto.PromotionCreationDTO;
 import ispp.project.dondesiempre.models.promotions.dto.PromotionDTO;
 import ispp.project.dondesiempre.services.promotions.PromotionService;
 import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -45,7 +46,7 @@ public class PromotionController {
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<PromotionDTO> getPromotionById(@PathVariable Integer id) {
+  public ResponseEntity<PromotionDTO> getPromotionById(@PathVariable UUID id) {
     Promotion promotion = promotionService.getPromotionById(id);
     PromotionDTO promotionDTO =
         PromotionDTO.fromPromotion(
@@ -55,7 +56,7 @@ public class PromotionController {
 
   @PatchMapping("/{id}/discount")
   public ResponseEntity<PromotionDTO> updateDiscount(
-      @PathVariable Integer id, @RequestParam Integer discountPercentage) {
+      @PathVariable UUID id, @RequestParam Integer discountPercentage) {
 
     Promotion promotion = promotionService.updatePromotionDiscount(id, discountPercentage);
     return ResponseEntity.ok(
@@ -64,13 +65,13 @@ public class PromotionController {
   }
 
   @DeleteMapping("/{id}")
-  public ResponseEntity<Void> deletePromotion(@PathVariable Integer id) {
+  public ResponseEntity<Void> deletePromotion(@PathVariable UUID id) {
     promotionService.deletePromotion(id);
     return ResponseEntity.noContent().build();
   }
 
   @GetMapping("/stores/{storeId}")
-  public ResponseEntity<List<PromotionDTO>> getPromotionsByStoreId(@PathVariable Integer storeId) {
+  public ResponseEntity<List<PromotionDTO>> getPromotionsByStoreId(@PathVariable UUID storeId) {
     return ResponseEntity.ok(
         promotionService.getPromotionsByStoreId(storeId).stream()
             .map(

@@ -13,6 +13,7 @@ import ispp.project.dondesiempre.repositories.promotions.PromotionRepository;
 import ispp.project.dondesiempre.repositories.stores.StoreRepository;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -71,7 +72,7 @@ public class PromotionService {
   }
 
   @Transactional
-  public PromotionProduct addProduct(Integer promotionId, Integer productId) {
+  public PromotionProduct addProduct(UUID promotionId, UUID productId) {
     Promotion promotion = getPromotionById(promotionId);
     Product product =
         productRepository
@@ -87,7 +88,7 @@ public class PromotionService {
   }
 
   @Transactional(readOnly = true)
-  public Promotion getPromotionById(Integer id) {
+  public Promotion getPromotionById(UUID id) {
     return promotionRepository
         .findById(id)
         .orElseThrow(() -> new ResourceNotFoundException("Promotion not found with id: " + id));
@@ -113,7 +114,7 @@ public class PromotionService {
   }
 
   @Transactional
-  public Promotion updatePromotionDiscount(Integer id, Integer discountPercentage) {
+  public Promotion updatePromotionDiscount(UUID id, Integer discountPercentage) {
     if (discountPercentage < 1 || discountPercentage > 100) {
       throw new InvalidRequestException("Discount must be between 1 and 100");
     }
@@ -123,20 +124,25 @@ public class PromotionService {
   }
 
   @Transactional
-  public void deletePromotion(Integer id) {
+  public void deletePromotion(UUID id) {
     Promotion promotion = getPromotionById(id);
     promotionProductRepository.findByPromotionId(id).forEach(promotionProductRepository::delete);
     promotionRepository.delete(promotion);
   }
 
   @Transactional(readOnly = true)
-  public List<Integer> getAllProductsByPromotionId(Integer promotionId) {
+  public List<UUID> getAllProductsByPromotionId(UUID promotionId) {
     getPromotionById(promotionId); // Ensure promotion exists
     return promotionProductRepository.findProductIdsByPromotionId(promotionId);
   }
 
   @Transactional(readOnly = true)
-  public List<Promotion> getPromotionsByStoreId(Integer storeId) {
+  public List<Promotion> getPromotionsByStoreId(UUID storeId) {
     return promotionRepository.findByStoreId(storeId);
+  }
+
+  @Transactional(readOnly = true)
+  public List<Promotion> getPromotionsByProductId(UUID productId) {
+    return promotionProductRepository.findPromotionsByProductId(productId);
   }
 }
