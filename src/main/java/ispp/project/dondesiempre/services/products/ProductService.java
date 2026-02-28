@@ -4,7 +4,6 @@ import ispp.project.dondesiempre.exceptions.InvalidRequestException;
 import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.models.products.Product;
 import ispp.project.dondesiempre.models.products.dto.ProductCreationDTO;
-import ispp.project.dondesiempre.models.products.dto.ProductDTO;
 import ispp.project.dondesiempre.models.storefronts.Storefront;
 import ispp.project.dondesiempre.models.stores.Store;
 import ispp.project.dondesiempre.repositories.products.ProductRepository;
@@ -77,9 +76,7 @@ public class ProductService {
   }
 
   @Transactional
-  public List<ProductDTO> findByStorefront(Storefront storefront) {
-    return productRepository.findByStorefrontId(storefront.getId()).stream()
-        .map(ProductDTO::fromProduct)
-        .toList();
+  public List<Product> findByStorefront(Storefront storefront) {
+    return productRepository.findByStorefrontId(storefront.getId());
   }
 }

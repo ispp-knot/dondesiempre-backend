@@ -22,17 +22,19 @@ public class OutfitProductDTO {
   private Integer index;
   private UUID storeId;
 
-  public OutfitProductDTO(OutfitProduct product) {
-    this.id = product.getProduct().getId();
+  public static OutfitProductDTO from(OutfitProduct product) {
+    OutfitProductDTO dto = new OutfitProductDTO();
+    dto.id = product.getProduct().getId();
 
-    this.name = product.getProduct().getName();
-    this.description = product.getProduct().getDescription();
-    this.image = product.getProduct().getImage();
+    dto.name = product.getProduct().getName();
+    dto.description = product.getProduct().getDescription();
+    dto.image = product.getProduct().getImage();
 
-    this.priceInCents = product.getProduct().getDiscountedPriceInCents();
-    this.type = product.getProduct().getType();
+    dto.priceInCents = product.getProduct().getDiscountedPriceInCents();
+    dto.type = product.getProduct().getType();
 
-    this.index = product.getIndex();
-    this.storeId = product.getProduct().getStore().getId();
+    dto.index = product.getIndex();
+    dto.storeId = product.getProduct().getStore().getId();
+    return dto;
   }
 }
