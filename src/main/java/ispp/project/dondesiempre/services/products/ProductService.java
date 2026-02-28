@@ -4,6 +4,8 @@ import ispp.project.dondesiempre.exceptions.InvalidRequestException;
 import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.models.products.Product;
 import ispp.project.dondesiempre.models.products.dto.ProductCreationDTO;
+import ispp.project.dondesiempre.models.products.dto.ProductDTO;
+import ispp.project.dondesiempre.models.storefronts.Storefront;
 import ispp.project.dondesiempre.repositories.products.ProductRepository;
 import ispp.project.dondesiempre.repositories.stores.StoreRepository;
 import jakarta.transaction.Transactional;
@@ -30,6 +32,7 @@ public class ProductService {
     product.setPriceInCents(dto.getPriceInCents());
     product.setDiscountedPriceInCents(dto.getDiscountedPriceInCents());
     product.setDescription(dto.getDescription());
+    product.setImage(dto.getImage());
     product.setType(productTypeService.getProductTypeById(dto.getTypeId()));
     product.setStore(storeRepository.getReferenceById(dto.getStoreId()));
     return productRepository.save(product);
@@ -60,5 +63,12 @@ public class ProductService {
     product.setDiscountedPriceInCents(discountedPriceInCents);
     Product updatedProduct = productRepository.save(product);
     return updatedProduct;
+  }
+
+  @Transactional
+  public List<ProductDTO> findByStorefront(Storefront storefront) {
+    return productRepository.findByStorefrontId(storefront.getId()).stream()
+        .map(ProductDTO::fromProduct)
+        .toList();
   }
 }
