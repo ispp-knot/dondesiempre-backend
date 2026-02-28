@@ -9,13 +9,13 @@ import lombok.Setter;
 @Setter
 public class ProductDTO {
 
-  private Integer id;
+  private UUID id;
   private String name;
   private Integer priceInCents;
   private Integer discountedPriceInCents;
   private String description;
   private String image;
-  
+
   private UUID typeId;
   private UUID storeId;
 

@@ -12,5 +12,5 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
   public List<Product> findAllDiscountedProducts();
 
   @Query("select p from Product p where p.store.storefront.id = :storefrontId")
-  public List<Product> findByStorefrontId(Integer storefrontId);
+  public List<Product> findByStorefrontId(UUID storefrontId);
 }

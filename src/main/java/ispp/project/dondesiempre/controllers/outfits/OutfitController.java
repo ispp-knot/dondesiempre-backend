@@ -44,7 +44,7 @@ public class OutfitController {
   @GetMapping("storefronts/{storefrontId}/outfits")
   @ResponseStatus(HttpStatus.FOUND)
   public ResponseEntity<List<OutfitDTO>> getByStorefrontId(
-      @PathVariable("storefrontId") Integer storefrontId) {
+      @PathVariable("storefrontId") UUID storefrontId) {
     return new ResponseEntity<>(
         outfitService.findByStorefront(storefrontService.findById(storefrontId)), HttpStatus.OK);
   }
@@ -77,7 +77,7 @@ public class OutfitController {
 
   @DeleteMapping("outfits/{id}/tags")
   @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<String> removeTag(@PathVariable("id") Integer id, @RequestBody String tag) {
+  public ResponseEntity<String> removeTag(@PathVariable("id") UUID id, @RequestBody String tag) {
     outfitService.removeTag(id, tag);
     return new ResponseEntity<>("Tag successfully removed from outfit.", HttpStatus.OK);
   }
@@ -92,7 +92,7 @@ public class OutfitController {
   @DeleteMapping("outfits/{id}/products/{productId}")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<String> removeProduct(
-      @PathVariable("id") Integer id, @PathVariable("productId") Integer productId) {
+      @PathVariable("id") UUID id, @PathVariable("productId") UUID productId) {
     outfitService.removeProduct(id, productService.getProductById(productId));
     return new ResponseEntity<>("Product successfully removed from outfit.", HttpStatus.CREATED);
   }
@@ -100,7 +100,7 @@ public class OutfitController {
   @PatchMapping("outfits/{id}/products/sort")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<String> sortProducts(
-      @PathVariable("id") Integer id, @RequestBody List<OutfitCreationProductDTO> products) {
+      @PathVariable("id") UUID id, @RequestBody List<OutfitCreationProductDTO> products) {
     outfitService.sortProducts(id, products);
     return new ResponseEntity<>("Products successfully sorted.", HttpStatus.OK);
   }

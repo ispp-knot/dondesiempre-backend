@@ -153,7 +153,7 @@ public class OutfitService {
   }
 
   @Transactional(rollbackFor = ResourceNotFoundException.class)
-  public void removeTag(Integer outfitId, String tagName) throws ResourceNotFoundException {
+  public void removeTag(UUID outfitId, String tagName) throws ResourceNotFoundException {
     Outfit outfit;
     OutfitTag tag;
     OutfitTagRelation relation;
@@ -203,7 +203,7 @@ public class OutfitService {
   }
 
   @Transactional(rollbackFor = ResourceNotFoundException.class)
-  public void removeProduct(Integer outfitId, Product product) throws ResourceNotFoundException {
+  public void removeProduct(UUID outfitId, Product product) throws ResourceNotFoundException {
     Outfit outfit;
     OutfitProduct relation;
 
@@ -218,7 +218,7 @@ public class OutfitService {
   }
 
   @Transactional(rollbackFor = ResourceNotFoundException.class)
-  public void sortProducts(Integer outfitId, List<OutfitCreationProductDTO> products)
+  public void sortProducts(UUID outfitId, List<OutfitCreationProductDTO> products)
       throws ResourceNotFoundException {
     List<OutfitProduct> relations;
 
