@@ -36,9 +36,9 @@ public class StoreController {
 
   @PostMapping("/stores/{storeId}/followers")
   @ResponseStatus(HttpStatus.CREATED)
-  public ResponseEntity<StoreFollower> followStore(@PathVariable("storeId") UUID storeId) {
-    StoreFollower follow = storeService.followStore(storeId);
-    return new ResponseEntity<>(follow, HttpStatus.CREATED);
+  public ResponseEntity<String> followStore(@PathVariable("storeId") UUID storeId) {
+    storeService.followStore(storeId);
+    return new ResponseEntity<>("Store followed successfully", HttpStatus.CREATED);
   }
 
   @DeleteMapping("/stores/{storeId}/followers/me")
