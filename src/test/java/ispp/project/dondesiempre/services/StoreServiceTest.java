@@ -10,6 +10,7 @@ import static org.mockito.Mockito.when;
 
 import ispp.project.dondesiempre.exceptions.InvalidBoundingBoxException;
 import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
+import ispp.project.dondesiempre.models.storefronts.Storefront;
 import ispp.project.dondesiempre.models.stores.Store;
 import ispp.project.dondesiempre.models.stores.dto.StoreDTO;
 import ispp.project.dondesiempre.repositories.stores.StoreRepository;
@@ -40,6 +41,9 @@ public class StoreServiceTest {
     storeId = UUID.randomUUID();
     store.setId(storeId);
     store.setName("Tienda de Prueba");
+    Storefront storefront = new Storefront();
+    storefront.setIsFirstCollections(true);
+    store.setStorefront(storefront);
   }
 
   @Test
