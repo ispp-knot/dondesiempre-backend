@@ -1,0 +1,54 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1772293305631-32
+      author: ignacio (generated)
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: store_followersPK
+                  name: id
+                  type: UUID
+              - column:
+                  name: version
+                  type: INTEGER
+              - column:
+                  constraints:
+                    nullable: false
+                  name: client_id
+                  type: UUID
+              - column:
+                  constraints:
+                    nullable: false
+                  name: store_id
+                  type: UUID
+            tableName: store_followers
+  - changeSet:
+      id: 1772293305631-33
+      author: ignacio (generated)
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: client_id
+            baseTableName: store_followers
+            constraintName: FKkiqljpe1320vkomydvantt4u2
+            deferrable: false
+            initiallyDeferred: false
+            referencedColumnNames: id
+            referencedTableName: clients
+            validate: true
+  - changeSet:
+      id: 1772293305631-34
+      author: ignacio (generated)
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: store_id
+            baseTableName: store_followers
+            constraintName: FKtcp440uh4bj153f3hqu6ds8d6
+            deferrable: false
+            initiallyDeferred: false
+            referencedColumnNames: id
+            referencedTableName: stores
+            validate: true
