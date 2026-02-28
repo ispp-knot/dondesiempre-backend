@@ -8,6 +8,7 @@ import ispp.project.dondesiempre.models.stores.StoreFollower;
 import ispp.project.dondesiempre.models.stores.dto.StoreDTO;
 import ispp.project.dondesiempre.repositories.stores.StoreFollowerRepository;
 import ispp.project.dondesiempre.repositories.stores.StoreRepository;
+import ispp.project.dondesiempre.services.UserService;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class StoreService {
   private final StoreRepository storeRepository;
   private final StoreFollowerRepository storeFollowerRepository;
+  private final UserService userService;
 
   @Transactional(readOnly = true, rollbackFor = ResourceNotFoundException.class)
   public Store findById(UUID id) throws ResourceNotFoundException {
@@ -38,19 +40,9 @@ public class StoreService {
     return stores.stream().map(StoreDTO::new).toList();
   }
 
-  Client mockCurrentUser() {
-    UUID currentUserId = UUID.randomUUID();
-    Client currentUser = new Client();
-    currentUser.setId(currentUserId);
-    currentUser.setName("Mock");
-    currentUser.setSurname("Client");
-    currentUser.setEmail("mock@user.test");
-    return currentUser;
-  }
-
   @Transactional
   public StoreFollower followStore(UUID storeId) {
-    Client currentUser = mockCurrentUser();
+    Client currentUser = userService.getCurrentClient();
 
     StoreFollower follow = new StoreFollower();
     follow.setClient(currentUser);
@@ -62,7 +54,7 @@ public class StoreService {
 
   @Transactional
   public void unfollowStore(UUID storeId) {
-    Client currentUser = mockCurrentUser();
+    Client currentUser = userService.getCurrentClient();
 
     StoreFollower follow =
         storeFollowerRepository
@@ -74,7 +66,7 @@ public class StoreService {
 
   @Transactional(readOnly = true)
   public List<StoreDTO> getMyFollowedStores() {
-    Client currentUser = mockCurrentUser();
+    Client currentUser = userService.getCurrentClient();
     return storeFollowerRepository.findByClientId(currentUser.getId()).stream()
         .map(follower -> new StoreDTO(follower.getStore()))
         .toList();
