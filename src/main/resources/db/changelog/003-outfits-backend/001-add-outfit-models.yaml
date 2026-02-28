@@ -73,7 +73,7 @@ databaseChangeLog:
                   type: UUID
               - column:
                   name: version
-                  type: UUID
+                  type: INTEGER
               - column:
                   constraints:
                     nullable: false
