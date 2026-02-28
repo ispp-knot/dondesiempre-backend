@@ -8,8 +8,6 @@ import ispp.project.dondesiempre.models.outfits.OutfitTag;
 import ispp.project.dondesiempre.models.outfits.OutfitTagRelation;
 import ispp.project.dondesiempre.models.outfits.dto.OutfitCreationDTO;
 import ispp.project.dondesiempre.models.outfits.dto.OutfitCreationProductDTO;
-import ispp.project.dondesiempre.models.outfits.dto.OutfitDTO;
-import ispp.project.dondesiempre.models.outfits.dto.OutfitProductDTO;
 import ispp.project.dondesiempre.models.outfits.dto.OutfitUpdateDTO;
 import ispp.project.dondesiempre.models.products.Product;
 import ispp.project.dondesiempre.models.storefronts.Storefront;
@@ -17,6 +15,7 @@ import ispp.project.dondesiempre.models.stores.Store;
 import ispp.project.dondesiempre.repositories.outfits.OutfitProductRepository;
 import ispp.project.dondesiempre.repositories.outfits.OutfitRepository;
 import ispp.project.dondesiempre.repositories.outfits.OutfitTagRelationRepository;
+import ispp.project.dondesiempre.services.UserService;
 import ispp.project.dondesiempre.services.products.ProductService;
 import ispp.project.dondesiempre.services.storefronts.StorefrontService;
 import jakarta.persistence.EntityNotFoundException;
@@ -36,6 +35,7 @@ public class OutfitService {
 
   private final ProductService productService;
   private final StorefrontService storefrontService;
+  private final UserService userService;
 
   private final OutfitTagService outfitTagService;
 
@@ -48,40 +48,28 @@ public class OutfitService {
         .orElseThrow(() -> new ResourceNotFoundException("Outfit with ID " + id + "not found."));
   }
 
-  @Transactional(readOnly = true, rollbackFor = ResourceNotFoundException.class)
-  public OutfitDTO findByIdToDTO(UUID id) throws ResourceNotFoundException {
-    return new OutfitDTO(
-        applicationContext.getBean(OutfitService.class).findById(id),
-        outfitRepository.findOutfitTagsById(id),
-        outfitRepository.findOutfitOutfitProductsById(id));
+  @Transactional(readOnly = true)
+  public List<String> findTagsByOutfitId(UUID id) {
+    return outfitRepository.findOutfitTagsById(id);
   }
 
   @Transactional(readOnly = true)
-  public List<OutfitDTO> findByStore(Store store) {
-    return outfitRepository.findByStoreId(store.getId()).stream()
-        .map(
-            outfit ->
-                new OutfitDTO(
-                    outfit,
-                    outfitRepository.findOutfitTagsById(outfit.getId()),
-                    outfitRepository.findOutfitOutfitProductsById(outfit.getId())))
-        .toList();
+  public List<OutfitProduct> findOutfitProductsByOutfitId(UUID id) {
+    return outfitRepository.findOutfitOutfitProductsById(id);
   }
 
   @Transactional(readOnly = true)
-  public List<OutfitDTO> findByStorefront(Storefront storefront) {
-    return outfitRepository.findByStorefrontId(storefront.getId()).stream()
-        .map(
-            outfit ->
-                new OutfitDTO(
-                    outfit,
-                    outfitRepository.findOutfitTagsById(outfit.getId()),
-                    outfitRepository.findOutfitOutfitProductsById(outfit.getId())))
-        .toList();
+  public List<Outfit> findByStore(Store store) {
+    return outfitRepository.findByStoreId(store.getId());
+  }
+
+  @Transactional(readOnly = true)
+  public List<Outfit> findByStorefront(Storefront storefront) {
+    return outfitRepository.findByStorefrontId(storefront.getId());
   }
 
   @Transactional(rollbackFor = InvalidRequestException.class)
-  public OutfitDTO create(OutfitCreationDTO dto) throws InvalidRequestException {
+  public Outfit create(OutfitCreationDTO dto) throws InvalidRequestException {
     Outfit outfit;
     UUID outfitId;
 
@@ -91,7 +79,9 @@ public class OutfitService {
     outfit.setDescription(dto.getDescription());
     outfit.setIndex(dto.getIndex());
     outfit.setImage(dto.getImage());
-    outfit.setStorefront(storefrontService.findById(dto.getStorefrontId()));
+    Storefront storefront = storefrontService.findById(dto.getStorefrontId());
+    userService.assertUserOwnsStore(storefront.getStore());
+    outfit.setStorefront(storefront);
 
     if (dto.getProducts() == null || (dto.getProducts() != null && dto.getProducts().size() <= 0)) {
       throw new InvalidRequestException("An outfit cannot be created without products.");
@@ -104,10 +94,7 @@ public class OutfitService {
     dto.getTags().stream().forEach(name -> addTag(outfitId, name));
     dto.getProducts().stream().forEach(product -> addProduct(outfitId, product));
 
-    return new OutfitDTO(
-        outfit,
-        outfitRepository.findOutfitTagsById(outfit.getId()),
-        outfitRepository.findOutfitOutfitProductsById(outfit.getId()));
+    return outfit;
   }
 
   private Integer calculatePriceOnCreation(List<OutfitCreationProductDTO> dtos)
@@ -118,10 +105,11 @@ public class OutfitService {
   }
 
   @Transactional(rollbackFor = ResourceNotFoundException.class)
-  public OutfitDTO update(UUID id, OutfitUpdateDTO dto) throws ResourceNotFoundException {
+  public Outfit update(UUID id, OutfitUpdateDTO dto) throws ResourceNotFoundException {
     Outfit outfitToUpdate;
 
     outfitToUpdate = applicationContext.getBean(OutfitService.class).findById(id);
+    userService.assertUserOwnsStore(outfitToUpdate.getStorefront().getStore());
 
     outfitToUpdate.setName(dto.getName());
     outfitToUpdate.setDescription(dto.getDescription());
@@ -129,10 +117,7 @@ public class OutfitService {
     outfitToUpdate.setImage(dto.getImage());
     outfitToUpdate.setIndex(dto.getIndex());
 
-    return new OutfitDTO(
-        outfitRepository.save(outfitToUpdate),
-        outfitRepository.findOutfitTagsById(id),
-        outfitRepository.findOutfitOutfitProductsById(id));
+    return outfitRepository.save(outfitToUpdate);
   }
 
   @Transactional(rollbackFor = ResourceNotFoundException.class)
@@ -142,6 +127,7 @@ public class OutfitService {
     OutfitTagRelation outfitTag;
 
     outfit = applicationContext.getBean(OutfitService.class).findById(outfitId);
+    userService.assertUserOwnsStore(outfit.getStorefront().getStore());
     tag = outfitTagService.findOrCreate(tagName);
 
     outfitTag = new OutfitTagRelation();
@@ -159,6 +145,7 @@ public class OutfitService {
     OutfitTagRelation relation;
 
     outfit = applicationContext.getBean(OutfitService.class).findById(outfitId);
+    userService.assertUserOwnsStore(outfit.getStorefront().getStore());
     tag = outfitTagService.findByName(tagName);
 
     relation =
@@ -170,7 +157,7 @@ public class OutfitService {
   }
 
   @Transactional(rollbackFor = {ResourceNotFoundException.class, InvalidRequestException.class})
-  public OutfitProductDTO addProduct(UUID outfitId, OutfitCreationProductDTO dto)
+  public OutfitProduct addProduct(UUID outfitId, OutfitCreationProductDTO dto)
       throws ResourceNotFoundException, InvalidRequestException {
     Outfit outfit;
     Product product;
@@ -179,6 +166,7 @@ public class OutfitService {
     List<Integer> productIndicesOfOutfit;
 
     outfit = applicationContext.getBean(OutfitService.class).findById(outfitId);
+    userService.assertUserOwnsStore(outfit.getStorefront().getStore());
     product = productService.getProductById(dto.getId());
 
     productsOfOutfit = outfitRepository.findOutfitProductsById(outfitId);
@@ -199,7 +187,7 @@ public class OutfitService {
     outfitProduct.setProduct(product);
     outfitProductRepository.save(outfitProduct);
 
-    return new OutfitProductDTO(outfitProduct);
+    return outfitProduct;
   }
 
   @Transactional(rollbackFor = ResourceNotFoundException.class)
@@ -208,6 +196,7 @@ public class OutfitService {
     OutfitProduct relation;
 
     outfit = applicationContext.getBean(OutfitService.class).findById(outfitId);
+    userService.assertUserOwnsStore(outfit.getStorefront().getStore());
     relation =
         outfitRepository
             .findProductRelation(outfit.getId(), product.getId())
@@ -220,8 +209,11 @@ public class OutfitService {
   @Transactional(rollbackFor = ResourceNotFoundException.class)
   public void sortProducts(UUID outfitId, List<OutfitCreationProductDTO> products)
       throws ResourceNotFoundException {
+    Outfit outfit;
     List<OutfitProduct> relations;
 
+    outfit = applicationContext.getBean(OutfitService.class).findById(outfitId);
+    userService.assertUserOwnsStore(outfit.getStorefront().getStore());
     relations = outfitRepository.findOutfitOutfitProductsById(outfitId);
 
     for (OutfitProduct relation : relations) {
@@ -234,7 +226,7 @@ public class OutfitService {
               .orElseThrow(
                   () ->
                       new ResourceNotFoundException(
-                          "Could not find association entity between requested outift and product."));
+                          "Could not find association entity between requested outfit and product."));
       relation.setIndex(product.getIndex());
     }
     outfitProductRepository.saveAll(relations);
@@ -242,6 +234,8 @@ public class OutfitService {
 
   @Transactional
   public void delete(UUID id) {
+    Outfit outfit = applicationContext.getBean(OutfitService.class).findById(id);
+    userService.assertUserOwnsStore(outfit.getStorefront().getStore());
     outfitRepository.findOutfitOutfitProductsById(id).stream()
         .forEach(p -> outfitProductRepository.deleteById(p.getId()));
     outfitRepository.findOutfitOutfitTagsById(id).stream()

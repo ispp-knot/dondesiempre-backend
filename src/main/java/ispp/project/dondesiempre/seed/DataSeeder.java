@@ -1,6 +1,7 @@
 package ispp.project.dondesiempre.seed;
 
 import ispp.project.dondesiempre.models.Client;
+import ispp.project.dondesiempre.models.User;
 import ispp.project.dondesiempre.models.outfits.Outfit;
 import ispp.project.dondesiempre.models.outfits.OutfitProduct;
 import ispp.project.dondesiempre.models.outfits.OutfitTag;
@@ -15,6 +16,7 @@ import ispp.project.dondesiempre.models.stores.SocialNetwork;
 import ispp.project.dondesiempre.models.stores.Store;
 import ispp.project.dondesiempre.models.stores.StoreSocialNetwork;
 import ispp.project.dondesiempre.repositories.ClientRepository;
+import ispp.project.dondesiempre.repositories.UserRepository;
 import ispp.project.dondesiempre.repositories.outfits.OutfitProductRepository;
 import ispp.project.dondesiempre.repositories.outfits.OutfitRepository;
 import ispp.project.dondesiempre.repositories.outfits.OutfitTagRelationRepository;
@@ -27,6 +29,7 @@ import ispp.project.dondesiempre.repositories.products.ProductVariantRepository;
 import ispp.project.dondesiempre.repositories.stores.SocialNetworkRepository;
 import ispp.project.dondesiempre.repositories.stores.StoreRepository;
 import ispp.project.dondesiempre.repositories.stores.StoreSocialNetworkRepository;
+import ispp.project.dondesiempre.services.UserService;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -56,6 +59,7 @@ public class DataSeeder implements CommandLineRunner {
   private static final Logger log = LoggerFactory.getLogger(DataSeeder.class);
 
   private final SeedProperties props;
+  private final UserRepository userRepository;
   private final StoreRepository storeRepository;
   private final SocialNetworkRepository socialNetworkRepository;
   private final StoreSocialNetworkRepository storeSocialNetworkRepository;
@@ -104,6 +108,12 @@ public class DataSeeder implements CommandLineRunner {
         outfitTagRepository.findAll().stream()
             .collect(Collectors.toMap(OutfitTag::getName, ot -> ot));
 
+    // Create user that owns the manual store (this is the seed user for getCurrentUser())
+    User storeOwner = new User();
+    storeOwner.setEmail(UserService.SEED_USER_EMAIL);
+    storeOwner.setPassword("password123");
+    userRepository.save(storeOwner);
+
     // Create storefront (saved via CascadeType.ALL on Store.storefront)
     Storefront storefront = new Storefront();
     storefront.setPrimaryColor("#c65a3a");
@@ -123,6 +133,7 @@ public class DataSeeder implements CommandLineRunner {
         "Tienda de moda local con más de 10 años de experiencia en el sector textil sevillano.");
     store.setAcceptsShipping(true);
     store.setStorefront(storefront);
+    store.setUser(storeOwner);
     storeRepository.save(store);
 
     // Social networks
@@ -195,12 +206,18 @@ public class DataSeeder implements CommandLineRunner {
     createOutfitTagRelation(outfit2, outfitTags.get("Elegante"));
 
     // Client
+    User clientUser = new User();
+    clientUser.setEmail("ana.garcia@ejemplo.es");
+    clientUser.setPassword("password123");
+    userRepository.save(clientUser);
+
     Client client = new Client();
     client.setName("Ana");
     client.setSurname("García");
     client.setEmail("ana.garcia@ejemplo.es");
     client.setPhone("+34 623456789");
     client.setAddress("Calle San Fernando, nº 12, Sevilla");
+    client.setUser(clientUser);
     clientRepository.save(client);
   }
 
@@ -226,6 +243,13 @@ public class DataSeeder implements CommandLineRunner {
     List<OutfitTag> allOutfitTags = outfitTagRepository.findAll();
 
     for (int i = 0; i < props.getStoreCount(); i++) {
+      String storeEmail = "tienda" + i + "@ejemplo.es";
+
+      User storeUser = new User();
+      storeUser.setEmail(storeEmail);
+      storeUser.setPassword("password123");
+      userRepository.save(storeUser);
+
       Storefront storefront = new Storefront();
       storefront.setPrimaryColor("#" + pick(hexColors, rng));
       storefront.setSecondaryColor("#" + pick(hexColors, rng));
@@ -238,7 +262,7 @@ public class DataSeeder implements CommandLineRunner {
 
       Store store = new Store();
       store.setName(pick(storeNames, rng));
-      store.setEmail("tienda" + i + "@ejemplo.es");
+      store.setEmail(storeEmail);
       store.setStoreID(String.format("TIENDA-RND-%03d", i));
       store.setLocation(location);
       store.setAddress(pick(addresses, rng));
@@ -247,6 +271,7 @@ public class DataSeeder implements CommandLineRunner {
       store.setAboutUs(pick(aboutUsList, rng));
       store.setAcceptsShipping(rng.nextBoolean());
       store.setStorefront(storefront);
+      store.setUser(storeUser);
       storeRepository.save(store);
 
       // Social networks
@@ -323,12 +348,20 @@ public class DataSeeder implements CommandLineRunner {
               .replace("ú", "u")
               .replace("ñ", "n");
 
+      String clientEmail = normalizedName + "." + normalizedSurname + i + "@ejemplo.es";
+
+      User clientUser = new User();
+      clientUser.setEmail(clientEmail);
+      clientUser.setPassword("password123");
+      userRepository.save(clientUser);
+
       Client client = new Client();
       client.setName(name);
       client.setSurname(surname);
-      client.setEmail(normalizedName + "." + normalizedSurname + i + "@ejemplo.es");
+      client.setEmail(clientEmail);
       client.setPhone(pick(phoneNumbers, rng));
       client.setAddress(pick(addresses, rng));
+      client.setUser(clientUser);
       clientRepository.save(client);
     }
   }
