@@ -262,4 +262,90 @@ public class OutfitServiceTest {
 
     assertThrows(InvalidRequestException.class, () -> outfitService.create(dto));
   }
+
+  @Test
+  void removeTag_shouldRemoveTag_whenAuthorized() {
+    OutfitDTO created = outfitService.create(buildCreationDTO());
+    outfitService.addTag(created.getId(), "cool");
+
+    assertDoesNotThrow(() -> outfitService.removeTag(created.getId(), "cool"));
+  }
+
+  @Test
+  void removeTag_shouldThrowUnauthorizedException_whenNotAuthorized() {
+    OutfitDTO created = outfitService.create(buildCreationDTO());
+    outfitService.addTag(created.getId(), "cool");
+
+    doThrow(new UnauthorizedException("Not authorized"))
+        .when(userService)
+        .assertUserOwnsStore(any());
+
+    assertThrows(
+        UnauthorizedException.class, () -> outfitService.removeTag(created.getId(), "cool"));
+  }
+
+  @Test
+  void removeProduct_shouldRemoveProduct_whenAuthorized() {
+    OutfitDTO created = outfitService.create(buildCreationDTO());
+
+    assertDoesNotThrow(() -> outfitService.removeProduct(created.getId(), product));
+  }
+
+  @Test
+  void removeProduct_shouldThrowUnauthorizedException_whenNotAuthorized() {
+    OutfitDTO created = outfitService.create(buildCreationDTO());
+
+    doThrow(new UnauthorizedException("Not authorized"))
+        .when(userService)
+        .assertUserOwnsStore(any());
+
+    assertThrows(
+        UnauthorizedException.class, () -> outfitService.removeProduct(created.getId(), product));
+  }
+
+  @Test
+  void sortProducts_shouldSortProducts_whenAuthorized() {
+    Product extra = new Product();
+    extra.setName("Extra Product");
+    extra.setPriceInCents(500);
+    extra.setDiscountedPriceInCents(500);
+    extra.setType(product.getType());
+    extra.setStore(store);
+    extra = productRepository.save(extra);
+
+    OutfitCreationProductDTO extraDTO = new OutfitCreationProductDTO();
+    extraDTO.setId(extra.getId());
+    extraDTO.setIndex(1);
+
+    OutfitDTO created = outfitService.create(buildCreationDTO());
+    outfitService.addProduct(created.getId(), extraDTO);
+
+    OutfitCreationProductDTO sortFirst = new OutfitCreationProductDTO();
+    sortFirst.setId(product.getId());
+    sortFirst.setIndex(1);
+
+    OutfitCreationProductDTO sortSecond = new OutfitCreationProductDTO();
+    sortSecond.setId(extra.getId());
+    sortSecond.setIndex(0);
+
+    assertDoesNotThrow(
+        () -> outfitService.sortProducts(created.getId(), List.of(sortFirst, sortSecond)));
+  }
+
+  @Test
+  void sortProducts_shouldThrowUnauthorizedException_whenNotAuthorized() {
+    OutfitDTO created = outfitService.create(buildCreationDTO());
+
+    doThrow(new UnauthorizedException("Not authorized"))
+        .when(userService)
+        .assertUserOwnsStore(any());
+
+    OutfitCreationProductDTO sortDTO = new OutfitCreationProductDTO();
+    sortDTO.setId(product.getId());
+    sortDTO.setIndex(0);
+
+    assertThrows(
+        UnauthorizedException.class,
+        () -> outfitService.sortProducts(created.getId(), List.of(sortDTO)));
+  }
 }
