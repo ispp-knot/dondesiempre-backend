@@ -1,5 +1,7 @@
 package ispp.project.dondesiempre.controllers;
 
+import java.util.UUID;
+
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import ispp.project.dondesiempre.models.products.Product;
 import ispp.project.dondesiempre.models.products.dto.DiscountModificationDTO;
@@ -33,7 +35,7 @@ public class ProductController {
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<ProductDTO> getProductById(@PathVariable Integer id) {
+  public ResponseEntity<ProductDTO> getProductById(@PathVariable UUID id) {
     Product product = productService.getProductById(id);
     ProductDTO dto = ProductDTO.fromProduct(product);
     return new ResponseEntity<>(dto, HttpStatus.OK);
@@ -54,7 +56,7 @@ public class ProductController {
 
   @PutMapping("/{id}/discount")
   public ResponseEntity<Product> updateDiscount(
-      @PathVariable Integer id, @RequestBody DiscountModificationDTO discount) {
+      @PathVariable UUID id, @RequestBody DiscountModificationDTO discount) {
     Product updatedProduct =
         productService.updateProductDiscount(id, discount.getDiscountedPriceInCents());
     return new ResponseEntity<>(updatedProduct, HttpStatus.ACCEPTED);

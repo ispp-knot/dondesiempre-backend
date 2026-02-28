@@ -1,5 +1,7 @@
 package ispp.project.dondesiempre.models.stores.dto;
 
+import java.util.UUID;
+
 import ispp.project.dondesiempre.models.stores.Store;
 import lombok.Getter;
 import lombok.Setter;
@@ -8,7 +10,7 @@ import lombok.Setter;
 @Setter
 public class StoreDTO {
 
-  private Integer id;
+  private UUID id;
   private String name;
   private String email;
   private String storeID;

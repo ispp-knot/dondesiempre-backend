@@ -1,5 +1,7 @@
 package ispp.project.dondesiempre.repositories;
 
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -42,7 +44,7 @@ class ClientRepositoryTest {
     void testUpdate() {
         Client client = new Client();
         Client saved = clientRepository.save(client);
-        Integer originalId = saved.getId();
+        UUID originalId = saved.getId();
 
         Client updated = clientRepository.save(saved);
 
@@ -53,7 +55,7 @@ class ClientRepositoryTest {
     void testDelete() {
         Client client = new Client();
         Client saved = clientRepository.save(client);
-        Integer id = saved.getId();
+        UUID id = saved.getId();
 
         clientRepository.deleteById(id);
 

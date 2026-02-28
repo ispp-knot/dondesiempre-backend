@@ -1,5 +1,7 @@
 package ispp.project.dondesiempre.services;
 
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import ispp.project.dondesiempre.exceptions.InvalidRequestException;
@@ -242,8 +244,8 @@ public class ProductServiceTest {
   @Test
   public void shouldThrowException_WhenGettingNonExistentProduct() {
     try {
-      productService.getProductById(9999); // Assuming this ID does not exist
-      assert false; // Should not reach here
+      productService.getProductById(UUID.randomUUID()); 
+      assert false;
     } catch (RuntimeException e) {
       assert e.getMessage().equals("Product not found");
     }

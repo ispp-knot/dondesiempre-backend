@@ -1,5 +1,7 @@
 package ispp.project.dondesiempre.models;
 
+import java.util.UUID;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.GeneratedValue;
@@ -15,14 +17,13 @@ import lombok.EqualsAndHashCode;
 public class BaseEntity {
 
 	@Id
-	@SequenceGenerator(name = "entity_seq", sequenceName = "entity_sequence", initialValue = 100)
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "entity_seq")
-	protected Integer id;
+	@GeneratedValue(strategy = GenerationType.UUID)
+	protected UUID id;
 
 	@Version
 	private Integer version;
 
-	public Integer getId() {
+	public UUID getId() {
 		return id;
 	}
 
@@ -34,7 +35,7 @@ public class BaseEntity {
 		this.version = version;
 	}
 
-	public void setId(Integer id) {
+	public void setId(UUID id) {
 		this.id = id;
 	}
 

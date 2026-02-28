@@ -1,5 +1,7 @@
 package ispp.project.dondesiempre.models.outfits.dto;
 
+import java.util.UUID;
+
 import ispp.project.dondesiempre.models.outfits.Outfit;
 import ispp.project.dondesiempre.models.outfits.OutfitProduct;
 import java.util.Comparator;
@@ -10,7 +12,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class OutfitDTO {
-  private Integer id;
+  private UUID id;
 
   private String name;
   private String description;
@@ -20,7 +22,7 @@ public class OutfitDTO {
   private Integer discountedPriceInCents;
 
   private Integer index;
-  private Integer storefrontId;
+  private UUID storefrontId;
 
   private List<String> tags;
   private List<OutfitProductDTO> products;

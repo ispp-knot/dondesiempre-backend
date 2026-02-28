@@ -1,5 +1,7 @@
 package ispp.project.dondesiempre.services.stores;
 
+import java.util.UUID;
+
 import ispp.project.dondesiempre.exceptions.InvalidBoundingBoxException;
 import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.models.stores.Store;
@@ -16,7 +18,7 @@ public class StoreService {
   private final StoreRepository storeRepository;
 
   @Transactional(readOnly = true, rollbackFor = ResourceNotFoundException.class)
-  public Store findById(Integer id) throws ResourceNotFoundException {
+  public Store findById(UUID id) throws ResourceNotFoundException {
     return storeRepository
         .findById(id)
         .orElseThrow(() -> new ResourceNotFoundException("Store with ID " + id + " not found."));

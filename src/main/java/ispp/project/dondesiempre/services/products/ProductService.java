@@ -1,5 +1,7 @@
 package ispp.project.dondesiempre.services.products;
 
+import java.util.UUID;
+
 import ispp.project.dondesiempre.exceptions.InvalidRequestException;
 import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.models.products.Product;
@@ -34,7 +36,7 @@ public class ProductService {
     return productRepository.save(product);
   }
 
-  public Product getProductById(Integer id) {
+  public Product getProductById(UUID id) {
     Product product =
         productRepository
             .findById(id)
@@ -51,7 +53,7 @@ public class ProductService {
   }
 
   @Transactional
-  public Product updateProductDiscount(Integer id, Integer discountedPriceInCents) {
+  public Product updateProductDiscount(UUID id, Integer discountedPriceInCents) {
     if (discountedPriceInCents > getProductById(id).getPriceInCents()) {
       throw new InvalidRequestException("Discounted price cannot be greater than original price");
     }
