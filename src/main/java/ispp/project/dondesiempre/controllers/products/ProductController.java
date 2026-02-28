@@ -1,4 +1,4 @@
-package ispp.project.dondesiempre.controllers;
+package ispp.project.dondesiempre.controllers.products;
 
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import ispp.project.dondesiempre.models.products.Product;

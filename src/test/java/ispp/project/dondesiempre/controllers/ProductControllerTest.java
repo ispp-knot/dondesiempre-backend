@@ -2,6 +2,7 @@ package ispp.project.dondesiempre.controllers;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import ispp.project.dondesiempre.controllers.products.ProductController;
 import ispp.project.dondesiempre.exceptions.InvalidRequestException;
 import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.models.products.Product;
