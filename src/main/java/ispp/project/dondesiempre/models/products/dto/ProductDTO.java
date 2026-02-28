@@ -1,6 +1,7 @@
 package ispp.project.dondesiempre.models.products.dto;
 
 import ispp.project.dondesiempre.models.products.Product;
+import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,8 +13,8 @@ public class ProductDTO {
   private Integer priceInCents;
   private Integer discountedPriceInCents;
   private String description;
-  private Integer typeId;
-  private Integer storeId;
+  private UUID typeId;
+  private UUID storeId;
 
   public static ProductDTO fromProduct(Product product) {
     ProductDTO dto = new ProductDTO();

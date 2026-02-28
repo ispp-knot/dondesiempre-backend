@@ -12,4 +12,8 @@ databaseChangeLog:
   - include:
       file: db/changelog/006-discounts-on-products/discounts-on-product.changelog.yaml
   - include:
+      file: db/changelog/007-reference-data/007.changelog.yaml
+  - include:
       file: db/changelog/008-promotions-on-products/promotions-on-products.changelog.yaml
+
+

@@ -19,7 +19,7 @@ databaseChangeLog:
                   constraints:
                     nullable: false
                   name: storefront_id
-                  type: INTEGER
+                  type: UUID
             tableName: outfits
   - changeSet:
       id: 1771812743099-33
