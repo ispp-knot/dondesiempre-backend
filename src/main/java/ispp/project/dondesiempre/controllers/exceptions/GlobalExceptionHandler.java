@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -39,6 +40,12 @@ public class GlobalExceptionHandler {
   public ResponseEntity<String> handleUnauthorizedException(
       UnauthorizedException exception, WebRequest request) {
     return new ResponseEntity<>(exception.getMessage(), HttpStatus.FORBIDDEN);
+  }
+
+  @ExceptionHandler(ResponseStatusException.class)
+  public ResponseEntity<String> handleResponseStatusException(
+      ResponseStatusException exception, WebRequest request) {
+    return new ResponseEntity<>(exception.getReason(), exception.getStatusCode());
   }
 
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)

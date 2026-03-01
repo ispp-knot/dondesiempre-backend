@@ -17,3 +17,5 @@ databaseChangeLog:
       file: db/changelog/010-add-product-image/add-product-image.changelog.yaml
   - include:
       file: db/changelog/011-users/011.changelog.yaml
+  - include:
+      file: db/changelog/014-create-collection/create-collection.changelog.yaml

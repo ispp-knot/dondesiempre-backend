@@ -1,0 +1,43 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001-create-collections-table
+      author: codex
+      changes:
+        - createTable:
+            tableName: collections
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+                    primaryKeyName: collectionsPK
+              - column:
+                  name: version
+                  type: INTEGER
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: TEXT
+              - column:
+                  name: store_id
+                  type: UUID
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: 001-add-fk-collections-store
+      author: codex
+      changes:
+        - addForeignKeyConstraint:
+            baseTableName: collections
+            baseColumnNames: store_id
+            referencedTableName: stores
+            referencedColumnNames: id
+            constraintName: FKcollections_store
+            validate: true
