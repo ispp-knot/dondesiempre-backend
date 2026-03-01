@@ -13,14 +13,13 @@ import static org.mockito.Mockito.when;
 
 import ispp.project.dondesiempre.exceptions.InvalidRequestException;
 import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
+import ispp.project.dondesiempre.models.User;
 import ispp.project.dondesiempre.models.outfits.Outfit;
 import ispp.project.dondesiempre.models.outfits.OutfitProduct;
 import ispp.project.dondesiempre.models.outfits.OutfitTag;
 import ispp.project.dondesiempre.models.outfits.OutfitTagRelation;
 import ispp.project.dondesiempre.models.outfits.dto.OutfitCreationDTO;
 import ispp.project.dondesiempre.models.outfits.dto.OutfitCreationProductDTO;
-import ispp.project.dondesiempre.models.outfits.dto.OutfitDTO;
-import ispp.project.dondesiempre.models.outfits.dto.OutfitProductDTO;
 import ispp.project.dondesiempre.models.outfits.dto.OutfitUpdateDTO;
 import ispp.project.dondesiempre.models.products.Product;
 import ispp.project.dondesiempre.models.storefronts.Storefront;
@@ -28,6 +27,7 @@ import ispp.project.dondesiempre.models.stores.Store;
 import ispp.project.dondesiempre.repositories.outfits.OutfitProductRepository;
 import ispp.project.dondesiempre.repositories.outfits.OutfitRepository;
 import ispp.project.dondesiempre.repositories.outfits.OutfitTagRelationRepository;
+import ispp.project.dondesiempre.services.UserService;
 import ispp.project.dondesiempre.services.products.ProductService;
 import ispp.project.dondesiempre.services.storefronts.StorefrontService;
 import java.util.ArrayList;
@@ -49,6 +49,7 @@ class OutfitServiceTest {
   @Mock private OutfitProductRepository outfitProductRepository;
   @Mock private OutfitTagRelationRepository outfitTagRelationRepository;
   @Mock private ProductService productService;
+  @Mock private UserService userService;
   @Mock private StorefrontService storefrontService;
   @Mock private OutfitTagService outfitTagService;
   @Mock private ApplicationContext applicationContext;
@@ -59,12 +60,14 @@ class OutfitServiceTest {
   private UUID productId;
   private UUID storefrontId;
   private UUID storeId;
+  private UUID userId;
 
   private Storefront storefront;
   private Store store;
   private Outfit outfit;
   private Product product;
   private OutfitProduct outfitProduct;
+  private User user;
 
   @BeforeEach
   void setUp() {
@@ -72,13 +75,17 @@ class OutfitServiceTest {
     productId = UUID.randomUUID();
     storefrontId = UUID.randomUUID();
     storeId = UUID.randomUUID();
+    userId = UUID.randomUUID();
+
+    user = new User();
+    user.setId(userId);
 
     storefront = new Storefront();
     storefront.setId(storefrontId);
 
     store = new Store();
     store.setId(storeId);
-
+    store.setUser(user);
     outfit = new Outfit();
     outfit.setId(outfitId);
     outfit.setName("Test Outfit");
@@ -122,48 +129,22 @@ class OutfitServiceTest {
   }
 
   @Test
-  void shouldReturnOutfitDTO_whenIdExists() throws ResourceNotFoundException {
-    when(outfitRepository.findById(outfitId)).thenReturn(Optional.of(outfit));
-    when(outfitRepository.findOutfitTagsById(outfitId)).thenReturn(List.of("casual"));
-    when(outfitRepository.findOutfitOutfitProductsById(outfitId))
-        .thenReturn(List.of(outfitProduct));
-
-    OutfitDTO result = outfitService.findByIdToDTO(outfitId);
-
-    assertNotNull(result);
-    assertEquals(outfitId, result.getId());
-    assertEquals("casual", result.getTags().get(0));
-    assertEquals("Test Product", result.getProducts().get(0).getName());
-  }
-
-  @Test
-  void shouldThrowResourceNotFoundException_whenIdDoesNotExist_findByIdToDTO() {
-    UUID nonExistentId = UUID.randomUUID();
-    when(outfitRepository.findById(nonExistentId)).thenReturn(Optional.empty());
-    assertThrows(ResourceNotFoundException.class, () -> outfitService.findByIdToDTO(nonExistentId));
-  }
-
-  @Test
   void shouldReturnListOfOutfitDTOs_whenStoreHasOutfits() {
     when(outfitRepository.findByStoreId(storeId)).thenReturn(List.of(outfit));
-    when(outfitRepository.findOutfitTagsById(outfitId)).thenReturn(List.of("casual"));
-    when(outfitRepository.findOutfitOutfitProductsById(outfitId))
-        .thenReturn(List.of(outfitProduct));
 
-    List<OutfitDTO> result = outfitService.findByStore(store);
+    List<Outfit> result = outfitService.findByStore(store);
 
     assertNotNull(result);
     assertEquals(1, result.size());
     assertEquals(outfitId, result.get(0).getId());
-    assertEquals("casual", result.get(0).getTags().get(0));
-    assertEquals("Test Product", result.get(0).getProducts().get(0).getName());
+    assertEquals("Test Outfit", result.get(0).getName());
   }
 
   @Test
   void shouldReturnEmptyList_whenStoreHasNoOutfits() {
     when(outfitRepository.findByStoreId(storeId)).thenReturn(new ArrayList<>());
 
-    List<OutfitDTO> result = outfitService.findByStore(store);
+    List<Outfit> result = outfitService.findByStore(store);
 
     assertNotNull(result);
     assertTrue(result.isEmpty());
@@ -193,16 +174,13 @@ class OutfitServiceTest {
     when(productService.getProductById(productId)).thenReturn(product);
     when(outfitRepository.save(any())).thenReturn(outfit);
     when(outfitRepository.findById(outfitId)).thenReturn(Optional.of(outfit));
-    when(outfitTagService.findByName("casual")).thenReturn(tag);
+    when(outfitTagService.findOrCreate("casual")).thenReturn(tag);
     when(outfitTagRelationRepository.save(any())).thenReturn(new OutfitTagRelation());
     when(outfitRepository.findOutfitProductsById(outfitId)).thenReturn(new ArrayList<>());
     when(outfitRepository.findOutfitProductIndicesById(outfitId)).thenReturn(new ArrayList<>());
     when(outfitProductRepository.save(any())).thenReturn(outfitProduct);
-    when(outfitRepository.findOutfitTagsById(outfitId)).thenReturn(List.of("casual"));
-    when(outfitRepository.findOutfitOutfitProductsById(outfitId))
-        .thenReturn(List.of(outfitProduct));
 
-    OutfitDTO result = outfitService.create(dto);
+    Outfit result = outfitService.create(dto);
 
     assertNotNull(result);
     assertEquals(outfitId, result.getId());
@@ -252,10 +230,8 @@ class OutfitServiceTest {
 
     when(outfitRepository.findById(outfitId)).thenReturn(Optional.of(outfit));
     when(outfitRepository.save(any())).thenReturn(outfit);
-    when(outfitRepository.findOutfitTagsById(outfitId)).thenReturn(List.of());
-    when(outfitRepository.findOutfitOutfitProductsById(outfitId)).thenReturn(List.of());
 
-    OutfitDTO result = outfitService.update(outfitId, dto);
+    Outfit result = outfitService.update(outfitId, dto);
 
     assertNotNull(result);
     assertEquals("Updated Outfit", result.getName());
@@ -283,13 +259,12 @@ class OutfitServiceTest {
     tag.setName("casual");
 
     when(outfitRepository.findById(outfitId)).thenReturn(Optional.of(outfit));
-    when(outfitTagService.findByName("casual")).thenReturn(tag);
+    when(outfitTagService.findOrCreate("casual")).thenReturn(tag);
     when(outfitTagRelationRepository.save(any())).thenReturn(new OutfitTagRelation());
 
     String result = outfitService.addTag(outfitId, "casual");
 
     assertEquals("casual", result);
-    verify(outfitTagService, never()).create(any());
     verify(outfitTagRelationRepository, times(1)).save(any());
   }
 
@@ -300,15 +275,13 @@ class OutfitServiceTest {
     newTag.setName("new-tag");
 
     when(outfitRepository.findById(outfitId)).thenReturn(Optional.of(outfit));
-    when(outfitTagService.findByName("new-tag"))
-        .thenThrow(new ResourceNotFoundException("Tag 'new-tag' not found."));
-    when(outfitTagService.create("new-tag")).thenReturn(newTag);
+    when(outfitTagService.findOrCreate("new-tag")).thenReturn(newTag);
     when(outfitTagRelationRepository.save(any())).thenReturn(new OutfitTagRelation());
 
     String result = outfitService.addTag(outfitId, "new-tag");
 
     assertEquals("new-tag", result);
-    verify(outfitTagService, times(1)).create("new-tag");
+    verify(outfitTagService, times(1)).findOrCreate("new-tag");
     verify(outfitTagRelationRepository, times(1)).save(any());
   }
 
@@ -326,10 +299,10 @@ class OutfitServiceTest {
     when(outfitRepository.findOutfitProductIndicesById(outfitId)).thenReturn(new ArrayList<>());
     when(outfitProductRepository.save(any())).thenReturn(outfitProduct);
 
-    OutfitProductDTO result = outfitService.addProduct(outfitId, dto);
+    OutfitProduct result = outfitService.addProduct(outfitId, dto);
 
     assertNotNull(result);
-    assertEquals("Test Product", result.getName());
+    assertEquals("Test Product", result.getProduct().getName());
     verify(outfitProductRepository, times(1)).save(any());
   }
 
@@ -379,6 +352,8 @@ class OutfitServiceTest {
 
   @Test
   void shouldCallDeleteById_whenDeleteInvoked() {
+    when(outfitRepository.findById(outfitId)).thenReturn(Optional.of(outfit));
+
     outfitService.delete(outfitId);
 
     verify(outfitRepository, times(1)).deleteById(outfitId);
