@@ -4,12 +4,14 @@ import ispp.project.dondesiempre.models.BaseEntity;
 import ispp.project.dondesiempre.models.stores.Store;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import java.util.HashSet;
+import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
@@ -45,8 +47,6 @@ public class Product extends BaseEntity {
   @OnDelete(action = OnDeleteAction.CASCADE)
   private Store store;
 
-  @ManyToOne(optional = true)
-  @OnDelete(action = OnDeleteAction.SET_NULL)
-  @JoinColumn(name = "category_id")
-  private ProductCategory category;
+  @ManyToMany(mappedBy = "products")
+  private Set<ProductCollection> collections = new HashSet<>();
 }
