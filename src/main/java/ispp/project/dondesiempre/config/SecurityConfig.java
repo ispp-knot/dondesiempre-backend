@@ -31,6 +31,8 @@ public class SecurityConfig implements WebMvcConfigurer {
                     .permitAll()
                     .requestMatchers("/api/v1/stores/*/followers/**")
                     .authenticated()
+                    .requestMatchers("/api/v1/clients/me/followed-stores")
+                    .authenticated()
                     .anyRequest()
                     .permitAll());
 
