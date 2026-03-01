@@ -1,0 +1,48 @@
+databaseChangeLog:
+  - changeSet:
+      id: 002-create-collection-products-table
+      author: codex
+      changes:
+        - createTable:
+            tableName: collection_products
+            columns:
+              - column:
+                  name: collection_id
+                  type: INTEGER
+                  constraints:
+                    nullable: false
+              - column:
+                  name: product_id
+                  type: INTEGER
+                  constraints:
+                    nullable: false
+        - addPrimaryKey:
+            tableName: collection_products
+            columnNames: collection_id, product_id
+            constraintName: collection_products_pk
+
+  - changeSet:
+      id: 002-add-fk-collection-products-collection
+      author: codex
+      changes:
+        - addForeignKeyConstraint:
+            baseTableName: collection_products
+            baseColumnNames: collection_id
+            referencedTableName: collections
+            referencedColumnNames: id
+            constraintName: FKcollection_products_collection
+            onDelete: CASCADE
+            validate: true
+
+  - changeSet:
+      id: 002-add-fk-collection-products-product
+      author: codex
+      changes:
+        - addForeignKeyConstraint:
+            baseTableName: collection_products
+            baseColumnNames: product_id
+            referencedTableName: products
+            referencedColumnNames: id
+            constraintName: FKcollection_products_product
+            onDelete: CASCADE
+            validate: true

@@ -8,4 +8,4 @@ databaseChangeLog:
   - include:
       file: db/changelog/005-entities-renaming-and-refactoring/entities-renaming-and-refactoring.changelog.yaml
   - include:
-      file: db/changelog/007-create-category/create-category.changelog.yaml
+      file: db/changelog/007-create-collection/create-collection.changelog.yaml

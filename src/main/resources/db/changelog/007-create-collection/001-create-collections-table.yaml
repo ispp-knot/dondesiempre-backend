@@ -1,10 +1,10 @@
 databaseChangeLog:
   - changeSet:
-      id: 001-create-categories-table
-      author: tu-nombre
+      id: 001-create-collections-table
+      author: codex
       changes:
         - createTable:
-            tableName: categories
+            tableName: collections
             columns:
               - column:
                   name: id
@@ -12,7 +12,7 @@ databaseChangeLog:
                   constraints:
                     primaryKey: true
                     nullable: false
-                    primaryKeyName: categoriesPK
+                    primaryKeyName: collectionsPK
               - column:
                   name: version
                   type: INTEGER
@@ -31,13 +31,13 @@ databaseChangeLog:
                     nullable: false
 
   - changeSet:
-      id: 001-add-fk-categories-store
-      author: tu-nombre
+      id: 001-add-fk-collections-store
+      author: codex
       changes:
         - addForeignKeyConstraint:
-            baseTableName: categories
+            baseTableName: collections
             baseColumnNames: store_id
             referencedTableName: stores
             referencedColumnNames: id
-            constraintName: FKcategories_store
+            constraintName: FKcollections_store
             validate: true

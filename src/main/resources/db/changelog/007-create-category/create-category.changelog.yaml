@@ -1,5 +1,0 @@
-databaseChangeLog:
-  - include:
-      file: db/changelog/007-create-category/001-create-categories-table.yaml
-  - include:
-      file: db/changelog/007-create-category/002-update-products-table.yaml
