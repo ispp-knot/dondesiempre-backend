@@ -221,11 +221,15 @@ class OutfitRepositoryTest {
       product.setPriceInCents(i * 1000); // Set price in cents (e.g., 1000 = $10.00)
       product.setDiscountedPriceInCents(i * 1000); // Set discounted price in cents
       product.setType(type);
+      Store storeToSet =
+          (i < 3)
+              ? store1
+              : store2; // First 3 products belong to store1, last product belongs to store2
+      product.setStore(storeToSet);
       product = productRepository.save(product);
 
       products.add(product);
     }
-    products.get(0).setStore(store1);
 
     outfitProduct = new OutfitProduct();
     outfitProduct.setIndex(0);
@@ -233,23 +237,17 @@ class OutfitRepositoryTest {
     outfitProduct.setOutfit(outfit1);
     outfitProduct = outfitProductRepository.save(outfitProduct);
 
-    products.get(1).setStore(store1);
-
     outfitProduct = new OutfitProduct();
     outfitProduct.setIndex(1);
     outfitProduct.setProduct(products.get(2));
     outfitProduct.setOutfit(outfit2);
     outfitProduct = outfitProductRepository.save(outfitProduct);
 
-    products.get(2).setStore(store1);
-
     outfitProduct = new OutfitProduct();
     outfitProduct.setIndex(0);
     outfitProduct.setProduct(products.get(1));
     outfitProduct.setOutfit(outfit2);
     outfitProduct = outfitProductRepository.save(outfitProduct);
-
-    products.get(3).setStore(store2);
 
     outfitProduct = new OutfitProduct();
     outfitProduct.setIndex(0);
