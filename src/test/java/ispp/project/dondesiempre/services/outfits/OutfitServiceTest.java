@@ -358,4 +358,114 @@ class OutfitServiceTest {
 
     verify(outfitRepository, times(1)).deleteById(outfitId);
   }
+
+  // --- sortProducts ---
+
+  @Test
+  void shouldSortProducts_whenValidData() throws ResourceNotFoundException {
+    UUID productId2 = UUID.randomUUID();
+    Product product2 = new Product();
+    product2.setId(productId2);
+    product2.setName("Test Product 2");
+
+    OutfitProduct outfitProduct2 = new OutfitProduct();
+    outfitProduct2.setId(UUID.randomUUID());
+    outfitProduct2.setIndex(1);
+    outfitProduct2.setOutfit(outfit);
+    outfitProduct2.setProduct(product2);
+
+    OutfitCreationProductDTO dto1 = new OutfitCreationProductDTO();
+    dto1.setId(productId);
+    dto1.setIndex(1); // Changed index
+
+    OutfitCreationProductDTO dto2 = new OutfitCreationProductDTO();
+    dto2.setId(productId2);
+    dto2.setIndex(0); // Changed index
+
+    List<OutfitCreationProductDTO> products = List.of(dto1, dto2);
+    List<OutfitProduct> relations = new ArrayList<>();
+    relations.add(outfitProduct);
+    relations.add(outfitProduct2);
+
+    when(outfitRepository.findById(outfitId)).thenReturn(Optional.of(outfit));
+    when(outfitRepository.findOutfitOutfitProductsById(outfitId)).thenReturn(relations);
+    when(outfitProductRepository.saveAll(relations)).thenReturn(relations);
+
+    outfitService.sortProducts(outfitId, products);
+
+    assertEquals(1, outfitProduct.getIndex());
+    assertEquals(0, outfitProduct2.getIndex());
+    verify(outfitProductRepository, times(1)).saveAll(relations);
+  }
+
+  @Test
+  void shouldThrowResourceNotFoundException_whenProductNotInOutfit() {
+    UUID productId2 = UUID.randomUUID();
+    Product product2 = new Product();
+    product2.setId(productId2);
+    product2.setName("Test Product 2");
+
+    OutfitProduct outfitProduct2 = new OutfitProduct();
+    outfitProduct2.setId(UUID.randomUUID());
+    outfitProduct2.setIndex(1);
+    outfitProduct2.setOutfit(outfit);
+    outfitProduct2.setProduct(product2);
+
+    // Only providing index update for one product, but outfit has two products
+    OutfitCreationProductDTO dto1 = new OutfitCreationProductDTO();
+    dto1.setId(productId);
+    dto1.setIndex(0);
+
+    List<OutfitCreationProductDTO> products = List.of(dto1); // Missing product2
+    List<OutfitProduct> relations = new ArrayList<>();
+    relations.add(outfitProduct);
+    relations.add(outfitProduct2); // This relation won't find a match in products list
+
+    when(outfitRepository.findById(outfitId)).thenReturn(Optional.of(outfit));
+    when(outfitRepository.findOutfitOutfitProductsById(outfitId)).thenReturn(relations);
+
+    assertThrows(
+        ResourceNotFoundException.class, () -> outfitService.sortProducts(outfitId, products));
+    verify(outfitProductRepository, never()).saveAll(any());
+  }
+
+  // --- removeProduct ---
+
+  @Test
+  void shouldRemoveProduct_whenProductBelongsToOutfit() throws ResourceNotFoundException {
+    when(outfitRepository.findById(outfitId)).thenReturn(Optional.of(outfit));
+    when(outfitRepository.findProductRelation(outfitId, productId))
+        .thenReturn(Optional.of(outfitProduct));
+
+    outfitService.removeProduct(outfitId, product);
+
+    verify(outfitProductRepository, times(1)).delete(outfitProduct);
+  }
+
+  @Test
+  void shouldThrowResourceNotFoundException_whenProductDoesNotBelongToOutfit() {
+    UUID nonExistentProductId = UUID.randomUUID();
+    Product nonExistentProduct = new Product();
+    nonExistentProduct.setId(nonExistentProductId);
+
+    when(outfitRepository.findById(outfitId)).thenReturn(Optional.of(outfit));
+    when(outfitRepository.findProductRelation(outfitId, nonExistentProductId))
+        .thenReturn(Optional.empty());
+
+    assertThrows(
+        ResourceNotFoundException.class,
+        () -> outfitService.removeProduct(outfitId, nonExistentProduct));
+    verify(outfitProductRepository, never()).delete(any());
+  }
+
+  @Test
+  void shouldThrowResourceNotFoundException_whenRemovingProductFromNonExistentOutfit() {
+    UUID nonExistentId = UUID.randomUUID();
+
+    when(outfitRepository.findById(nonExistentId)).thenReturn(Optional.empty());
+
+    assertThrows(
+        ResourceNotFoundException.class, () -> outfitService.removeProduct(nonExistentId, product));
+    verify(outfitProductRepository, never()).delete(any());
+  }
 }
