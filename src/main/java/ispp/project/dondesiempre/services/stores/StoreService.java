@@ -1,13 +1,5 @@
 package ispp.project.dondesiempre.services.stores;
 
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
-import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import ispp.project.dondesiempre.exceptions.InvalidBoundingBoxException;
 import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.models.stores.Store;
@@ -17,7 +9,13 @@ import ispp.project.dondesiempre.models.stores.dto.StoreDTO;
 import ispp.project.dondesiempre.models.stores.dto.StoreUpdateDTO;
 import ispp.project.dondesiempre.repositories.stores.StoreRepository;
 import ispp.project.dondesiempre.repositories.stores.StoreSocialNetworkRepository;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -45,16 +43,17 @@ public class StoreService {
   }
 
   public StoreDTO findByIdToDTO(UUID id) {
-    Store store = storeRepository.findById(id)
-        .orElseThrow(() -> new ResourceNotFoundException("Store not found"));
+    Store store =
+        storeRepository
+            .findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Store not found"));
 
     StoreDTO storeDTO = new StoreDTO(store);
 
     List<StoreSocialNetwork> networks = storeSocialNetworkRepository.findByStoreId(store.getId());
 
-    List<SocialNetworkDTO> networkDTOs = networks.stream()
-        .map(SocialNetworkDTO::new)
-        .collect(Collectors.toList());
+    List<SocialNetworkDTO> networkDTOs =
+        networks.stream().map(SocialNetworkDTO::new).collect(Collectors.toList());
 
     storeDTO.setSocialNetworks(networkDTOs);
 
