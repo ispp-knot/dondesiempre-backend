@@ -1,9 +1,11 @@
 package ispp.project.dondesiempre.models.storefronts;
 
 import ispp.project.dondesiempre.models.BaseEntity;
+import ispp.project.dondesiempre.models.stores.Store;
 import ispp.project.dondesiempre.validators.HexColor;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -33,4 +35,7 @@ public class Storefront extends BaseEntity {
   @URL
   @Column(name = "banner_image_url")
   private String bannerImageUrl;
+
+  @OneToOne(mappedBy = "storefront")
+  private Store store;
 }

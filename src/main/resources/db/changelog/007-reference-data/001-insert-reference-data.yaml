@@ -1,0 +1,27 @@
+databaseChangeLog:
+  - changeSet:
+      id: 007-insert-reference-data
+      author: dev
+      changes:
+        - sql:
+            sql: |
+              INSERT INTO social_networks (id, version, name) VALUES
+                ('c8e993eb-2c4f-47a8-9e6e-3f1cb5b90156', 0, 'Instagram'), ('d6cf1fa9-3bd1-43f1-abdd-67ba933b18ce', 0, 'Facebook'), ('928b91cb-8e7e-407e-8070-e93c8c4c60ac', 0, 'TikTok'),
+                ('56ca2606-6797-4918-a657-bb38003c534d', 0, 'X'), ('ea7afae5-092e-4ecb-b54e-438b30c1a4bb', 0, 'WhatsApp');
+
+              INSERT INTO product_types (id, version, type) VALUES
+                ('c8e993eb-2c4f-47a8-9e6e-3f1cb5b90157', 0, 'Camiseta'), ('d6cf1fa9-3bd1-43f1-abdd-67ba933b18cf', 0, 'Pantalón'), ('928b91cb-8e7e-407e-8070-e93c8c4c60ad', 0, 'Vestido'),
+                ('56ca2606-6797-4918-a657-bb38003c534e', 0, 'Chaqueta'), ('ea7afae5-092e-4ecb-b54e-438b30c1a4bc', 0, 'Zapatos'), ('f2a2d2d2-f2a2-f2a2-f2a2-f2a2d2d2d2d2', 0, 'Accesorio');
+
+              INSERT INTO product_colors (id, version, color) VALUES
+                ('c8e993eb-2c4f-47a8-9e6e-3f1cb5b90158', 0, 'Negro'), ('d6cf1fa9-3bd1-43f1-abdd-67ba933b18cf', 0, 'Blanco'), ('928b91cb-8e7e-407e-8070-e93c8c4c60ae', 0, 'Rojo'),
+                ('56ca2606-6797-4918-a657-bb38003c534f', 0, 'Azul'), ('ea7afae5-092e-4ecb-b54e-438b30c1a4bd', 0, 'Verde'), ('f2a2d2d2-f2a2-f2a2-f2a2-f2a2d2d2d2d3', 0, 'Rosa'),
+                ('c8e993eb-2c4f-47a8-9e6e-3f1cb5b90159', 0, 'Gris'), ('d6cf1fa9-3bd1-43f1-abdd-67ba933b18d0', 0, 'Beige');
+
+              INSERT INTO product_sizes (id, version, size) VALUES
+                ('c8e993eb-2c4f-47a8-9e6e-3f1cb5b9015a', 0, 'XS'), ('d6cf1fa9-3bd1-43f1-abdd-67ba933b18d1', 0, 'S'), ('928b91cb-8e7e-407e-8070-e93c8c4c60af', 0, 'M'),
+                ('56ca2606-6797-4918-a657-bb38003c5350', 0, 'L'), ('ea7afae5-092e-4ecb-b54e-438b30c1a4be', 0, 'XL'), ('f2a2d2d2-f2a2-f2a2-f2a2-f2a2d2d2d2d4', 0, 'XXL');
+
+              INSERT INTO outfit_tags (id, version, name) VALUES
+                ('c8e993eb-2c4f-47a8-9e6e-3f1cb5b9015b', 0, 'Verano'), ('d6cf1fa9-3bd1-43f1-abdd-67ba933b18d2', 0, 'Invierno'), ('928b91cb-8e7e-407e-8070-e93c8c4c60b0', 0, 'Casual'),
+                ('56ca2606-6797-4918-a657-bb38003c5351', 0, 'Formal'), ('ea7afae5-092e-4ecb-b54e-438b30c1a4bf', 0, 'Deportivo'), ('f2a2d2d2-f2a2-f2a2-f2a2-f2a2d2d2d2d5', 0, 'Elegante');

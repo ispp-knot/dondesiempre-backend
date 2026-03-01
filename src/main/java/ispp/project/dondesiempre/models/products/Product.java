@@ -2,6 +2,7 @@ package ispp.project.dondesiempre.models.products;
 
 import ispp.project.dondesiempre.models.BaseEntity;
 import ispp.project.dondesiempre.models.stores.Store;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToMany;
@@ -16,6 +17,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.hibernate.validator.constraints.URL;
 
 @Entity
 @Getter
@@ -31,11 +33,18 @@ public class Product extends BaseEntity {
   @Column
   @NotNull
   @Min(0)
-  Double price;
+  Integer priceInCents;
+
+  @Column
+  @NotNull
+  @Min(0)
+  Integer discountedPriceInCents;
 
   @Column(columnDefinition = "TEXT")
   @Size(max = 5000)
   String description;
+
+  @Column @Nullable @URL private String image;
 
   @NotNull
   @ManyToOne(optional = false)

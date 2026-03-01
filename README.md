@@ -1,87 +1,22 @@
 # DondeSiempre Backend
 
----
+`Instalar el Backend`
 
-En este documento se detallan los pasos para poder iniciar el backend de donde siempre y empezar el desarrollo.
+Toda la información sobre la instalación del backend se puede encontrar en nuesta [documentación sobre como instalar el Backend](https://ispp-knot.github.io/knot/docs/guia-de-instalacion/instalacion-backend)
 
-# Requisitos
+`Detalles adicionales`
 
-- Java 25 (Configurar JAVA_HOME y el Path)
-- Docker compose(Opcional)
+Para saber acerca de detalles del desarrollo, acceder a cualquiera de los enlaces de interes:
 
-# Clone del repositorio
+- [Guía de estilo](https://ispp-knot.github.io/knot/docs/guia-de-desarrollo/estilos-de-codigo)
+- [Como contribuir en Github](https://ispp-knot.github.io/knot/docs/guia-de-desarrollo/contribuir-github)
+- [La arquitectura de Spring](https://ispp-knot.github.io/knot/docs/guia-de-desarrollo/arquitectura-spring)
+- [El linting automatico](https://ispp-knot.github.io/knot/docs/guia-de-desarrollo/lint)
+- [Migraciones](https://ispp-knot.github.io/knot/docs/guia-de-desarrollo/migraciones)
+- [Testing](https://ispp-knot.github.io/knot/docs/guia-de-desarrollo/migraciones)
 
-Primero clone el repositorio con `git clone`.
+`Frontend`
 
-### 🚀 Uso
+Si se quiere acceder a la [información del frontend](https://ispp-knot.github.io/knot/docs/guia-de-instalacion/instalacion-frontend)
 
-Para usar la base de datos de neon copie el .env.example vacío y rellenelo:
-
-```bash
-cp .env.example .env
-```
-
-En caso de usar la base de datos levantada en un contenedor use:
-
-```bash
-cp .env.dev .env
-```
-
-## Iniciar el proyecto
-
-Una vez configurado el entorno, iniciar el proyecto es tan simple como ejecutar:
-
-### Windows
-
-```powershell
-.\mvnw spring-boot:run
-```
-
-### Linux/macOS
-
-```bash
-mvnw spring-boot:run
-```
-
-### Docker PostgreSQL
-
-Si se va a usar la DB de docker ejecutar los siguiente antes de arrancar spring:
-
-```powershell
-docker compose up -d postgres
-```
-
-Para detenerlo:
-
-```powershell
-docker compose down
-```
-
-## Swagger
-
-La interfaz de Swagger está disponible en el perfil de desarrollo en <http://localhost:8080/api/v1/swagger>.
-
-## Para Testear
-
-Es necesario tener instalado Maven (y tenerlo añadido al entorno del sistema)
-
-Para instalar Maven, dirigirse a las siguiente URL: [Descarga de Maven](https://maven.apache.org/download.cgi)
-Seleccionar la opcion de _Binary Zip archive_ y descomprimir el archivo en una carpeta dentro de C:/Archivos de Programa/Apache
-
-Luego de tener instalado maven, ejecutar la base de datos de pruebas en un contenedor de docker
-
-```bash
-docker compose -f docker-compose.test.yml up
-```
-
-### Windows
-
-```powershell
-.\mvnw test
-```
-
-### Linux/macOS
-
-```bash
-mvnw test
-```
+Si se quiere acceder al [repositorio del frontend](https://github.com/ispp-knot/dondesiempre-frontend)

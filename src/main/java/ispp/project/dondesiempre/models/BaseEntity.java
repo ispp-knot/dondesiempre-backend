@@ -1,46 +1,42 @@
 package ispp.project.dondesiempre.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
-import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Version;
+import java.util.UUID;
 import lombok.EqualsAndHashCode;
 
 @MappedSuperclass
-@EqualsAndHashCode(of = { "id" })
+@EqualsAndHashCode(of = {"id"})
 public class BaseEntity {
 
-	@Id
-	@SequenceGenerator(name = "entity_seq", sequenceName = "entity_sequence", initialValue = 100)
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "entity_seq")
-	protected Integer id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.UUID)
+  protected UUID id;
 
-	@Version
-	private Integer version;
+  @Version private Integer version;
 
-	public Integer getId() {
-		return id;
-	}
+  public UUID getId() {
+    return id;
+  }
 
-	public Integer getVersion() {
-		return version;
-	}
+  public Integer getVersion() {
+    return version;
+  }
 
-	public void setVersion(Integer version) {
-		this.version = version;
-	}
+  public void setVersion(Integer version) {
+    this.version = version;
+  }
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
+  public void setId(UUID id) {
+    this.id = id;
+  }
 
-	@JsonIgnore
-	public boolean isNew() {
-		return this.id == null;
-	}
-
+  @JsonIgnore
+  public boolean isNew() {
+    return this.id == null;
+  }
 }

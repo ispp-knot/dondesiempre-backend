@@ -1,0 +1,77 @@
+# ----------------------------------------------------------------------------
+# Seed Workflow
+# ----------------------------------------------------------------------------
+
+name: Seed
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  seed:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgis/postgis:17-3.5
+        env:
+          POSTGRES_DB: devmigrdb
+          POSTGRES_USER: devmigruser
+          POSTGRES_PASSWORD: devmigrpass
+        ports:
+          - 5434:5432
+        options: >-
+          --health-cmd="pg_isready -U devmigruser"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '25'
+
+      - name: Cache Maven packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Process resources
+        run: ./mvnw process-resources
+
+      - name: Validate Liquibase changesets
+        run: ./mvnw liquibase:validate
+
+      - name: Run seeder
+        run: ./mvnw spring-boot:run -Dspring-boot.run.profiles=dev-migration,seed
+
+      - name: Verify seeded data
+        env:
+          PGPASSWORD: devmigrpass
+        run: |
+          psql -h localhost -p 5434 -U devmigruser -d devmigrdb -v ON_ERROR_STOP=1 <<'SQL'
+          SELECT table_name AS tbl, row_count
+          FROM (
+            SELECT 'stores'    AS table_name, COUNT(*) AS row_count FROM stores
+            UNION ALL SELECT 'products',  COUNT(*) FROM products
+            UNION ALL SELECT 'clients',   COUNT(*) FROM clients
+          ) counts;
+
+          DO $$
+          BEGIN
+            IF (SELECT COUNT(*) FROM stores)   = 0 THEN RAISE EXCEPTION 'No stores seeded';   END IF;
+            IF (SELECT COUNT(*) FROM products) = 0 THEN RAISE EXCEPTION 'No products seeded'; END IF;
+            IF (SELECT COUNT(*) FROM clients)  = 0 THEN RAISE EXCEPTION 'No clients seeded';  END IF;
+          END $$;
+          SQL

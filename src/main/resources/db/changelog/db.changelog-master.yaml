@@ -4,8 +4,18 @@ databaseChangeLog:
   - include:
       file: db/changelog/002-create-storefront/create-storfront.changelog.yaml
   - include:
+      file: db/changelog/003-outfits-backend/outfits-backend.changelog.yaml
+  - include:
       file: db/changelog/004-enable-postgis/enable-postgis.changelog.yaml
   - include:
       file: db/changelog/005-entities-renaming-and-refactoring/entities-renaming-and-refactoring.changelog.yaml
   - include:
-      file: db/changelog/007-create-collection/create-collection.changelog.yaml
+      file: db/changelog/006-discounts-on-products/discounts-on-product.changelog.yaml
+  - include:
+      file: db/changelog/007-reference-data/007.changelog.yaml
+  - include:
+      file: db/changelog/010-add-product-image/add-product-image.changelog.yaml
+  - include:
+      file: db/changelog/011-users/011.changelog.yaml
+  - include:
+      file: db/changelog/014-create-collection/create-collection.changelog.yaml

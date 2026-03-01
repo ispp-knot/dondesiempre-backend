@@ -1,0 +1,20 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1771848345167-31
+      author: guill_1goz466 (generated)
+      changes:
+        - addColumn:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                  name: discounted_price_in_cents
+                  type: INTEGER
+            tableName: outfits
+  - changeSet:
+      id: 1771848345167-32
+      author: guill_1goz466 (generated)
+      changes:
+        - dropColumn:
+            columnName: discount
+            tableName: outfits

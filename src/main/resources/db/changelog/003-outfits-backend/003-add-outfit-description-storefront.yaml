@@ -1,0 +1,36 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1771812743099-31
+      author: guill_1goz466 (generated)
+      changes:
+        - addColumn:
+            columns:
+              - column:
+                  name: description
+                  type: VARCHAR(255)
+            tableName: outfits
+  - changeSet:
+      id: 1771812743099-32
+      author: guill_1goz466 (generated)
+      changes:
+        - addColumn:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                  name: storefront_id
+                  type: UUID
+            tableName: outfits
+  - changeSet:
+      id: 1771812743099-33
+      author: guill_1goz466 (generated)
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: storefront_id
+            baseTableName: outfits
+            constraintName: FKqldxhoqjqwj4pnc9gk61em9un
+            deferrable: false
+            initiallyDeferred: false
+            referencedColumnNames: id
+            referencedTableName: storefronts
+            validate: true
