@@ -1,6 +1,6 @@
 package ispp.project.dondesiempre.controllers.stores;
 
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import org.springframework.web.bind.annotation.RequestBody;
 import ispp.project.dondesiempre.models.stores.dto.StoreDTO;
 import ispp.project.dondesiempre.models.stores.dto.StoreUpdateDTO;
 import ispp.project.dondesiempre.services.stores.StoreService;

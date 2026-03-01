@@ -56,13 +56,14 @@ public class StoreService {
 
     storeToUpdate = applicationContext.getBean(StoreService.class).findById(id);
 
-    storeToUpdate.setName(dto.getName());
-    storeToUpdate.setEmail(dto.getEmail());
-    storeToUpdate.setStoreID(dto.getStoreID()); // No sé si esto se debería de actualizar
-    storeToUpdate.setAddress(dto.getAddress());
-    storeToUpdate.setOpeningHours(dto.getOpeningHours());
-    storeToUpdate.setPhone(dto.getPhone());
-    storeToUpdate.setAboutUs(dto.getAboutUs());
+    if (dto.getName() != null) storeToUpdate.setName(dto.getName());
+    if (dto.getEmail() != null) storeToUpdate.setEmail(dto.getEmail());
+    if (dto.getStoreID() != null) storeToUpdate.setStoreID(dto.getStoreID());
+    if (dto.getAddress() != null) storeToUpdate.setAddress(dto.getAddress());
+    if (dto.getOpeningHours() != null) storeToUpdate.setOpeningHours(dto.getOpeningHours());
+    if (dto.getPhone() != null) storeToUpdate.setPhone(dto.getPhone());
+    if (dto.getAboutUs() != null) storeToUpdate.setAboutUs(dto.getAboutUs());
+    
 
     return new StoreDTO(storeRepository.save(storeToUpdate));
   }
