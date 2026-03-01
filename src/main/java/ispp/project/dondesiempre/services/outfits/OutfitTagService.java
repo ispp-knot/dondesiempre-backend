@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class OutfitTagService {
   private final OutfitTagRepository outfitTagRepository;
 
-  @Transactional(readOnly = true)
+  @Transactional(readOnly = true, rollbackFor = ResourceNotFoundException.class)
   public OutfitTag findByName(String tagName) throws ResourceNotFoundException {
     return outfitTagRepository
         .findByName(tagName)
@@ -20,11 +20,14 @@ public class OutfitTagService {
   }
 
   @Transactional
-  public OutfitTag create(String tagName) {
-    OutfitTag tag;
-
-    tag = new OutfitTag();
-    tag.setName(tagName);
-    return outfitTagRepository.save(tag);
+  public OutfitTag findOrCreate(String tagName) {
+    return outfitTagRepository
+        .findByName(tagName)
+        .orElseGet(
+            () -> {
+              OutfitTag tag = new OutfitTag();
+              tag.setName(tagName);
+              return outfitTagRepository.save(tag);
+            });
   }
 }

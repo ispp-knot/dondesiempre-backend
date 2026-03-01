@@ -13,3 +13,7 @@ databaseChangeLog:
       file: db/changelog/006-discounts-on-products/discounts-on-product.changelog.yaml
   - include:
       file: db/changelog/007-reference-data/007.changelog.yaml
+  - include:
+      file: db/changelog/010-add-product-image/add-product-image.changelog.yaml
+  - include:
+      file: db/changelog/011-users/011.changelog.yaml
