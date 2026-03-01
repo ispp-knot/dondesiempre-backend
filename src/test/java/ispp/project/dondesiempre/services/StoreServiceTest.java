@@ -13,6 +13,7 @@ import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.models.storefronts.Storefront;
 import ispp.project.dondesiempre.models.stores.Store;
 import ispp.project.dondesiempre.models.stores.dto.StoreDTO;
+import ispp.project.dondesiempre.models.stores.dto.StoreUpdateDTO;
 import ispp.project.dondesiempre.repositories.stores.StoreRepository;
 import ispp.project.dondesiempre.services.stores.StoreService;
 import java.util.List;
@@ -24,6 +25,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationContext;
 
 @ExtendWith(MockitoExtension.class)
 public class StoreServiceTest {
@@ -31,6 +33,8 @@ public class StoreServiceTest {
   @Mock private StoreRepository storeRepository;
 
   @InjectMocks private StoreService storeService;
+
+  @Mock private ApplicationContext applicationContext;
 
   private Store store;
   private UUID storeId;
@@ -102,5 +106,20 @@ public class StoreServiceTest {
 
     verify(storeRepository, times(0))
         .findStoresInBoundingBox(anyDouble(), anyDouble(), anyDouble(), anyDouble(), anyInt());
+  }
+
+  @Test
+  void shouldReturnStoreDTO_whenUpdateStoreIsSuccessful() {
+    when(storeRepository.findById(storeId)).thenReturn(Optional.of(store));
+    when(applicationContext.getBean(StoreService.class)).thenReturn(storeService);
+
+    StoreUpdateDTO storeUpdateDTO = new StoreUpdateDTO();
+    storeUpdateDTO.setName("Nombre Actualizado");
+
+    storeService.updateStore(storeId, storeUpdateDTO);
+
+    assertEquals("Nombre Actualizado", store.getName());
+    verify(storeRepository, times(1)).findById(storeId);
+    verify(storeRepository, times(1)).save(store);
   }
 }
