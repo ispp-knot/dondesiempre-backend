@@ -1,5 +1,6 @@
 package ispp.project.dondesiempre.models.stores.dto;
 
+import java.util.List;
 import java.util.UUID;
 
 import ispp.project.dondesiempre.models.storefronts.Storefront;
@@ -27,6 +28,7 @@ public class StoreDTO {
   private String primaryColor;
   private String secondaryColor;
   private String bannerImageUrl;
+  private List<SocialNetworkDTO> socialNetworks;
 
   public StoreDTO(Store store) {
     if (store == null) return;

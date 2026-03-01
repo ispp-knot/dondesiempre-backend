@@ -1,22 +1,29 @@
 package ispp.project.dondesiempre.services.stores;
 
-import ispp.project.dondesiempre.exceptions.InvalidBoundingBoxException;
-import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
-import ispp.project.dondesiempre.models.stores.Store;
-import ispp.project.dondesiempre.models.stores.dto.StoreDTO;
-import ispp.project.dondesiempre.models.stores.dto.StoreUpdateDTO;
-import ispp.project.dondesiempre.repositories.stores.StoreRepository;
 import java.util.List;
 import java.util.UUID;
-import lombok.RequiredArgsConstructor;
+import java.util.stream.Collectors;
+
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import ispp.project.dondesiempre.exceptions.InvalidBoundingBoxException;
+import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
+import ispp.project.dondesiempre.models.stores.Store;
+import ispp.project.dondesiempre.models.stores.StoreSocialNetwork;
+import ispp.project.dondesiempre.models.stores.dto.SocialNetworkDTO;
+import ispp.project.dondesiempre.models.stores.dto.StoreDTO;
+import ispp.project.dondesiempre.models.stores.dto.StoreUpdateDTO;
+import ispp.project.dondesiempre.repositories.stores.StoreRepository;
+import ispp.project.dondesiempre.repositories.stores.StoreSocialNetworkRepository;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class StoreService {
   private final StoreRepository storeRepository;
+  private final StoreSocialNetworkRepository storeSocialNetworkRepository;
   private final ApplicationContext applicationContext;
 
   @Transactional(readOnly = true, rollbackFor = ResourceNotFoundException.class)
@@ -38,8 +45,20 @@ public class StoreService {
   }
 
   public StoreDTO findByIdToDTO(UUID id) {
-    Store store = findById(id);
-    return new StoreDTO(store);
+    Store store = storeRepository.findById(id)
+        .orElseThrow(() -> new ResourceNotFoundException("Store not found"));
+
+    StoreDTO storeDTO = new StoreDTO(store);
+
+    List<StoreSocialNetwork> networks = storeSocialNetworkRepository.findByStoreId(store.getId());
+
+    List<SocialNetworkDTO> networkDTOs = networks.stream()
+        .map(SocialNetworkDTO::new)
+        .collect(Collectors.toList());
+
+    storeDTO.setSocialNetworks(networkDTOs);
+
+    return storeDTO;
   }
 
   public List<StoreDTO> findAll() {
