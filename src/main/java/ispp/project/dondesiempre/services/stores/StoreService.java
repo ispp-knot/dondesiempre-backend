@@ -37,6 +37,7 @@ public class StoreService {
     return stores.stream().map(StoreDTO::new).toList();
   }
 
+  @Transactional(readOnly = true)
   public StoreDTO findByIdToDTO(UUID id) {
     Store store = findById(id);
     return new StoreDTO(store);
