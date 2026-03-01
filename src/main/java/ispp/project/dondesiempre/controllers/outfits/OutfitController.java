@@ -1,19 +1,8 @@
 package ispp.project.dondesiempre.controllers.outfits;
 
-import ispp.project.dondesiempre.models.outfits.Outfit;
-import ispp.project.dondesiempre.models.outfits.dto.OutfitCreationDTO;
-import ispp.project.dondesiempre.models.outfits.dto.OutfitCreationProductDTO;
-import ispp.project.dondesiempre.models.outfits.dto.OutfitDTO;
-import ispp.project.dondesiempre.models.outfits.dto.OutfitProductDTO;
-import ispp.project.dondesiempre.models.outfits.dto.OutfitUpdateDTO;
-import ispp.project.dondesiempre.services.outfits.OutfitService;
-import ispp.project.dondesiempre.services.products.ProductService;
-import ispp.project.dondesiempre.services.storefronts.StorefrontService;
-import ispp.project.dondesiempre.services.stores.StoreService;
-import jakarta.validation.Valid;
 import java.util.List;
 import java.util.UUID;
-import lombok.RequiredArgsConstructor;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -26,6 +15,19 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+
+import ispp.project.dondesiempre.models.outfits.Outfit;
+import ispp.project.dondesiempre.models.outfits.dto.OutfitCreationDTO;
+import ispp.project.dondesiempre.models.outfits.dto.OutfitCreationProductDTO;
+import ispp.project.dondesiempre.models.outfits.dto.OutfitDTO;
+import ispp.project.dondesiempre.models.outfits.dto.OutfitProductDTO;
+import ispp.project.dondesiempre.models.outfits.dto.OutfitUpdateDTO;
+import ispp.project.dondesiempre.services.outfits.OutfitService;
+import ispp.project.dondesiempre.services.products.ProductService;
+import ispp.project.dondesiempre.services.storefronts.StorefrontService;
+import ispp.project.dondesiempre.services.stores.StoreService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -64,11 +66,19 @@ public class OutfitController {
     return new ResponseEntity<>(dtos, HttpStatus.OK);
   }
 
-  @GetMapping("stores/{id}/outfits")
+  @GetMapping("stores/{storeId}/outfits")
   @ResponseStatus(HttpStatus.FOUND)
-  public ResponseEntity<List<OutfitDTO>> getByStoreId(@PathVariable("id") UUID id) {
-    return new ResponseEntity<>(
-        outfitService.findByStore(storeService.findById(id)), HttpStatus.OK);
+  public ResponseEntity<List<OutfitDTO>> getByStoreId(@PathVariable("storeId") UUID storeId) {
+    List<OutfitDTO> dtos =
+        outfitService.findByStore(storeService.findById(storeId)).stream()
+            .map(
+                outfit ->
+                    OutfitDTO.from(
+                        outfit,
+                        outfitService.findTagsByOutfitId(outfit.getId()),
+                        outfitService.findOutfitProductsByOutfitId(outfit.getId())))
+            .toList();
+    return new ResponseEntity<>(dtos, HttpStatus.OK);
   }
 
   @PostMapping("outfits")

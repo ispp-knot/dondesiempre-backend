@@ -1,8 +1,9 @@
 package ispp.project.dondesiempre.models.stores.dto;
 
+import java.util.UUID;
+
 import ispp.project.dondesiempre.models.storefronts.Storefront;
 import ispp.project.dondesiempre.models.stores.Store;
-import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -21,6 +22,7 @@ public class StoreDTO {
   private Boolean acceptsShipping;
   private Double latitude;
   private Double longitude;
+  private UUID storefrontId;
   private Boolean isFirstCollections;
   private String primaryColor;
   private String secondaryColor;
@@ -44,6 +46,7 @@ public class StoreDTO {
     }
 
     Storefront storefront = store.getStorefront();
+    this.storefrontId = storefront.getId();
     this.isFirstCollections = storefront.getIsFirstCollections();
     this.primaryColor = storefront.getPrimaryColor();
     this.secondaryColor = storefront.getSecondaryColor();
