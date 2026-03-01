@@ -1,6 +1,5 @@
 package ispp.project.dondesiempre.controllers.stores;
 
-import org.springframework.web.bind.annotation.RequestBody;
 import ispp.project.dondesiempre.models.stores.dto.StoreDTO;
 import ispp.project.dondesiempre.models.stores.dto.StoreUpdateDTO;
 import ispp.project.dondesiempre.services.stores.StoreService;
@@ -12,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -34,14 +34,11 @@ public class StoreController {
         storeService.findStoresInBoundingBox(minLon, minLat, maxLon, maxLat), HttpStatus.OK);
   }
 
-  // Para pruebas
-  @GetMapping("/storeses")
+  @GetMapping("/stores/all")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<List<StoreDTO>> getStores() {
     return new ResponseEntity<>(storeService.findAll(), HttpStatus.OK);
   }
-
-  //
 
   @GetMapping("/stores/{id}")
   @ResponseStatus(HttpStatus.OK)

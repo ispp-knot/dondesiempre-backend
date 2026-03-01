@@ -42,13 +42,10 @@ public class StoreService {
     return new StoreDTO(store);
   }
 
-  // Para pruebas
   public List<StoreDTO> findAll() {
     List<Store> stores = storeRepository.findAll();
     return stores.stream().map(StoreDTO::new).toList();
   }
-
-  //
 
   @Transactional(rollbackFor = ResourceNotFoundException.class)
   public StoreDTO updateStore(UUID id, StoreUpdateDTO dto) throws ResourceNotFoundException {
@@ -63,7 +60,6 @@ public class StoreService {
     if (dto.getOpeningHours() != null) storeToUpdate.setOpeningHours(dto.getOpeningHours());
     if (dto.getPhone() != null) storeToUpdate.setPhone(dto.getPhone());
     if (dto.getAboutUs() != null) storeToUpdate.setAboutUs(dto.getAboutUs());
-    
 
     return new StoreDTO(storeRepository.save(storeToUpdate));
   }
