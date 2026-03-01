@@ -64,19 +64,11 @@ public class OutfitController {
     return new ResponseEntity<>(dtos, HttpStatus.OK);
   }
 
-  @GetMapping("stores/{storeId}/outfits")
+  @GetMapping("stores/{id}/outfits")
   @ResponseStatus(HttpStatus.FOUND)
-  public ResponseEntity<List<OutfitDTO>> getByStoreId(@PathVariable("storeId") UUID storeId) {
-    List<OutfitDTO> dtos =
-        outfitService.findByStore(storeService.findById(storeId)).stream()
-            .map(
-                outfit ->
-                    OutfitDTO.from(
-                        outfit,
-                        outfitService.findTagsByOutfitId(outfit.getId()),
-                        outfitService.findOutfitProductsByOutfitId(outfit.getId())))
-            .toList();
-    return new ResponseEntity<>(dtos, HttpStatus.OK);
+  public ResponseEntity<List<OutfitDTO>> getByStoreId(@PathVariable("id") UUID id) {
+    return new ResponseEntity<>(
+        outfitService.findByStore(storeService.findById(id)), HttpStatus.OK);
   }
 
   @PostMapping("outfits")

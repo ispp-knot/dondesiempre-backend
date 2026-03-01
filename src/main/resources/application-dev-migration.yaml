@@ -9,3 +9,10 @@ spring:
   logging:
     level:
       root: ERROR
+springdoc:
+  swagger-ui:
+    path: /api/v1/swagger
+    enabled: true
+  api-docs:
+    path: /api/v1/docs
+    enabled: true
