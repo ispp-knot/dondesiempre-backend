@@ -12,6 +12,7 @@ import ispp.project.dondesiempre.repositories.stores.StoreRepository;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -25,13 +26,13 @@ public class CollectionService {
   private final ProductRepository productRepository;
   private final StoreRepository storeRepository;
 
-  public List<CollectionResponseDTO> getByStore(Integer storeId) {
+  public List<CollectionResponseDTO> getByStore(UUID storeId) {
     return collectionRepository.findByStoreId(storeId).stream()
         .map(CollectionResponseDTO::new)
         .toList();
   }
 
-  public CollectionResponseDTO getById(Integer id) {
+  public CollectionResponseDTO getById(UUID id) {
     ProductCollection collection =
         collectionRepository
             .findById(id)
@@ -39,7 +40,7 @@ public class CollectionService {
     return new CollectionResponseDTO(collection);
   }
 
-  public CollectionResponseDTO create(Integer storeId, CollectionCreationDTO dto) {
+  public CollectionResponseDTO create(UUID storeId, CollectionCreationDTO dto) {
     Store store =
         storeRepository
             .findById(storeId)
@@ -55,13 +56,13 @@ public class CollectionService {
     return new CollectionResponseDTO(collectionRepository.save(collection));
   }
 
-  public CollectionResponseDTO update(Integer id, CollectionUpdateDTO dto) {
+  public CollectionResponseDTO update(UUID id, CollectionUpdateDTO dto) {
     ProductCollection collection =
         collectionRepository
             .findById(id)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
-    Integer storeId = collection.getStore().getId();
+    UUID storeId = collection.getStore().getId();
     if (collectionRepository.existsByNameAndStoreIdAndIdNot(dto.getName(), storeId, id)) {
       throw new ResponseStatusException(HttpStatus.CONFLICT);
     }
@@ -73,7 +74,7 @@ public class CollectionService {
     return new CollectionResponseDTO(collectionRepository.save(collection));
   }
 
-  public void delete(Integer id) {
+  public void delete(UUID id) {
     ProductCollection collection =
         collectionRepository
             .findById(id)
@@ -81,7 +82,7 @@ public class CollectionService {
     collectionRepository.delete(collection);
   }
 
-  private ProductCollection dtoToEntity(CollectionCreationDTO dto, Integer storeId) {
+  private ProductCollection dtoToEntity(CollectionCreationDTO dto, UUID storeId) {
     ProductCollection collection = new ProductCollection();
     collection.setName(dto.getName());
     collection.setDescription(dto.getDescription());
@@ -89,7 +90,7 @@ public class CollectionService {
     return collection;
   }
 
-  private List<Product> fetchValidatedProducts(Set<Integer> productIds, Integer storeId) {
+  private List<Product> fetchValidatedProducts(Set<UUID> productIds, UUID storeId) {
     if (productIds == null || productIds.isEmpty()) {
       return List.of();
     }

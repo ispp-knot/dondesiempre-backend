@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -19,5 +20,5 @@ public class CollectionCreationDTO {
   @Size(max = 1000)
   private String description;
 
-  @NotNull private Set<Integer> productIds = new HashSet<>();
+  @NotNull private Set<UUID> productIds = new HashSet<>();
 }

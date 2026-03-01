@@ -6,6 +6,7 @@ import ispp.project.dondesiempre.dto.collection.CollectionUpdateDTO;
 import ispp.project.dondesiempre.services.CollectionService;
 import jakarta.validation.Valid;
 import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,29 +27,29 @@ public class CollectionController {
   private final CollectionService collectionService;
 
   @GetMapping("/store/{storeId}/collections")
-  public ResponseEntity<List<CollectionResponseDTO>> getByStore(@PathVariable Integer storeId) {
+  public ResponseEntity<List<CollectionResponseDTO>> getByStore(@PathVariable UUID storeId) {
     return ResponseEntity.ok(collectionService.getByStore(storeId));
   }
 
   @GetMapping("/collections/{id}")
-  public ResponseEntity<CollectionResponseDTO> getById(@PathVariable Integer id) {
+  public ResponseEntity<CollectionResponseDTO> getById(@PathVariable UUID id) {
     return ResponseEntity.ok(collectionService.getById(id));
   }
 
   @PostMapping("/store/{storeId}/collections")
   public ResponseEntity<CollectionResponseDTO> create(
-      @PathVariable Integer storeId, @Valid @RequestBody CollectionCreationDTO dto) {
+      @PathVariable UUID storeId, @Valid @RequestBody CollectionCreationDTO dto) {
     return ResponseEntity.status(HttpStatus.CREATED).body(collectionService.create(storeId, dto));
   }
 
   @PutMapping("/collections/{id}")
   public ResponseEntity<CollectionResponseDTO> update(
-      @PathVariable Integer id, @Valid @RequestBody CollectionUpdateDTO dto) {
+      @PathVariable UUID id, @Valid @RequestBody CollectionUpdateDTO dto) {
     return ResponseEntity.ok(collectionService.update(id, dto));
   }
 
   @DeleteMapping("/collections/{id}")
-  public ResponseEntity<Void> delete(@PathVariable Integer id) {
+  public ResponseEntity<Void> delete(@PathVariable UUID id) {
     collectionService.delete(id);
     return ResponseEntity.noContent().build();
   }

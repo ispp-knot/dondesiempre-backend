@@ -8,12 +8,12 @@ databaseChangeLog:
             columns:
               - column:
                   name: collection_id
-                  type: INTEGER
+                  type: UUID
                   constraints:
                     nullable: false
               - column:
                   name: product_id
-                  type: INTEGER
+                  type: UUID
                   constraints:
                     nullable: false
         - addPrimaryKey:

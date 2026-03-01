@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import ispp.project.dondesiempre.models.User;
 import ispp.project.dondesiempre.models.products.Product;
 import ispp.project.dondesiempre.models.products.ProductCollection;
 import ispp.project.dondesiempre.models.products.ProductType;
@@ -17,6 +18,7 @@ import ispp.project.dondesiempre.repositories.storefronts.StorefrontRepository;
 import ispp.project.dondesiempre.repositories.stores.StoreRepository;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
@@ -37,10 +39,16 @@ class CollectionRepositoryTest {
   @Autowired private ProductTypeRepository productTypeRepository;
   @Autowired private StoreRepository storeRepository;
   @Autowired private StorefrontRepository storefrontRepository;
+  @Autowired private UserRepository userRepository;
 
   private Store createStore() {
     Storefront storefront = new Storefront();
     storefrontRepository.save(storefront);
+
+    User user = new User();
+    user.setEmail("store-" + UUID.randomUUID() + "@test.com");
+    user.setPassword("test-password");
+    userRepository.save(user);
 
     GeometryFactory gf = new GeometryFactory(new PrecisionModel(), 4326);
     Point location = gf.createPoint(new Coordinate(-5.9845, 37.3891));
@@ -54,6 +62,7 @@ class CollectionRepositoryTest {
     store.setOpeningHours("L-V 10:00-20:00");
     store.setAcceptsShipping(false);
     store.setStorefront(storefront);
+    store.setUser(user);
     return storeRepository.save(store);
   }
 
@@ -64,7 +73,8 @@ class CollectionRepositoryTest {
 
     Product product = new Product();
     product.setName("Camiseta Basica");
-    product.setPrice(19.99);
+    product.setPriceInCents(1999);
+    product.setDiscountedPriceInCents(1799);
     product.setDescription("Algodon");
     product.setType(savedType);
     product.setStore(store);
@@ -136,7 +146,7 @@ class CollectionRepositoryTest {
     collection.setStore(store);
     collection.setProducts(Set.of(product));
     ProductCollection saved = collectionRepository.save(collection);
-    Integer id = saved.getId();
+    UUID id = saved.getId();
 
     collectionRepository.deleteById(id);
 

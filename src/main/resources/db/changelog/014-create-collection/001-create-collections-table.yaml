@@ -8,7 +8,7 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  type: INTEGER
+                  type: UUID
                   constraints:
                     primaryKey: true
                     nullable: false
@@ -26,7 +26,7 @@ databaseChangeLog:
                   type: TEXT
               - column:
                   name: store_id
-                  type: INTEGER
+                  type: UUID
                   constraints:
                     nullable: false
 

@@ -1,7 +1,6 @@
 package ispp.project.dondesiempre.controllers;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
@@ -23,6 +22,7 @@ import ispp.project.dondesiempre.models.stores.Store;
 import ispp.project.dondesiempre.services.CollectionService;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +36,11 @@ import org.springframework.web.server.ResponseStatusException;
 @WebMvcTest(CollectionController.class)
 class CollectionControllerTest {
 
+  private static final UUID STORE_ID = UUID.fromString("00000000-0000-0000-0000-000000000001");
+  private static final UUID STORE_2_ID = UUID.fromString("00000000-0000-0000-0000-000000000002");
+  private static final UUID COLLECTION_ID = UUID.fromString("00000000-0000-0000-0000-000000000010");
+  private static final UUID PRODUCT_ID = UUID.fromString("00000000-0000-0000-0000-000000000100");
+
   @Autowired private MockMvc mockMvc;
   @Autowired private ObjectMapper objectMapper;
 
@@ -46,15 +51,15 @@ class CollectionControllerTest {
   @BeforeEach
   void setUp() {
     Store store = new Store();
-    store.setId(1);
+    store.setId(STORE_ID);
     store.setName("Tienda Test");
 
     Product product = new Product();
-    product.setId(10);
+    product.setId(PRODUCT_ID);
     product.setStore(store);
 
     ProductCollection collection = new ProductCollection();
-    collection.setId(1);
+    collection.setId(COLLECTION_ID);
     collection.setName("Primavera");
     collection.setDescription("Coleccion de primavera");
     collection.setStore(store);
@@ -65,31 +70,32 @@ class CollectionControllerTest {
 
   @Test
   void testGetByStore() throws Exception {
-    when(collectionService.getByStore(1)).thenReturn(List.of(collectionResponse));
+    when(collectionService.getByStore(STORE_ID)).thenReturn(List.of(collectionResponse));
 
     mockMvc
-        .perform(get("/api/v1/store/1/collections"))
+        .perform(get("/api/v1/store/{storeId}/collections", STORE_ID))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$[0].name").value("Primavera"))
-        .andExpect(jsonPath("$[0].productIds[0]").value(10));
+        .andExpect(jsonPath("$[0].productIds[0]").value(PRODUCT_ID.toString()));
   }
 
   @Test
   void testGetById_found() throws Exception {
-    when(collectionService.getById(1)).thenReturn(collectionResponse);
+    when(collectionService.getById(COLLECTION_ID)).thenReturn(collectionResponse);
 
     mockMvc
-        .perform(get("/api/v1/collections/1"))
+        .perform(get("/api/v1/collections/{id}", COLLECTION_ID))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.name").value("Primavera"));
   }
 
   @Test
   void testGetById_notFound() throws Exception {
-    when(collectionService.getById(anyInt()))
+    UUID randomId = UUID.randomUUID();
+    when(collectionService.getById(randomId))
         .thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
 
-    mockMvc.perform(get("/api/v1/collections/99")).andExpect(status().isNotFound());
+    mockMvc.perform(get("/api/v1/collections/{id}", randomId)).andExpect(status().isNotFound());
   }
 
   @Test
@@ -97,33 +103,34 @@ class CollectionControllerTest {
     CollectionCreationDTO dto = new CollectionCreationDTO();
     dto.setName("Primavera");
     dto.setDescription("Coleccion de primavera");
-    dto.setProductIds(Set.of(10));
+    dto.setProductIds(Set.of(PRODUCT_ID));
 
-    when(collectionService.create(eq(1), any(CollectionCreationDTO.class)))
+    when(collectionService.create(eq(STORE_ID), any(CollectionCreationDTO.class)))
         .thenReturn(collectionResponse);
 
     mockMvc
         .perform(
-            post("/api/v1/store/1/collections")
+            post("/api/v1/store/{storeId}/collections", STORE_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto)))
         .andExpect(status().isCreated())
         .andExpect(jsonPath("$.name").value("Primavera"))
-        .andExpect(jsonPath("$.productIds[0]").value(10));
+        .andExpect(jsonPath("$.productIds[0]").value(PRODUCT_ID.toString()));
   }
 
   @Test
   void testCreate_storeNotFound() throws Exception {
+    UUID randomStoreId = UUID.randomUUID();
     CollectionCreationDTO dto = new CollectionCreationDTO();
     dto.setName("Primavera");
     dto.setProductIds(Set.of());
 
-    when(collectionService.create(eq(99), any(CollectionCreationDTO.class)))
+    when(collectionService.create(eq(randomStoreId), any(CollectionCreationDTO.class)))
         .thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
 
     mockMvc
         .perform(
-            post("/api/v1/store/99/collections")
+            post("/api/v1/store/{storeId}/collections", randomStoreId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto)))
         .andExpect(status().isNotFound());
@@ -135,12 +142,12 @@ class CollectionControllerTest {
     dto.setName("Primavera");
     dto.setProductIds(Set.of());
 
-    when(collectionService.create(eq(1), any(CollectionCreationDTO.class)))
+    when(collectionService.create(eq(STORE_ID), any(CollectionCreationDTO.class)))
         .thenThrow(new ResponseStatusException(HttpStatus.CONFLICT));
 
     mockMvc
         .perform(
-            post("/api/v1/store/1/collections")
+            post("/api/v1/store/{storeId}/collections", STORE_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto)))
         .andExpect(status().isConflict());
@@ -150,39 +157,41 @@ class CollectionControllerTest {
   void testUpdate_ok() throws Exception {
     CollectionUpdateDTO dto = new CollectionUpdateDTO();
     dto.setName("Verano");
-    dto.setProductIds(Set.of(10));
+    dto.setProductIds(Set.of(PRODUCT_ID));
 
     CollectionResponseDTO updated = new CollectionResponseDTO();
-    updated.setId(1);
+    updated.setId(COLLECTION_ID);
     updated.setName("Verano");
-    updated.setStoreId(1);
+    updated.setStoreId(STORE_ID);
     updated.setStoreName("Tienda Test");
-    updated.setProductIds(List.of(10));
+    updated.setProductIds(List.of(PRODUCT_ID));
 
-    when(collectionService.update(eq(1), any(CollectionUpdateDTO.class))).thenReturn(updated);
+    when(collectionService.update(eq(COLLECTION_ID), any(CollectionUpdateDTO.class)))
+        .thenReturn(updated);
 
     mockMvc
         .perform(
-            put("/api/v1/collections/1")
+            put("/api/v1/collections/{id}", COLLECTION_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto)))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.name").value("Verano"))
-        .andExpect(jsonPath("$.productIds[0]").value(10));
+        .andExpect(jsonPath("$.productIds[0]").value(PRODUCT_ID.toString()));
   }
 
   @Test
   void testUpdate_notFound() throws Exception {
+    UUID randomId = UUID.randomUUID();
     CollectionUpdateDTO dto = new CollectionUpdateDTO();
     dto.setName("Verano");
     dto.setProductIds(Set.of());
 
-    when(collectionService.update(eq(99), any(CollectionUpdateDTO.class)))
+    when(collectionService.update(eq(randomId), any(CollectionUpdateDTO.class)))
         .thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
 
     mockMvc
         .perform(
-            put("/api/v1/collections/99")
+            put("/api/v1/collections/{id}", randomId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto)))
         .andExpect(status().isNotFound());
@@ -190,24 +199,29 @@ class CollectionControllerTest {
 
   @Test
   void testDelete_ok() throws Exception {
-    doNothing().when(collectionService).delete(1);
+    doNothing().when(collectionService).delete(COLLECTION_ID);
 
-    mockMvc.perform(delete("/api/v1/collections/1")).andExpect(status().isNoContent());
+    mockMvc
+        .perform(delete("/api/v1/collections/{id}", COLLECTION_ID))
+        .andExpect(status().isNoContent());
   }
 
   @Test
   void testDelete_notFound() throws Exception {
-    doThrow(new ResponseStatusException(HttpStatus.NOT_FOUND)).when(collectionService).delete(99);
+    UUID randomId = UUID.randomUUID();
+    doThrow(new ResponseStatusException(HttpStatus.NOT_FOUND))
+        .when(collectionService)
+        .delete(randomId);
 
-    mockMvc.perform(delete("/api/v1/collections/99")).andExpect(status().isNotFound());
+    mockMvc.perform(delete("/api/v1/collections/{id}", randomId)).andExpect(status().isNotFound());
   }
 
   @Test
   void testGetByStore_empty() throws Exception {
-    when(collectionService.getByStore(anyInt())).thenReturn(List.of());
+    when(collectionService.getByStore(STORE_2_ID)).thenReturn(List.of());
 
     mockMvc
-        .perform(get("/api/v1/store/99/collections"))
+        .perform(get("/api/v1/store/{storeId}/collections", STORE_2_ID))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$").isArray())
         .andExpect(jsonPath("$").isEmpty());
