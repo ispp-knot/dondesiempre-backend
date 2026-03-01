@@ -4,10 +4,12 @@ import ispp.project.dondesiempre.exceptions.InvalidBoundingBoxException;
 import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.models.stores.Store;
 import ispp.project.dondesiempre.models.stores.dto.StoreDTO;
+import ispp.project.dondesiempre.models.stores.dto.StoreUpdateDTO;
 import ispp.project.dondesiempre.repositories.stores.StoreRepository;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class StoreService {
   private final StoreRepository storeRepository;
+  private final ApplicationContext applicationContext;
 
   @Transactional(readOnly = true, rollbackFor = ResourceNotFoundException.class)
   public Store findById(UUID id) throws ResourceNotFoundException {
@@ -37,5 +40,30 @@ public class StoreService {
   public StoreDTO findByIdToDTO(UUID id) {
     Store store = findById(id);
     return new StoreDTO(store);
+  }
+
+  // Para pruebas
+  public List<StoreDTO> findAll() {
+    List<Store> stores = storeRepository.findAll();
+    return stores.stream().map(StoreDTO::new).toList();
+  }
+
+  //
+
+  @Transactional(rollbackFor = ResourceNotFoundException.class)
+  public StoreDTO updateStore(UUID id, StoreUpdateDTO dto) throws ResourceNotFoundException {
+    Store storeToUpdate;
+
+    storeToUpdate = applicationContext.getBean(StoreService.class).findById(id);
+
+    storeToUpdate.setName(dto.getName());
+    storeToUpdate.setEmail(dto.getEmail());
+    storeToUpdate.setStoreID(dto.getStoreID()); // No sé si esto se debería de actualizar
+    storeToUpdate.setAddress(dto.getAddress());
+    storeToUpdate.setOpeningHours(dto.getOpeningHours());
+    storeToUpdate.setPhone(dto.getPhone());
+    storeToUpdate.setAboutUs(dto.getAboutUs());
+
+    return new StoreDTO(storeRepository.save(storeToUpdate));
   }
 }
