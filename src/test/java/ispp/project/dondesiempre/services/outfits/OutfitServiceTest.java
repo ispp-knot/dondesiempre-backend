@@ -100,9 +100,7 @@ class OutfitServiceTest {
     outfitProduct.setProduct(product);
 
     // Lenient: not all tests call methods that go through ApplicationContext
-    lenient()
-        .when(applicationContext.getBean(OutfitService.class))
-        .thenReturn(outfitService);
+    lenient().when(applicationContext.getBean(OutfitService.class)).thenReturn(outfitService);
   }
 
   // --- findById ---
