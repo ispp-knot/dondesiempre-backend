@@ -1,0 +1,26 @@
+databaseChangeLog:
+- changeSet:
+    id: 1772283798654-36
+    author: roth (generated)
+    changes:
+    - addColumn:
+        columns:
+        - column:
+            name: promotion_image_url
+            type: VARCHAR(255)
+        tableName: promotions
+- changeSet:
+    id: 1772283798654-37
+    author: roth (generated)
+    changes:
+    - dropSequence:
+        sequenceName: entity_sequence
+- changeSet:
+    id: 1772283798654-1
+    author: roth (generated)
+    changes:
+    - addNotNullConstraint:
+        columnDataType: uuid
+        columnName: store_id
+        tableName: products
+        validate: true

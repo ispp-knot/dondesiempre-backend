@@ -15,5 +15,5 @@ databaseChangeLog:
       file: db/changelog/007-reference-data/007.changelog.yaml
   - include:
       file: db/changelog/008-promotions-on-products/promotions-on-products.changelog.yaml
-
-
+  - include:
+      file: db/changelog/012-added-images-to-promotions/images-on-promotions.changelog.yaml

@@ -12,6 +12,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.validator.constraints.URL;
 
 @Entity
 @Getter
@@ -38,4 +39,8 @@ public class Promotion extends BaseEntity {
 
   @Column(columnDefinition = "TEXT")
   private String description;
+
+  @URL
+  @Column(name = "promotion_image_url")
+  private String promotionImageUrl;
 }
