@@ -13,8 +13,8 @@ import static org.mockito.Mockito.when;
 
 import ispp.project.dondesiempre.exceptions.InvalidBoundingBoxException;
 import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
+import ispp.project.dondesiempre.mockEntities.StoreMockEntities;
 import ispp.project.dondesiempre.models.Client;
-import ispp.project.dondesiempre.models.User;
 import ispp.project.dondesiempre.models.stores.Store;
 import ispp.project.dondesiempre.models.stores.StoreFollower;
 import ispp.project.dondesiempre.models.stores.dto.StoreDTO;
@@ -40,38 +40,11 @@ public class StoreServiceTest {
 
   @InjectMocks private StoreService storeService;
 
-  private static final Client TEST_CLIENT = sampleClient();
+  private static final Client TEST_CLIENT = StoreMockEntities.sampleClient();
   private static final UUID TEST_STORE_ID = UUID.randomUUID();
-  private static final Store TEST_STORE = sampleStore();
-  private static final StoreFollower TEST_FOLLOWER = sampleFollower();
-
-  private static Store sampleStore() {
-    Store store = new Store();
-    store.setId(TEST_STORE_ID);
-    store.setName("Tienda de Prueba");
-
-    return store;
-  }
-
-  private static Client sampleClient() {
-    User user = new User();
-    user.setId(UUID.randomUUID());
-    user.setEmail(UserService.SEED_USER_EMAIL);
-
-    Client client = new Client();
-    client.setId(UUID.randomUUID());
-    client.setUser(user);
-
-    return client;
-  }
-
-  private static StoreFollower sampleFollower() {
-    StoreFollower follower = new StoreFollower();
-    follower.setClient(TEST_CLIENT);
-    follower.setStore(TEST_STORE);
-
-    return follower;
-  }
+  private static final Store TEST_STORE = StoreMockEntities.sampleStore(TEST_STORE_ID);
+  private static final StoreFollower TEST_FOLLOWER =
+      StoreMockEntities.sampleFollower(TEST_CLIENT, TEST_STORE);
 
   @Test
   void shouldReturnStore_whenFindByIdExists() {
