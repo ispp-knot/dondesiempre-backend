@@ -31,7 +31,8 @@ public class PromotionService {
   private final UserService userService;
 
   @Transactional
-  public Promotion savePromotion(PromotionCreationDTO dto) {
+  public Promotion savePromotion(PromotionCreationDTO dto)
+      throws ResourceNotFoundException, InvalidRequestException {
     Promotion promotion = new Promotion();
     promotion.setName(dto.getName());
     if (dto.getDiscountPercentage() < 1 || dto.getDiscountPercentage() > 100) {
@@ -69,15 +70,18 @@ public class PromotionService {
           "All products must belong to the same store as the promotion");
     }
 
-    Promotion saved = promotionRepository.save(promotion);
-
-    products.forEach(product -> addProduct(saved.getId(), product.getId()));
-
-    return saved;
+    try {
+      Promotion saved = promotionRepository.save(promotion);
+      products.forEach(product -> addProduct(saved.getId(), product.getId()));
+      return saved;
+    } catch (Exception e) {
+      throw new InvalidRequestException("Error creating promotion");
+    }
   }
 
   @Transactional
-  public PromotionProduct addProduct(UUID promotionId, UUID productId) {
+  public PromotionProduct addProduct(UUID promotionId, UUID productId)
+      throws ResourceNotFoundException, InvalidRequestException {
     Promotion promotion = getPromotionById(promotionId);
     Product product =
         productRepository
@@ -101,7 +105,7 @@ public class PromotionService {
   }
 
   @Transactional(readOnly = true)
-  public Promotion getPromotionById(UUID id) {
+  public Promotion getPromotionById(UUID id) throws ResourceNotFoundException {
     return promotionRepository
         .findById(id)
         .orElseThrow(() -> new ResourceNotFoundException("Promotion not found with id: " + id));
@@ -112,7 +116,8 @@ public class PromotionService {
     return promotionRepository.findAll();
   }
 
-  public Integer calculateDiscountedPrice(Integer originalPrice, Integer discountPercentage) {
+  public Integer calculateDiscountedPrice(Integer originalPrice, Integer discountPercentage)
+      throws InvalidRequestException {
     if (originalPrice == null || discountPercentage == null) {
       throw new InvalidRequestException("Price and discount must not be null");
     }
@@ -127,7 +132,8 @@ public class PromotionService {
   }
 
   @Transactional
-  public Promotion updatePromotion(UUID id, PromotionUpdateDTO dto) {
+  public Promotion updatePromotion(UUID id, PromotionUpdateDTO dto)
+      throws ResourceNotFoundException, InvalidRequestException {
 
     Promotion promotion = getPromotionById(id);
     userService.assertUserOwnsStore(promotion.getStore());
