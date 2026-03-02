@@ -4,9 +4,13 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
 
 import ispp.project.dondesiempre.exceptions.InvalidRequestException;
 import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
+import ispp.project.dondesiempre.exceptions.UnauthorizedException;
+import ispp.project.dondesiempre.models.User;
 import ispp.project.dondesiempre.models.products.Product;
 import ispp.project.dondesiempre.models.products.ProductType;
 import ispp.project.dondesiempre.models.products.dto.ProductCreationDTO;
@@ -16,6 +20,7 @@ import ispp.project.dondesiempre.models.promotions.dto.PromotionCreationDTO;
 import ispp.project.dondesiempre.models.promotions.dto.PromotionUpdateDTO;
 import ispp.project.dondesiempre.models.storefronts.Storefront;
 import ispp.project.dondesiempre.models.stores.Store;
+import ispp.project.dondesiempre.repositories.UserRepository;
 import ispp.project.dondesiempre.repositories.products.ProductTypeRepository;
 import ispp.project.dondesiempre.repositories.stores.StoreRepository;
 import ispp.project.dondesiempre.services.products.ProductService;
@@ -32,15 +37,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
 @AutoConfigureTestDatabase(replace = Replace.NONE)
+@Transactional
 public class PromotionServiceTest {
 
   @Autowired private PromotionService promotionService;
   @Autowired private StoreRepository storeRepository;
   @Autowired private ProductTypeRepository productTypeRepository;
   @Autowired private ProductService productService;
+  @Autowired private UserRepository userRepository;
+  @MockitoBean private UserService userService;
 
   private Storefront createStorefront() {
     Storefront storefront = new Storefront();
@@ -51,6 +61,12 @@ public class PromotionServiceTest {
   }
 
   private Store createAndSaveStore(String name, String email, String storeId) {
+
+    User user = new User();
+    user.setEmail("user@example.com");
+    user.setPassword("password");
+    user = userRepository.save(user);
+
     Store store = new Store();
     store.setName(name);
     store.setEmail(email);
@@ -63,6 +79,7 @@ public class PromotionServiceTest {
     store.setOpeningHours("9am - 5pm");
     store.setAcceptsShipping(true);
     store.setStorefront(createStorefront());
+    store.setUser(user);
     return storeRepository.save(store);
   }
 
@@ -302,5 +319,79 @@ public class PromotionServiceTest {
     assertThrows(
         ResourceNotFoundException.class,
         () -> promotionService.addProduct(promotionId, UUID.randomUUID()));
+  }
+
+  @Test
+  public void shouldThrowUnauthorizedException_WhenCreatingPromotionWithoutAuthorization() {
+    doThrow(new UnauthorizedException("Not authorized"))
+        .when(userService)
+        .assertUserOwnsStore(any());
+
+    Store store = createAndSaveStore("Test Store", "test@test.com", "test-store");
+    PromotionCreationDTO promotionCreationDTO = new PromotionCreationDTO();
+    promotionCreationDTO.setName("Test Promotion");
+    promotionCreationDTO.setDiscountPercentage(20);
+    promotionCreationDTO.setActive(true);
+    promotionCreationDTO.setProductIds(List.of(UUID.randomUUID()));
+    promotionCreationDTO.setStoreId(store.getId());
+
+    assertThrows(
+        UnauthorizedException.class, () -> promotionService.savePromotion(promotionCreationDTO));
+  }
+
+  @Test
+  public void shouldThrowUnauthorizedException_WhenUpdatingPromotionWithoutAuthorization() {
+    Store store = createAndSaveStore("Test Store", "test@example.com", "test-store");
+    ProductType productType = createAndSaveProductType("Test Product Type");
+    Product product = createProduct("Test Product", 1000, 800, productType.getId(), store.getId());
+    Promotion promotion =
+        createPromotion("Test Promotion", 20, true, List.of(product.getId()), store.getId());
+
+    doThrow(new UnauthorizedException("Not authorized"))
+        .when(userService)
+        .assertUserOwnsStore(any());
+
+    PromotionUpdateDTO updateDTO = new PromotionUpdateDTO();
+    updateDTO.setDiscountPercentage(30);
+
+    assertThrows(
+        UnauthorizedException.class,
+        () -> promotionService.updatePromotion(promotion.getId(), updateDTO));
+  }
+
+  @Test
+  public void shouldThrowUnauthorizedException_WhenDeletingPromotionWithoutAuthorization() {
+    Store store = createAndSaveStore("Test Store", "test@example.com", "test-store");
+    ProductType productType = createAndSaveProductType("Test Product Type");
+    Product product = createProduct("Test Product", 1000, 800, productType.getId(), store.getId());
+    Promotion promotion =
+        createPromotion("Test Promotion", 20, true, List.of(product.getId()), store.getId());
+
+    doThrow(new UnauthorizedException("Not authorized"))
+        .when(userService)
+        .assertUserOwnsStore(any());
+
+    assertThrows(
+        UnauthorizedException.class, () -> promotionService.deletePromotion(promotion.getId()));
+  }
+
+  @Test
+  public void shouldThrowUnauthorizedException_WhenAddingProductToPromotionWithoutAuthorization() {
+    Store store = createAndSaveStore("Test Store", "test@test.com", "test-store");
+    ProductType productType = createAndSaveProductType("Test Product Type");
+    Product product = createProduct("Test Product", 1000, 800, productType.getId(), store.getId());
+    Promotion promotion =
+        createPromotion("Test Promotion", 20, true, List.of(product.getId()), store.getId());
+
+    Product product2 =
+        createProduct("Test Product 2", 1000, 800, productType.getId(), store.getId());
+
+    doThrow(new UnauthorizedException("Not authorized"))
+        .when(userService)
+        .assertUserOwnsStore(any());
+
+    assertThrows(
+        UnauthorizedException.class,
+        () -> promotionService.addProduct(promotion.getId(), product2.getId()));
   }
 }
