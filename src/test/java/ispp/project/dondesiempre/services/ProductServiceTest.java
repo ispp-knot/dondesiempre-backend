@@ -38,6 +38,7 @@ public class ProductServiceTest {
   @Autowired private StoreRepository storeRepository;
   @Autowired private UserRepository userRepository;
   @MockitoBean private UserService userService;
+  @MockitoBean private CloudinaryService cloudinaryService;
 
   private User testUser;
 
@@ -85,7 +86,7 @@ public class ProductServiceTest {
     dto.setTypeId(savedProductType.getId());
     dto.setStoreId(saved_store.getId());
 
-    Product product = productService.saveProduct(dto);
+    Product product = productService.saveProduct(dto, null);
     assert product != null;
     assert product.getName().equals("Test Product");
   }
@@ -129,7 +130,7 @@ public class ProductServiceTest {
     assertThrows(
         InvalidRequestException.class,
         () -> {
-          productService.saveProduct(dto);
+          productService.saveProduct(dto, null);
         });
   }
 
@@ -168,7 +169,7 @@ public class ProductServiceTest {
     dto.setTypeId(savedProductType.getId());
     dto.setStoreId(saved_store.getId());
 
-    Product product = productService.saveProduct(dto);
+    Product product = productService.saveProduct(dto, null);
     Product updatedProduct = productService.updateProductDiscount(product.getId(), 700);
     assert updatedProduct.getDiscountedPriceInCents() == 700;
     assert updatedProduct.getId().equals(product.getId());
@@ -210,7 +211,7 @@ public class ProductServiceTest {
     dto.setTypeId(savedProductType.getId());
     dto.setStoreId(saved_store.getId());
 
-    Product product = productService.saveProduct(dto);
+    Product product = productService.saveProduct(dto, null);
     assertThrows(
         InvalidRequestException.class,
         () -> {
@@ -254,7 +255,7 @@ public class ProductServiceTest {
     dto.setTypeId(savedProductType.getId());
     dto.setStoreId(saved_store.getId());
 
-    Product product = productService.saveProduct(dto);
+    Product product = productService.saveProduct(dto, null);
     Product fetchedProduct = productService.getProductById(product.getId());
     assert fetchedProduct != null;
     assert fetchedProduct.getId().equals(product.getId());
@@ -306,9 +307,9 @@ public class ProductServiceTest {
     dto.setTypeId(savedProductType.getId());
     dto.setStoreId(saved_store.getId());
 
-    productService.saveProduct(dto);
+    productService.saveProduct(dto, null);
     dto.setName("Another Test Product");
-    productService.saveProduct(dto);
+    productService.saveProduct(dto, null);
 
     assert productService.getAllProducts().size() >= 2;
   }
@@ -348,10 +349,10 @@ public class ProductServiceTest {
     dto.setTypeId(savedProductType.getId());
     dto.setStoreId(saved_store.getId());
 
-    productService.saveProduct(dto);
+    productService.saveProduct(dto, null);
     dto.setName("Non-discounted Product");
     dto.setDiscountedPriceInCents(1000); // No discount
-    productService.saveProduct(dto);
+    productService.saveProduct(dto, null);
 
     assert productService.getAllDiscountedProducts().size() >= 1;
   }

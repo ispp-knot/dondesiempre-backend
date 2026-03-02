@@ -53,6 +53,7 @@ public class OutfitServiceTest {
   @Autowired private ProductTypeRepository productTypeRepository;
   @Autowired private ProductRepository productRepository;
   @MockitoBean private UserService userService;
+  @MockitoBean private CloudinaryService cloudinaryService;
 
   private Storefront storefront;
   private Store store;
@@ -113,7 +114,7 @@ public class OutfitServiceTest {
 
   @Test
   void create_shouldCreateOutfit_whenAuthorized() {
-    Outfit result = outfitService.create(buildCreationDTO());
+    Outfit result = outfitService.create(buildCreationDTO(), null);
 
     assertNotNull(result);
     assertEquals("Test Outfit", result.getName());
@@ -125,12 +126,12 @@ public class OutfitServiceTest {
         .when(userService)
         .assertUserOwnsStore(any());
 
-    assertThrows(UnauthorizedException.class, () -> outfitService.create(buildCreationDTO()));
+    assertThrows(UnauthorizedException.class, () -> outfitService.create(buildCreationDTO(), null));
   }
 
   @Test
   void update_shouldUpdateOutfit_whenAuthorized() {
-    Outfit created = outfitService.create(buildCreationDTO());
+    Outfit created = outfitService.create(buildCreationDTO(), null);
 
     OutfitUpdateDTO updateDTO = new OutfitUpdateDTO();
     updateDTO.setName("Updated Outfit");
@@ -138,7 +139,7 @@ public class OutfitServiceTest {
     updateDTO.setIndex(1);
     updateDTO.setDiscountedPriceInCents(500);
 
-    Outfit result = outfitService.update(created.getId(), updateDTO);
+    Outfit result = outfitService.update(created.getId(), updateDTO, null);
 
     assertEquals("Updated Outfit", result.getName());
     assertEquals(1, result.getIndex());
@@ -146,7 +147,7 @@ public class OutfitServiceTest {
 
   @Test
   void update_shouldThrowUnauthorizedException_whenNotAuthorized() {
-    Outfit created = outfitService.create(buildCreationDTO());
+    Outfit created = outfitService.create(buildCreationDTO(), null);
 
     doThrow(new UnauthorizedException("Not authorized"))
         .when(userService)
@@ -158,12 +159,12 @@ public class OutfitServiceTest {
     updateDTO.setIndex(0);
 
     assertThrows(
-        UnauthorizedException.class, () -> outfitService.update(created.getId(), updateDTO));
+        UnauthorizedException.class, () -> outfitService.update(created.getId(), updateDTO, null));
   }
 
   @Test
   void delete_shouldDeleteOutfit_whenAuthorized() {
-    Outfit created = outfitService.create(buildCreationDTO());
+    Outfit created = outfitService.create(buildCreationDTO(), null);
     UUID outfitId = created.getId();
 
     assertDoesNotThrow(() -> outfitService.delete(outfitId));
@@ -171,7 +172,7 @@ public class OutfitServiceTest {
 
   @Test
   void delete_shouldThrowUnauthorizedException_whenNotAuthorized() {
-    Outfit created = outfitService.create(buildCreationDTO());
+    Outfit created = outfitService.create(buildCreationDTO(), null);
     UUID outfitId = created.getId();
 
     doThrow(new UnauthorizedException("Not authorized"))
@@ -183,7 +184,7 @@ public class OutfitServiceTest {
 
   @Test
   void addTag_shouldAddTag_whenAuthorized() {
-    Outfit created = outfitService.create(buildCreationDTO());
+    Outfit created = outfitService.create(buildCreationDTO(), null);
 
     String tagName = outfitService.addTag(created.getId(), "cool");
 
@@ -192,7 +193,7 @@ public class OutfitServiceTest {
 
   @Test
   void addTag_shouldThrowUnauthorizedException_whenNotAuthorized() {
-    Outfit created = outfitService.create(buildCreationDTO());
+    Outfit created = outfitService.create(buildCreationDTO(), null);
 
     doThrow(new UnauthorizedException("Not authorized"))
         .when(userService)
@@ -203,7 +204,7 @@ public class OutfitServiceTest {
 
   @Test
   void addProduct_shouldAddProduct_whenAuthorized() {
-    Outfit created = outfitService.create(buildCreationDTO());
+    Outfit created = outfitService.create(buildCreationDTO(), null);
 
     Product extra = new Product();
     extra.setName("Extra Product");
@@ -222,7 +223,7 @@ public class OutfitServiceTest {
 
   @Test
   void addProduct_shouldThrowUnauthorizedException_whenNotAuthorized() {
-    Outfit created = outfitService.create(buildCreationDTO());
+    Outfit created = outfitService.create(buildCreationDTO(), null);
 
     doThrow(new UnauthorizedException("Not authorized"))
         .when(userService)
@@ -238,7 +239,7 @@ public class OutfitServiceTest {
 
   @Test
   void findById_shouldReturnOutfit_whenExists() {
-    Outfit created = outfitService.create(buildCreationDTO());
+    Outfit created = outfitService.create(buildCreationDTO(), null);
     Outfit found = outfitService.findById(created.getId());
 
     assertNotNull(found);
@@ -259,12 +260,12 @@ public class OutfitServiceTest {
     dto.setTags(List.of());
     dto.setProducts(List.of());
 
-    assertThrows(InvalidRequestException.class, () -> outfitService.create(dto));
+    assertThrows(InvalidRequestException.class, () -> outfitService.create(dto, null));
   }
 
   @Test
   void removeTag_shouldRemoveTag_whenAuthorized() {
-    Outfit created = outfitService.create(buildCreationDTO());
+    Outfit created = outfitService.create(buildCreationDTO(), null);
     outfitService.addTag(created.getId(), "cool");
 
     assertDoesNotThrow(() -> outfitService.removeTag(created.getId(), "cool"));
@@ -272,7 +273,7 @@ public class OutfitServiceTest {
 
   @Test
   void removeTag_shouldThrowUnauthorizedException_whenNotAuthorized() {
-    Outfit created = outfitService.create(buildCreationDTO());
+    Outfit created = outfitService.create(buildCreationDTO(), null);
     outfitService.addTag(created.getId(), "cool");
 
     doThrow(new UnauthorizedException("Not authorized"))
@@ -285,14 +286,14 @@ public class OutfitServiceTest {
 
   @Test
   void removeProduct_shouldRemoveProduct_whenAuthorized() {
-    Outfit created = outfitService.create(buildCreationDTO());
+    Outfit created = outfitService.create(buildCreationDTO(), null);
 
     assertDoesNotThrow(() -> outfitService.removeProduct(created.getId(), product));
   }
 
   @Test
   void removeProduct_shouldThrowUnauthorizedException_whenNotAuthorized() {
-    Outfit created = outfitService.create(buildCreationDTO());
+    Outfit created = outfitService.create(buildCreationDTO(), null);
 
     doThrow(new UnauthorizedException("Not authorized"))
         .when(userService)
@@ -316,7 +317,7 @@ public class OutfitServiceTest {
     extraDTO.setId(extra.getId());
     extraDTO.setIndex(1);
 
-    Outfit created = outfitService.create(buildCreationDTO());
+    Outfit created = outfitService.create(buildCreationDTO(), null);
     outfitService.addProduct(created.getId(), extraDTO);
 
     OutfitCreationProductDTO sortFirst = new OutfitCreationProductDTO();
@@ -333,7 +334,7 @@ public class OutfitServiceTest {
 
   @Test
   void sortProducts_shouldThrowUnauthorizedException_whenNotAuthorized() {
-    Outfit created = outfitService.create(buildCreationDTO());
+    Outfit created = outfitService.create(buildCreationDTO(), null);
 
     doThrow(new UnauthorizedException("Not authorized"))
         .when(userService)

@@ -21,17 +21,22 @@ import org.springframework.web.multipart.MultipartFile;
 @ExtendWith(MockitoExtension.class)
 public class CloudinaryServiceImplTest {
 
-  @Mock private Cloudinary cloudinary;
-  @Mock private Uploader uploader;
-  @Mock private CloudinaryProperties properties;
-  @Mock private MultipartFile mockFile;
+  @Mock
+  private Cloudinary cloudinary;
+  @Mock
+  private Uploader uploader;
+  @Mock
+  private CloudinaryProperties properties;
+  @Mock
+  private MultipartFile mockFile;
 
-  @InjectMocks private CloudinaryServiceImpl cloudinaryService;
+  @InjectMocks
+  private CloudinaryServiceImpl cloudinaryService;
 
   @Test
   void upload_returnsSecureUrl_whenUploadSucceeds() throws Exception {
     when(cloudinary.uploader()).thenReturn(uploader);
-    when(mockFile.getBytes()).thenReturn(new byte[] {1, 2, 3});
+    when(mockFile.getBytes()).thenReturn(new byte[] { 1, 2, 3 });
     when(properties.getFolderPrefix()).thenReturn("dev");
     when(uploader.upload(any(byte[].class), any(Map.class)))
         .thenReturn(Map.of("secure_url", "https://res.cloudinary.com/test/img.jpg"));

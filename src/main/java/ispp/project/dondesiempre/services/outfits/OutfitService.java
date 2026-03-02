@@ -15,6 +15,7 @@ import ispp.project.dondesiempre.models.stores.Store;
 import ispp.project.dondesiempre.repositories.outfits.OutfitProductRepository;
 import ispp.project.dondesiempre.repositories.outfits.OutfitRepository;
 import ispp.project.dondesiempre.repositories.outfits.OutfitTagRelationRepository;
+import ispp.project.dondesiempre.services.CloudinaryService;
 import ispp.project.dondesiempre.services.UserService;
 import ispp.project.dondesiempre.services.products.ProductService;
 import ispp.project.dondesiempre.services.storefronts.StorefrontService;
@@ -25,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -38,6 +40,7 @@ public class OutfitService {
   private final UserService userService;
 
   private final OutfitTagService outfitTagService;
+  private final CloudinaryService cloudinaryService;
 
   private final ApplicationContext applicationContext;
 
@@ -69,7 +72,7 @@ public class OutfitService {
   }
 
   @Transactional(rollbackFor = InvalidRequestException.class)
-  public Outfit create(OutfitCreationDTO dto) throws InvalidRequestException {
+  public Outfit create(OutfitCreationDTO dto, MultipartFile image) throws InvalidRequestException {
     Outfit outfit;
     UUID outfitId;
 
@@ -78,7 +81,9 @@ public class OutfitService {
     outfit.setName(dto.getName());
     outfit.setDescription(dto.getDescription());
     outfit.setIndex(dto.getIndex());
-    outfit.setImage(dto.getImage());
+    if (image != null && !image.isEmpty()) {
+      outfit.setImage(cloudinaryService.upload(image));
+    }
     Storefront storefront = storefrontService.findById(dto.getStorefrontId());
     userService.assertUserOwnsStore(storefront.getStore());
     outfit.setStorefront(storefront);
@@ -105,7 +110,8 @@ public class OutfitService {
   }
 
   @Transactional(rollbackFor = ResourceNotFoundException.class)
-  public Outfit update(UUID id, OutfitUpdateDTO dto) throws ResourceNotFoundException {
+  public Outfit update(UUID id, OutfitUpdateDTO dto, MultipartFile image)
+      throws ResourceNotFoundException {
     Outfit outfitToUpdate;
 
     outfitToUpdate = applicationContext.getBean(OutfitService.class).findById(id);
@@ -114,7 +120,9 @@ public class OutfitService {
     outfitToUpdate.setName(dto.getName());
     outfitToUpdate.setDescription(dto.getDescription());
     outfitToUpdate.setDiscountedPriceInCents(dto.getDiscountedPriceInCents());
-    outfitToUpdate.setImage(dto.getImage());
+    if (image != null && !image.isEmpty()) {
+      outfitToUpdate.setImage(cloudinaryService.upload(image));
+    }
     outfitToUpdate.setIndex(dto.getIndex());
 
     return outfitRepository.save(outfitToUpdate);
