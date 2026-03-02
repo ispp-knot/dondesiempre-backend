@@ -1,15 +1,13 @@
 package ispp.project.dondesiempre.services.storefronts;
 
-import java.util.UUID;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.models.storefronts.Storefront;
 import ispp.project.dondesiempre.models.storefronts.dto.StorefrontDTO;
 import ispp.project.dondesiempre.repositories.storefronts.StorefrontRepository;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -26,7 +24,7 @@ public class StorefrontService {
 
   @Transactional(rollbackFor = ResourceNotFoundException.class)
   public StorefrontDTO updateStorefront(UUID id, StorefrontDTO dto) {
-    Storefront storefront = this.findById(id); 
+    Storefront storefront = this.findById(id);
 
     storefront.setIsFirstCollections(dto.getIsFirstCollections());
     storefront.setPrimaryColor(dto.getPrimaryColor());

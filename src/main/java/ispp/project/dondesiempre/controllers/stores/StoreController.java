@@ -2,8 +2,8 @@ package ispp.project.dondesiempre.controllers.stores;
 
 import ispp.project.dondesiempre.models.Client;
 import ispp.project.dondesiempre.models.stores.dto.StoreDTO;
-import ispp.project.dondesiempre.models.stores.dto.StoreUpdateDTO;
 import ispp.project.dondesiempre.models.stores.dto.StoreFollowerDTO;
+import ispp.project.dondesiempre.models.stores.dto.StoreUpdateDTO;
 import ispp.project.dondesiempre.services.UserService;
 import ispp.project.dondesiempre.services.stores.StoreService;
 import java.util.List;

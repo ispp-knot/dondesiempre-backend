@@ -1,26 +1,15 @@
 package ispp.project.dondesiempre.controllers;
 
-import java.util.UUID;
-
-import org.junit.jupiter.api.Test;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.FilterType;
-import org.springframework.http.MediaType;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import ispp.project.dondesiempre.controllers.exceptions.GlobalExceptionHandler;
 import ispp.project.dondesiempre.controllers.storefronts.StorefrontController;
 import ispp.project.dondesiempre.exceptions.UnauthorizedException;
@@ -28,6 +17,15 @@ import ispp.project.dondesiempre.models.storefronts.Storefront;
 import ispp.project.dondesiempre.models.storefronts.dto.StorefrontDTO;
 import ispp.project.dondesiempre.services.UserService;
 import ispp.project.dondesiempre.services.storefronts.StorefrontService;
+import java.util.UUID;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(
     controllers = StorefrontController.class,
@@ -42,7 +40,7 @@ public class StorefrontControllerTest {
   @Autowired private ObjectMapper objectMapper;
 
   @MockitoBean private StorefrontService storefrontService;
-  
+
   @MockitoBean private UserService userService;
 
   @Test
@@ -91,9 +89,10 @@ public class StorefrontControllerTest {
     StorefrontDTO inputDto = new StorefrontDTO();
 
     when(storefrontService.findById(id)).thenReturn(storefront);
-    
+
     doThrow(new UnauthorizedException("You do not own this store."))
-           .when(userService).assertUserOwnsStore(any());
+        .when(userService)
+        .assertUserOwnsStore(any());
 
     mockMvc
         .perform(
