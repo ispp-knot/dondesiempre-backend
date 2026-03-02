@@ -26,8 +26,6 @@ public class StorefrontController {
     return new ResponseEntity<>(storefrontService.getDTOById(id), HttpStatus.OK);
   }
 
-  // TODO: Quitar el /edit
-  // TODO: Validar que el dueño del storefront es el que edita
   @PutMapping("/{id}")
   public ResponseEntity<StorefrontDTO> updateStorefront(
       @PathVariable UUID id, @RequestBody StorefrontDTO storefrontDTO) {
