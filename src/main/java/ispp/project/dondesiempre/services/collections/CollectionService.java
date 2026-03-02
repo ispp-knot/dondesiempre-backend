@@ -1,5 +1,6 @@
 package ispp.project.dondesiempre.services.collections;
 
+import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.models.collections.ProductCollection;
 import ispp.project.dondesiempre.models.collections.dto.CollectionCreationDTO;
 import ispp.project.dondesiempre.models.collections.dto.CollectionResponseDTO;
@@ -36,7 +37,7 @@ public class CollectionService {
     ProductCollection collection =
         collectionRepository
             .findById(id)
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+            .orElseThrow(() -> new ResourceNotFoundException("Collection not found"));
     return new CollectionResponseDTO(collection);
   }
 
@@ -44,10 +45,11 @@ public class CollectionService {
     Store store =
         storeRepository
             .findById(storeId)
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+            .orElseThrow(() -> new ResourceNotFoundException("Store not found"));
 
     if (collectionRepository.existsByNameAndStoreId(dto.getName(), storeId)) {
-      throw new ResponseStatusException(HttpStatus.CONFLICT);
+      throw new ResponseStatusException(
+          HttpStatus.CONFLICT, "Collection name already exists in this store");
     }
 
     ProductCollection collection = dtoToEntity(dto, storeId);
@@ -60,11 +62,12 @@ public class CollectionService {
     ProductCollection collection =
         collectionRepository
             .findById(id)
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+            .orElseThrow(() -> new ResourceNotFoundException("Collection not found"));
 
     UUID storeId = collection.getStore().getId();
     if (collectionRepository.existsByNameAndStoreIdAndIdNot(dto.getName(), storeId, id)) {
-      throw new ResponseStatusException(HttpStatus.CONFLICT);
+      throw new ResponseStatusException(
+          HttpStatus.CONFLICT, "Collection name already exists in this store");
     }
 
     collection.setName(dto.getName());
@@ -78,7 +81,7 @@ public class CollectionService {
     ProductCollection collection =
         collectionRepository
             .findById(id)
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+            .orElseThrow(() -> new ResourceNotFoundException("Collection not found"));
     collectionRepository.delete(collection);
   }
 
@@ -97,7 +100,7 @@ public class CollectionService {
 
     List<Product> products = productRepository.findByIdIn(productIds);
     if (products.size() != productIds.size()) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Some products were not found");
+      throw new ResourceNotFoundException("Some products were not found");
     }
 
     boolean allBelongToStore =

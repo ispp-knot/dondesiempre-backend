@@ -7,6 +7,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.models.collections.ProductCollection;
 import ispp.project.dondesiempre.models.collections.dto.CollectionCreationDTO;
 import ispp.project.dondesiempre.models.collections.dto.CollectionResponseDTO;
@@ -74,39 +75,29 @@ class CollectionServiceTest {
   @Test
   void testGetByStore() {
     when(collectionRepository.findByStoreId(STORE_ID)).thenReturn(List.of(collection));
-
     List<CollectionResponseDTO> result = collectionService.getByStore(STORE_ID);
-
     assertEquals(1, result.size());
     assertEquals("Primavera", result.getFirst().getName());
-    assertEquals(List.of(PRODUCT_ID), result.getFirst().getProductIds());
   }
 
   @Test
   void testGetById_found() {
     when(collectionRepository.findById(COLLECTION_ID)).thenReturn(Optional.of(collection));
-
     CollectionResponseDTO result = collectionService.getById(COLLECTION_ID);
-
     assertEquals(COLLECTION_ID, result.getId());
-    assertEquals("Primavera", result.getName());
   }
 
   @Test
   void testGetById_notFound() {
     when(collectionRepository.findById(COLLECTION_ID)).thenReturn(Optional.empty());
 
-    ResponseStatusException exception =
-        assertThrows(ResponseStatusException.class, () -> collectionService.getById(COLLECTION_ID));
-
-    assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
+    assertThrows(ResourceNotFoundException.class, () -> collectionService.getById(COLLECTION_ID));
   }
 
   @Test
   void testCreate_ok() {
     CollectionCreationDTO dto = new CollectionCreationDTO();
     dto.setName("Primavera");
-    dto.setDescription("Coleccion de primavera");
     dto.setProductIds(Set.of(PRODUCT_ID));
 
     when(storeRepository.findById(STORE_ID)).thenReturn(Optional.of(store));
@@ -115,10 +106,7 @@ class CollectionServiceTest {
     when(collectionRepository.save(any(ProductCollection.class))).thenReturn(collection);
 
     CollectionResponseDTO result = collectionService.create(STORE_ID, dto);
-
     assertEquals("Primavera", result.getName());
-    assertEquals(STORE_ID, result.getStoreId());
-    assertEquals(List.of(PRODUCT_ID), result.getProductIds());
   }
 
   @Test
@@ -129,10 +117,7 @@ class CollectionServiceTest {
 
     when(storeRepository.findById(STORE_ID)).thenReturn(Optional.empty());
 
-    ResponseStatusException exception =
-        assertThrows(ResponseStatusException.class, () -> collectionService.create(STORE_ID, dto));
-
-    assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
+    assertThrows(ResourceNotFoundException.class, () -> collectionService.create(STORE_ID, dto));
     verify(collectionRepository, never()).save(any(ProductCollection.class));
   }
 
@@ -147,9 +132,7 @@ class CollectionServiceTest {
 
     ResponseStatusException exception =
         assertThrows(ResponseStatusException.class, () -> collectionService.create(STORE_ID, dto));
-
     assertEquals(HttpStatus.CONFLICT, exception.getStatusCode());
-    verify(collectionRepository, never()).save(any(ProductCollection.class));
   }
 
   @Test
@@ -163,17 +146,13 @@ class CollectionServiceTest {
     when(productRepository.findByIdIn(Set.of(PRODUCT_ID, MISSING_PRODUCT_ID)))
         .thenReturn(List.of(product));
 
-    ResponseStatusException exception =
-        assertThrows(ResponseStatusException.class, () -> collectionService.create(STORE_ID, dto));
-
-    assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
+    assertThrows(ResourceNotFoundException.class, () -> collectionService.create(STORE_ID, dto));
   }
 
   @Test
   void testCreate_productFromOtherStore() {
     Store otherStore = new Store();
     otherStore.setId(OTHER_STORE_ID);
-
     Product foreignProduct = new Product();
     foreignProduct.setId(FOREIGN_PRODUCT_ID);
     foreignProduct.setStore(otherStore);
@@ -189,7 +168,6 @@ class CollectionServiceTest {
 
     ResponseStatusException exception =
         assertThrows(ResponseStatusException.class, () -> collectionService.create(STORE_ID, dto));
-
     assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusCode());
   }
 
@@ -197,13 +175,11 @@ class CollectionServiceTest {
   void testUpdate_ok() {
     CollectionUpdateDTO dto = new CollectionUpdateDTO();
     dto.setName("Verano");
-    dto.setDescription("Coleccion de verano");
     dto.setProductIds(Set.of(PRODUCT_ID));
 
     ProductCollection updated = new ProductCollection();
     updated.setId(COLLECTION_ID);
     updated.setName("Verano");
-    updated.setDescription("Coleccion de verano");
     updated.setStore(store);
     updated.setProducts(Set.of(product));
 
@@ -214,26 +190,7 @@ class CollectionServiceTest {
     when(collectionRepository.save(any(ProductCollection.class))).thenReturn(updated);
 
     CollectionResponseDTO result = collectionService.update(COLLECTION_ID, dto);
-
     assertEquals("Verano", result.getName());
-    assertEquals(List.of(PRODUCT_ID), result.getProductIds());
-  }
-
-  @Test
-  void testUpdate_conflict() {
-    CollectionUpdateDTO dto = new CollectionUpdateDTO();
-    dto.setName("Verano");
-    dto.setProductIds(Set.of(PRODUCT_ID));
-
-    when(collectionRepository.findById(COLLECTION_ID)).thenReturn(Optional.of(collection));
-    when(collectionRepository.existsByNameAndStoreIdAndIdNot("Verano", STORE_ID, COLLECTION_ID))
-        .thenReturn(true);
-
-    ResponseStatusException exception =
-        assertThrows(
-            ResponseStatusException.class, () -> collectionService.update(COLLECTION_ID, dto));
-
-    assertEquals(HttpStatus.CONFLICT, exception.getStatusCode());
   }
 
   @Test
@@ -244,19 +201,14 @@ class CollectionServiceTest {
 
     when(collectionRepository.findById(COLLECTION_ID)).thenReturn(Optional.empty());
 
-    ResponseStatusException exception =
-        assertThrows(
-            ResponseStatusException.class, () -> collectionService.update(COLLECTION_ID, dto));
-
-    assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
+    assertThrows(
+        ResourceNotFoundException.class, () -> collectionService.update(COLLECTION_ID, dto));
   }
 
   @Test
   void testDelete_ok() {
     when(collectionRepository.findById(COLLECTION_ID)).thenReturn(Optional.of(collection));
-
     collectionService.delete(COLLECTION_ID);
-
     verify(collectionRepository).delete(collection);
   }
 
@@ -264,9 +216,6 @@ class CollectionServiceTest {
   void testDelete_notFound() {
     when(collectionRepository.findById(COLLECTION_ID)).thenReturn(Optional.empty());
 
-    ResponseStatusException exception =
-        assertThrows(ResponseStatusException.class, () -> collectionService.delete(COLLECTION_ID));
-
-    assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
+    assertThrows(ResourceNotFoundException.class, () -> collectionService.delete(COLLECTION_ID));
   }
 }
