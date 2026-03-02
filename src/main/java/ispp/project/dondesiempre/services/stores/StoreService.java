@@ -65,10 +65,10 @@ public class StoreService {
   }
 
   @Transactional(readOnly = true)
-  public List<StoreDTO> getMyFollowedStores() {
+  public List<Store> getMyFollowedStores() {
     Client currentUser = userService.getCurrentClient();
     return storeFollowerRepository.findByClientId(currentUser.getId()).stream()
-        .map(follower -> new StoreDTO(follower.getStore()))
+        .map(follower -> follower.getStore())
         .toList();
   }
 }

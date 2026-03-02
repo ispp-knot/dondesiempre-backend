@@ -50,7 +50,8 @@ public class StoreController {
   @GetMapping("/clients/me/followed-stores")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<List<StoreDTO>> getMyFollowedStores() {
-    List<StoreDTO> followedStores = storeService.getMyFollowedStores();
+    List<StoreDTO> followedStores =
+        storeService.getMyFollowedStores().stream().map(store -> new StoreDTO(store)).toList();
     return new ResponseEntity<>(followedStores, HttpStatus.OK);
   }
 }
