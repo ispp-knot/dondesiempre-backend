@@ -3,6 +3,7 @@ package ispp.project.dondesiempre.controllers.promotions;
 import ispp.project.dondesiempre.models.promotions.Promotion;
 import ispp.project.dondesiempre.models.promotions.dto.PromotionCreationDTO;
 import ispp.project.dondesiempre.models.promotions.dto.PromotionDTO;
+import ispp.project.dondesiempre.models.promotions.dto.PromotionUpdateDTO;
 import ispp.project.dondesiempre.services.promotions.PromotionService;
 import java.util.List;
 import java.util.UUID;
@@ -15,7 +16,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -54,11 +54,11 @@ public class PromotionController {
     return ResponseEntity.ok(promotionDTO);
   }
 
-  @PatchMapping("/{id}/discount")
-  public ResponseEntity<PromotionDTO> updateDiscount(
-      @PathVariable UUID id, @RequestParam Integer discountPercentage) {
+  @PatchMapping("/{id}")
+  public ResponseEntity<PromotionDTO> updatePromotion(
+      @PathVariable UUID id, @RequestBody PromotionUpdateDTO updateDTO) {
 
-    Promotion promotion = promotionService.updatePromotionDiscount(id, discountPercentage);
+    Promotion promotion = promotionService.updatePromotion(id, updateDTO);
     return ResponseEntity.ok(
         PromotionDTO.fromPromotion(
             promotion, promotionService.getAllProductsByPromotionId(promotion.getId())));

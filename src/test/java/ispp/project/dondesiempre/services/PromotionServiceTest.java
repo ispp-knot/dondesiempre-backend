@@ -13,6 +13,7 @@ import ispp.project.dondesiempre.models.products.dto.ProductCreationDTO;
 import ispp.project.dondesiempre.models.promotions.Promotion;
 import ispp.project.dondesiempre.models.promotions.PromotionProduct;
 import ispp.project.dondesiempre.models.promotions.dto.PromotionCreationDTO;
+import ispp.project.dondesiempre.models.promotions.dto.PromotionUpdateDTO;
 import ispp.project.dondesiempre.models.storefronts.Storefront;
 import ispp.project.dondesiempre.models.stores.Store;
 import ispp.project.dondesiempre.repositories.products.ProductTypeRepository;
@@ -41,18 +42,19 @@ public class PromotionServiceTest {
   @Autowired private ProductTypeRepository productTypeRepository;
   @Autowired private ProductService productService;
 
-  @Test
-  public void shouldCreateNewPromotion() {
-
+  private Storefront createStorefront() {
     Storefront storefront = new Storefront();
     storefront.setIsFirstCollections(true);
     storefront.setPrimaryColor("#c65a3a");
     storefront.setSecondaryColor("#19756a");
+    return storefront;
+  }
 
+  private Store createAndSaveStore(String name, String email, String storeId) {
     Store store = new Store();
-    store.setName("Test Store");
-    store.setEmail("test@example.com");
-    store.setStoreID("test-store");
+    store.setName(name);
+    store.setEmail(email);
+    store.setStoreID(storeId);
     store.setLocation(
         new Point(
             new CoordinateArraySequence(new Coordinate[] {new Coordinate(0.0, 0.0)}),
@@ -60,39 +62,56 @@ public class PromotionServiceTest {
     store.setAddress("123 Test Street");
     store.setOpeningHours("9am - 5pm");
     store.setAcceptsShipping(true);
-    store.setStorefront(storefront);
+    store.setStorefront(createStorefront());
+    return storeRepository.save(store);
+  }
 
-    Store saved_store = storeRepository.save(store);
+  private ProductType createAndSaveProductType(String type) {
+    ProductType productType = new ProductType();
+    productType.setType(type);
+    return productTypeRepository.save(productType);
+  }
 
-    ProductType type = new ProductType();
-    type.setType("Test Product Type");
-    ProductType savedProductType = productTypeRepository.save(type);
-
+  private Product createProduct(
+      String name,
+      Integer priceInCents,
+      Integer discountedPriceInCents,
+      UUID typeId,
+      UUID storeId) {
     ProductCreationDTO dto = new ProductCreationDTO();
-    dto.setName("Test Product");
-    dto.setPriceInCents(1000);
-    dto.setDiscountedPriceInCents(800);
+    dto.setName(name);
+    dto.setPriceInCents(priceInCents);
+    dto.setDiscountedPriceInCents(discountedPriceInCents);
     dto.setDescription("This is a test product");
-    dto.setTypeId(savedProductType.getId());
-    dto.setStoreId(saved_store.getId());
+    dto.setTypeId(typeId);
+    dto.setStoreId(storeId);
+    return productService.saveProduct(dto);
+  }
 
-    Product product = productService.saveProduct(dto);
-
+  private Promotion createPromotion(
+      String name, Integer discount, Boolean active, List<UUID> productIds, UUID storeId) {
     PromotionCreationDTO promotionCreationDTO = new PromotionCreationDTO();
-    promotionCreationDTO.setName("Test Promotion");
-    promotionCreationDTO.setDiscountPercentage(20);
-    promotionCreationDTO.setActive(true);
-    promotionCreationDTO.setProductIds(List.of(product.getId()));
-    promotionCreationDTO.setStoreId(saved_store.getId());
-    Promotion promotion = promotionService.savePromotion(promotionCreationDTO);
+    promotionCreationDTO.setName(name);
+    promotionCreationDTO.setDiscountPercentage(discount);
+    promotionCreationDTO.setActive(active);
+    promotionCreationDTO.setProductIds(productIds);
+    promotionCreationDTO.setStoreId(storeId);
+    return promotionService.savePromotion(promotionCreationDTO);
+  }
+
+  @Test
+  public void shouldCreateNewPromotion() {
+    Store store = createAndSaveStore("Test Store", "test@example.com", "test-store");
+    ProductType productType = createAndSaveProductType("Test Product Type");
+    Product product = createProduct("Test Product", 1000, 800, productType.getId(), store.getId());
+    Promotion promotion =
+        createPromotion("Test Promotion", 20, true, List.of(product.getId()), store.getId());
 
     assertNotNull(promotion);
-    assertEquals(promotionCreationDTO.getName(), promotion.getName());
-    assertEquals(promotionCreationDTO.getDiscountPercentage(), promotion.getDiscountPercentage());
-    assertEquals(promotionCreationDTO.isActive(), promotion.isActive());
-    assertEquals(
-        promotionCreationDTO.getProductIds().size(),
-        promotionService.getAllProductsByPromotionId(promotion.getId()).size());
+    assertEquals("Test Promotion", promotion.getName());
+    assertEquals(20, promotion.getDiscountPercentage());
+    assertEquals(true, promotion.isActive());
+    assertEquals(1, promotionService.getAllProductsByPromotionId(promotion.getId()).size());
   }
 
   @Test
@@ -113,32 +132,13 @@ public class PromotionServiceTest {
 
   @Test
   public void shoudlThrowResourceNotFoundException_WhenProductDoesNotExist() {
-
-    Storefront storefront = new Storefront();
-    storefront.setIsFirstCollections(true);
-    storefront.setPrimaryColor("#c65a3a");
-    storefront.setSecondaryColor("#19756a");
-
-    Store store = new Store();
-    store.setName("Test Store");
-    store.setEmail("test@example.com");
-    store.setStoreID("test-store");
-    store.setLocation(
-        new Point(
-            new CoordinateArraySequence(new Coordinate[] {new Coordinate(0.0, 0.0)}),
-            new GeometryFactory(new PrecisionModel(PrecisionModel.FIXED), 0)));
-    store.setAddress("123 Test Street");
-    store.setOpeningHours("9am - 5pm");
-    store.setAcceptsShipping(true);
-    store.setStorefront(storefront);
-
-    Store saved_store = storeRepository.save(store);
+    Store store = createAndSaveStore("Test Store", "test@example.com", "test-store");
 
     PromotionCreationDTO promotionCreationDTO = new PromotionCreationDTO();
     promotionCreationDTO.setName("Test Promotion");
     promotionCreationDTO.setDiscountPercentage(20);
     promotionCreationDTO.setActive(true);
-    promotionCreationDTO.setStoreId(saved_store.getId());
+    promotionCreationDTO.setStoreId(store.getId());
     promotionCreationDTO.setProductIds(
         List.of(UUID.randomUUID(), UUID.randomUUID())); // Non-existent product IDs
 
@@ -149,69 +149,19 @@ public class PromotionServiceTest {
 
   @Test
   public void shoudlThrowInvalidRequestException_WhenProductsAreNotFromTheSameStore() {
+    Store store = createAndSaveStore("Test Store", "test@example.com", "test-store");
+    Store anotherStore = createAndSaveStore("Another Store", "test@another.com", "another-store");
+    ProductType productType = createAndSaveProductType("Test Product Type");
 
-    Storefront storefront = new Storefront();
-    storefront.setIsFirstCollections(true);
-    storefront.setPrimaryColor("#c65a3a");
-    storefront.setSecondaryColor("#19756a");
-
-    Store store = new Store();
-    store.setName("Test Store");
-    store.setEmail("test@example.com");
-    store.setStoreID("test-store");
-    store.setLocation(
-        new Point(
-            new CoordinateArraySequence(new Coordinate[] {new Coordinate(0.0, 0.0)}),
-            new GeometryFactory(new PrecisionModel(PrecisionModel.FIXED), 0)));
-    store.setAddress("123 Test Street");
-    store.setOpeningHours("9am - 5pm");
-    store.setAcceptsShipping(true);
-    store.setStorefront(storefront);
-
-    Store saved_store = storeRepository.save(store);
-
-    storefront = new Storefront();
-    storefront.setIsFirstCollections(true);
-    storefront.setPrimaryColor("#c65a3a");
-    storefront.setSecondaryColor("#19756a");
-
-    Store anotherStore = new Store();
-    anotherStore.setName("Another Store");
-    anotherStore.setEmail("test@another.com");
-    anotherStore.setStoreID("another-store");
-    anotherStore.setLocation(
-        new Point(
-            new CoordinateArraySequence(new Coordinate[] {new Coordinate(1.0, 1.0)}),
-            new GeometryFactory(new PrecisionModel(PrecisionModel.FIXED), 0)));
-    anotherStore.setAddress("456 Another Street");
-    anotherStore.setOpeningHours("10am - 6pm");
-    anotherStore.setAcceptsShipping(true);
-    anotherStore.setStorefront(storefront);
-
-    Store saved_store2 = storeRepository.save(anotherStore);
-
-    ProductType type = new ProductType();
-    type.setType("Test Product Type");
-    ProductType savedProductType = productTypeRepository.save(type);
-
-    ProductCreationDTO dto = new ProductCreationDTO();
-    dto.setName("Test Product");
-    dto.setPriceInCents(1000);
-    dto.setDiscountedPriceInCents(800);
-    dto.setDescription("This is a test product");
-    dto.setTypeId(savedProductType.getId());
-    dto.setStoreId(saved_store.getId());
-
-    Product product = productService.saveProduct(dto);
-    dto.setName("Another-product");
-    dto.setStoreId(saved_store2.getId());
-    Product anotherProduct = productService.saveProduct(dto);
+    Product product = createProduct("Test Product", 1000, 800, productType.getId(), store.getId());
+    Product anotherProduct =
+        createProduct("Another-product", 1000, 800, productType.getId(), anotherStore.getId());
 
     PromotionCreationDTO promotionCreationDTO = new PromotionCreationDTO();
     promotionCreationDTO.setName("Test Promotion");
     promotionCreationDTO.setDiscountPercentage(20);
     promotionCreationDTO.setActive(true);
-    promotionCreationDTO.setStoreId(saved_store.getId());
+    promotionCreationDTO.setStoreId(store.getId());
     promotionCreationDTO.setProductIds(List.of(product.getId(), anotherProduct.getId()));
 
     assertThrows(
@@ -249,48 +199,11 @@ public class PromotionServiceTest {
 
   @Test
   public void shouldGetPromotionById() {
-
-    Storefront storefront = new Storefront();
-    storefront.setIsFirstCollections(true);
-    storefront.setPrimaryColor("#c65a3a");
-    storefront.setSecondaryColor("#19756a");
-
-    Store store = new Store();
-    store.setName("Test Store");
-    store.setEmail("test@example.com");
-    store.setStoreID("test-store");
-    store.setLocation(
-        new Point(
-            new CoordinateArraySequence(new Coordinate[] {new Coordinate(0.0, 0.0)}),
-            new GeometryFactory(new PrecisionModel(PrecisionModel.FIXED), 0)));
-    store.setAddress("123 Test Street");
-    store.setOpeningHours("9am - 5pm");
-    store.setAcceptsShipping(true);
-    store.setStorefront(storefront);
-
-    Store saved_store = storeRepository.save(store);
-
-    ProductType type = new ProductType();
-    type.setType("Test Product Type");
-    ProductType savedProductType = productTypeRepository.save(type);
-
-    ProductCreationDTO dto = new ProductCreationDTO();
-    dto.setName("Test Product");
-    dto.setPriceInCents(1000);
-    dto.setDiscountedPriceInCents(800);
-    dto.setDescription("This is a test product");
-    dto.setTypeId(savedProductType.getId());
-    dto.setStoreId(saved_store.getId());
-
-    Product product = productService.saveProduct(dto);
-
-    PromotionCreationDTO promotionCreationDTO = new PromotionCreationDTO();
-    promotionCreationDTO.setName("Test Promotion");
-    promotionCreationDTO.setDiscountPercentage(20);
-    promotionCreationDTO.setActive(true);
-    promotionCreationDTO.setProductIds(List.of(product.getId()));
-    promotionCreationDTO.setStoreId(saved_store.getId());
-    Promotion promotion = promotionService.savePromotion(promotionCreationDTO);
+    Store store = createAndSaveStore("Test Store", "test@example.com", "test-store");
+    ProductType productType = createAndSaveProductType("Test Product Type");
+    Product product = createProduct("Test Product", 1000, 800, productType.getId(), store.getId());
+    Promotion promotion =
+        createPromotion("Test Promotion", 20, true, List.of(product.getId()), store.getId());
 
     UUID expectedId = promotion.getId();
     Promotion foundPromotion = promotionService.getPromotionById(expectedId);
@@ -313,51 +226,16 @@ public class PromotionServiceTest {
 
   @Test
   public void shouldUpdatePromotionDiscount() {
-    Storefront storefront = new Storefront();
-    storefront.setIsFirstCollections(true);
-    storefront.setPrimaryColor("#c65a3a");
-    storefront.setSecondaryColor("#19756a");
-
-    Store store = new Store();
-    store.setName("Test Store");
-    store.setEmail("test@example.com");
-    store.setStoreID("test-store");
-    store.setLocation(
-        new Point(
-            new CoordinateArraySequence(new Coordinate[] {new Coordinate(0.0, 0.0)}),
-            new GeometryFactory(new PrecisionModel(PrecisionModel.FIXED), 0)));
-    store.setAddress("123 Test Street");
-    store.setOpeningHours("9am - 5pm");
-    store.setAcceptsShipping(true);
-    store.setStorefront(storefront);
-
-    Store saved_store = storeRepository.save(store);
-
-    ProductType type = new ProductType();
-    type.setType("Test Product Type");
-    ProductType savedProductType = productTypeRepository.save(type);
-
-    ProductCreationDTO dto = new ProductCreationDTO();
-    dto.setName("Test Product");
-    dto.setPriceInCents(1000);
-    dto.setDiscountedPriceInCents(800);
-    dto.setDescription("This is a test product");
-    dto.setTypeId(savedProductType.getId());
-    dto.setStoreId(saved_store.getId());
-
-    Product product = productService.saveProduct(dto);
-
-    PromotionCreationDTO promotionCreationDTO = new PromotionCreationDTO();
-    promotionCreationDTO.setName("Test Promotion");
-    promotionCreationDTO.setDiscountPercentage(20);
-    promotionCreationDTO.setActive(true);
-    promotionCreationDTO.setStoreId(saved_store.getId());
-
-    promotionCreationDTO.setProductIds(List.of(product.getId()));
-    Promotion promotion = promotionService.savePromotion(promotionCreationDTO);
+    Store store = createAndSaveStore("Test Store", "test@example.com", "test-store");
+    ProductType productType = createAndSaveProductType("Test Product Type");
+    Product product = createProduct("Test Product", 1000, 800, productType.getId(), store.getId());
+    Promotion promotion =
+        createPromotion("Test Promotion", 20, true, List.of(product.getId()), store.getId());
     UUID promotionId = promotion.getId();
+    PromotionUpdateDTO updateDTO = new PromotionUpdateDTO();
     Integer newDiscount = 30;
-    Promotion updatedPromotion = promotionService.updatePromotionDiscount(promotionId, newDiscount);
+    updateDTO.setDiscountPercentage(newDiscount);
+    Promotion updatedPromotion = promotionService.updatePromotion(promotionId, updateDTO);
     assertNotNull(updatedPromotion);
     assertEquals(newDiscount, updatedPromotion.getDiscountPercentage());
     assertEquals(promotionId, updatedPromotion.getId());
@@ -365,97 +243,28 @@ public class PromotionServiceTest {
 
   @Test
   public void shouldThrowInvalidRequestException_WhenUpdatingPromotionWithInvalidDiscount() {
-    Storefront storefront = new Storefront();
-    storefront.setIsFirstCollections(true);
-    storefront.setPrimaryColor("#c65a3a");
-    storefront.setSecondaryColor("#19756a");
-
-    Store store = new Store();
-    store.setName("Test Store");
-    store.setEmail("test@example.com");
-    store.setStoreID("test-store");
-    store.setLocation(
-        new Point(
-            new CoordinateArraySequence(new Coordinate[] {new Coordinate(0.0, 0.0)}),
-            new GeometryFactory(new PrecisionModel(PrecisionModel.FIXED), 0)));
-    store.setAddress("123 Test Street");
-    store.setOpeningHours("9am - 5pm");
-    store.setAcceptsShipping(true);
-    store.setStorefront(storefront);
-
-    Store saved_store = storeRepository.save(store);
-
-    ProductType type = new ProductType();
-    type.setType("Test Product Type");
-    ProductType savedProductType = productTypeRepository.save(type);
-
-    ProductCreationDTO dto = new ProductCreationDTO();
-    dto.setName("Test Product");
-    dto.setPriceInCents(1000);
-    dto.setDiscountedPriceInCents(800);
-    dto.setDescription("This is a test product");
-    dto.setTypeId(savedProductType.getId());
-    dto.setStoreId(saved_store.getId());
-
-    Product product = productService.saveProduct(dto);
-
-    PromotionCreationDTO promotionCreationDTO = new PromotionCreationDTO();
-    promotionCreationDTO.setName("Test Promotion");
-    promotionCreationDTO.setDiscountPercentage(20);
-    promotionCreationDTO.setActive(true);
-    promotionCreationDTO.setProductIds(List.of(product.getId()));
-    promotionCreationDTO.setStoreId(saved_store.getId());
-    Promotion promotion = promotionService.savePromotion(promotionCreationDTO);
+    Store store = createAndSaveStore("Test Store", "test@example.com", "test-store");
+    ProductType productType = createAndSaveProductType("Test Product Type");
+    Product product = createProduct("Test Product", 1000, 800, productType.getId(), store.getId());
+    Promotion promotion =
+        createPromotion("Test Promotion", 20, true, List.of(product.getId()), store.getId());
     UUID promotionId = promotion.getId();
+
+    PromotionUpdateDTO updateDTO = new PromotionUpdateDTO();
     Integer invalidDiscount = 150; // Invalid discount percentage
+    updateDTO.setDiscountPercentage(invalidDiscount);
     assertThrows(
         InvalidRequestException.class,
-        () -> promotionService.updatePromotionDiscount(promotionId, invalidDiscount));
+        () -> promotionService.updatePromotion(promotionId, updateDTO));
   }
 
   @Test
   public void shouldDeletePromotion() {
-    Storefront storefront = new Storefront();
-    storefront.setIsFirstCollections(true);
-    storefront.setPrimaryColor("#c65a3a");
-    storefront.setSecondaryColor("#19756a");
-
-    Store store = new Store();
-    store.setName("Test Store");
-    store.setEmail("test@example.com");
-    store.setStoreID("test-store");
-    store.setLocation(
-        new Point(
-            new CoordinateArraySequence(new Coordinate[] {new Coordinate(0.0, 0.0)}),
-            new GeometryFactory(new PrecisionModel(PrecisionModel.FIXED), 0)));
-    store.setAddress("123 Test Street");
-    store.setOpeningHours("9am - 5pm");
-    store.setAcceptsShipping(true);
-    store.setStorefront(storefront);
-
-    Store saved_store = storeRepository.save(store);
-
-    ProductType type = new ProductType();
-    type.setType("Test Product Type");
-    ProductType savedProductType = productTypeRepository.save(type);
-
-    ProductCreationDTO dto = new ProductCreationDTO();
-    dto.setName("Test Product");
-    dto.setPriceInCents(1000);
-    dto.setDiscountedPriceInCents(800);
-    dto.setDescription("This is a test product");
-    dto.setTypeId(savedProductType.getId());
-    dto.setStoreId(saved_store.getId());
-
-    Product product = productService.saveProduct(dto);
-
-    PromotionCreationDTO promotionCreationDTO = new PromotionCreationDTO();
-    promotionCreationDTO.setName("Test Promotion");
-    promotionCreationDTO.setDiscountPercentage(20);
-    promotionCreationDTO.setActive(true);
-    promotionCreationDTO.setProductIds(List.of(product.getId()));
-    promotionCreationDTO.setStoreId(saved_store.getId());
-    Promotion promotion = promotionService.savePromotion(promotionCreationDTO);
+    Store store = createAndSaveStore("Test Store", "test@example.com", "test-store");
+    ProductType productType = createAndSaveProductType("Test Product Type");
+    Product product = createProduct("Test Product", 1000, 800, productType.getId(), store.getId());
+    Promotion promotion =
+        createPromotion("Test Promotion", 20, true, List.of(product.getId()), store.getId());
 
     UUID promotionId = promotion.getId();
     promotionService.deletePromotion(promotionId);
@@ -466,50 +275,13 @@ public class PromotionServiceTest {
 
   @Test
   public void shouldAddProductToPromotion() {
-    Storefront storefront = new Storefront();
-    storefront.setIsFirstCollections(true);
-    storefront.setPrimaryColor("#c65a3a");
-    storefront.setSecondaryColor("#19756a");
-
-    Store store = new Store();
-    store.setName("Test Store");
-    store.setEmail("test@test.com");
-    store.setStoreID("test-store");
-    store.setLocation(
-        new Point(
-            new CoordinateArraySequence(new Coordinate[] {new Coordinate(0.0, 0.0)}),
-            new GeometryFactory(new PrecisionModel(PrecisionModel.FIXED), 0)));
-    store.setAddress("123 Test Street");
-    store.setOpeningHours("9am - 5pm");
-    store.setAcceptsShipping(true);
-    store.setStorefront(storefront);
-
-    Store saved_store = storeRepository.save(store);
-
-    ProductType type = new ProductType();
-    type.setType("Test Product Type");
-    ProductType savedProductType = productTypeRepository.save(type);
-
-    ProductCreationDTO dto = new ProductCreationDTO();
-    dto.setName("Test Product");
-    dto.setPriceInCents(1000);
-    dto.setDiscountedPriceInCents(800);
-    dto.setDescription("This is a test product");
-    dto.setTypeId(savedProductType.getId());
-    dto.setStoreId(saved_store.getId());
-
-    Product product = productService.saveProduct(dto);
-    dto.setName("Test Product 2");
-
-    Product product2 = productService.saveProduct(dto);
-
-    PromotionCreationDTO promotionCreationDTO = new PromotionCreationDTO();
-    promotionCreationDTO.setName("Test Promotion");
-    promotionCreationDTO.setDiscountPercentage(20);
-    promotionCreationDTO.setActive(true);
-    promotionCreationDTO.setProductIds(List.of(product.getId()));
-    promotionCreationDTO.setStoreId(saved_store.getId());
-    Promotion promotion = promotionService.savePromotion(promotionCreationDTO);
+    Store store = createAndSaveStore("Test Store", "test@test.com", "test-store");
+    ProductType productType = createAndSaveProductType("Test Product Type");
+    Product product = createProduct("Test Product", 1000, 800, productType.getId(), store.getId());
+    Product product2 =
+        createProduct("Test Product 2", 1000, 800, productType.getId(), store.getId());
+    Promotion promotion =
+        createPromotion("Test Promotion", 20, true, List.of(product.getId()), store.getId());
     UUID promotionId = promotion.getId();
     PromotionProduct promotionProduct = promotionService.addProduct(promotionId, product2.getId());
 
@@ -520,47 +292,11 @@ public class PromotionServiceTest {
 
   @Test
   public void shouldThrowResourceNotFoundException_WhenAddingNonExistentProductToPromotion() {
-    Storefront storefront = new Storefront();
-    storefront.setIsFirstCollections(true);
-    storefront.setPrimaryColor("#c65a3a");
-    storefront.setSecondaryColor("#19756a");
-
-    Store store = new Store();
-    store.setName("Test Store");
-    store.setEmail("test@test.com");
-    store.setStoreID("test-store");
-    store.setLocation(
-        new Point(
-            new CoordinateArraySequence(new Coordinate[] {new Coordinate(0.0, 0.0)}),
-            new GeometryFactory(new PrecisionModel(PrecisionModel.FIXED), 0)));
-    store.setAddress("123 Test Street");
-    store.setOpeningHours("9am - 5pm");
-    store.setAcceptsShipping(true);
-    store.setStorefront(storefront);
-
-    Store saved_store = storeRepository.save(store);
-
-    ProductType type = new ProductType();
-    type.setType("Test Product Type");
-    ProductType savedProductType = productTypeRepository.save(type);
-
-    ProductCreationDTO dto = new ProductCreationDTO();
-    dto.setName("Test Product");
-    dto.setPriceInCents(1000);
-    dto.setDiscountedPriceInCents(800);
-    dto.setDescription("This is a test product");
-    dto.setTypeId(savedProductType.getId());
-    dto.setStoreId(saved_store.getId());
-
-    Product product = productService.saveProduct(dto);
-
-    PromotionCreationDTO promotionCreationDTO = new PromotionCreationDTO();
-    promotionCreationDTO.setName("Test Promotion");
-    promotionCreationDTO.setDiscountPercentage(20);
-    promotionCreationDTO.setActive(true);
-    promotionCreationDTO.setProductIds(List.of(product.getId()));
-    promotionCreationDTO.setStoreId(saved_store.getId());
-    Promotion promotion = promotionService.savePromotion(promotionCreationDTO);
+    Store store = createAndSaveStore("Test Store", "test@test.com", "test-store");
+    ProductType productType = createAndSaveProductType("Test Product Type");
+    Product product = createProduct("Test Product", 1000, 800, productType.getId(), store.getId());
+    Promotion promotion =
+        createPromotion("Test Promotion", 20, true, List.of(product.getId()), store.getId());
     UUID promotionId = promotion.getId();
 
     assertThrows(
