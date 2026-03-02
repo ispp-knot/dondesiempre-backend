@@ -6,12 +6,12 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import ispp.project.dondesiempre.models.User;
+import ispp.project.dondesiempre.models.collections.ProductCollection;
 import ispp.project.dondesiempre.models.products.Product;
-import ispp.project.dondesiempre.models.products.ProductCollection;
 import ispp.project.dondesiempre.models.products.ProductType;
 import ispp.project.dondesiempre.models.storefronts.Storefront;
 import ispp.project.dondesiempre.models.stores.Store;
-import ispp.project.dondesiempre.repositories.products.CollectionRepository;
+import ispp.project.dondesiempre.repositories.collections.CollectionRepository;
 import ispp.project.dondesiempre.repositories.products.ProductRepository;
 import ispp.project.dondesiempre.repositories.products.ProductTypeRepository;
 import ispp.project.dondesiempre.repositories.storefronts.StorefrontRepository;

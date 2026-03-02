@@ -1,7 +1,7 @@
-package ispp.project.dondesiempre.dto.collection;
+package ispp.project.dondesiempre.models.collections.dto;
 
+import ispp.project.dondesiempre.models.collections.ProductCollection;
 import ispp.project.dondesiempre.models.products.Product;
-import ispp.project.dondesiempre.models.products.ProductCollection;
 import java.util.List;
 import java.util.UUID;
 import lombok.Getter;

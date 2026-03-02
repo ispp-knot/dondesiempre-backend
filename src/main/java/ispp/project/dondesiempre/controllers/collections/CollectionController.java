@@ -1,9 +1,9 @@
-package ispp.project.dondesiempre.controllers;
+package ispp.project.dondesiempre.controllers.collections;
 
-import ispp.project.dondesiempre.dto.collection.CollectionCreationDTO;
-import ispp.project.dondesiempre.dto.collection.CollectionResponseDTO;
-import ispp.project.dondesiempre.dto.collection.CollectionUpdateDTO;
-import ispp.project.dondesiempre.services.CollectionService;
+import ispp.project.dondesiempre.models.collections.dto.CollectionCreationDTO;
+import ispp.project.dondesiempre.models.collections.dto.CollectionResponseDTO;
+import ispp.project.dondesiempre.models.collections.dto.CollectionUpdateDTO;
+import ispp.project.dondesiempre.services.collections.CollectionService;
 import jakarta.validation.Valid;
 import java.util.List;
 import java.util.UUID;

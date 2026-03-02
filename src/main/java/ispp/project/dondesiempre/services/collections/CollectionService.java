@@ -1,12 +1,12 @@
-package ispp.project.dondesiempre.services;
+package ispp.project.dondesiempre.services.collections;
 
-import ispp.project.dondesiempre.dto.collection.CollectionCreationDTO;
-import ispp.project.dondesiempre.dto.collection.CollectionResponseDTO;
-import ispp.project.dondesiempre.dto.collection.CollectionUpdateDTO;
+import ispp.project.dondesiempre.models.collections.ProductCollection;
+import ispp.project.dondesiempre.models.collections.dto.CollectionCreationDTO;
+import ispp.project.dondesiempre.models.collections.dto.CollectionResponseDTO;
+import ispp.project.dondesiempre.models.collections.dto.CollectionUpdateDTO;
 import ispp.project.dondesiempre.models.products.Product;
-import ispp.project.dondesiempre.models.products.ProductCollection;
 import ispp.project.dondesiempre.models.stores.Store;
-import ispp.project.dondesiempre.repositories.products.CollectionRepository;
+import ispp.project.dondesiempre.repositories.collections.CollectionRepository;
 import ispp.project.dondesiempre.repositories.products.ProductRepository;
 import ispp.project.dondesiempre.repositories.stores.StoreRepository;
 import java.util.HashSet;

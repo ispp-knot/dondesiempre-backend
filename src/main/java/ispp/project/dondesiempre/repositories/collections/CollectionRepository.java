@@ -1,6 +1,6 @@
-package ispp.project.dondesiempre.repositories.products;
+package ispp.project.dondesiempre.repositories.collections;
 
-import ispp.project.dondesiempre.models.products.ProductCollection;
+import ispp.project.dondesiempre.models.collections.ProductCollection;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;

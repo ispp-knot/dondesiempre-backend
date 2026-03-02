@@ -1,4 +1,4 @@
-package ispp.project.dondesiempre.dto.collection;
+package ispp.project.dondesiempre.models.collections.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

@@ -13,13 +13,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import ispp.project.dondesiempre.dto.collection.CollectionCreationDTO;
-import ispp.project.dondesiempre.dto.collection.CollectionResponseDTO;
-import ispp.project.dondesiempre.dto.collection.CollectionUpdateDTO;
+import ispp.project.dondesiempre.models.collections.ProductCollection;
+import ispp.project.dondesiempre.models.collections.dto.CollectionCreationDTO;
+import ispp.project.dondesiempre.models.collections.dto.CollectionResponseDTO;
+import ispp.project.dondesiempre.models.collections.dto.CollectionUpdateDTO;
 import ispp.project.dondesiempre.models.products.Product;
-import ispp.project.dondesiempre.models.products.ProductCollection;
 import ispp.project.dondesiempre.models.stores.Store;
-import ispp.project.dondesiempre.services.CollectionService;
+import ispp.project.dondesiempre.services.collections.CollectionService;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -33,7 +33,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.server.ResponseStatusException;
 
-@WebMvcTest(CollectionController.class)
+@WebMvcTest(ispp.project.dondesiempre.controllers.collections.CollectionController.class)
 class CollectionControllerTest {
 
   private static final UUID STORE_ID = UUID.fromString("00000000-0000-0000-0000-000000000001");

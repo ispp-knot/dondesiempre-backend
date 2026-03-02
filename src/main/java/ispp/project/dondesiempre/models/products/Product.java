@@ -1,6 +1,7 @@
 package ispp.project.dondesiempre.models.products;
 
 import ispp.project.dondesiempre.models.BaseEntity;
+import ispp.project.dondesiempre.models.collections.ProductCollection;
 import ispp.project.dondesiempre.models.stores.Store;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.Column;
