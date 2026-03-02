@@ -108,12 +108,12 @@ public class StoreServiceTest {
   void shouldFollowStore() {
     when(userService.getCurrentClient()).thenReturn(TEST_CLIENT);
     when(storeRepository.findById(TEST_STORE_ID)).thenReturn(Optional.of(TEST_STORE));
-    when(storeFollowerRepository.save(any())).thenReturn(null);
+    when(storeFollowerRepository.save(any())).thenReturn(TEST_FOLLOWER);
 
     StoreFollower follow = storeService.followStore(TEST_STORE_ID);
 
-    assertEquals(follow.getClient().getId(), TEST_CLIENT.getId());
-    assertEquals(follow.getStore().getId(), TEST_STORE_ID);
+    assertEquals(follow.getClient().getId(), TEST_FOLLOWER.getClient().getId());
+    assertEquals(follow.getStore().getId(), TEST_FOLLOWER.getStore().getId());
     verify(storeFollowerRepository).save(follow);
   }
 
@@ -144,7 +144,7 @@ public class StoreServiceTest {
     when(userService.getCurrentClient()).thenReturn(TEST_CLIENT);
     when(storeFollowerRepository.findByClientId(TEST_CLIENT.getId())).thenReturn(List.of());
 
-    List<StoreDTO> stores = storeService.getMyFollowedStores();
+    List<Store> stores = storeService.getMyFollowedStores();
 
     assertEquals(stores.size(), 0);
   }
@@ -155,7 +155,7 @@ public class StoreServiceTest {
     when(storeFollowerRepository.findByClientId(TEST_CLIENT.getId()))
         .thenReturn(List.of(TEST_FOLLOWER));
 
-    List<StoreDTO> stores = storeService.getMyFollowedStores();
+    List<Store> stores = storeService.getMyFollowedStores();
 
     assertEquals(stores.size(), 1);
     assertEquals(stores.get(0).getId(), new StoreDTO(TEST_STORE).getId());
@@ -167,9 +167,9 @@ public class StoreServiceTest {
     when(storeFollowerRepository.findByClientId(TEST_CLIENT.getId()))
         .thenReturn(List.of(TEST_FOLLOWER, TEST_FOLLOWER, TEST_FOLLOWER));
 
-    List<StoreDTO> stores = storeService.getMyFollowedStores();
+    List<Store> stores = storeService.getMyFollowedStores();
 
     assertEquals(stores.size(), 3);
-    assertEquals(stores.get(0).getId(), new StoreDTO(TEST_STORE).getId());
+    assertEquals(stores.get(0).getId(), TEST_STORE.getId());
   }
 }
