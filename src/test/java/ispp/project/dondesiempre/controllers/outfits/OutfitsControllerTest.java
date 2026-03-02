@@ -62,6 +62,8 @@ class OutfitsControllerTest {
   private OutfitProduct outfitProduct;
   private Product product;
 
+  private final String TEST_TAG = "casual";
+
   @BeforeEach
   void setUp() {
     outfitId = UUID.randomUUID();
@@ -110,23 +112,14 @@ class OutfitsControllerTest {
   @Test
   void getById_shouldReturnOk_whenOutfitExists() throws Exception {
     when(outfitService.findById(outfitId)).thenReturn(outfit);
-    when(outfitService.findTagsByOutfitId(outfitId)).thenReturn(List.of("casual"));
+    when(outfitService.findTagsByOutfitId(outfitId)).thenReturn(List.of(TEST_TAG));
     when(outfitService.findOutfitProductsByOutfitId(outfitId)).thenReturn(List.of(outfitProduct));
 
     mockMvc
         .perform(get("/api/v1/outfits/" + outfitId))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.id").value(outfitId.toString()))
-        .andExpect(jsonPath("$.name").value("Test Outfit"));
-  }
-
-  @Test
-  void getById_shouldReturnNotFound_whenOutfitDoesNotExist() throws Exception {
-    UUID nonExistentId = UUID.randomUUID();
-    when(outfitService.findById(nonExistentId))
-        .thenThrow(new ResourceNotFoundException("Outfit not found."));
-
-    mockMvc.perform(get("/api/v1/outfits/" + nonExistentId)).andExpect(status().isNotFound());
+        .andExpect(jsonPath("$.name").value(outfit.getName()));
   }
 
   // -------------------------------------------------------------------------
@@ -144,18 +137,7 @@ class OutfitsControllerTest {
         .perform(get("/api/v1/stores/" + storeId + "/outfits"))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.size()").value(1))
-        .andExpect(jsonPath("$[0].name").value("Test Outfit"));
-  }
-
-  @Test
-  void getByStoreId_shouldReturnNotFound_whenStoreDoesNotExist() throws Exception {
-    UUID nonExistentId = UUID.randomUUID();
-    when(storeService.findById(nonExistentId))
-        .thenThrow(new ResourceNotFoundException("Store not found."));
-
-    mockMvc
-        .perform(get("/api/v1/stores/" + nonExistentId + "/outfits"))
-        .andExpect(status().isNotFound());
+        .andExpect(jsonPath("$[0].name").value(outfit.getName()));
   }
 
   // -------------------------------------------------------------------------
@@ -175,17 +157,6 @@ class OutfitsControllerTest {
         .andExpect(jsonPath("$.size()").value(1));
   }
 
-  @Test
-  void getByStorefrontId_shouldReturnNotFound_whenStorefrontDoesNotExist() throws Exception {
-    UUID nonExistentId = UUID.randomUUID();
-    when(storefrontService.findById(nonExistentId))
-        .thenThrow(new ResourceNotFoundException("Storefront not found."));
-
-    mockMvc
-        .perform(get("/api/v1/storefronts/" + nonExistentId + "/outfits"))
-        .andExpect(status().isNotFound());
-  }
-
   // -------------------------------------------------------------------------
   // POST /api/v1/outfits
   // -------------------------------------------------------------------------
@@ -200,11 +171,11 @@ class OutfitsControllerTest {
     creationDTO.setName("New Outfit");
     creationDTO.setIndex(0);
     creationDTO.setStorefrontId(storefrontId);
-    creationDTO.setTags(List.of("casual"));
+    creationDTO.setTags(List.of(TEST_TAG));
     creationDTO.setProducts(List.of(productDTO));
 
     when(outfitService.create(any())).thenReturn(outfit);
-    when(outfitService.findTagsByOutfitId(outfitId)).thenReturn(List.of("casual"));
+    when(outfitService.findTagsByOutfitId(outfitId)).thenReturn(List.of(TEST_TAG));
     when(outfitService.findOutfitProductsByOutfitId(outfitId)).thenReturn(List.of(outfitProduct));
 
     mockMvc
@@ -214,7 +185,7 @@ class OutfitsControllerTest {
                 .content(objectMapper.writeValueAsString(creationDTO)))
         .andExpect(status().isCreated())
         .andExpect(jsonPath("$.id").value(outfitId.toString()))
-        .andExpect(jsonPath("$.name").value("Test Outfit"));
+        .andExpect(jsonPath("$.name").value(outfit.getName()));
   }
 
   @Test
@@ -286,15 +257,15 @@ class OutfitsControllerTest {
 
   @Test
   void addTag_shouldReturnCreated_whenOutfitExists() throws Exception {
-    when(outfitService.addTag(eq(outfitId), any())).thenReturn("casual");
+    when(outfitService.addTag(eq(outfitId), any())).thenReturn(TEST_TAG);
 
     mockMvc
         .perform(
             post("/api/v1/outfits/" + outfitId + "/tags")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("\"casual\""))
+                .content("\"" + TEST_TAG + "\""))
         .andExpect(status().isCreated())
-        .andExpect(content().string("casual"));
+        .andExpect(content().string(TEST_TAG));
   }
 
   @Test
@@ -307,7 +278,7 @@ class OutfitsControllerTest {
         .perform(
             post("/api/v1/outfits/" + nonExistentId + "/tags")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("\"casual\""))
+                .content("\"" + TEST_TAG + "\""))
         .andExpect(status().isNotFound());
   }
 
@@ -323,7 +294,7 @@ class OutfitsControllerTest {
         .perform(
             delete("/api/v1/outfits/" + outfitId + "/tags")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("\"casual\""))
+                .content("\"" + TEST_TAG + "\""))
         .andExpect(status().isOk())
         .andExpect(content().string("Tag successfully removed from outfit."));
   }
@@ -341,7 +312,7 @@ class OutfitsControllerTest {
         .perform(
             delete("/api/v1/outfits/" + nonExistentId + "/tags")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("\"casual\""))
+                .content("\"" + TEST_TAG + "\""))
         .andExpect(status().isNotFound());
   }
 

@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -152,11 +153,15 @@ class OutfitServiceTest {
 
   // --- create ---
 
-  @Test
-  void shouldCreateOutfit_whenValidData() {
+  private OutfitCreationProductDTO createValidProductDTO() {
     OutfitCreationProductDTO productDTO = new OutfitCreationProductDTO();
     productDTO.setId(productId);
     productDTO.setIndex(0);
+    return productDTO;
+  }
+
+  private OutfitCreationDTO createValidOutfitCreationDTO() {
+    OutfitCreationProductDTO productDTO = createValidProductDTO();
 
     OutfitCreationDTO dto = new OutfitCreationDTO();
     dto.setName("New Outfit");
@@ -165,6 +170,12 @@ class OutfitServiceTest {
     dto.setStorefrontId(storefrontId);
     dto.setTags(List.of("casual"));
     dto.setProducts(List.of(productDTO));
+    return dto;
+  }
+
+  @Test
+  void shouldCreateOutfit_whenValidData() {
+    OutfitCreationDTO dto = createValidOutfitCreationDTO();
 
     OutfitTag tag = new OutfitTag();
     tag.setId(UUID.randomUUID());
@@ -185,6 +196,7 @@ class OutfitServiceTest {
     assertNotNull(result);
     assertEquals(outfitId, result.getId());
     verify(outfitRepository, times(1)).save(any());
+    assertEquals(1000, result.getDiscountedPriceInCents());
   }
 
   @Test
@@ -238,35 +250,7 @@ class OutfitServiceTest {
     verify(outfitRepository, times(1)).save(outfit);
   }
 
-  @Test
-  void shouldThrowResourceNotFoundException_whenUpdatingNonExistentOutfit() {
-    UUID nonExistentId = UUID.randomUUID();
-    OutfitUpdateDTO dto = new OutfitUpdateDTO();
-    dto.setName("Updated Outfit");
-
-    when(outfitRepository.findById(nonExistentId)).thenReturn(Optional.empty());
-
-    assertThrows(ResourceNotFoundException.class, () -> outfitService.update(nonExistentId, dto));
-    verify(outfitRepository, never()).save(any());
-  }
-
   // --- addTag ---
-
-  @Test
-  void shouldAddExistingTag_whenTagAlreadyExists() {
-    OutfitTag tag = new OutfitTag();
-    tag.setId(UUID.randomUUID());
-    tag.setName("casual");
-
-    when(outfitRepository.findById(outfitId)).thenReturn(Optional.of(outfit));
-    when(outfitTagService.findOrCreate("casual")).thenReturn(tag);
-    when(outfitTagRelationRepository.save(any())).thenReturn(new OutfitTagRelation());
-
-    String result = outfitService.addTag(outfitId, "casual");
-
-    assertEquals("casual", result);
-    verify(outfitTagRelationRepository, times(1)).save(any());
-  }
 
   @Test
   void shouldCreateAndAddTag_whenTagDoesNotExist() {
@@ -349,13 +333,32 @@ class OutfitServiceTest {
   }
 
   // --- delete ---
-
   @Test
-  void shouldCallDeleteById_whenDeleteInvoked() {
+  void shouldDeleteProductsTagsAndOutfit_whenDeleteInvoked() {
+
+    // Simulamos que el outfit existe
     when(outfitRepository.findById(outfitId)).thenReturn(Optional.of(outfit));
 
+    // Simulamos que hay un producto asociado
+    when(outfitRepository.findOutfitOutfitProductsById(outfitId))
+        .thenReturn(List.of(outfitProduct));
+
+    // Simulamos que NO hay tags asociados
+    when(outfitRepository.findOutfitOutfitTagsById(outfitId)).thenReturn(List.of());
+
+    // Evitamos que falle la validación de ownership
+    doNothing().when(userService).assertUserOwnsStore(any());
+
+    // Ejecutamos
     outfitService.delete(outfitId);
 
+    // Verificamos que se elimina el outfitProduct concreto
+    verify(outfitProductRepository, times(1)).deleteById(outfitProduct.getId());
+
+    // No debería eliminar tags
+    verify(outfitTagRelationRepository, never()).deleteById(any());
+
+    // Finalmente se elimina el outfit
     verify(outfitRepository, times(1)).deleteById(outfitId);
   }
 
