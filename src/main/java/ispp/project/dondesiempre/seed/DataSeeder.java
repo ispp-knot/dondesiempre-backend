@@ -219,6 +219,17 @@ public class DataSeeder implements CommandLineRunner {
     client.setAddress("Calle San Fernando, nº 12, Sevilla");
     client.setUser(clientUser);
     clientRepository.save(client);
+
+    // Client (to be deleted, with store user)
+
+    Client clientWithStoreUser = new Client();
+    clientWithStoreUser.setName("Ana");
+    clientWithStoreUser.setSurname("García");
+    clientWithStoreUser.setEmail("storeclient@ejemplo.es");
+    clientWithStoreUser.setPhone("+34 623456780");
+    clientWithStoreUser.setAddress("Calle San Fernando, nº 12, Sevilla");
+    clientWithStoreUser.setUser(storeOwner);
+    clientRepository.save(clientWithStoreUser);
   }
 
   private void loadRandomData() {
