@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1772221198337-31
+      author: guill_1goz466 (generated)
+      changes:
+        - addColumn:
+            columns:
+              - column:
+                  name: image
+                  type: VARCHAR(255)
+            tableName: products

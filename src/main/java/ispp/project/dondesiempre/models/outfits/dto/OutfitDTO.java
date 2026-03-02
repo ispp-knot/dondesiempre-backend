@@ -26,24 +26,26 @@ public class OutfitDTO {
   private List<String> tags;
   private List<OutfitProductDTO> products;
 
-  public OutfitDTO(Outfit outfit, List<String> tags, List<OutfitProduct> products) {
-    this.id = outfit.getId();
+  public static OutfitDTO from(Outfit outfit, List<String> tags, List<OutfitProduct> products) {
+    OutfitDTO dto = new OutfitDTO();
+    dto.id = outfit.getId();
 
-    this.name = outfit.getName();
-    this.description = outfit.getDescription();
-    this.image = outfit.getImage();
+    dto.name = outfit.getName();
+    dto.description = outfit.getDescription();
+    dto.image = outfit.getImage();
 
-    this.discountedPriceInCents = outfit.getDiscountedPriceInCents();
+    dto.discountedPriceInCents = outfit.getDiscountedPriceInCents();
 
-    this.index = outfit.getIndex();
-    this.storefrontId = outfit.getStorefront().getId();
+    dto.index = outfit.getIndex();
+    dto.storefrontId = outfit.getStorefront().getId();
 
-    this.tags = tags;
-    this.products =
+    dto.tags = tags;
+    dto.products =
         products.stream()
-            .map(product -> new OutfitProductDTO(product))
-            .sorted(Comparator.comparing(product -> product.getIndex()))
+            .map(OutfitProductDTO::from)
+            .sorted(Comparator.comparing(OutfitProductDTO::getIndex))
             .toList();
-    this.priceInCents = this.products.stream().mapToInt(product -> product.getPriceInCents()).sum();
+    dto.priceInCents = dto.products.stream().mapToInt(OutfitProductDTO::getPriceInCents).sum();
+    return dto;
   }
 }

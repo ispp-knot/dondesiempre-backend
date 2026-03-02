@@ -5,9 +5,10 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import ispp.project.dondesiempre.models.User;
 import ispp.project.dondesiempre.models.storefronts.Storefront;
 import ispp.project.dondesiempre.models.stores.Store;
-import jakarta.persistence.EntityManager;
+import ispp.project.dondesiempre.repositories.UserRepository;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,21 +26,25 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 public class StoreRepositoryTest {
 
   @Autowired private StoreRepository storeRepository;
-
-  @Autowired private EntityManager entityManager;
-
-  @BeforeEach
-  void cleanDatabase() {
-    entityManager.createNativeQuery("DELETE FROM promotion_products").executeUpdate();
-    entityManager.createNativeQuery("DELETE FROM products").executeUpdate();
-    entityManager.createNativeQuery("DELETE FROM promotions").executeUpdate();
-    entityManager.createNativeQuery("DELETE FROM stores").executeUpdate();
-  }
+  @Autowired private UserRepository userRepository;
 
   private final GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
+  private int testUserIndex = 0;
+
+  @BeforeEach
+  void setUp() {
+    testUserIndex = 0;
+  }
 
   private Point createPoint(double longitude, double latitude) {
     return geometryFactory.createPoint(new Coordinate(longitude, latitude));
+  }
+
+  private User createTestUser() {
+    User user = new User();
+    user.setEmail("testuser" + (testUserIndex++) + "@test.com");
+    user.setPassword("testpassword");
+    return userRepository.save(user);
   }
 
   private void createTestStore(String name, double longitude, double latitude) {
@@ -52,6 +57,7 @@ public class StoreRepositoryTest {
     store.setPhone("123456789");
     store.setAcceptsShipping(true);
     store.setLocation(createPoint(longitude, latitude));
+    store.setUser(createTestUser());
 
     Storefront storefront = new Storefront();
     store.setStorefront(storefront);
