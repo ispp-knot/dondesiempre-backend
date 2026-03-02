@@ -12,25 +12,20 @@ import ispp.project.dondesiempre.models.stores.Store;
 import ispp.project.dondesiempre.repositories.UserRepository;
 import java.util.Optional;
 import java.util.UUID;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.context.ApplicationContext;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
 
   @Mock private UserRepository userRepository;
+  @Mock private ApplicationContext applicationContext;
 
   @InjectMocks private UserService userService;
-
-  @BeforeEach
-  void injectSelf() {
-    ReflectionTestUtils.setField(userService, "userService", userService);
-  }
 
   @Test
   void getCurrentUser_shouldReturnUser_whenFound() {
@@ -56,6 +51,7 @@ class UserServiceTest {
     User user = new User();
     user.setId(UUID.randomUUID());
     when(userRepository.findByEmail(UserService.SEED_USER_EMAIL)).thenReturn(Optional.of(user));
+    when(applicationContext.getBean(UserService.class)).thenReturn(userService);
 
     Store store = new Store();
     store.setUser(user);
@@ -69,6 +65,7 @@ class UserServiceTest {
     currentUser.setId(UUID.randomUUID());
     when(userRepository.findByEmail(UserService.SEED_USER_EMAIL))
         .thenReturn(Optional.of(currentUser));
+    when(applicationContext.getBean(UserService.class)).thenReturn(userService);
 
     User otherUser = new User();
     otherUser.setId(UUID.randomUUID());
