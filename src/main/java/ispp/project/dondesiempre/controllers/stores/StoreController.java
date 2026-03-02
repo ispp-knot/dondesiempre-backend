@@ -8,8 +8,10 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -51,5 +53,27 @@ public class StoreController {
   public ResponseEntity<StoreDTO> updateStore(
       @PathVariable("id") UUID id, @RequestBody StoreUpdateDTO dto) {
     return new ResponseEntity<>(storeService.updateStore(id, dto), HttpStatus.OK);
+  }
+
+  @PostMapping("/stores/{storeId}/followers")
+  @ResponseStatus(HttpStatus.CREATED)
+  public ResponseEntity<String> followStore(@PathVariable("storeId") UUID storeId) {
+    storeService.followStore(storeId);
+    return new ResponseEntity<>("Store followed successfully", HttpStatus.CREATED);
+  }
+
+  @DeleteMapping("/stores/{storeId}/followers/me")
+  @ResponseStatus(HttpStatus.OK)
+  public ResponseEntity<String> unfollowStore(@PathVariable("storeId") UUID storeId) {
+    storeService.unfollowStore(storeId);
+    return new ResponseEntity<>("Store unfollowed successfully.", HttpStatus.OK);
+  }
+
+  @GetMapping("/clients/me/followed-stores")
+  @ResponseStatus(HttpStatus.OK)
+  public ResponseEntity<List<StoreDTO>> getMyFollowedStores() {
+    List<StoreDTO> followedStores =
+        storeService.getMyFollowedStores().stream().map(store -> new StoreDTO(store)).toList();
+    return new ResponseEntity<>(followedStores, HttpStatus.OK);
   }
 }
