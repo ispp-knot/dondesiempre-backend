@@ -27,8 +27,9 @@ public class ProductService {
   private final UserService userService;
   private final CloudinaryService cloudinaryService;
 
-  @Transactional
-  public Product saveProduct(ProductCreationDTO dto, MultipartFile image) {
+  @Transactional(rollbackOn = InvalidRequestException.class)
+  public Product saveProduct(ProductCreationDTO dto, MultipartFile image)
+      throws InvalidRequestException {
     if (dto.getDiscountedPriceInCents() > dto.getPriceInCents()) {
       throw new InvalidRequestException("Discounted price cannot be greater than original price");
     }

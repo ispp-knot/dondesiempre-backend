@@ -109,9 +109,9 @@ public class OutfitService {
         .sum();
   }
 
-  @Transactional(rollbackFor = ResourceNotFoundException.class)
+  @Transactional(rollbackFor = {ResourceNotFoundException.class, InvalidRequestException.class})
   public Outfit update(UUID id, OutfitUpdateDTO dto, MultipartFile image)
-      throws ResourceNotFoundException {
+      throws ResourceNotFoundException, InvalidRequestException {
     Outfit outfitToUpdate;
 
     outfitToUpdate = applicationContext.getBean(OutfitService.class).findById(id);

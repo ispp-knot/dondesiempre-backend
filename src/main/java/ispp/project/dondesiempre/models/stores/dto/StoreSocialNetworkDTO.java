@@ -15,6 +15,4 @@ public class StoreSocialNetworkDTO {
     this.name = ssn.getSocialNetwork().getName();
     this.link = ssn.getLink();
   }
-
-  public StoreSocialNetworkDTO() {}
 }

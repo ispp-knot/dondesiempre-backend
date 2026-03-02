@@ -37,7 +37,7 @@ public class StoreService {
     Store store = findById(id);
     StoreDTO dto = new StoreDTO(store);
     dto.setSocialNetworks(
-        socialNetworkRepository.findByStore(store).stream()
+        socialNetworkRepository.findByStoreId(id).stream()
             .map(StoreSocialNetworkDTO::new)
             .toList());
     return dto;

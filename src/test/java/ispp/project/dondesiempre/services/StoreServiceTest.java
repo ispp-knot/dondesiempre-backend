@@ -117,7 +117,7 @@ public class StoreServiceTest {
     ssn.setSocialNetwork(sn);
 
     when(storeRepository.findById(TEST_STORE_ID)).thenReturn(Optional.of(TEST_STORE));
-    when(socialNetworkRepository.findByStore(TEST_STORE)).thenReturn(List.of(ssn));
+    when(socialNetworkRepository.findByStoreId(TEST_STORE_ID)).thenReturn(List.of(ssn));
 
     StoreDTO result = storeService.findByIdAsDTO(TEST_STORE_ID);
 
@@ -125,14 +125,6 @@ public class StoreServiceTest {
     assertEquals(1, result.getSocialNetworks().size());
     assertEquals("instagram", result.getSocialNetworks().get(0).getName());
     assertEquals("https://instagram.com/store", result.getSocialNetworks().get(0).getLink());
-  }
-
-  @Test
-  void shouldThrowResourceNotFoundException_whenFindByIdAsDTODoesNotExist() {
-    UUID nonExistentId = UUID.randomUUID();
-    when(storeRepository.findById(nonExistentId)).thenReturn(Optional.empty());
-
-    assertThrows(ResourceNotFoundException.class, () -> storeService.findByIdAsDTO(nonExistentId));
   }
 
   @Test

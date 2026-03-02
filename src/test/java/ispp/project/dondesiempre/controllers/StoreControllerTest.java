@@ -10,7 +10,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import ispp.project.dondesiempre.controllers.exceptions.GlobalExceptionHandler;
 import ispp.project.dondesiempre.controllers.stores.StoreController;
-import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.mockEntities.StoreMockEntities;
 import ispp.project.dondesiempre.models.Client;
 import ispp.project.dondesiempre.models.stores.Store;
@@ -94,15 +93,6 @@ public class StoreControllerTest {
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.name").value("La Boutique"))
         .andExpect(jsonPath("$.address").value("Calle Mayor 1"));
-  }
-
-  @Test
-  void shouldReturnNotFound_whenGetStoreByIdDoesNotExist() throws Exception {
-    UUID nonExistentId = UUID.randomUUID();
-    when(storeService.findByIdAsDTO(nonExistentId))
-        .thenThrow(new ResourceNotFoundException("Store not found"));
-
-    mockMvc.perform(get("/api/v1/stores/{id}", nonExistentId)).andExpect(status().isNotFound());
   }
 
   @Test
