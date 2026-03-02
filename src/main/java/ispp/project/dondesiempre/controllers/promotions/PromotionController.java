@@ -15,17 +15,15 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/promotions")
 @RequiredArgsConstructor
 public class PromotionController {
 
   private final PromotionService promotionService;
 
-  @PostMapping
+  @PostMapping("/api/v1/promotions")
   public ResponseEntity<PromotionDTO> createPromotion(@RequestBody PromotionCreationDTO dto) {
     Promotion promotion = promotionService.savePromotion(dto);
     PromotionDTO promotionDTO =
@@ -34,7 +32,7 @@ public class PromotionController {
     return ResponseEntity.ok(promotionDTO);
   }
 
-  @GetMapping
+  @GetMapping("/api/v1/promotions")
   public ResponseEntity<List<PromotionDTO>> getAllPromotions() {
     return ResponseEntity.ok(
         promotionService.getAllPromotions().stream()
@@ -45,7 +43,7 @@ public class PromotionController {
             .toList());
   }
 
-  @GetMapping("/{id}")
+  @GetMapping("/api/v1/promotions/{id}")
   public ResponseEntity<PromotionDTO> getPromotionById(@PathVariable UUID id) {
     Promotion promotion = promotionService.getPromotionById(id);
     PromotionDTO promotionDTO =
@@ -54,7 +52,7 @@ public class PromotionController {
     return ResponseEntity.ok(promotionDTO);
   }
 
-  @PutMapping("/{id}")
+  @PutMapping("/api/v1/promotions/{id}")
   public ResponseEntity<PromotionDTO> updatePromotion(
       @PathVariable UUID id, @RequestBody PromotionUpdateDTO updateDTO) {
 
@@ -64,7 +62,7 @@ public class PromotionController {
             promotion, promotionService.getAllProductsByPromotionId(promotion.getId())));
   }
 
-  @DeleteMapping("/{id}")
+  @DeleteMapping("/api/v1/promotions/{id}")
   public ResponseEntity<Void> deletePromotion(@PathVariable UUID id) {
     promotionService.deletePromotion(id);
     return ResponseEntity.noContent().build();
