@@ -126,4 +126,29 @@ public class StoreControllerTest {
         .andExpect(jsonPath("$.length()").value(1))
         .andExpect(jsonPath("$[0].id").value(TEST_STORE_ID.toString()));
   }
+
+  @Test
+  void checkIfIFollowStore_shouldReturnForbidden_whenNotAuthorized() throws Exception {
+    mockMvc
+        .perform(get("/api/v1/stores/{storeId}/followers/me", TEST_STORE_ID))
+        .andExpect(status().is(403));
+  }
+
+  @Test
+  @WithMockUser(username = "testUser")
+  void checkIfIFollowStore_shouldReturnOk_whenAuthorizedAndFollowing() throws Exception {
+    when(storeService.checkIfIFollowStore(TEST_STORE_ID)).thenReturn(true);
+    mockMvc
+        .perform(get("/api/v1/stores/{storeId}/followers/me", TEST_STORE_ID))
+        .andExpect(status().isOk());
+  }
+
+  @Test
+  @WithMockUser(username = "testUser")
+  void checkIfIFollowStore_shouldReturnNotFound_whenAuthorizedAndNotFollowing() throws Exception {
+    when(storeService.checkIfIFollowStore(TEST_STORE_ID)).thenReturn(false);
+    mockMvc
+        .perform(get("/api/v1/stores/{storeId}/followers/me", TEST_STORE_ID))
+        .andExpect(status().isNotFound());
+  }
 }
