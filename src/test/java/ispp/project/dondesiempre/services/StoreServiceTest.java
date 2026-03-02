@@ -181,7 +181,8 @@ public class StoreServiceTest {
 
     boolean res = storeService.checkIfIFollowStore(TEST_STORE_ID);
 
-    verify(storeFollowerRepository, times(1)).existsByClientIdAndStoreId(TEST_CLIENT.getId(), TEST_STORE_ID);
+    verify(storeFollowerRepository, times(1))
+        .existsByClientIdAndStoreId(TEST_CLIENT.getId(), TEST_STORE_ID);
     assertEquals(res, true);
   }
 
@@ -193,7 +194,8 @@ public class StoreServiceTest {
 
     boolean res = storeService.checkIfIFollowStore(TEST_STORE_ID);
 
-    verify(storeFollowerRepository, times(1)).existsByClientIdAndStoreId(TEST_CLIENT.getId(), TEST_STORE_ID);
+    verify(storeFollowerRepository, times(1))
+        .existsByClientIdAndStoreId(TEST_CLIENT.getId(), TEST_STORE_ID);
     assertEquals(res, false);
   }
 }
