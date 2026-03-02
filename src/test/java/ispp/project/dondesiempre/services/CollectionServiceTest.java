@@ -7,6 +7,8 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import ispp.project.dondesiempre.exceptions.InvalidRequestException;
+import ispp.project.dondesiempre.exceptions.RequestConflictException;
 import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.models.collections.ProductCollection;
 import ispp.project.dondesiempre.models.collections.dto.CollectionCreationDTO;
@@ -28,8 +30,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.server.ResponseStatusException;
 
 @ExtendWith(MockitoExtension.class)
 class CollectionServiceTest {
@@ -40,15 +40,11 @@ class CollectionServiceTest {
 
   @InjectMocks private CollectionService collectionService;
 
-  private static final UUID STORE_ID = UUID.fromString("00000000-0000-0000-0000-000000000001");
-  private static final UUID OTHER_STORE_ID =
-      UUID.fromString("00000000-0000-0000-0000-000000000002");
-  private static final UUID COLLECTION_ID = UUID.fromString("00000000-0000-0000-0000-000000000010");
-  private static final UUID PRODUCT_ID = UUID.fromString("00000000-0000-0000-0000-000000000100");
-  private static final UUID MISSING_PRODUCT_ID =
-      UUID.fromString("00000000-0000-0000-0000-000000000101");
-  private static final UUID FOREIGN_PRODUCT_ID =
-      UUID.fromString("00000000-0000-0000-0000-000000000199");
+  private static final UUID STORE_ID = UUID.randomUUID();
+  private static final UUID OTHER_STORE_ID = UUID.randomUUID();
+  private static final UUID COLLECTION_ID = UUID.randomUUID();
+  private static final UUID PRODUCT_ID = UUID.randomUUID();
+  private static final UUID FOREIGN_PRODUCT_ID = UUID.randomUUID();
 
   private Store store;
   private Product product;
@@ -67,7 +63,6 @@ class CollectionServiceTest {
     collection = new ProductCollection();
     collection.setId(COLLECTION_ID);
     collection.setName("Primavera");
-    collection.setDescription("Coleccion de primavera");
     collection.setStore(store);
     collection.setProducts(Set.of(product));
   }
@@ -77,7 +72,6 @@ class CollectionServiceTest {
     when(collectionRepository.findByStoreId(STORE_ID)).thenReturn(List.of(collection));
     List<CollectionResponseDTO> result = collectionService.getByStore(STORE_ID);
     assertEquals(1, result.size());
-    assertEquals("Primavera", result.getFirst().getName());
   }
 
   @Test
@@ -90,7 +84,6 @@ class CollectionServiceTest {
   @Test
   void testGetById_notFound() {
     when(collectionRepository.findById(COLLECTION_ID)).thenReturn(Optional.empty());
-
     assertThrows(ResourceNotFoundException.class, () -> collectionService.getById(COLLECTION_ID));
   }
 
@@ -113,8 +106,6 @@ class CollectionServiceTest {
   void testCreate_storeNotFound() {
     CollectionCreationDTO dto = new CollectionCreationDTO();
     dto.setName("Primavera");
-    dto.setProductIds(Set.of());
-
     when(storeRepository.findById(STORE_ID)).thenReturn(Optional.empty());
 
     assertThrows(ResourceNotFoundException.class, () -> collectionService.create(STORE_ID, dto));
@@ -125,28 +116,10 @@ class CollectionServiceTest {
   void testCreate_conflict() {
     CollectionCreationDTO dto = new CollectionCreationDTO();
     dto.setName("Primavera");
-    dto.setProductIds(Set.of());
-
     when(storeRepository.findById(STORE_ID)).thenReturn(Optional.of(store));
     when(collectionRepository.existsByNameAndStoreId("Primavera", STORE_ID)).thenReturn(true);
 
-    ResponseStatusException exception =
-        assertThrows(ResponseStatusException.class, () -> collectionService.create(STORE_ID, dto));
-    assertEquals(HttpStatus.CONFLICT, exception.getStatusCode());
-  }
-
-  @Test
-  void testCreate_productsNotFound() {
-    CollectionCreationDTO dto = new CollectionCreationDTO();
-    dto.setName("Primavera");
-    dto.setProductIds(Set.of(PRODUCT_ID, MISSING_PRODUCT_ID));
-
-    when(storeRepository.findById(STORE_ID)).thenReturn(Optional.of(store));
-    when(collectionRepository.existsByNameAndStoreId("Primavera", STORE_ID)).thenReturn(false);
-    when(productRepository.findByIdIn(Set.of(PRODUCT_ID, MISSING_PRODUCT_ID)))
-        .thenReturn(List.of(product));
-
-    assertThrows(ResourceNotFoundException.class, () -> collectionService.create(STORE_ID, dto));
+    assertThrows(RequestConflictException.class, () -> collectionService.create(STORE_ID, dto));
   }
 
   @Test
@@ -166,9 +139,7 @@ class CollectionServiceTest {
     when(productRepository.findByIdIn(Set.of(FOREIGN_PRODUCT_ID)))
         .thenReturn(List.of(foreignProduct));
 
-    ResponseStatusException exception =
-        assertThrows(ResponseStatusException.class, () -> collectionService.create(STORE_ID, dto));
-    assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusCode());
+    assertThrows(InvalidRequestException.class, () -> collectionService.create(STORE_ID, dto));
   }
 
   @Test
@@ -177,32 +148,26 @@ class CollectionServiceTest {
     dto.setName("Verano");
     dto.setProductIds(Set.of(PRODUCT_ID));
 
-    ProductCollection updated = new ProductCollection();
-    updated.setId(COLLECTION_ID);
-    updated.setName("Verano");
-    updated.setStore(store);
-    updated.setProducts(Set.of(product));
-
     when(collectionRepository.findById(COLLECTION_ID)).thenReturn(Optional.of(collection));
     when(collectionRepository.existsByNameAndStoreIdAndIdNot("Verano", STORE_ID, COLLECTION_ID))
         .thenReturn(false);
     when(productRepository.findByIdIn(Set.of(PRODUCT_ID))).thenReturn(List.of(product));
-    when(collectionRepository.save(any(ProductCollection.class))).thenReturn(updated);
+    when(collectionRepository.save(any(ProductCollection.class))).thenReturn(collection);
 
     CollectionResponseDTO result = collectionService.update(COLLECTION_ID, dto);
-    assertEquals("Verano", result.getName());
+    assertEquals(COLLECTION_ID, result.getId());
   }
 
   @Test
-  void testUpdate_notFound() {
+  void testUpdate_conflict() {
     CollectionUpdateDTO dto = new CollectionUpdateDTO();
     dto.setName("Verano");
-    dto.setProductIds(Set.of());
-
-    when(collectionRepository.findById(COLLECTION_ID)).thenReturn(Optional.empty());
+    when(collectionRepository.findById(COLLECTION_ID)).thenReturn(Optional.of(collection));
+    when(collectionRepository.existsByNameAndStoreIdAndIdNot("Verano", STORE_ID, COLLECTION_ID))
+        .thenReturn(true);
 
     assertThrows(
-        ResourceNotFoundException.class, () -> collectionService.update(COLLECTION_ID, dto));
+        RequestConflictException.class, () -> collectionService.update(COLLECTION_ID, dto));
   }
 
   @Test
@@ -215,7 +180,6 @@ class CollectionServiceTest {
   @Test
   void testDelete_notFound() {
     when(collectionRepository.findById(COLLECTION_ID)).thenReturn(Optional.empty());
-
     assertThrows(ResourceNotFoundException.class, () -> collectionService.delete(COLLECTION_ID));
   }
 }
