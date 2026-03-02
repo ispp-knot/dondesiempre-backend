@@ -1,6 +1,7 @@
 package ispp.project.dondesiempre.config;
 
 import com.cloudinary.Cloudinary;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,6 +14,10 @@ public class CloudinaryConfig {
 
   @Bean
   public Cloudinary cloudinary() {
-    return new Cloudinary(properties.getUrl());
+    String url = properties.getUrl();
+    if (url == null || url.isBlank()) {
+      return new Cloudinary(Map.of());
+    }
+    return new Cloudinary(url);
   }
 }
