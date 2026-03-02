@@ -1,19 +1,19 @@
 package ispp.project.dondesiempre.models.products;
 
 import ispp.project.dondesiempre.models.BaseEntity;
-import ispp.project.dondesiempre.models.collections.ProductCollection;
+import ispp.project.dondesiempre.models.collections.CollectionProduct;
 import ispp.project.dondesiempre.models.stores.Store;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
@@ -57,6 +57,6 @@ public class Product extends BaseEntity {
   @OnDelete(action = OnDeleteAction.CASCADE)
   private Store store;
 
-  @ManyToMany(mappedBy = "products")
-  private Set<ProductCollection> collections = new HashSet<>();
+  @OneToMany(mappedBy = "product")
+  private List<CollectionProduct> collectionProducts = new ArrayList<>();
 }
