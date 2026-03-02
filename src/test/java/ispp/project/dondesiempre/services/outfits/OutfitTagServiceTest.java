@@ -2,10 +2,13 @@ package ispp.project.dondesiempre.services.outfits;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.models.outfits.OutfitTag;
 import ispp.project.dondesiempre.repositories.outfits.OutfitTagRepository;
 import java.util.UUID;
@@ -43,5 +46,36 @@ public class OutfitTagServiceTest {
     assertNotNull(result);
     assertEquals(tagName, result.getName());
     verify(outfitTagRepository, times(1)).findByName(tagName);
+  }
+
+  @Test
+  void findByName_shouldReturnNull_whenTagDoesNotExist() {
+    when(outfitTagRepository.findByName(tagName)).thenReturn(java.util.Optional.empty());
+    assertThrows(ResourceNotFoundException.class, () -> outfitTagService.findByName(tagName));
+    verify(outfitTagRepository, times(1)).findByName(tagName);
+  }
+
+  @Test
+  void findOrCreate_shouldReturnExistingTag_whenTagExists() {
+    when(outfitTagRepository.findByName(tagName)).thenReturn(java.util.Optional.of(tag));
+
+    OutfitTag result = outfitTagService.findOrCreate(tagName);
+    assertNotNull(result);
+    assertEquals(tagName, result.getName());
+    verify(outfitTagRepository, times(1)).findByName(tagName);
+    verify(outfitTagRepository, times(0)).save(any());
+  }
+
+  @Test
+  void findOrCreate_shouldCreateAndReturnNewTag_whenTagDoesNotExist() {
+    when(outfitTagRepository.findByName(tagName)).thenReturn(java.util.Optional.empty());
+    when(outfitTagRepository.save(any(OutfitTag.class)))
+        .thenAnswer(invocation -> invocation.getArgument(0));
+
+    OutfitTag result = outfitTagService.findOrCreate(tagName);
+    assertNotNull(result);
+    assertEquals(tagName, result.getName());
+    verify(outfitTagRepository, times(1)).findByName(tagName);
+    verify(outfitTagRepository, times(1)).save(any(OutfitTag.class));
   }
 }

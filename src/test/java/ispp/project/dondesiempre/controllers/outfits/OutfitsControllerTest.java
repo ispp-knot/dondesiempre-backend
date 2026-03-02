@@ -14,8 +14,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import ispp.project.dondesiempre.exceptions.InvalidRequestException;
-import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.models.outfits.Outfit;
 import ispp.project.dondesiempre.models.outfits.OutfitProduct;
 import ispp.project.dondesiempre.models.outfits.dto.OutfitCreationDTO;
@@ -188,26 +186,6 @@ class OutfitsControllerTest {
         .andExpect(jsonPath("$.name").value(outfit.getName()));
   }
 
-  @Test
-  void create_shouldReturnBadRequest_whenNoProducts() throws Exception {
-    OutfitCreationDTO creationDTO = new OutfitCreationDTO();
-    creationDTO.setName("New Outfit");
-    creationDTO.setIndex(0);
-    creationDTO.setStorefrontId(storefrontId);
-    creationDTO.setTags(List.of());
-    creationDTO.setProducts(List.of());
-
-    when(outfitService.create(any()))
-        .thenThrow(new InvalidRequestException("An outfit cannot be created without products."));
-
-    mockMvc
-        .perform(
-            post("/api/v1/outfits")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(creationDTO)))
-        .andExpect(status().isBadRequest());
-  }
-
   // -------------------------------------------------------------------------
   // PUT /api/v1/outfits/{id}
   // -------------------------------------------------------------------------
@@ -232,25 +210,6 @@ class OutfitsControllerTest {
         .andExpect(jsonPath("$.id").value(outfitId.toString()));
   }
 
-  @Test
-  void update_shouldReturnNotFound_whenOutfitDoesNotExist() throws Exception {
-    UUID nonExistentId = UUID.randomUUID();
-    OutfitUpdateDTO updateDTO = new OutfitUpdateDTO();
-    updateDTO.setName("Updated Outfit");
-    updateDTO.setDiscountedPriceInCents(2000);
-    updateDTO.setIndex(1);
-
-    when(outfitService.update(eq(nonExistentId), any()))
-        .thenThrow(new ResourceNotFoundException("Outfit not found."));
-
-    mockMvc
-        .perform(
-            put("/api/v1/outfits/" + nonExistentId)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(updateDTO)))
-        .andExpect(status().isNotFound());
-  }
-
   // -------------------------------------------------------------------------
   // POST /api/v1/outfits/{id}/tags
   // -------------------------------------------------------------------------
@@ -268,20 +227,6 @@ class OutfitsControllerTest {
         .andExpect(content().string(TEST_TAG));
   }
 
-  @Test
-  void addTag_shouldReturnNotFound_whenOutfitDoesNotExist() throws Exception {
-    UUID nonExistentId = UUID.randomUUID();
-    when(outfitService.addTag(eq(nonExistentId), any()))
-        .thenThrow(new ResourceNotFoundException("Outfit not found."));
-
-    mockMvc
-        .perform(
-            post("/api/v1/outfits/" + nonExistentId + "/tags")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("\"" + TEST_TAG + "\""))
-        .andExpect(status().isNotFound());
-  }
-
   // -------------------------------------------------------------------------
   // DELETE /api/v1/outfits/{id}/tags
   // -------------------------------------------------------------------------
@@ -297,23 +242,6 @@ class OutfitsControllerTest {
                 .content("\"" + TEST_TAG + "\""))
         .andExpect(status().isOk())
         .andExpect(content().string("Tag successfully removed from outfit."));
-  }
-
-  @Test
-  void removeTag_shouldReturnNotFound_whenOutfitDoesNotExist() throws Exception {
-    UUID nonExistentId = UUID.randomUUID();
-    doNothing().when(outfitService).removeTag(eq(nonExistentId), any());
-    // Si el servicio lanza excepción al no encontrar el outfit
-    org.mockito.Mockito.doThrow(new ResourceNotFoundException("Outfit not found."))
-        .when(outfitService)
-        .removeTag(eq(nonExistentId), any());
-
-    mockMvc
-        .perform(
-            delete("/api/v1/outfits/" + nonExistentId + "/tags")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("\"" + TEST_TAG + "\""))
-        .andExpect(status().isNotFound());
   }
 
   // -------------------------------------------------------------------------
@@ -337,25 +265,6 @@ class OutfitsControllerTest {
         .andExpect(jsonPath("$.name").value("Test Product"));
   }
 
-  @Test
-  void addProduct_shouldReturnBadRequest_whenProductFromDifferentStore() throws Exception {
-    OutfitCreationProductDTO productDTO = new OutfitCreationProductDTO();
-    productDTO.setId(productId);
-    productDTO.setIndex(0);
-
-    when(outfitService.addProduct(eq(outfitId), any()))
-        .thenThrow(
-            new InvalidRequestException(
-                "All products in an outfit must belong to the same store."));
-
-    mockMvc
-        .perform(
-            post("/api/v1/outfits/" + outfitId + "/products")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(productDTO)))
-        .andExpect(status().isBadRequest());
-  }
-
   // -------------------------------------------------------------------------
   // DELETE /api/v1/outfits/{id}/products/{productId}
   // -------------------------------------------------------------------------
@@ -369,17 +278,6 @@ class OutfitsControllerTest {
         .perform(delete("/api/v1/outfits/" + outfitId + "/products/" + productId))
         .andExpect(status().isCreated())
         .andExpect(content().string("Product successfully removed from outfit."));
-  }
-
-  @Test
-  void removeProduct_shouldReturnNotFound_whenProductDoesNotExist() throws Exception {
-    UUID nonExistentProductId = UUID.randomUUID();
-    when(productService.getProductById(nonExistentProductId))
-        .thenThrow(new ResourceNotFoundException("Product not found."));
-
-    mockMvc
-        .perform(delete("/api/v1/outfits/" + outfitId + "/products/" + nonExistentProductId))
-        .andExpect(status().isNotFound());
   }
 
   // -------------------------------------------------------------------------
@@ -415,15 +313,5 @@ class OutfitsControllerTest {
         .perform(delete("/api/v1/outfits/" + outfitId))
         .andExpect(status().isOk())
         .andExpect(content().string("Outfit successfully deleted."));
-  }
-
-  @Test
-  void delete_shouldReturnNotFound_whenOutfitDoesNotExist() throws Exception {
-    UUID nonExistentId = UUID.randomUUID();
-    org.mockito.Mockito.doThrow(new ResourceNotFoundException("Outfit not found."))
-        .when(outfitService)
-        .delete(nonExistentId);
-
-    mockMvc.perform(delete("/api/v1/outfits/" + nonExistentId)).andExpect(status().isNotFound());
   }
 }

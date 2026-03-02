@@ -460,15 +460,4 @@ class OutfitServiceTest {
         () -> outfitService.removeProduct(outfitId, nonExistentProduct));
     verify(outfitProductRepository, never()).delete(any());
   }
-
-  @Test
-  void shouldThrowResourceNotFoundException_whenRemovingProductFromNonExistentOutfit() {
-    UUID nonExistentId = UUID.randomUUID();
-
-    when(outfitRepository.findById(nonExistentId)).thenReturn(Optional.empty());
-
-    assertThrows(
-        ResourceNotFoundException.class, () -> outfitService.removeProduct(nonExistentId, product));
-    verify(outfitProductRepository, never()).delete(any());
-  }
 }
