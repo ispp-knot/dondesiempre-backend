@@ -6,11 +6,13 @@ import ispp.project.dondesiempre.models.products.Product;
 import ispp.project.dondesiempre.models.promotions.Promotion;
 import ispp.project.dondesiempre.models.promotions.PromotionProduct;
 import ispp.project.dondesiempre.models.promotions.dto.PromotionCreationDTO;
+import ispp.project.dondesiempre.models.promotions.dto.PromotionUpdateDTO;
 import ispp.project.dondesiempre.models.stores.Store;
 import ispp.project.dondesiempre.repositories.products.ProductRepository;
 import ispp.project.dondesiempre.repositories.promotions.PromotionProductRepository;
 import ispp.project.dondesiempre.repositories.promotions.PromotionRepository;
 import ispp.project.dondesiempre.repositories.stores.StoreRepository;
+import ispp.project.dondesiempre.services.UserService;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -26,6 +28,7 @@ public class PromotionService {
   private final ProductRepository productRepository;
   private final PromotionProductRepository promotionProductRepository;
   private final StoreRepository storeRepository;
+  private final UserService userService;
 
   @Transactional
   public Promotion savePromotion(PromotionCreationDTO dto) {
@@ -45,6 +48,8 @@ public class PromotionService {
                 () ->
                     new ResourceNotFoundException("Store not found with id: " + dto.getStoreId()));
     promotion.setStore(store);
+
+    userService.assertUserOwnsStore(store);
 
     Set<Product> products =
         dto.getProductIds().stream()
@@ -84,7 +89,15 @@ public class PromotionService {
     PromotionProduct promotionProduct = new PromotionProduct();
     promotionProduct.setPromotion(promotion);
     promotionProduct.setProduct(product);
-    return promotionProductRepository.save(promotionProduct);
+    userService.assertUserOwnsStore(product.getStore());
+    userService.assertUserOwnsStore(promotion.getStore());
+
+    try {
+      return promotionProductRepository.save(promotionProduct);
+    } catch (Exception e) {
+      throw new InvalidRequestException(
+          "This product is already part of the promotion or there was an error adding it.");
+    }
   }
 
   @Transactional(readOnly = true)
@@ -114,18 +127,63 @@ public class PromotionService {
   }
 
   @Transactional
-  public Promotion updatePromotionDiscount(UUID id, Integer discountPercentage) {
-    if (discountPercentage < 1 || discountPercentage > 100) {
-      throw new InvalidRequestException("Discount must be between 1 and 100");
-    }
+  public Promotion updatePromotion(UUID id, PromotionUpdateDTO dto) {
+
     Promotion promotion = getPromotionById(id);
-    promotion.setDiscountPercentage(discountPercentage);
-    return promotionRepository.save(promotion);
+    userService.assertUserOwnsStore(promotion.getStore());
+
+    if (dto.getName() != null) {
+      promotion.setName(dto.getName());
+    }
+    if (dto.getDescription() != null) {
+      promotion.setDescription(dto.getDescription());
+    }
+    if (dto.isActive() != promotion.isActive()) {
+      promotion.setActive(dto.isActive());
+    }
+    if (dto.getDiscountPercentage() != null) {
+      if (dto.getDiscountPercentage() < 1 || dto.getDiscountPercentage() > 100) {
+        throw new InvalidRequestException("Discount must be between 1 and 100");
+      }
+      promotion.setDiscountPercentage(dto.getDiscountPercentage());
+    }
+
+    if (dto.getProductIds() != null && !dto.getProductIds().isEmpty()) {
+      Set<Product> products =
+          dto.getProductIds().stream()
+              .map(
+                  productId ->
+                      productRepository
+                          .findById(productId)
+                          .orElseThrow(
+                              () ->
+                                  new ResourceNotFoundException(
+                                      "Product not found with id: " + productId)))
+              .collect(java.util.stream.Collectors.toSet());
+
+      if (products.stream()
+          .anyMatch(product -> !product.getStore().getId().equals(promotion.getStore().getId()))) {
+        throw new InvalidRequestException(
+            "All products must belong to the same store as the promotion");
+      }
+
+      // Remove existing associations
+      promotionProductRepository.findByPromotionId(id).forEach(promotionProductRepository::delete);
+
+      // Add new associations
+      products.forEach(product -> addProduct(id, product.getId()));
+    }
+    try {
+      return promotionRepository.save(promotion);
+    } catch (Exception e) {
+      throw new InvalidRequestException("Error updating promotion");
+    }
   }
 
   @Transactional
   public void deletePromotion(UUID id) {
     Promotion promotion = getPromotionById(id);
+    userService.assertUserOwnsStore(promotion.getStore());
     promotionProductRepository.findByPromotionId(id).forEach(promotionProductRepository::delete);
     promotionRepository.delete(promotion);
   }
