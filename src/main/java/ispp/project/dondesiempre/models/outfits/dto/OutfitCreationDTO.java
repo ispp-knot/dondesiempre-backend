@@ -13,7 +13,6 @@ public class OutfitCreationDTO {
 
   private String name;
   private String description;
-  private String image;
 
   private List<String> tags;
   private List<OutfitCreationProductDTO> products;

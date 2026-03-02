@@ -10,9 +10,12 @@ import static org.mockito.Mockito.when;
 
 import ispp.project.dondesiempre.exceptions.InvalidBoundingBoxException;
 import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
+import ispp.project.dondesiempre.models.stores.SocialNetwork;
 import ispp.project.dondesiempre.models.stores.Store;
+import ispp.project.dondesiempre.models.stores.StoreSocialNetwork;
 import ispp.project.dondesiempre.models.stores.dto.StoreDTO;
 import ispp.project.dondesiempre.repositories.stores.StoreRepository;
+import ispp.project.dondesiempre.repositories.stores.StoreSocialNetworkRepository;
 import ispp.project.dondesiempre.services.stores.StoreService;
 import java.util.List;
 import java.util.Optional;
@@ -28,6 +31,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 public class StoreServiceTest {
 
   @Mock private StoreRepository storeRepository;
+  @Mock private StoreSocialNetworkRepository socialNetworkRepository;
 
   @InjectMocks private StoreService storeService;
 
@@ -98,5 +102,32 @@ public class StoreServiceTest {
 
     verify(storeRepository, times(0))
         .findStoresInBoundingBox(anyDouble(), anyDouble(), anyDouble(), anyDouble(), anyInt());
+  }
+
+  @Test
+  void shouldReturnStoreDTOWithSocialNetworks_whenFindByIdAsDTOExists() {
+    SocialNetwork sn = new SocialNetwork();
+    sn.setName("instagram");
+    StoreSocialNetwork ssn = new StoreSocialNetwork();
+    ssn.setLink("https://instagram.com/store");
+    ssn.setSocialNetwork(sn);
+
+    when(storeRepository.findById(storeId)).thenReturn(Optional.of(store));
+    when(socialNetworkRepository.findByStore(store)).thenReturn(List.of(ssn));
+
+    StoreDTO result = storeService.findByIdAsDTO(storeId);
+
+    assertEquals("Tienda de Prueba", result.getName());
+    assertEquals(1, result.getSocialNetworks().size());
+    assertEquals("instagram", result.getSocialNetworks().get(0).getName());
+    assertEquals("https://instagram.com/store", result.getSocialNetworks().get(0).getLink());
+  }
+
+  @Test
+  void shouldThrowResourceNotFoundException_whenFindByIdAsDTODoesNotExist() {
+    UUID nonExistentId = UUID.randomUUID();
+    when(storeRepository.findById(nonExistentId)).thenReturn(Optional.empty());
+
+    assertThrows(ResourceNotFoundException.class, () -> storeService.findByIdAsDTO(nonExistentId));
   }
 }

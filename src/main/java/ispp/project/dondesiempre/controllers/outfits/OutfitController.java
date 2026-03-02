@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,8 +25,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -79,10 +82,12 @@ public class OutfitController {
     return new ResponseEntity<>(dtos, HttpStatus.OK);
   }
 
-  @PostMapping("outfits")
+  @PostMapping(value = "outfits", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   @ResponseStatus(HttpStatus.CREATED)
-  public ResponseEntity<OutfitDTO> create(@RequestBody @Valid OutfitCreationDTO dto) {
-    Outfit outfit = outfitService.create(dto);
+  public ResponseEntity<OutfitDTO> create(
+      @RequestPart("dto") @Valid OutfitCreationDTO dto,
+      @RequestPart(value = "image", required = false) MultipartFile image) {
+    Outfit outfit = outfitService.create(dto, image);
     OutfitDTO outfitDTO =
         OutfitDTO.from(
             outfit,
@@ -91,11 +96,13 @@ public class OutfitController {
     return new ResponseEntity<>(outfitDTO, HttpStatus.CREATED);
   }
 
-  @PutMapping("outfits/{id}")
+  @PutMapping(value = "outfits/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<OutfitDTO> update(
-      @PathVariable("id") UUID id, @RequestBody @Valid OutfitUpdateDTO dto) {
-    Outfit outfit = outfitService.update(id, dto);
+      @PathVariable("id") UUID id,
+      @RequestPart("dto") @Valid OutfitUpdateDTO dto,
+      @RequestPart(value = "image", required = false) MultipartFile image) {
+    Outfit outfit = outfitService.update(id, dto, image);
     OutfitDTO outfitDTO =
         OutfitDTO.from(
             outfit,

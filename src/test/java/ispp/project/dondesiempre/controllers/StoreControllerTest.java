@@ -7,9 +7,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import ispp.project.dondesiempre.controllers.exceptions.GlobalExceptionHandler;
 import ispp.project.dondesiempre.controllers.stores.StoreController;
+import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.models.stores.dto.StoreDTO;
 import ispp.project.dondesiempre.services.stores.StoreService;
 import java.util.List;
+import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -62,5 +64,30 @@ public class StoreControllerTest {
     mockMvc
         .perform(get("/api/v1/stores").param("minLon", "-6.0"))
         .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  void shouldReturnOkAndStoreDTO_whenGetStoreByIdExists() throws Exception {
+    UUID storeId = UUID.randomUUID();
+    StoreDTO store = new StoreDTO();
+    store.setName("La Boutique");
+    store.setAddress("Calle Mayor 1");
+
+    when(storeService.findByIdAsDTO(storeId)).thenReturn(store);
+
+    mockMvc
+        .perform(get("/api/v1/stores/{id}", storeId))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.name").value("La Boutique"))
+        .andExpect(jsonPath("$.address").value("Calle Mayor 1"));
+  }
+
+  @Test
+  void shouldReturnNotFound_whenGetStoreByIdDoesNotExist() throws Exception {
+    UUID nonExistentId = UUID.randomUUID();
+    when(storeService.findByIdAsDTO(nonExistentId))
+        .thenThrow(new ResourceNotFoundException("Store not found"));
+
+    mockMvc.perform(get("/api/v1/stores/{id}", nonExistentId)).andExpect(status().isNotFound());
   }
 }

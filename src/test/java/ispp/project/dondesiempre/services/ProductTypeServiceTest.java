@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
@@ -20,6 +21,7 @@ public class ProductTypeServiceTest {
 
   @Autowired private ProductTypeService productTypeService;
   @Autowired private ProductTypeRepository productTypeRepository;
+  @MockitoBean private CloudinaryService cloudinaryService;
 
   @Test
   public void shouldNotBeNull() {

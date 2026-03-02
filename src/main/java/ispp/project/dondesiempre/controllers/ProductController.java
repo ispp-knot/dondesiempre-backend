@@ -13,13 +13,16 @@ import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -51,9 +54,11 @@ public class ProductController {
     return new ResponseEntity<>(dtos, HttpStatus.OK);
   }
 
-  @PostMapping("products")
-  public ResponseEntity<Product> createProduct(@RequestBody @Valid ProductCreationDTO dto) {
-    Product savedProduct = productService.saveProduct(dto);
+  @PostMapping(value = "products", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  public ResponseEntity<Product> createProduct(
+      @RequestPart("dto") @Valid ProductCreationDTO dto,
+      @RequestPart(value = "image", required = false) MultipartFile image) {
+    Product savedProduct = productService.saveProduct(dto, image);
     return new ResponseEntity<>(savedProduct, HttpStatus.CREATED);
   }
 

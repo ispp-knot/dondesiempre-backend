@@ -8,12 +8,14 @@ import ispp.project.dondesiempre.models.storefronts.Storefront;
 import ispp.project.dondesiempre.models.stores.Store;
 import ispp.project.dondesiempre.repositories.products.ProductRepository;
 import ispp.project.dondesiempre.repositories.stores.StoreRepository;
+import ispp.project.dondesiempre.services.CloudinaryService;
 import ispp.project.dondesiempre.services.UserService;
 import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -23,9 +25,10 @@ public class ProductService {
   private final StoreRepository storeRepository;
   private final ProductTypeService productTypeService;
   private final UserService userService;
+  private final CloudinaryService cloudinaryService;
 
   @Transactional
-  public Product saveProduct(ProductCreationDTO dto) {
+  public Product saveProduct(ProductCreationDTO dto, MultipartFile image) {
     if (dto.getDiscountedPriceInCents() > dto.getPriceInCents()) {
       throw new InvalidRequestException("Discounted price cannot be greater than original price");
     }
@@ -42,7 +45,9 @@ public class ProductService {
     product.setPriceInCents(dto.getPriceInCents());
     product.setDiscountedPriceInCents(dto.getDiscountedPriceInCents());
     product.setDescription(dto.getDescription());
-    product.setImage(dto.getImage());
+    if (image != null && !image.isEmpty()) {
+      product.setImage(cloudinaryService.upload(image));
+    }
     product.setType(productTypeService.getProductTypeById(dto.getTypeId()));
     product.setStore(store);
     return productRepository.save(product);
