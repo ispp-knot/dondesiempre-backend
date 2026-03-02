@@ -1,7 +1,10 @@
 package ispp.project.dondesiempre.controllers.stores;
 
+import ispp.project.dondesiempre.models.Client;
 import ispp.project.dondesiempre.models.stores.dto.StoreDTO;
 import ispp.project.dondesiempre.models.stores.dto.StoreUpdateDTO;
+import ispp.project.dondesiempre.models.stores.dto.StoreFollowerDTO;
+import ispp.project.dondesiempre.services.UserService;
 import ispp.project.dondesiempre.services.stores.StoreService;
 import java.util.List;
 import java.util.UUID;
@@ -24,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class StoreController {
   private final StoreService storeService;
+  private final UserService userService;
 
   @GetMapping("/stores")
   @ResponseStatus(HttpStatus.OK)
@@ -75,5 +79,13 @@ public class StoreController {
     List<StoreDTO> followedStores =
         storeService.getMyFollowedStores().stream().map(store -> new StoreDTO(store)).toList();
     return new ResponseEntity<>(followedStores, HttpStatus.OK);
+  }
+
+  @GetMapping("/stores/{storeId}/followers/me")
+  public ResponseEntity<StoreFollowerDTO> checkIfIFollowStore(@PathVariable UUID storeId) {
+    Client currentClient = userService.getCurrentClient();
+    boolean follows = storeService.checkIfClientFollowsStore(currentClient.getId(), storeId);
+    return new ResponseEntity<>(
+        new StoreFollowerDTO(currentClient.getId(), storeId, follows), HttpStatus.OK);
   }
 }

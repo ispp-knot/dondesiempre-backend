@@ -188,4 +188,28 @@ public class StoreServiceTest {
     assertEquals(stores.size(), 3);
     assertEquals(stores.get(0).getId(), TEST_STORE.getId());
   }
+
+  @Test
+  void checkIfIFollowStore_shouldReturnTrue_whenFollowingStore() {
+    when(storeFollowerRepository.existsByClientIdAndStoreId(TEST_CLIENT.getId(), TEST_STORE_ID))
+        .thenReturn(true);
+
+    boolean res = storeService.checkIfClientFollowsStore(TEST_CLIENT.getId(), TEST_STORE_ID);
+
+    verify(storeFollowerRepository, times(1))
+        .existsByClientIdAndStoreId(TEST_CLIENT.getId(), TEST_STORE_ID);
+    assertEquals(res, true);
+  }
+
+  @Test
+  void checkIfIFollowStore_shouldReturnFalse_whenNotFollowingStore() {
+    when(storeFollowerRepository.existsByClientIdAndStoreId(TEST_CLIENT.getId(), TEST_STORE_ID))
+        .thenReturn(false);
+
+    boolean res = storeService.checkIfClientFollowsStore(TEST_CLIENT.getId(), TEST_STORE_ID);
+
+    verify(storeFollowerRepository, times(1))
+        .existsByClientIdAndStoreId(TEST_CLIENT.getId(), TEST_STORE_ID);
+    assertEquals(res, false);
+  }
 }

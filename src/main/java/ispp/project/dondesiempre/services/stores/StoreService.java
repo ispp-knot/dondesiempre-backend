@@ -90,10 +90,10 @@ public class StoreService {
 
   @Transactional
   public StoreFollower followStore(UUID storeId) {
-    Client currentUser = userService.getCurrentClient();
+    Client currentClient = userService.getCurrentClient();
 
     StoreFollower follow = new StoreFollower();
-    follow.setClient(currentUser);
+    follow.setClient(currentClient);
     follow.setStore(findById(storeId));
 
     StoreFollower createdFollow = storeFollowerRepository.save(follow);
@@ -102,11 +102,11 @@ public class StoreService {
 
   @Transactional(rollbackFor = ResourceNotFoundException.class)
   public void unfollowStore(UUID storeId) throws ResourceNotFoundException {
-    Client currentUser = userService.getCurrentClient();
+    Client currentClient = userService.getCurrentClient();
 
     StoreFollower follow =
         storeFollowerRepository
-            .findByClientIdAndStoreId(currentUser.getId(), storeId)
+            .findByClientIdAndStoreId(currentClient.getId(), storeId)
             .orElseThrow(() -> new ResourceNotFoundException("You don't follow that store."));
 
     storeFollowerRepository.delete(follow);
@@ -114,9 +114,14 @@ public class StoreService {
 
   @Transactional(readOnly = true)
   public List<Store> getMyFollowedStores() {
-    Client currentUser = userService.getCurrentClient();
-    return storeFollowerRepository.findByClientId(currentUser.getId()).stream()
+    Client currentClient = userService.getCurrentClient();
+    return storeFollowerRepository.findByClientId(currentClient.getId()).stream()
         .map(follower -> follower.getStore())
         .toList();
+  }
+
+  @Transactional(readOnly = true)
+  public boolean checkIfClientFollowsStore(UUID clientId, UUID storeId) {
+    return storeFollowerRepository.existsByClientIdAndStoreId(clientId, storeId);
   }
 }
