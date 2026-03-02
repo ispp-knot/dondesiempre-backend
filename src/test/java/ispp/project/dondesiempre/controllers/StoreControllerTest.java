@@ -80,7 +80,7 @@ public class StoreControllerTest {
   }
 
   @Test
-  void shouldReturnBadRequestOnFollowStoreWithoutAuth() throws Exception {
+  void followStore_shouldReturnForbidden_whenNotAuthorized() throws Exception {
     mockMvc
         .perform(post("/api/v1/stores/{storeId}/followers", TEST_STORE_ID))
         .andExpect(status().is(403));
@@ -88,7 +88,7 @@ public class StoreControllerTest {
 
   @Test
   @WithMockUser(username = "testUser")
-  void shouldFollowStore() throws Exception {
+  void followStore_shouldFollowStore_whenAuthorized() throws Exception {
     when(storeService.followStore(TEST_STORE_ID)).thenReturn(TEST_FOLLOWER);
     mockMvc
         .perform(post("/api/v1/stores/{storeId}/followers", TEST_STORE_ID))
@@ -96,7 +96,7 @@ public class StoreControllerTest {
   }
 
   @Test
-  void shouldReturnBadRequestOnUnfollowStoreWithoutAuth() throws Exception {
+  void unfollowStore_shouldReturnForbidden_whenNotAuthorized() throws Exception {
     mockMvc
         .perform(delete("/api/v1/stores/{storeId}/followers/me", TEST_STORE_ID))
         .andExpect(status().is(403));
@@ -104,7 +104,7 @@ public class StoreControllerTest {
 
   @Test
   @WithMockUser(username = "testUser")
-  void shouldUnfollowStore() throws Exception {
+  void unfollowStore_shouldUnfollowStore_whenAuthorized() throws Exception {
     doNothing().when(storeService).unfollowStore(TEST_STORE_ID);
     mockMvc
         .perform(delete("/api/v1/stores/{storeId}/followers/me", TEST_STORE_ID))
@@ -112,14 +112,14 @@ public class StoreControllerTest {
   }
 
   @Test
-  void shouldReturnBadRequestOnGetFollowedStoresWithoutAuth() throws Exception {
+  void getMyFollowedStores_shouldReturnForbidden_whenNotAuthorized() throws Exception {
     mockMvc.perform(get("/api/v1/clients/me/followed-stores")).andExpect(status().is(403));
   }
 
   @Test
   @WithMockUser(username = "testUser")
-  void shouldGetFollowedStores() throws Exception {
-    when(storeService.getMyFollowedStores()).thenReturn(List.of(new StoreDTO(TEST_STORE)));
+  void getMyFollowedStores_shouldReturnFollowedStores_whenAuthorized() throws Exception {
+    when(storeService.getMyFollowedStores()).thenReturn(List.of(TEST_STORE));
     mockMvc
         .perform(get("/api/v1/clients/me/followed-stores"))
         .andExpect(status().isOk())

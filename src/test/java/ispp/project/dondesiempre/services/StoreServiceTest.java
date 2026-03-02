@@ -105,7 +105,7 @@ public class StoreServiceTest {
   }
 
   @Test
-  void shouldFollowStore() {
+  void followStore_shouldFollowStore_whenStoreExists() {
     when(userService.getCurrentClient()).thenReturn(TEST_CLIENT);
     when(storeRepository.findById(TEST_STORE_ID)).thenReturn(Optional.of(TEST_STORE));
     when(storeFollowerRepository.save(any())).thenReturn(TEST_FOLLOWER);
@@ -118,7 +118,7 @@ public class StoreServiceTest {
   }
 
   @Test
-  void shouldThrowExceptionIfUnfollowNotFollowedStore() {
+  void unfollowStore_shouldThrowNotFound_whenNotPreviouslyFollowed() {
     when(userService.getCurrentClient()).thenReturn(TEST_CLIENT);
     when(storeFollowerRepository.findByClientIdAndStoreId(TEST_CLIENT.getId(), TEST_STORE_ID))
         .thenReturn(Optional.empty());
@@ -128,7 +128,7 @@ public class StoreServiceTest {
   }
 
   @Test
-  void shouldUnfollowStore() {
+  void unfollowStore_shouldUnfollowStore_whenPreviouslyFollowed() {
     when(userService.getCurrentClient()).thenReturn(TEST_CLIENT);
     when(storeFollowerRepository.findByClientIdAndStoreId(TEST_CLIENT.getId(), TEST_STORE_ID))
         .thenReturn(Optional.of(TEST_FOLLOWER));
@@ -140,7 +140,7 @@ public class StoreServiceTest {
   }
 
   @Test
-  void shouldGetZeroFollowedStore() {
+  void getMyFollowedStores_shouldGetZeroStores_whenNotFollowingAnyStore() {
     when(userService.getCurrentClient()).thenReturn(TEST_CLIENT);
     when(storeFollowerRepository.findByClientId(TEST_CLIENT.getId())).thenReturn(List.of());
 
@@ -150,7 +150,7 @@ public class StoreServiceTest {
   }
 
   @Test
-  void shouldGetOneFollowedStore() {
+  void getMyFollowedStores_shouldGetOneStore_whenFollowingOneStore() {
     when(userService.getCurrentClient()).thenReturn(TEST_CLIENT);
     when(storeFollowerRepository.findByClientId(TEST_CLIENT.getId()))
         .thenReturn(List.of(TEST_FOLLOWER));
@@ -162,7 +162,7 @@ public class StoreServiceTest {
   }
 
   @Test
-  void shouldGetThreeFollowedStore() {
+  void getMyFollowedStores_shouldGetMultipleStores_whenFollowingMultipleStores() {
     when(userService.getCurrentClient()).thenReturn(TEST_CLIENT);
     when(storeFollowerRepository.findByClientId(TEST_CLIENT.getId()))
         .thenReturn(List.of(TEST_FOLLOWER, TEST_FOLLOWER, TEST_FOLLOWER));

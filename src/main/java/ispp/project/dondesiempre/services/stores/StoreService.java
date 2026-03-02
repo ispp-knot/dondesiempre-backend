@@ -48,12 +48,12 @@ public class StoreService {
     follow.setClient(currentUser);
     follow.setStore(findById(storeId));
 
-    storeFollowerRepository.save(follow);
-    return follow;
+    StoreFollower createdFollow = storeFollowerRepository.save(follow);
+    return createdFollow;
   }
 
-  @Transactional
-  public void unfollowStore(UUID storeId) {
+  @Transactional(rollbackFor = ResourceNotFoundException.class)
+  public void unfollowStore(UUID storeId) throws ResourceNotFoundException {
     Client currentUser = userService.getCurrentClient();
 
     StoreFollower follow =
