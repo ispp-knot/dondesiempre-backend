@@ -28,24 +28,26 @@ public class CollectionController {
 
   @GetMapping("/store/{storeId}/collections")
   public ResponseEntity<List<CollectionResponseDTO>> getByStore(@PathVariable UUID storeId) {
-    return ResponseEntity.ok(collectionService.getByStore(storeId));
+    return ResponseEntity.ok(
+        collectionService.getByStore(storeId).stream().map(CollectionResponseDTO::new).toList());
   }
 
   @GetMapping("/collections/{id}")
   public ResponseEntity<CollectionResponseDTO> getById(@PathVariable UUID id) {
-    return ResponseEntity.ok(collectionService.getById(id));
+    return ResponseEntity.ok(new CollectionResponseDTO(collectionService.getById(id)));
   }
 
   @PostMapping("/store/{storeId}/collections")
   public ResponseEntity<CollectionResponseDTO> create(
       @PathVariable UUID storeId, @Valid @RequestBody CollectionCreationDTO dto) {
-    return ResponseEntity.status(HttpStatus.CREATED).body(collectionService.create(storeId, dto));
+    return ResponseEntity.status(HttpStatus.CREATED)
+        .body(new CollectionResponseDTO(collectionService.create(storeId, dto)));
   }
 
   @PutMapping("/collections/{id}")
   public ResponseEntity<CollectionResponseDTO> update(
       @PathVariable UUID id, @Valid @RequestBody CollectionUpdateDTO dto) {
-    return ResponseEntity.ok(collectionService.update(id, dto));
+    return ResponseEntity.ok(new CollectionResponseDTO(collectionService.update(id, dto)));
   }
 
   @DeleteMapping("/collections/{id}")

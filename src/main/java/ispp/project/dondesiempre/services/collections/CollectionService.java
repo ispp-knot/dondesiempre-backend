@@ -5,7 +5,6 @@ import ispp.project.dondesiempre.exceptions.RequestConflictException;
 import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.models.collections.ProductCollection;
 import ispp.project.dondesiempre.models.collections.dto.CollectionCreationDTO;
-import ispp.project.dondesiempre.models.collections.dto.CollectionResponseDTO;
 import ispp.project.dondesiempre.models.collections.dto.CollectionUpdateDTO;
 import ispp.project.dondesiempre.models.products.Product;
 import ispp.project.dondesiempre.models.stores.Store;
@@ -27,21 +26,17 @@ public class CollectionService {
   private final ProductRepository productRepository;
   private final StoreRepository storeRepository;
 
-  public List<CollectionResponseDTO> getByStore(UUID storeId) {
-    return collectionRepository.findByStoreId(storeId).stream()
-        .map(CollectionResponseDTO::new)
-        .toList();
+  public List<ProductCollection> getByStore(UUID storeId) {
+    return collectionRepository.findByStoreId(storeId);
   }
 
-  public CollectionResponseDTO getById(UUID id) {
-    ProductCollection collection =
-        collectionRepository
-            .findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("Collection not found"));
-    return new CollectionResponseDTO(collection);
+  public ProductCollection getById(UUID id) {
+    return collectionRepository
+        .findById(id)
+        .orElseThrow(() -> new ResourceNotFoundException("Collection not found"));
   }
 
-  public CollectionResponseDTO create(UUID storeId, CollectionCreationDTO dto) {
+  public ProductCollection create(UUID storeId, CollectionCreationDTO dto) {
     Store store =
         storeRepository
             .findById(storeId)
@@ -51,10 +46,10 @@ public class CollectionService {
     }
     ProductCollection collection = dtoToEntity(dto, storeId);
     collection.setStore(store);
-    return new CollectionResponseDTO(collectionRepository.save(collection));
+    return collectionRepository.save(collection);
   }
 
-  public CollectionResponseDTO update(UUID id, CollectionUpdateDTO dto) {
+  public ProductCollection update(UUID id, CollectionUpdateDTO dto) {
     ProductCollection collection =
         collectionRepository
             .findById(id)
@@ -66,7 +61,7 @@ public class CollectionService {
     collection.setName(dto.getName());
     collection.setDescription(dto.getDescription());
     collection.setProducts(new HashSet<>(fetchValidatedProducts(dto.getProductIds(), storeId)));
-    return new CollectionResponseDTO(collectionRepository.save(collection));
+    return collectionRepository.save(collection);
   }
 
   public void delete(UUID id) {

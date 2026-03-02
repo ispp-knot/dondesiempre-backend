@@ -1,7 +1,6 @@
 package ispp.project.dondesiempre.models.collections.dto;
 
 import ispp.project.dondesiempre.models.collections.ProductCollection;
-import ispp.project.dondesiempre.models.products.Product;
 import java.util.List;
 import java.util.UUID;
 import lombok.Getter;
@@ -26,6 +25,10 @@ public class CollectionResponseDTO {
     this.description = collection.getDescription();
     this.storeId = collection.getStore().getId();
     this.storeName = collection.getStore().getName();
-    this.productIds = collection.getProducts().stream().map(Product::getId).sorted().toList();
+    this.productIds =
+        collection.getCollectionProducts().stream()
+            .map(collectionProduct -> collectionProduct.getProduct().getId())
+            .sorted()
+            .toList();
   }
 }
