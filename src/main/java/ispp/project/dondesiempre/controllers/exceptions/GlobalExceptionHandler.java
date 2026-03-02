@@ -2,6 +2,7 @@ package ispp.project.dondesiempre.controllers.exceptions;
 
 import ispp.project.dondesiempre.exceptions.InvalidBoundingBoxException;
 import ispp.project.dondesiempre.exceptions.InvalidRequestException;
+import ispp.project.dondesiempre.exceptions.RequestConflictException;
 import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.exceptions.UnauthorizedException;
 import org.springframework.http.HttpStatus;
@@ -10,7 +11,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
-import org.springframework.web.server.ResponseStatusException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -42,10 +42,11 @@ public class GlobalExceptionHandler {
     return new ResponseEntity<>(exception.getMessage(), HttpStatus.FORBIDDEN);
   }
 
-  @ExceptionHandler(ResponseStatusException.class)
-  public ResponseEntity<String> handleResponseStatusException(
-      ResponseStatusException exception, WebRequest request) {
-    return new ResponseEntity<>(exception.getReason(), exception.getStatusCode());
+  @ResponseStatus(HttpStatus.CONFLICT)
+  @ExceptionHandler(RequestConflictException.class)
+  public ResponseEntity<String> handleRequestConflictException(
+      RequestConflictException exception, WebRequest request) {
+    return new ResponseEntity<>(exception.getMessage(), HttpStatus.CONFLICT);
   }
 
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
