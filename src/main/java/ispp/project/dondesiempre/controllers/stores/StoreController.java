@@ -54,4 +54,10 @@ public class StoreController {
         storeService.getMyFollowedStores().stream().map(store -> new StoreDTO(store)).toList();
     return new ResponseEntity<>(followedStores, HttpStatus.OK);
   }
+
+  @GetMapping("/stores/{storeId}/followers/me")
+  public ResponseEntity<Void> checkIfIFollowStore(@PathVariable UUID storeId) {
+    boolean follows = storeService.checkIfIFollowStore(storeId);
+    return new ResponseEntity<>(follows ? HttpStatus.OK : HttpStatus.NOT_FOUND);
+  }
 }
