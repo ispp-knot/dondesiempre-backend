@@ -73,8 +73,7 @@ public class StoreService {
   }
 
   @Transactional(readOnly = true)
-  public boolean checkIfIFollowStore(UUID storeId) {
-    Client currentClient = userService.getCurrentClient();
-    return storeFollowerRepository.existsByClientIdAndStoreId(currentClient.getId(), storeId);
+  public boolean checkIfClientFollowsStore(UUID clientId, UUID storeId) {
+    return storeFollowerRepository.existsByClientIdAndStoreId(clientId, storeId);
   }
 }

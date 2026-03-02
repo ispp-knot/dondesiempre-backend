@@ -175,11 +175,10 @@ public class StoreServiceTest {
 
   @Test
   void checkIfIFollowStore_shouldReturnTrue_whenFollowingStore() {
-    when(userService.getCurrentClient()).thenReturn(TEST_CLIENT);
     when(storeFollowerRepository.existsByClientIdAndStoreId(TEST_CLIENT.getId(), TEST_STORE_ID))
         .thenReturn(true);
 
-    boolean res = storeService.checkIfIFollowStore(TEST_STORE_ID);
+    boolean res = storeService.checkIfClientFollowsStore(TEST_CLIENT.getId(), TEST_STORE_ID);
 
     verify(storeFollowerRepository, times(1))
         .existsByClientIdAndStoreId(TEST_CLIENT.getId(), TEST_STORE_ID);
@@ -188,11 +187,10 @@ public class StoreServiceTest {
 
   @Test
   void checkIfIFollowStore_shouldReturnFalse_whenNotFollowingStore() {
-    when(userService.getCurrentClient()).thenReturn(TEST_CLIENT);
     when(storeFollowerRepository.existsByClientIdAndStoreId(TEST_CLIENT.getId(), TEST_STORE_ID))
         .thenReturn(false);
 
-    boolean res = storeService.checkIfIFollowStore(TEST_STORE_ID);
+    boolean res = storeService.checkIfClientFollowsStore(TEST_CLIENT.getId(), TEST_STORE_ID);
 
     verify(storeFollowerRepository, times(1))
         .existsByClientIdAndStoreId(TEST_CLIENT.getId(), TEST_STORE_ID);

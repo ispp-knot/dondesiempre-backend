@@ -15,6 +15,7 @@ import ispp.project.dondesiempre.models.Client;
 import ispp.project.dondesiempre.models.stores.Store;
 import ispp.project.dondesiempre.models.stores.StoreFollower;
 import ispp.project.dondesiempre.models.stores.dto.StoreDTO;
+import ispp.project.dondesiempre.services.UserService;
 import ispp.project.dondesiempre.services.stores.StoreService;
 import java.util.List;
 import java.util.UUID;
@@ -38,6 +39,7 @@ public class StoreControllerTest {
   @Autowired private MockMvc mockMvc;
 
   @MockitoBean private StoreService storeService;
+  @MockitoBean private UserService userService;
 
   private static final Client TEST_CLIENT = StoreMockEntities.sampleClient();
   private static final UUID TEST_STORE_ID = UUID.randomUUID();
@@ -136,19 +138,30 @@ public class StoreControllerTest {
 
   @Test
   @WithMockUser(username = "testUser")
-  void checkIfIFollowStore_shouldReturnOk_whenAuthorizedAndFollowing() throws Exception {
-    when(storeService.checkIfIFollowStore(TEST_STORE_ID)).thenReturn(true);
+  void checkIfIFollowStore_shouldReturnFollowingDTO_whenAuthorizedAndFollowing() throws Exception {
+    when(userService.getCurrentClient()).thenReturn(TEST_CLIENT);
+    when(storeService.checkIfClientFollowsStore(TEST_CLIENT.getId(), TEST_STORE_ID))
+        .thenReturn(true);
     mockMvc
         .perform(get("/api/v1/stores/{storeId}/followers/me", TEST_STORE_ID))
-        .andExpect(status().isOk());
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.clientId").value(TEST_CLIENT.getId().toString()))
+        .andExpect(jsonPath("$.storeId").value(TEST_STORE_ID.toString()))
+        .andExpect(jsonPath("$.isFollowing").value(true));
   }
 
   @Test
   @WithMockUser(username = "testUser")
-  void checkIfIFollowStore_shouldReturnNotFound_whenAuthorizedAndNotFollowing() throws Exception {
-    when(storeService.checkIfIFollowStore(TEST_STORE_ID)).thenReturn(false);
+  void checkIfIFollowStore_shouldReturnNotFollowingDTO_whenAuthorizedAndNotFollowing()
+      throws Exception {
+    when(userService.getCurrentClient()).thenReturn(TEST_CLIENT);
+    when(storeService.checkIfClientFollowsStore(TEST_CLIENT.getId(), TEST_STORE_ID))
+        .thenReturn(false);
     mockMvc
         .perform(get("/api/v1/stores/{storeId}/followers/me", TEST_STORE_ID))
-        .andExpect(status().isNotFound());
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.clientId").value(TEST_CLIENT.getId().toString()))
+        .andExpect(jsonPath("$.storeId").value(TEST_STORE_ID.toString()))
+        .andExpect(jsonPath("$.isFollowing").value(false));
   }
 }
