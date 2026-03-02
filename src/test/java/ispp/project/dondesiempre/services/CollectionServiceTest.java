@@ -12,7 +12,6 @@ import ispp.project.dondesiempre.exceptions.RequestConflictException;
 import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.models.collections.ProductCollection;
 import ispp.project.dondesiempre.models.collections.dto.CollectionCreationDTO;
-import ispp.project.dondesiempre.models.collections.dto.CollectionResponseDTO;
 import ispp.project.dondesiempre.models.collections.dto.CollectionUpdateDTO;
 import ispp.project.dondesiempre.models.products.Product;
 import ispp.project.dondesiempre.models.stores.Store;
@@ -68,27 +67,27 @@ class CollectionServiceTest {
   }
 
   @Test
-  void testGetByStore() {
+  void shouldReturnCollections_WhenGetByStore() {
     when(collectionRepository.findByStoreId(STORE_ID)).thenReturn(List.of(collection));
-    List<CollectionResponseDTO> result = collectionService.getByStore(STORE_ID);
+    List<ProductCollection> result = collectionService.getByStore(STORE_ID);
     assertEquals(1, result.size());
   }
 
   @Test
-  void testGetById_found() {
+  void shouldReturnCollection_WhenGetByIdExists() {
     when(collectionRepository.findById(COLLECTION_ID)).thenReturn(Optional.of(collection));
-    CollectionResponseDTO result = collectionService.getById(COLLECTION_ID);
+    ProductCollection result = collectionService.getById(COLLECTION_ID);
     assertEquals(COLLECTION_ID, result.getId());
   }
 
   @Test
-  void testGetById_notFound() {
+  void shouldThrowNotFound_WhenGetByIdMissing() {
     when(collectionRepository.findById(COLLECTION_ID)).thenReturn(Optional.empty());
     assertThrows(ResourceNotFoundException.class, () -> collectionService.getById(COLLECTION_ID));
   }
 
   @Test
-  void testCreate_ok() {
+  void shouldCreateCollection_WhenDataIsValid() {
     CollectionCreationDTO dto = new CollectionCreationDTO();
     dto.setName("Primavera");
     dto.setProductIds(Set.of(PRODUCT_ID));
@@ -98,12 +97,12 @@ class CollectionServiceTest {
     when(productRepository.findByIdIn(Set.of(PRODUCT_ID))).thenReturn(List.of(product));
     when(collectionRepository.save(any(ProductCollection.class))).thenReturn(collection);
 
-    CollectionResponseDTO result = collectionService.create(STORE_ID, dto);
+    ProductCollection result = collectionService.create(STORE_ID, dto);
     assertEquals("Primavera", result.getName());
   }
 
   @Test
-  void testCreate_storeNotFound() {
+  void shouldThrowNotFound_WhenCreateAndStoreMissing() {
     CollectionCreationDTO dto = new CollectionCreationDTO();
     dto.setName("Primavera");
     when(storeRepository.findById(STORE_ID)).thenReturn(Optional.empty());
@@ -113,7 +112,7 @@ class CollectionServiceTest {
   }
 
   @Test
-  void testCreate_conflict() {
+  void shouldThrowConflict_WhenCreateAndNameAlreadyExists() {
     CollectionCreationDTO dto = new CollectionCreationDTO();
     dto.setName("Primavera");
     when(storeRepository.findById(STORE_ID)).thenReturn(Optional.of(store));
@@ -123,7 +122,7 @@ class CollectionServiceTest {
   }
 
   @Test
-  void testCreate_productFromOtherStore() {
+  void shouldThrowBadRequest_WhenCreateWithProductsFromAnotherStore() {
     Store otherStore = new Store();
     otherStore.setId(OTHER_STORE_ID);
     Product foreignProduct = new Product();
@@ -143,7 +142,7 @@ class CollectionServiceTest {
   }
 
   @Test
-  void testUpdate_ok() {
+  void shouldUpdateCollection_WhenDataIsValid() {
     CollectionUpdateDTO dto = new CollectionUpdateDTO();
     dto.setName("Verano");
     dto.setProductIds(Set.of(PRODUCT_ID));
@@ -154,12 +153,12 @@ class CollectionServiceTest {
     when(productRepository.findByIdIn(Set.of(PRODUCT_ID))).thenReturn(List.of(product));
     when(collectionRepository.save(any(ProductCollection.class))).thenReturn(collection);
 
-    CollectionResponseDTO result = collectionService.update(COLLECTION_ID, dto);
+    ProductCollection result = collectionService.update(COLLECTION_ID, dto);
     assertEquals(COLLECTION_ID, result.getId());
   }
 
   @Test
-  void testUpdate_conflict() {
+  void shouldThrowConflict_WhenUpdateAndNameAlreadyExists() {
     CollectionUpdateDTO dto = new CollectionUpdateDTO();
     dto.setName("Verano");
     when(collectionRepository.findById(COLLECTION_ID)).thenReturn(Optional.of(collection));
@@ -171,14 +170,14 @@ class CollectionServiceTest {
   }
 
   @Test
-  void testDelete_ok() {
+  void shouldDeleteCollection_WhenDeleteExisting() {
     when(collectionRepository.findById(COLLECTION_ID)).thenReturn(Optional.of(collection));
     collectionService.delete(COLLECTION_ID);
     verify(collectionRepository).delete(collection);
   }
 
   @Test
-  void testDelete_notFound() {
+  void shouldThrowNotFound_WhenDeleteMissing() {
     when(collectionRepository.findById(COLLECTION_ID)).thenReturn(Optional.empty());
     assertThrows(ResourceNotFoundException.class, () -> collectionService.delete(COLLECTION_ID));
   }

@@ -13,9 +13,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import ispp.project.dondesiempre.exceptions.RequestConflictException;
+import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.models.collections.ProductCollection;
 import ispp.project.dondesiempre.models.collections.dto.CollectionCreationDTO;
-import ispp.project.dondesiempre.models.collections.dto.CollectionResponseDTO;
 import ispp.project.dondesiempre.models.collections.dto.CollectionUpdateDTO;
 import ispp.project.dondesiempre.models.products.Product;
 import ispp.project.dondesiempre.models.stores.Store;
@@ -27,11 +28,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.web.server.ResponseStatusException;
 
 @WebMvcTest(ispp.project.dondesiempre.controllers.collections.CollectionController.class)
 class CollectionControllerTest {
@@ -46,7 +45,7 @@ class CollectionControllerTest {
 
   @MockitoBean private CollectionService collectionService;
 
-  private CollectionResponseDTO collectionResponse;
+  private ProductCollection collection;
 
   @BeforeEach
   void setUp() {
@@ -58,19 +57,17 @@ class CollectionControllerTest {
     product.setId(PRODUCT_ID);
     product.setStore(store);
 
-    ProductCollection collection = new ProductCollection();
+    collection = new ProductCollection();
     collection.setId(COLLECTION_ID);
     collection.setName("Primavera");
     collection.setDescription("Coleccion de primavera");
     collection.setStore(store);
     collection.setProducts(Set.of(product));
-
-    collectionResponse = new CollectionResponseDTO(collection);
   }
 
   @Test
-  void testGetByStore() throws Exception {
-    when(collectionService.getByStore(STORE_ID)).thenReturn(List.of(collectionResponse));
+  void shouldReturnCollections_WhenGetByStore() throws Exception {
+    when(collectionService.getByStore(STORE_ID)).thenReturn(List.of(collection));
 
     mockMvc
         .perform(get("/api/v1/store/{storeId}/collections", STORE_ID))
@@ -80,8 +77,8 @@ class CollectionControllerTest {
   }
 
   @Test
-  void testGetById_found() throws Exception {
-    when(collectionService.getById(COLLECTION_ID)).thenReturn(collectionResponse);
+  void shouldReturnCollection_WhenGetByIdExists() throws Exception {
+    when(collectionService.getById(COLLECTION_ID)).thenReturn(collection);
 
     mockMvc
         .perform(get("/api/v1/collections/{id}", COLLECTION_ID))
@@ -90,23 +87,22 @@ class CollectionControllerTest {
   }
 
   @Test
-  void testGetById_notFound() throws Exception {
+  void shouldReturnNotFound_WhenGetByIdMissing() throws Exception {
     UUID randomId = UUID.randomUUID();
-    when(collectionService.getById(randomId))
-        .thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
+    when(collectionService.getById(randomId)).thenThrow(new ResourceNotFoundException());
 
     mockMvc.perform(get("/api/v1/collections/{id}", randomId)).andExpect(status().isNotFound());
   }
 
   @Test
-  void testCreate_ok() throws Exception {
+  void shouldCreateCollection_WhenCreateIsValid() throws Exception {
     CollectionCreationDTO dto = new CollectionCreationDTO();
     dto.setName("Primavera");
     dto.setDescription("Coleccion de primavera");
     dto.setProductIds(Set.of(PRODUCT_ID));
 
     when(collectionService.create(eq(STORE_ID), any(CollectionCreationDTO.class)))
-        .thenReturn(collectionResponse);
+        .thenReturn(collection);
 
     mockMvc
         .perform(
@@ -119,14 +115,14 @@ class CollectionControllerTest {
   }
 
   @Test
-  void testCreate_storeNotFound() throws Exception {
+  void shouldReturnNotFound_WhenCreateAndStoreMissing() throws Exception {
     UUID randomStoreId = UUID.randomUUID();
     CollectionCreationDTO dto = new CollectionCreationDTO();
     dto.setName("Primavera");
     dto.setProductIds(Set.of());
 
     when(collectionService.create(eq(randomStoreId), any(CollectionCreationDTO.class)))
-        .thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
+        .thenThrow(new ResourceNotFoundException());
 
     mockMvc
         .perform(
@@ -137,13 +133,13 @@ class CollectionControllerTest {
   }
 
   @Test
-  void testCreate_conflict() throws Exception {
+  void shouldReturnConflict_WhenCreateAndNameExists() throws Exception {
     CollectionCreationDTO dto = new CollectionCreationDTO();
     dto.setName("Primavera");
     dto.setProductIds(Set.of());
 
     when(collectionService.create(eq(STORE_ID), any(CollectionCreationDTO.class)))
-        .thenThrow(new ResponseStatusException(HttpStatus.CONFLICT));
+        .thenThrow(new RequestConflictException("duplicate"));
 
     mockMvc
         .perform(
@@ -154,17 +150,16 @@ class CollectionControllerTest {
   }
 
   @Test
-  void testUpdate_ok() throws Exception {
+  void shouldUpdateCollection_WhenUpdateIsValid() throws Exception {
     CollectionUpdateDTO dto = new CollectionUpdateDTO();
     dto.setName("Verano");
     dto.setProductIds(Set.of(PRODUCT_ID));
 
-    CollectionResponseDTO updated = new CollectionResponseDTO();
+    ProductCollection updated = new ProductCollection();
     updated.setId(COLLECTION_ID);
     updated.setName("Verano");
-    updated.setStoreId(STORE_ID);
-    updated.setStoreName("Tienda Test");
-    updated.setProductIds(List.of(PRODUCT_ID));
+    updated.setStore(collection.getStore());
+    updated.setProducts(Set.of(collection.getProducts().iterator().next()));
 
     when(collectionService.update(eq(COLLECTION_ID), any(CollectionUpdateDTO.class)))
         .thenReturn(updated);
@@ -180,14 +175,14 @@ class CollectionControllerTest {
   }
 
   @Test
-  void testUpdate_notFound() throws Exception {
+  void shouldReturnNotFound_WhenUpdateMissing() throws Exception {
     UUID randomId = UUID.randomUUID();
     CollectionUpdateDTO dto = new CollectionUpdateDTO();
     dto.setName("Verano");
     dto.setProductIds(Set.of());
 
     when(collectionService.update(eq(randomId), any(CollectionUpdateDTO.class)))
-        .thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
+        .thenThrow(new ResourceNotFoundException());
 
     mockMvc
         .perform(
@@ -198,7 +193,7 @@ class CollectionControllerTest {
   }
 
   @Test
-  void testDelete_ok() throws Exception {
+  void shouldDeleteCollection_WhenDeleteExisting() throws Exception {
     doNothing().when(collectionService).delete(COLLECTION_ID);
 
     mockMvc
@@ -207,17 +202,15 @@ class CollectionControllerTest {
   }
 
   @Test
-  void testDelete_notFound() throws Exception {
+  void shouldReturnNotFound_WhenDeleteMissing() throws Exception {
     UUID randomId = UUID.randomUUID();
-    doThrow(new ResponseStatusException(HttpStatus.NOT_FOUND))
-        .when(collectionService)
-        .delete(randomId);
+    doThrow(new ResourceNotFoundException()).when(collectionService).delete(randomId);
 
     mockMvc.perform(delete("/api/v1/collections/{id}", randomId)).andExpect(status().isNotFound());
   }
 
   @Test
-  void testGetByStore_empty() throws Exception {
+  void shouldReturnEmptyList_WhenStoreHasNoCollections() throws Exception {
     when(collectionService.getByStore(STORE_2_ID)).thenReturn(List.of());
 
     mockMvc

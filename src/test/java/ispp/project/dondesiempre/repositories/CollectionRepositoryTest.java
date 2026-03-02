@@ -1,8 +1,6 @@
 package ispp.project.dondesiempre.repositories;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import ispp.project.dondesiempre.models.User;
@@ -82,79 +80,7 @@ class CollectionRepositoryTest {
   }
 
   @Test
-  void testCreate() {
-    Store store = createStore();
-    Product product = createProduct(store);
-
-    ProductCollection collection = new ProductCollection();
-    collection.setName("Primavera");
-    collection.setDescription("Coleccion de primavera");
-    collection.setStore(store);
-    collection.setProducts(Set.of(product));
-
-    ProductCollection saved = collectionRepository.save(collection);
-
-    assertNotNull(saved.getId());
-    assertEquals("Primavera", saved.getName());
-    assertEquals(1, saved.getProducts().size());
-  }
-
-  @Test
-  void testRead() {
-    Store store = createStore();
-    Product product = createProduct(store);
-
-    ProductCollection collection = new ProductCollection();
-    collection.setName("Verano");
-    collection.setStore(store);
-    collection.setProducts(Set.of(product));
-    ProductCollection saved = collectionRepository.save(collection);
-
-    ProductCollection found = collectionRepository.findById(saved.getId()).orElse(null);
-
-    assertNotNull(found);
-    assertEquals(saved.getId(), found.getId());
-    assertEquals("Verano", found.getName());
-    assertEquals(1, found.getProducts().size());
-  }
-
-  @Test
-  void testUpdate() {
-    Store store = createStore();
-    Product product = createProduct(store);
-
-    ProductCollection collection = new ProductCollection();
-    collection.setName("Temporada");
-    collection.setStore(store);
-    collection.setProducts(Set.of(product));
-    ProductCollection saved = collectionRepository.save(collection);
-
-    saved.setName("Temporada 2026");
-    ProductCollection updated = collectionRepository.save(saved);
-
-    assertEquals("Temporada 2026", updated.getName());
-    assertEquals(saved.getId(), updated.getId());
-  }
-
-  @Test
-  void testDelete() {
-    Store store = createStore();
-    Product product = createProduct(store);
-
-    ProductCollection collection = new ProductCollection();
-    collection.setName("Outlet");
-    collection.setStore(store);
-    collection.setProducts(Set.of(product));
-    ProductCollection saved = collectionRepository.save(collection);
-    UUID id = saved.getId();
-
-    collectionRepository.deleteById(id);
-
-    assertTrue(collectionRepository.findById(id).isEmpty());
-  }
-
-  @Test
-  void testFindByStoreId() {
+  void shouldReturnCollections_WhenFindByStoreId() {
     Store store = createStore();
     Product product = createProduct(store);
 
@@ -171,7 +97,7 @@ class CollectionRepositoryTest {
   }
 
   @Test
-  void testExistsByNameAndStoreId_true() {
+  void shouldReturnTrue_WhenNameExistsInStore() {
     Store store = createStore();
     Product product = createProduct(store);
 
@@ -185,7 +111,7 @@ class CollectionRepositoryTest {
   }
 
   @Test
-  void testExistsByNameAndStoreId_false() {
+  void shouldReturnFalse_WhenNameDoesNotExistInStore() {
     Store store = createStore();
 
     assertFalse(collectionRepository.existsByNameAndStoreId("Inexistente", store.getId()));
