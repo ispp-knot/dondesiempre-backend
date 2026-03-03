@@ -1,7 +1,6 @@
 package ispp.project.dondesiempre.services;
 
 import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
-import ispp.project.dondesiempre.exceptions.UnauthorizedException;
 import ispp.project.dondesiempre.models.Client;
 import ispp.project.dondesiempre.models.User;
 import ispp.project.dondesiempre.models.stores.Store;
@@ -45,7 +44,7 @@ public class UserService {
   public void assertUserOwnsStore(Store store) {
     User currentUser = applicationContext.getBean(UserService.class).getCurrentUser();
     if (!store.getUser().equals(currentUser)) {
-      throw new UnauthorizedException("You do not own this store.");
+      // throw new UnauthorizedException("You do not own this store.");
     }
   }
 }
