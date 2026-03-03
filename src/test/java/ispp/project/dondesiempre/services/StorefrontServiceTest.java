@@ -21,11 +21,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationContext;
 
 @ExtendWith(MockitoExtension.class)
 public class StorefrontServiceTest {
 
   @Mock private StorefrontRepository storefrontRepository;
+  @Mock private ApplicationContext applicationContext;
 
   @InjectMocks private StorefrontService storefrontService;
 
@@ -70,6 +72,8 @@ public class StorefrontServiceTest {
     dto.setPrimaryColor("#000000");
     dto.setIsFirstCollections(false);
 
+    when(applicationContext.getBean(StorefrontService.class)).thenReturn(storefrontService);
+
     when(storefrontRepository.findById(storefrontId)).thenReturn(Optional.of(storefront));
     when(storefrontRepository.save(any(Storefront.class))).thenAnswer(i -> i.getArgument(0));
 
@@ -77,6 +81,7 @@ public class StorefrontServiceTest {
 
     assertEquals("#000000", result.getPrimaryColor());
     assertEquals(false, result.getIsFirstCollections());
+
     verify(storefrontRepository, times(1)).findById(storefrontId);
     verify(storefrontRepository, times(1)).save(any(Storefront.class));
   }

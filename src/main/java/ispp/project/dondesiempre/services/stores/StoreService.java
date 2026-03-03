@@ -38,14 +38,12 @@ public class StoreService {
   }
 
   @Transactional(readOnly = true)
-  public List<StoreDTO> findStoresInBoundingBox(
+  public List<Store> findStoresInBoundingBox(
       double minLon, double minLat, double maxLon, double maxLat) {
     if (minLon > maxLon || minLat > maxLat)
       throw new InvalidBoundingBoxException(
           "Invalid bounding box parameters: minimum coordinates cannot be greater than maximum coordinates.");
-    List<Store> stores =
-        storeRepository.findStoresInBoundingBox(minLon, minLat, maxLon, maxLat, 500);
-    return stores.stream().map(StoreDTO::new).toList();
+    return storeRepository.findStoresInBoundingBox(minLon, minLat, maxLon, maxLat, 500);
   }
 
   public StoreDTO findByIdToDTO(UUID id) {
