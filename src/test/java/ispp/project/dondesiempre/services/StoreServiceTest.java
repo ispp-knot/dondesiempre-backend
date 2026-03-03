@@ -128,10 +128,9 @@ public class StoreServiceTest {
     ssn.setLink("https://instagram.com/store");
     ssn.setSocialNetwork(sn);
 
-    when(storeRepository.findById(TEST_STORE.getId())).thenReturn(Optional.of(TEST_STORE));
-    when(socialNetworkRepository.findByStoreId(TEST_STORE.getId())).thenReturn(List.of(ssn));
+    when(socialNetworkRepository.findByStoreId(TEST_STORE_ID)).thenReturn(List.of(ssn));
 
-    StoreDTO result = storeService.findByIdToDTO(TEST_STORE.getId());
+    StoreDTO result = storeService.toDTO(TEST_STORE);
 
     assertEquals("Tienda de Prueba", result.getName());
     assertEquals(1, result.getSocialNetworks().size());

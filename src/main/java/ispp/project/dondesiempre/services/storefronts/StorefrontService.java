@@ -36,6 +36,6 @@ public class StorefrontService {
 
     Storefront updatedStorefront = storefrontRepository.save(storefront);
 
-    return StorefrontDTO.fromStorefront(updatedStorefront);
+    return new StorefrontDTO(updatedStorefront);
   }
 }

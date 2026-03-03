@@ -26,8 +26,7 @@ public class StorefrontController {
   @GetMapping("/{id}")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<StorefrontDTO> getStorefrontById(@PathVariable UUID id) {
-    return new ResponseEntity<>(
-        StorefrontDTO.fromStorefront(storefrontService.findById(id)), HttpStatus.OK);
+    return new ResponseEntity<>(new StorefrontDTO(storefrontService.findById(id)), HttpStatus.OK);
   }
 
   @PutMapping("/{id}")

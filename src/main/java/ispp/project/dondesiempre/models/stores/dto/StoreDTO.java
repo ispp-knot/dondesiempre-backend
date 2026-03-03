@@ -1,6 +1,6 @@
 package ispp.project.dondesiempre.models.stores.dto;
 
-import ispp.project.dondesiempre.models.storefronts.Storefront;
+import ispp.project.dondesiempre.models.storefronts.dto.StorefrontDTO;
 import ispp.project.dondesiempre.models.stores.Store;
 import java.util.List;
 import java.util.UUID;
@@ -18,16 +18,12 @@ public class StoreDTO {
   private String address;
   private String openingHours;
   private String phone;
-  private String aboutUs;
   private Boolean acceptsShipping;
   private Double latitude;
   private Double longitude;
-  private UUID storefrontId;
-  private Boolean isFirstCollections;
-  private String primaryColor;
-  private String secondaryColor;
-  private String bannerImageUrl;
-  private List<SocialNetworkDTO> socialNetworks;
+  private String aboutUs;
+  private StorefrontDTO storefront;
+  private List<StoreSocialNetworkDTO> socialNetworks;
 
   public StoreDTO(Store store) {
     if (store == null) return;
@@ -45,13 +41,7 @@ public class StoreDTO {
       this.latitude = store.getLocation().getY();
       this.longitude = store.getLocation().getX();
     }
-
-    Storefront storefront = store.getStorefront();
-    this.storefrontId = storefront.getId();
-    this.isFirstCollections = storefront.getIsFirstCollections();
-    this.primaryColor = storefront.getPrimaryColor();
-    this.secondaryColor = storefront.getSecondaryColor();
-    this.bannerImageUrl = storefront.getBannerImageUrl();
+    this.storefront = new StorefrontDTO(store.getStorefront());
   }
 
   public StoreDTO() {}

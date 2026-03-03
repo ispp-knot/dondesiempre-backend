@@ -59,7 +59,7 @@ public class StoreControllerTest {
 
     when(storeService.findStoresInBoundingBox(minLon, minLat, maxLon, maxLat))
         .thenReturn(List.of(TEST_STORE));
-    when(storeService.findByIdToDTO(TEST_STORE.getId())).thenReturn(storeDTO);
+    when(storeService.toDTO(TEST_STORE)).thenReturn(storeDTO);
 
     mockMvc
         .perform(
@@ -150,7 +150,7 @@ public class StoreControllerTest {
     storeDTO.setId(TEST_STORE_ID);
 
     when(storeService.getMyFollowedStores()).thenReturn(List.of(TEST_STORE));
-    when(storeService.findByIdToDTO(TEST_STORE.getId())).thenReturn(storeDTO);
+    when(storeService.toDTO(TEST_STORE)).thenReturn(storeDTO);
 
     mockMvc
         .perform(get("/api/v1/clients/me/followed-stores"))

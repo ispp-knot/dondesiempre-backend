@@ -5,9 +5,8 @@ import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.models.Client;
 import ispp.project.dondesiempre.models.stores.Store;
 import ispp.project.dondesiempre.models.stores.StoreFollower;
-import ispp.project.dondesiempre.models.stores.StoreSocialNetwork;
-import ispp.project.dondesiempre.models.stores.dto.SocialNetworkDTO;
 import ispp.project.dondesiempre.models.stores.dto.StoreDTO;
+import ispp.project.dondesiempre.models.stores.dto.StoreSocialNetworkDTO;
 import ispp.project.dondesiempre.models.stores.dto.StoreUpdateDTO;
 import ispp.project.dondesiempre.repositories.stores.StoreFollowerRepository;
 import ispp.project.dondesiempre.repositories.stores.StoreRepository;
@@ -15,7 +14,6 @@ import ispp.project.dondesiempre.repositories.stores.StoreSocialNetworkRepositor
 import ispp.project.dondesiempre.services.UserService;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -38,30 +36,22 @@ public class StoreService {
   }
 
   @Transactional(readOnly = true)
+  public StoreDTO toDTO(Store store) {
+    StoreDTO dto = new StoreDTO(store);
+    dto.setSocialNetworks(
+        storeSocialNetworkRepository.findByStoreId(store.getId()).stream()
+            .map(StoreSocialNetworkDTO::new)
+            .toList());
+    return dto;
+  }
+
+  @Transactional(readOnly = true)
   public List<Store> findStoresInBoundingBox(
       double minLon, double minLat, double maxLon, double maxLat) {
     if (minLon > maxLon || minLat > maxLat)
       throw new InvalidBoundingBoxException(
           "Invalid bounding box parameters: minimum coordinates cannot be greater than maximum coordinates.");
     return storeRepository.findStoresInBoundingBox(minLon, minLat, maxLon, maxLat, 500);
-  }
-
-  public StoreDTO findByIdToDTO(UUID id) {
-    Store store =
-        storeRepository
-            .findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("Store not found"));
-
-    StoreDTO storeDTO = new StoreDTO(store);
-
-    List<StoreSocialNetwork> networks = storeSocialNetworkRepository.findByStoreId(store.getId());
-
-    List<SocialNetworkDTO> networkDTOs =
-        networks.stream().map(SocialNetworkDTO::new).collect(Collectors.toList());
-
-    storeDTO.setSocialNetworks(networkDTOs);
-
-    return storeDTO;
   }
 
   public List<StoreDTO> findAll() {
