@@ -460,4 +460,75 @@ class OutfitServiceTest {
         () -> outfitService.removeProduct(outfitId, nonExistentProduct));
     verify(outfitProductRepository, never()).delete(any());
   }
+
+  @Test
+  void shouldfindTagsByOutfitId() throws ResourceNotFoundException {
+
+    when(outfitRepository.findOutfitTagsById(outfitId)).thenReturn(List.of("casual", "summer"));
+
+    List<String> result = outfitService.findTagsByOutfitId(outfitId);
+    assertNotNull(result);
+    verify(outfitRepository, times(1)).findOutfitTagsById(outfitId);
+  }
+
+  @Test
+  void shouldfindOutfitProductsByOutfitId() throws ResourceNotFoundException {
+
+    when(outfitRepository.findOutfitOutfitProductsById(outfitId))
+        .thenReturn(List.of(outfitProduct));
+
+    List<OutfitProduct> result = outfitService.findOutfitProductsByOutfitId(outfitId);
+    assertNotNull(result);
+    verify(outfitRepository, times(1)).findOutfitOutfitProductsById(outfitId);
+  }
+
+  @Test
+  void shouldfindByStorefront() throws ResourceNotFoundException {
+
+    when(outfitRepository.findByStorefrontId(storefrontId)).thenReturn(List.of(outfit));
+
+    List<Outfit> result = outfitService.findByStorefront(storefront);
+    assertNotNull(result);
+    verify(outfitRepository, times(1)).findByStorefrontId(storefrontId);
+  }
+
+  @Test
+  void shouldRemoveTag_whenTagBelongsToOutfit() throws ResourceNotFoundException {
+    UUID tagId = UUID.randomUUID();
+    OutfitTag tag = new OutfitTag();
+    String tagName = "casual";
+    tag.setId(tagId);
+    tag.setName(tagName);
+
+    OutfitTagRelation relation = new OutfitTagRelation();
+    relation.setId(UUID.randomUUID());
+    relation.setOutfit(outfit);
+    relation.setTag(tag);
+
+    when(outfitRepository.findById(outfitId)).thenReturn(Optional.of(outfit));
+    doNothing().when(userService).assertUserOwnsStore(any());
+    when(outfitTagService.findByName(tagName)).thenReturn(tag);
+    when(outfitRepository.findTagRelation(outfitId, tagId)).thenReturn(Optional.of(relation));
+
+    outfitService.removeTag(outfitId, tagName);
+
+    verify(outfitTagRelationRepository, times(1)).delete(relation);
+  }
+
+  @Test
+  void shouldThrowResourceNotFoundException_whenTagDoesNotBelongToOutfit() {
+    String tagName = "non-existent-tag";
+    UUID nonExistentTagId = UUID.randomUUID();
+    OutfitTag nonExistentTag = new OutfitTag();
+    nonExistentTag.setId(nonExistentTagId);
+
+    when(outfitRepository.findById(outfitId)).thenReturn(Optional.of(outfit));
+    doNothing().when(userService).assertUserOwnsStore(any());
+    when(outfitTagService.findByName(tagName)).thenReturn(nonExistentTag); // Tag doesn't exist
+    when(outfitRepository.findTagRelation(outfitId, nonExistentTagId))
+        .thenReturn(Optional.empty()); // No relation found
+
+    assertThrows(ResourceNotFoundException.class, () -> outfitService.removeTag(outfitId, tagName));
+    verify(outfitTagRelationRepository, never()).delete(any());
+  }
 }
