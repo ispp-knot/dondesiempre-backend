@@ -10,11 +10,11 @@ import ispp.project.dondesiempre.repositories.products.ProductRepository;
 import ispp.project.dondesiempre.repositories.stores.StoreRepository;
 import ispp.project.dondesiempre.services.CloudinaryService;
 import ispp.project.dondesiempre.services.UserService;
-import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
@@ -27,7 +27,7 @@ public class ProductService {
   private final UserService userService;
   private final CloudinaryService cloudinaryService;
 
-  @Transactional(rollbackOn = InvalidRequestException.class)
+  @Transactional(rollbackFor = InvalidRequestException.class)
   public Product saveProduct(ProductCreationDTO dto, MultipartFile image)
       throws InvalidRequestException {
     if (dto.getDiscountedPriceInCents() > dto.getPriceInCents()) {
@@ -54,6 +54,7 @@ public class ProductService {
     return productRepository.save(product);
   }
 
+  @Transactional(readOnly = true)
   public Product getProductById(UUID id) {
     Product product =
         productRepository
@@ -62,10 +63,12 @@ public class ProductService {
     return product;
   }
 
+  @Transactional(readOnly = true)
   public List<Product> getAllProducts() {
     return productRepository.findAll();
   }
 
+  @Transactional(readOnly = true)
   public List<Product> getAllDiscountedProducts() {
     return productRepository.findAllDiscountedProducts();
   }
