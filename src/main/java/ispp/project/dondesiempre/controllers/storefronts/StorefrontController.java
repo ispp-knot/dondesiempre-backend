@@ -29,11 +29,12 @@ public class StorefrontController {
     return new ResponseEntity<>(new StorefrontDTO(storefrontService.findById(id)), HttpStatus.OK);
   }
 
+  // TODO: Descomentar la línea 39 para validar que el usuario es dueño de la tienda
   @PutMapping("/{id}")
   public ResponseEntity<StorefrontDTO> updateStorefront(
       @PathVariable UUID id, @RequestBody StorefrontDTO storefrontDTO) {
     Storefront storefront = storefrontService.findById(id);
-    userService.assertUserOwnsStore(storefront.getStore());
+    // userService.assertUserOwnsStore(storefront.getStore());
     StorefrontDTO updated = storefrontService.updateStorefront(id, storefrontDTO);
     return ResponseEntity.ok(updated);
   }
