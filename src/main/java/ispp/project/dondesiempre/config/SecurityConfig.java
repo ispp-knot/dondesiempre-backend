@@ -30,9 +30,9 @@ public class SecurityConfig implements WebMvcConfigurer {
                 auth.requestMatchers("/api/v1/health")
                     .permitAll()
                     .requestMatchers("/api/v1/stores/*/followers/**")
-                    .authenticated()
+                    .permitAll()
                     .requestMatchers("/api/v1/clients/me/followed-stores")
-                    .authenticated()
+                    .permitAll()
                     .anyRequest()
                     .permitAll());
 
