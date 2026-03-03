@@ -50,13 +50,14 @@ public class StoreControllerTest {
     // Dado
     double minLon = -6.0, minLat = 37.0, maxLon = -5.0, maxLat = 38.0;
 
-    StoreDTO store = new StoreDTO();
-    store.setName("Tienda Centro");
-    store.setLatitude(37.5);
-    store.setLongitude(-5.5);
+    StoreDTO storeDTO = new StoreDTO();
+    storeDTO.setName("Tienda Centro");
+    storeDTO.setLatitude(37.5);
+    storeDTO.setLongitude(-5.5);
 
     when(storeService.findStoresInBoundingBox(minLon, minLat, maxLon, maxLat))
-        .thenReturn(List.of(store));
+        .thenReturn(List.of(TEST_STORE));
+    when(storeService.toDTO(TEST_STORE)).thenReturn(storeDTO);
 
     mockMvc
         .perform(
@@ -82,11 +83,13 @@ public class StoreControllerTest {
   @Test
   void shouldReturnOkAndStoreDTO_whenGetStoreByIdExists() throws Exception {
     UUID storeId = UUID.randomUUID();
-    StoreDTO store = new StoreDTO();
-    store.setName("La Boutique");
-    store.setAddress("Calle Mayor 1");
+    Store store = StoreMockEntities.sampleStore(storeId);
+    StoreDTO storeDTO = new StoreDTO();
+    storeDTO.setName("La Boutique");
+    storeDTO.setAddress("Calle Mayor 1");
 
-    when(storeService.findByIdAsDTO(storeId)).thenReturn(store);
+    when(storeService.findById(storeId)).thenReturn(store);
+    when(storeService.toDTO(store)).thenReturn(storeDTO);
 
     mockMvc
         .perform(get("/api/v1/stores/{id}", storeId))
@@ -135,7 +138,12 @@ public class StoreControllerTest {
   @Test
   @WithMockUser(username = "testUser")
   void getMyFollowedStores_shouldReturnFollowedStores_whenAuthorized() throws Exception {
+    StoreDTO storeDTO = new StoreDTO();
+    storeDTO.setId(TEST_STORE_ID);
+
     when(storeService.getMyFollowedStores()).thenReturn(List.of(TEST_STORE));
+    when(storeService.toDTO(TEST_STORE)).thenReturn(storeDTO);
+
     mockMvc
         .perform(get("/api/v1/clients/me/followed-stores"))
         .andExpect(status().isOk())

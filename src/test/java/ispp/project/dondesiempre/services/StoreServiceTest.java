@@ -78,7 +78,7 @@ public class StoreServiceTest {
         .thenReturn(List.of(TEST_STORE));
 
     // Cuando
-    List<StoreDTO> result = storeService.findStoresInBoundingBox(minLon, minLat, maxLon, maxLat);
+    List<Store> result = storeService.findStoresInBoundingBox(minLon, minLat, maxLon, maxLat);
 
     // Entonces
     assertEquals(1, result.size());
@@ -109,17 +109,16 @@ public class StoreServiceTest {
   }
 
   @Test
-  void shouldReturnStoreDTOWithSocialNetworks_whenFindByIdAsDTOExists() {
+  void shouldReturnStoreDTOWithSocialNetworks_whenToDTOCalled() {
     SocialNetwork sn = new SocialNetwork();
     sn.setName("instagram");
     StoreSocialNetwork ssn = new StoreSocialNetwork();
     ssn.setLink("https://instagram.com/store");
     ssn.setSocialNetwork(sn);
 
-    when(storeRepository.findById(TEST_STORE_ID)).thenReturn(Optional.of(TEST_STORE));
     when(socialNetworkRepository.findByStoreId(TEST_STORE_ID)).thenReturn(List.of(ssn));
 
-    StoreDTO result = storeService.findByIdAsDTO(TEST_STORE_ID);
+    StoreDTO result = storeService.toDTO(TEST_STORE);
 
     assertEquals("Tienda de Prueba", result.getName());
     assertEquals(1, result.getSocialNetworks().size());

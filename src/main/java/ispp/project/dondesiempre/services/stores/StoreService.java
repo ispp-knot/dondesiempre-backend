@@ -32,26 +32,23 @@ public class StoreService {
         .orElseThrow(() -> new ResourceNotFoundException("Store with ID " + id + " not found."));
   }
 
-  @Transactional(readOnly = true, rollbackFor = ResourceNotFoundException.class)
-  public StoreDTO findByIdAsDTO(UUID id) throws ResourceNotFoundException {
-    Store store = findById(id);
+  @Transactional(readOnly = true)
+  public StoreDTO toDTO(Store store) {
     StoreDTO dto = new StoreDTO(store);
     dto.setSocialNetworks(
-        socialNetworkRepository.findByStoreId(id).stream()
+        socialNetworkRepository.findByStoreId(store.getId()).stream()
             .map(StoreSocialNetworkDTO::new)
             .toList());
     return dto;
   }
 
   @Transactional(readOnly = true)
-  public List<StoreDTO> findStoresInBoundingBox(
+  public List<Store> findStoresInBoundingBox(
       double minLon, double minLat, double maxLon, double maxLat) {
     if (minLon > maxLon || minLat > maxLat)
       throw new InvalidBoundingBoxException(
           "Invalid bounding box parameters: minimum coordinates cannot be greater than maximum coordinates.");
-    List<Store> stores =
-        storeRepository.findStoresInBoundingBox(minLon, minLat, maxLon, maxLat, 500);
-    return stores.stream().map(StoreDTO::new).toList();
+    return storeRepository.findStoresInBoundingBox(minLon, minLat, maxLon, maxLat, 500);
   }
 
   @Transactional
