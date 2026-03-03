@@ -11,4 +11,6 @@ public interface StoreFollowerRepository extends JpaRepository<StoreFollower, UU
   Optional<StoreFollower> findByClientIdAndStoreId(UUID clientId, UUID storeId);
 
   List<StoreFollower> findByClientId(UUID clientId);
+
+  boolean existsByClientIdAndStoreId(UUID clientId, UUID storeId);
 }
