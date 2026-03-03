@@ -2,6 +2,7 @@ package ispp.project.dondesiempre.mockEntities;
 
 import ispp.project.dondesiempre.models.Client;
 import ispp.project.dondesiempre.models.User;
+import ispp.project.dondesiempre.models.storefronts.Storefront;
 import ispp.project.dondesiempre.models.stores.Store;
 import ispp.project.dondesiempre.models.stores.StoreFollower;
 import ispp.project.dondesiempre.services.UserService;
@@ -13,7 +14,9 @@ public class StoreMockEntities {
     Store store = new Store();
     store.setId(TEST_STORE_ID);
     store.setName("Tienda de Prueba");
-
+    Storefront storefront = new Storefront();
+    storefront.setIsFirstCollections(true);
+    store.setStorefront(storefront);
     return store;
   }
 

@@ -7,6 +7,7 @@ import ispp.project.dondesiempre.models.stores.Store;
 import ispp.project.dondesiempre.models.stores.StoreFollower;
 import ispp.project.dondesiempre.models.stores.dto.StoreDTO;
 import ispp.project.dondesiempre.models.stores.dto.StoreSocialNetworkDTO;
+import ispp.project.dondesiempre.models.stores.dto.StoreUpdateDTO;
 import ispp.project.dondesiempre.repositories.stores.StoreFollowerRepository;
 import ispp.project.dondesiempre.repositories.stores.StoreRepository;
 import ispp.project.dondesiempre.repositories.stores.StoreSocialNetworkRepository;
@@ -14,6 +15,7 @@ import ispp.project.dondesiempre.services.UserService;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,7 +23,8 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class StoreService {
   private final StoreRepository storeRepository;
-  private final StoreSocialNetworkRepository socialNetworkRepository;
+  private final StoreSocialNetworkRepository storeSocialNetworkRepository;
+  private final ApplicationContext applicationContext;
   private final StoreFollowerRepository storeFollowerRepository;
   private final UserService userService;
 
@@ -36,7 +39,7 @@ public class StoreService {
   public StoreDTO toDTO(Store store) {
     StoreDTO dto = new StoreDTO(store);
     dto.setSocialNetworks(
-        socialNetworkRepository.findByStoreId(store.getId()).stream()
+        storeSocialNetworkRepository.findByStoreId(store.getId()).stream()
             .map(StoreSocialNetworkDTO::new)
             .toList());
     return dto;
@@ -49,6 +52,28 @@ public class StoreService {
       throw new InvalidBoundingBoxException(
           "Invalid bounding box parameters: minimum coordinates cannot be greater than maximum coordinates.");
     return storeRepository.findStoresInBoundingBox(minLon, minLat, maxLon, maxLat, 500);
+  }
+
+  public List<StoreDTO> findAll() {
+    List<Store> stores = storeRepository.findAll();
+    return stores.stream().map(StoreDTO::new).toList();
+  }
+
+  @Transactional(rollbackFor = ResourceNotFoundException.class)
+  public StoreDTO updateStore(UUID id, StoreUpdateDTO dto) throws ResourceNotFoundException {
+    Store storeToUpdate;
+
+    storeToUpdate = applicationContext.getBean(StoreService.class).findById(id);
+
+    if (dto.getName() != null) storeToUpdate.setName(dto.getName());
+    if (dto.getEmail() != null) storeToUpdate.setEmail(dto.getEmail());
+    if (dto.getStoreID() != null) storeToUpdate.setStoreID(dto.getStoreID());
+    if (dto.getAddress() != null) storeToUpdate.setAddress(dto.getAddress());
+    if (dto.getOpeningHours() != null) storeToUpdate.setOpeningHours(dto.getOpeningHours());
+    if (dto.getPhone() != null) storeToUpdate.setPhone(dto.getPhone());
+    if (dto.getAboutUs() != null) storeToUpdate.setAboutUs(dto.getAboutUs());
+
+    return new StoreDTO(storeRepository.save(storeToUpdate));
   }
 
   @Transactional

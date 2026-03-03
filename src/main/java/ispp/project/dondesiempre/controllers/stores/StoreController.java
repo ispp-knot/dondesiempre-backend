@@ -3,6 +3,7 @@ package ispp.project.dondesiempre.controllers.stores;
 import ispp.project.dondesiempre.models.Client;
 import ispp.project.dondesiempre.models.stores.dto.StoreDTO;
 import ispp.project.dondesiempre.models.stores.dto.StoreFollowerDTO;
+import ispp.project.dondesiempre.models.stores.dto.StoreUpdateDTO;
 import ispp.project.dondesiempre.services.UserService;
 import ispp.project.dondesiempre.services.stores.StoreService;
 import java.util.List;
@@ -14,6 +15,8 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -26,12 +29,6 @@ public class StoreController {
   private final StoreService storeService;
   private final UserService userService;
 
-  @GetMapping("/stores/{id}")
-  @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<StoreDTO> getStoreById(@PathVariable UUID id) {
-    return new ResponseEntity<>(storeService.toDTO(storeService.findById(id)), HttpStatus.OK);
-  }
-
   @GetMapping("/stores")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<List<StoreDTO>> searchStoresInBoundingBox(
@@ -41,9 +38,28 @@ public class StoreController {
       @RequestParam double maxLat) {
     return new ResponseEntity<>(
         storeService.findStoresInBoundingBox(minLon, minLat, maxLon, maxLat).stream()
-            .map(storeService::toDTO)
+            .map(s -> storeService.toDTO(s))
             .toList(),
         HttpStatus.OK);
+  }
+
+  @GetMapping("/stores/all")
+  @ResponseStatus(HttpStatus.OK)
+  public ResponseEntity<List<StoreDTO>> getStores() {
+    return new ResponseEntity<>(storeService.findAll(), HttpStatus.OK);
+  }
+
+  @GetMapping("/stores/{id}")
+  @ResponseStatus(HttpStatus.OK)
+  public ResponseEntity<StoreDTO> getStoreById(@PathVariable UUID id) {
+    return new ResponseEntity<>(storeService.toDTO(storeService.findById(id)), HttpStatus.OK);
+  }
+
+  @PutMapping("/stores/{id}")
+  @ResponseStatus(HttpStatus.OK)
+  public ResponseEntity<StoreDTO> updateStore(
+      @PathVariable("id") UUID id, @RequestBody StoreUpdateDTO dto) {
+    return new ResponseEntity<>(storeService.updateStore(id, dto), HttpStatus.OK);
   }
 
   @PostMapping("/stores/{storeId}/followers")

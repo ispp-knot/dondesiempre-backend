@@ -15,6 +15,7 @@ import ispp.project.dondesiempre.exceptions.InvalidBoundingBoxException;
 import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.mockEntities.StoreMockEntities;
 import ispp.project.dondesiempre.models.Client;
+import ispp.project.dondesiempre.models.storefronts.Storefront;
 import ispp.project.dondesiempre.models.stores.SocialNetwork;
 import ispp.project.dondesiempre.models.stores.Store;
 import ispp.project.dondesiempre.models.stores.StoreFollower;
@@ -27,11 +28,13 @@ import ispp.project.dondesiempre.services.stores.StoreService;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationContext;
 
 @ExtendWith(MockitoExtension.class)
 public class StoreServiceTest {
@@ -39,10 +42,25 @@ public class StoreServiceTest {
   @Mock private StoreRepository storeRepository;
   @Mock private StoreSocialNetworkRepository socialNetworkRepository;
   @Mock private StoreFollowerRepository storeFollowerRepository;
-
   @Mock private UserService userService;
 
+  @Mock private ApplicationContext applicationContext;
+
   @InjectMocks private StoreService storeService;
+
+  private Store store;
+  private UUID storeId;
+
+  @BeforeEach
+  void setUp() {
+    store = new Store();
+    storeId = UUID.randomUUID();
+    store.setId(storeId);
+    store.setName("Tienda de Prueba");
+    Storefront storefront = new Storefront();
+    storefront.setIsFirstCollections(true);
+    store.setStorefront(storefront);
+  }
 
   private static final Client TEST_CLIENT = StoreMockEntities.sampleClient();
   private static final UUID TEST_STORE_ID = UUID.randomUUID();
@@ -72,34 +90,28 @@ public class StoreServiceTest {
 
   @Test
   void shouldReturnStoreList_whenBoundingBoxIsValid() {
-    // Dado
     double minLon = -6.0, minLat = 37.0, maxLon = -5.0, maxLat = 38.0;
     when(storeRepository.findStoresInBoundingBox(minLon, minLat, maxLon, maxLat, 500))
         .thenReturn(List.of(TEST_STORE));
 
-    // Cuando
     List<Store> result = storeService.findStoresInBoundingBox(minLon, minLat, maxLon, maxLat);
 
-    // Entonces
     assertEquals(1, result.size());
     verify(storeRepository, times(1)).findStoresInBoundingBox(minLon, minLat, maxLon, maxLat, 500);
   }
 
   @Test
   void shouldThrowInvalidBoundingBoxException_whenMinLonIsGreaterThanMaxLon() {
-    // minLon (-5.0) es mayor que maxLon (-6.0)
     assertThrows(
         InvalidBoundingBoxException.class,
         () -> storeService.findStoresInBoundingBox(-5.0, 37.0, -6.0, 38.0));
 
-    // Verificamos que NUNCA se llama al repositorio si la validación falla
     verify(storeRepository, times(0))
         .findStoresInBoundingBox(anyDouble(), anyDouble(), anyDouble(), anyDouble(), anyInt());
   }
 
   @Test
   void shouldThrowInvalidBoundingBoxException_whenMinLatIsGreaterThanMaxLat() {
-    // minLat (38.0) es mayor que maxLat (37.0)
     assertThrows(
         InvalidBoundingBoxException.class,
         () -> storeService.findStoresInBoundingBox(-6.0, 38.0, -5.0, 37.0));

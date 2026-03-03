@@ -24,4 +24,6 @@ public class StorefrontDTO {
     this.secondaryColor = storefront.getSecondaryColor();
     this.bannerImageUrl = storefront.getBannerImageUrl();
   }
+
+  public StorefrontDTO() {}
 }
