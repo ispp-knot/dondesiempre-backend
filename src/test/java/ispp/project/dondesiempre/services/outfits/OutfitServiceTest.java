@@ -191,7 +191,7 @@ class OutfitServiceTest {
     when(outfitRepository.findOutfitProductIndicesById(outfitId)).thenReturn(new ArrayList<>());
     when(outfitProductRepository.save(any())).thenReturn(outfitProduct);
 
-    Outfit result = outfitService.create(dto);
+    Outfit result = outfitService.create(dto, null);
 
     assertNotNull(result);
     assertEquals(outfitId, result.getId());
@@ -210,7 +210,7 @@ class OutfitServiceTest {
 
     when(storefrontService.findById(storefrontId)).thenReturn(storefront);
 
-    assertThrows(InvalidRequestException.class, () -> outfitService.create(dto));
+    assertThrows(InvalidRequestException.class, () -> outfitService.create(dto, null));
     verify(outfitRepository, never()).save(any());
   }
 
@@ -225,7 +225,7 @@ class OutfitServiceTest {
 
     when(storefrontService.findById(storefrontId)).thenReturn(storefront);
 
-    assertThrows(InvalidRequestException.class, () -> outfitService.create(dto));
+    assertThrows(InvalidRequestException.class, () -> outfitService.create(dto, null));
     verify(outfitRepository, never()).save(any());
   }
 
@@ -237,13 +237,12 @@ class OutfitServiceTest {
     dto.setName("Updated Outfit");
     dto.setDescription("Updated Description");
     dto.setDiscountedPriceInCents(2000);
-    dto.setImage(null);
     dto.setIndex(1);
 
     when(outfitRepository.findById(outfitId)).thenReturn(Optional.of(outfit));
     when(outfitRepository.save(any())).thenReturn(outfit);
 
-    Outfit result = outfitService.update(outfitId, dto);
+    Outfit result = outfitService.update(outfitId, dto, null);
 
     assertNotNull(result);
     assertEquals("Updated Outfit", result.getName());

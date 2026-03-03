@@ -26,6 +26,12 @@ public class StoreController {
   private final StoreService storeService;
   private final UserService userService;
 
+  @GetMapping("/stores/{id}")
+  @ResponseStatus(HttpStatus.OK)
+  public ResponseEntity<StoreDTO> getStoreById(@PathVariable UUID id) {
+    return new ResponseEntity<>(storeService.toDTO(storeService.findById(id)), HttpStatus.OK);
+  }
+
   @GetMapping("/stores")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<List<StoreDTO>> searchStoresInBoundingBox(
@@ -34,7 +40,10 @@ public class StoreController {
       @RequestParam double maxLon,
       @RequestParam double maxLat) {
     return new ResponseEntity<>(
-        storeService.findStoresInBoundingBox(minLon, minLat, maxLon, maxLat), HttpStatus.OK);
+        storeService.findStoresInBoundingBox(minLon, minLat, maxLon, maxLat).stream()
+            .map(storeService::toDTO)
+            .toList(),
+        HttpStatus.OK);
   }
 
   @PostMapping("/stores/{storeId}/followers")
@@ -55,7 +64,7 @@ public class StoreController {
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<List<StoreDTO>> getMyFollowedStores() {
     List<StoreDTO> followedStores =
-        storeService.getMyFollowedStores().stream().map(store -> new StoreDTO(store)).toList();
+        storeService.getMyFollowedStores().stream().map(storeService::toDTO).toList();
     return new ResponseEntity<>(followedStores, HttpStatus.OK);
   }
 

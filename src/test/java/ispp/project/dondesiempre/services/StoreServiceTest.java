@@ -15,11 +15,14 @@ import ispp.project.dondesiempre.exceptions.InvalidBoundingBoxException;
 import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.mockEntities.StoreMockEntities;
 import ispp.project.dondesiempre.models.Client;
+import ispp.project.dondesiempre.models.stores.SocialNetwork;
 import ispp.project.dondesiempre.models.stores.Store;
 import ispp.project.dondesiempre.models.stores.StoreFollower;
+import ispp.project.dondesiempre.models.stores.StoreSocialNetwork;
 import ispp.project.dondesiempre.models.stores.dto.StoreDTO;
 import ispp.project.dondesiempre.repositories.stores.StoreFollowerRepository;
 import ispp.project.dondesiempre.repositories.stores.StoreRepository;
+import ispp.project.dondesiempre.repositories.stores.StoreSocialNetworkRepository;
 import ispp.project.dondesiempre.services.stores.StoreService;
 import java.util.List;
 import java.util.Optional;
@@ -34,6 +37,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 public class StoreServiceTest {
 
   @Mock private StoreRepository storeRepository;
+  @Mock private StoreSocialNetworkRepository socialNetworkRepository;
   @Mock private StoreFollowerRepository storeFollowerRepository;
 
   @Mock private UserService userService;
@@ -74,7 +78,7 @@ public class StoreServiceTest {
         .thenReturn(List.of(TEST_STORE));
 
     // Cuando
-    List<StoreDTO> result = storeService.findStoresInBoundingBox(minLon, minLat, maxLon, maxLat);
+    List<Store> result = storeService.findStoresInBoundingBox(minLon, minLat, maxLon, maxLat);
 
     // Entonces
     assertEquals(1, result.size());
@@ -102,6 +106,24 @@ public class StoreServiceTest {
 
     verify(storeRepository, times(0))
         .findStoresInBoundingBox(anyDouble(), anyDouble(), anyDouble(), anyDouble(), anyInt());
+  }
+
+  @Test
+  void shouldReturnStoreDTOWithSocialNetworks_whenToDTOCalled() {
+    SocialNetwork sn = new SocialNetwork();
+    sn.setName("instagram");
+    StoreSocialNetwork ssn = new StoreSocialNetwork();
+    ssn.setLink("https://instagram.com/store");
+    ssn.setSocialNetwork(sn);
+
+    when(socialNetworkRepository.findByStoreId(TEST_STORE_ID)).thenReturn(List.of(ssn));
+
+    StoreDTO result = storeService.toDTO(TEST_STORE);
+
+    assertEquals("Tienda de Prueba", result.getName());
+    assertEquals(1, result.getSocialNetworks().size());
+    assertEquals("instagram", result.getSocialNetworks().get(0).getName());
+    assertEquals("https://instagram.com/store", result.getSocialNetworks().get(0).getLink());
   }
 
   @Test

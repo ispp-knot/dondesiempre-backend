@@ -102,7 +102,7 @@ public class PromotionServiceTest {
     dto.setDescription("This is a test product");
     dto.setTypeId(typeId);
     dto.setStoreId(storeId);
-    return productService.saveProduct(dto);
+    return productService.saveProduct(dto, null);
   }
 
   private Promotion createPromotion(

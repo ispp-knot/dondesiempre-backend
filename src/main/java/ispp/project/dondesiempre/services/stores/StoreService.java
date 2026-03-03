@@ -6,8 +6,10 @@ import ispp.project.dondesiempre.models.Client;
 import ispp.project.dondesiempre.models.stores.Store;
 import ispp.project.dondesiempre.models.stores.StoreFollower;
 import ispp.project.dondesiempre.models.stores.dto.StoreDTO;
+import ispp.project.dondesiempre.models.stores.dto.StoreSocialNetworkDTO;
 import ispp.project.dondesiempre.repositories.stores.StoreFollowerRepository;
 import ispp.project.dondesiempre.repositories.stores.StoreRepository;
+import ispp.project.dondesiempre.repositories.stores.StoreSocialNetworkRepository;
 import ispp.project.dondesiempre.services.UserService;
 import java.util.List;
 import java.util.UUID;
@@ -19,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class StoreService {
   private final StoreRepository storeRepository;
+  private final StoreSocialNetworkRepository socialNetworkRepository;
   private final StoreFollowerRepository storeFollowerRepository;
   private final UserService userService;
 
@@ -30,14 +33,22 @@ public class StoreService {
   }
 
   @Transactional(readOnly = true)
-  public List<StoreDTO> findStoresInBoundingBox(
+  public StoreDTO toDTO(Store store) {
+    StoreDTO dto = new StoreDTO(store);
+    dto.setSocialNetworks(
+        socialNetworkRepository.findByStoreId(store.getId()).stream()
+            .map(StoreSocialNetworkDTO::new)
+            .toList());
+    return dto;
+  }
+
+  @Transactional(readOnly = true)
+  public List<Store> findStoresInBoundingBox(
       double minLon, double minLat, double maxLon, double maxLat) {
     if (minLon > maxLon || minLat > maxLat)
       throw new InvalidBoundingBoxException(
           "Invalid bounding box parameters: minimum coordinates cannot be greater than maximum coordinates.");
-    List<Store> stores =
-        storeRepository.findStoresInBoundingBox(minLon, minLat, maxLon, maxLat, 500);
-    return stores.stream().map(StoreDTO::new).toList();
+    return storeRepository.findStoresInBoundingBox(minLon, minLat, maxLon, maxLat, 500);
   }
 
   @Transactional

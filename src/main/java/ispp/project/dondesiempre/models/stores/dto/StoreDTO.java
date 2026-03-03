@@ -1,6 +1,8 @@
 package ispp.project.dondesiempre.models.stores.dto;
 
+import ispp.project.dondesiempre.models.storefronts.dto.StorefrontDTO;
 import ispp.project.dondesiempre.models.stores.Store;
+import java.util.List;
 import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,6 +21,9 @@ public class StoreDTO {
   private Boolean acceptsShipping;
   private Double latitude;
   private Double longitude;
+  private String aboutUs;
+  private StorefrontDTO storefront;
+  private List<StoreSocialNetworkDTO> socialNetworks;
 
   public StoreDTO(Store store) {
     if (store == null) return;
@@ -30,11 +35,13 @@ public class StoreDTO {
     this.address = store.getAddress();
     this.openingHours = store.getOpeningHours();
     this.phone = store.getPhone();
+    this.aboutUs = store.getAboutUs();
     this.acceptsShipping = store.getAcceptsShipping();
     if (store.getLocation() != null) {
       this.latitude = store.getLocation().getY();
       this.longitude = store.getLocation().getX();
     }
+    this.storefront = new StorefrontDTO(store.getStorefront());
   }
 
   public StoreDTO() {}

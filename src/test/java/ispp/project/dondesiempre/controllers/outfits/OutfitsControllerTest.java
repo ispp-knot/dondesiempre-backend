@@ -6,9 +6,9 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -33,7 +33,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockPart;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -172,15 +174,15 @@ class OutfitsControllerTest {
     creationDTO.setTags(List.of(TEST_TAG));
     creationDTO.setProducts(List.of(productDTO));
 
-    when(outfitService.create(any())).thenReturn(outfit);
+    when(outfitService.create(any(), any())).thenReturn(outfit);
     when(outfitService.findTagsByOutfitId(outfitId)).thenReturn(List.of(TEST_TAG));
     when(outfitService.findOutfitProductsByOutfitId(outfitId)).thenReturn(List.of(outfitProduct));
 
+    MockPart dtoPart = new MockPart("dto", objectMapper.writeValueAsBytes(creationDTO));
+    dtoPart.getHeaders().setContentType(MediaType.APPLICATION_JSON);
+
     mockMvc
-        .perform(
-            post("/api/v1/outfits")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(creationDTO)))
+        .perform(multipart("/api/v1/outfits").part(dtoPart))
         .andExpect(status().isCreated())
         .andExpect(jsonPath("$.id").value(outfitId.toString()))
         .andExpect(jsonPath("$.name").value(outfit.getName()));
@@ -197,15 +199,15 @@ class OutfitsControllerTest {
     updateDTO.setDiscountedPriceInCents(2000);
     updateDTO.setIndex(1);
 
-    when(outfitService.update(eq(outfitId), any())).thenReturn(outfit);
+    when(outfitService.update(eq(outfitId), any(), any())).thenReturn(outfit);
     when(outfitService.findTagsByOutfitId(outfitId)).thenReturn(List.of());
     when(outfitService.findOutfitProductsByOutfitId(outfitId)).thenReturn(List.of(outfitProduct));
 
+    MockPart dtoPart = new MockPart("dto", objectMapper.writeValueAsBytes(updateDTO));
+    dtoPart.getHeaders().setContentType(MediaType.APPLICATION_JSON);
+
     mockMvc
-        .perform(
-            put("/api/v1/outfits/" + outfitId)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(updateDTO)))
+        .perform(multipart(HttpMethod.PUT, "/api/v1/outfits/" + outfitId).part(dtoPart))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.id").value(outfitId.toString()));
   }
