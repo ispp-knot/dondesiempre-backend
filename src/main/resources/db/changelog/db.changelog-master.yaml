@@ -14,9 +14,13 @@ databaseChangeLog:
   - include:
       file: db/changelog/007-reference-data/007.changelog.yaml
   - include:
+      file: db/changelog/008-promotions-on-products/promotions-on-products.changelog.yaml
+  - include:
       file: db/changelog/010-add-product-image/add-product-image.changelog.yaml
   - include:
       file: db/changelog/011-users/011.changelog.yaml
+  - include:
+      file: db/changelog/012-added-images-to-promotions/images-on-promotions.changelog.yaml
   - include:
       file: db/changelog/014-add-store-followers/add-store-followers.changelog.yaml
   - include:
