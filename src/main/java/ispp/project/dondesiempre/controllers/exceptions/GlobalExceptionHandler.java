@@ -2,6 +2,7 @@ package ispp.project.dondesiempre.controllers.exceptions;
 
 import ispp.project.dondesiempre.exceptions.InvalidBoundingBoxException;
 import ispp.project.dondesiempre.exceptions.InvalidRequestException;
+import ispp.project.dondesiempre.exceptions.RequestConflictException;
 import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.exceptions.UnauthorizedException;
 import org.springframework.http.HttpStatus;
@@ -39,6 +40,13 @@ public class GlobalExceptionHandler {
   public ResponseEntity<String> handleUnauthorizedException(
       UnauthorizedException exception, WebRequest request) {
     return new ResponseEntity<>(exception.getMessage(), HttpStatus.FORBIDDEN);
+  }
+
+  @ResponseStatus(HttpStatus.CONFLICT)
+  @ExceptionHandler(RequestConflictException.class)
+  public ResponseEntity<String> handleRequestConflictException(
+      RequestConflictException exception, WebRequest request) {
+    return new ResponseEntity<>(exception.getMessage(), HttpStatus.CONFLICT);
   }
 
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
