@@ -39,7 +39,7 @@ public class SecurityConfig implements WebMvcConfigurer {
             auth ->
                 auth
                     // Login is public
-                    .requestMatchers(HttpMethod.POST, "/api/v1/auth/logIn")
+                    .requestMatchers(HttpMethod.POST, "/api/v1/auth/login")
                     .permitAll()
                     // Store reads are public
                     .requestMatchers(HttpMethod.GET, "/api/v1/stores", "/api/v1/stores/all")
