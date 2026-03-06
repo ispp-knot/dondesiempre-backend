@@ -20,8 +20,10 @@ public class AuthService {
   private final UserService userService;
   private final JwtService jwtService;
 
-  @Transactional(readOnly = true)
-  public User getCurrentUser() {
+  @Transactional(
+      readOnly = true,
+      rollbackFor = {UnauthorizedException.class, ResourceNotFoundException.class})
+  public User getCurrentUser() throws UnauthorizedException, ResourceNotFoundException {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     if (authentication == null
         || !authentication.isAuthenticated()
@@ -34,15 +36,16 @@ public class AuthService {
         .orElseThrow(() -> new ResourceNotFoundException("Authenticated user not found."));
   }
 
-  @Transactional(readOnly = true)
-  public void assertUserOwnsStore(Store store) {
+  @Transactional(readOnly = true, rollbackFor = UnauthorizedException.class)
+  public void assertUserOwnsStore(Store store) throws UnauthorizedException {
     User currentUser = getCurrentUser();
     if (!store.getUser().equals(currentUser)) {
       throw new UnauthorizedException("You do not own this store.");
     }
   }
 
-  public String logIn(String email, String password) {
+  @Transactional(readOnly = true, rollbackFor = UnauthorizedException.class)
+  public String logIn(String email, String password) throws UnauthorizedException {
     User user =
         userRepository
             .findByEmail(email)

@@ -1,6 +1,7 @@
 package ispp.project.dondesiempre.services;
 
 import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
+import ispp.project.dondesiempre.exceptions.UnauthorizedException;
 import ispp.project.dondesiempre.models.Client;
 import ispp.project.dondesiempre.models.User;
 import ispp.project.dondesiempre.repositories.ClientRepository;
@@ -23,7 +24,7 @@ public class UserService {
   private final PasswordEncoder passwordEncoder;
   private final ApplicationContext applicationContext;
 
-  @Transactional
+  @Transactional(rollbackFor = Exception.class)
   public User register(String email, String password) {
     User user = new User();
     user.setEmail(email);
@@ -35,8 +36,10 @@ public class UserService {
     return passwordEncoder.matches(rawPassword, user.getPassword());
   }
 
-  @Transactional(readOnly = true, rollbackFor = ResourceNotFoundException.class)
-  public Client getCurrentClient() throws ResourceNotFoundException {
+  @Transactional(
+      readOnly = true,
+      rollbackFor = {ResourceNotFoundException.class, UnauthorizedException.class})
+  public Client getCurrentClient() throws ResourceNotFoundException, UnauthorizedException {
     User currentUser = applicationContext.getBean(AuthService.class).getCurrentUser();
     return clientRepository
         .findByUserId(currentUser.getId())
