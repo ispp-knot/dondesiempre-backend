@@ -16,8 +16,8 @@ import ispp.project.dondesiempre.models.stores.Store;
 import ispp.project.dondesiempre.repositories.UserRepository;
 import ispp.project.dondesiempre.repositories.products.ProductTypeRepository;
 import ispp.project.dondesiempre.repositories.stores.StoreRepository;
+import ispp.project.dondesiempre.services.AuthService;
 import ispp.project.dondesiempre.services.CloudinaryService;
-import ispp.project.dondesiempre.services.UserService;
 import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
@@ -45,7 +45,7 @@ public class ProductControllerTest {
   @Autowired private ProductTypeRepository productTypeRepository;
   @Autowired private StoreRepository storeRepository;
   @Autowired private UserRepository userRepository;
-  @MockitoBean private UserService userService;
+  @MockitoBean private AuthService authService;
   @MockitoBean private CloudinaryService cloudinaryService;
 
   private User testUser;

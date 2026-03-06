@@ -93,8 +93,8 @@ public class StorefrontControllerTest {
     when(storefrontService.findById(id)).thenReturn(storefront);
 
     doThrow(new UnauthorizedException("You do not own this store."))
-        .when(userService)
-        .assertUserOwnsStore(any());
+        .when(storefrontService)
+        .updateStorefront(any(), any());
 
     mockMvc
         .perform(

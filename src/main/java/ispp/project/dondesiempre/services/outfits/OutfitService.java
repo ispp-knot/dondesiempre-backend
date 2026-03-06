@@ -15,8 +15,8 @@ import ispp.project.dondesiempre.models.stores.Store;
 import ispp.project.dondesiempre.repositories.outfits.OutfitProductRepository;
 import ispp.project.dondesiempre.repositories.outfits.OutfitRepository;
 import ispp.project.dondesiempre.repositories.outfits.OutfitTagRelationRepository;
+import ispp.project.dondesiempre.services.AuthService;
 import ispp.project.dondesiempre.services.CloudinaryService;
-import ispp.project.dondesiempre.services.UserService;
 import ispp.project.dondesiempre.services.products.ProductService;
 import ispp.project.dondesiempre.services.storefronts.StorefrontService;
 import jakarta.persistence.EntityNotFoundException;
@@ -37,7 +37,7 @@ public class OutfitService {
 
   private final ProductService productService;
   private final StorefrontService storefrontService;
-  private final UserService userService;
+  private final AuthService authService;
 
   private final OutfitTagService outfitTagService;
   private final CloudinaryService cloudinaryService;
@@ -85,7 +85,7 @@ public class OutfitService {
       outfit.setImage(cloudinaryService.upload(image));
     }
     Storefront storefront = storefrontService.findById(dto.getStorefrontId());
-    userService.assertUserOwnsStore(storefront.getStore());
+    authService.assertUserOwnsStore(storefront.getStore());
     outfit.setStorefront(storefront);
 
     if (dto.getProducts() == null || (dto.getProducts() != null && dto.getProducts().size() <= 0)) {
@@ -115,7 +115,7 @@ public class OutfitService {
     Outfit outfitToUpdate;
 
     outfitToUpdate = applicationContext.getBean(OutfitService.class).findById(id);
-    userService.assertUserOwnsStore(outfitToUpdate.getStorefront().getStore());
+    authService.assertUserOwnsStore(outfitToUpdate.getStorefront().getStore());
 
     outfitToUpdate.setName(dto.getName());
     outfitToUpdate.setDescription(dto.getDescription());
@@ -135,7 +135,7 @@ public class OutfitService {
     OutfitTagRelation outfitTag;
 
     outfit = applicationContext.getBean(OutfitService.class).findById(outfitId);
-    userService.assertUserOwnsStore(outfit.getStorefront().getStore());
+    authService.assertUserOwnsStore(outfit.getStorefront().getStore());
     tag = outfitTagService.findOrCreate(tagName);
 
     outfitTag = new OutfitTagRelation();
@@ -153,7 +153,7 @@ public class OutfitService {
     OutfitTagRelation relation;
 
     outfit = applicationContext.getBean(OutfitService.class).findById(outfitId);
-    userService.assertUserOwnsStore(outfit.getStorefront().getStore());
+    authService.assertUserOwnsStore(outfit.getStorefront().getStore());
     tag = outfitTagService.findByName(tagName);
 
     relation =
@@ -174,7 +174,7 @@ public class OutfitService {
     List<Integer> productIndicesOfOutfit;
 
     outfit = applicationContext.getBean(OutfitService.class).findById(outfitId);
-    userService.assertUserOwnsStore(outfit.getStorefront().getStore());
+    authService.assertUserOwnsStore(outfit.getStorefront().getStore());
     product = productService.getProductById(dto.getId());
 
     productsOfOutfit = outfitRepository.findOutfitProductsById(outfitId);
@@ -204,7 +204,7 @@ public class OutfitService {
     OutfitProduct relation;
 
     outfit = applicationContext.getBean(OutfitService.class).findById(outfitId);
-    userService.assertUserOwnsStore(outfit.getStorefront().getStore());
+    authService.assertUserOwnsStore(outfit.getStorefront().getStore());
     relation =
         outfitRepository
             .findProductRelation(outfit.getId(), product.getId())
@@ -221,7 +221,7 @@ public class OutfitService {
     List<OutfitProduct> relations;
 
     outfit = applicationContext.getBean(OutfitService.class).findById(outfitId);
-    userService.assertUserOwnsStore(outfit.getStorefront().getStore());
+    authService.assertUserOwnsStore(outfit.getStorefront().getStore());
     relations = outfitRepository.findOutfitOutfitProductsById(outfitId);
 
     for (OutfitProduct relation : relations) {
@@ -243,7 +243,7 @@ public class OutfitService {
   @Transactional
   public void delete(UUID id) {
     Outfit outfit = applicationContext.getBean(OutfitService.class).findById(id);
-    userService.assertUserOwnsStore(outfit.getStorefront().getStore());
+    authService.assertUserOwnsStore(outfit.getStorefront().getStore());
     outfitRepository.findOutfitOutfitProductsById(id).stream()
         .forEach(p -> outfitProductRepository.deleteById(p.getId()));
     outfitRepository.findOutfitOutfitTagsById(id).stream()
