@@ -16,6 +16,8 @@ import ispp.project.dondesiempre.controllers.auth.dto.LoginRequestDTO;
 import ispp.project.dondesiempre.exceptions.UnauthorizedException;
 import ispp.project.dondesiempre.models.User;
 import ispp.project.dondesiempre.services.AuthService;
+import ispp.project.dondesiempre.services.UserService;
+import ispp.project.dondesiempre.services.stores.StoreService;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +34,8 @@ class AuthControllerTest {
   @Autowired private ObjectMapper objectMapper;
 
   @MockitoBean private AuthService authService;
+  @MockitoBean private UserService userService;
+  @MockitoBean private StoreService storeService;
   @MockitoBean private JwtProperties jwtProperties;
 
   @Test

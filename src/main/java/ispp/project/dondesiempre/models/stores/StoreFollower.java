@@ -1,7 +1,7 @@
 package ispp.project.dondesiempre.models.stores;
 
 import ispp.project.dondesiempre.models.BaseEntity;
-import ispp.project.dondesiempre.models.Client;
+import ispp.project.dondesiempre.models.clients.Client;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;

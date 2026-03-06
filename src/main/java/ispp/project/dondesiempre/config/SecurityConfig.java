@@ -38,8 +38,12 @@ public class SecurityConfig implements WebMvcConfigurer {
         .authorizeHttpRequests(
             auth ->
                 auth
-                    // Login is public
-                    .requestMatchers(HttpMethod.POST, "/api/v1/auth/login")
+                    // Auth endpoints are public
+                    .requestMatchers(
+                        HttpMethod.POST,
+                        "/api/v1/auth/login",
+                        "/api/v1/auth/register/store",
+                        "/api/v1/auth/register/client")
                     .permitAll()
                     // Store reads are public
                     .requestMatchers(HttpMethod.GET, "/api/v1/stores", "/api/v1/stores/all")

@@ -1,7 +1,7 @@
 package ispp.project.dondesiempre.seed;
 
-import ispp.project.dondesiempre.models.Client;
 import ispp.project.dondesiempre.models.User;
+import ispp.project.dondesiempre.models.clients.Client;
 import ispp.project.dondesiempre.models.outfits.Outfit;
 import ispp.project.dondesiempre.models.outfits.OutfitProduct;
 import ispp.project.dondesiempre.models.outfits.OutfitTag;

@@ -1,5 +1,6 @@
 package ispp.project.dondesiempre.controllers.exceptions;
 
+import ispp.project.dondesiempre.exceptions.AlreadyExistsException;
 import ispp.project.dondesiempre.exceptions.InvalidBoundingBoxException;
 import ispp.project.dondesiempre.exceptions.InvalidRequestException;
 import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
@@ -39,6 +40,13 @@ public class GlobalExceptionHandler {
   public ResponseEntity<String> handleUnauthorizedException(
       UnauthorizedException exception, WebRequest request) {
     return new ResponseEntity<>(exception.getMessage(), HttpStatus.FORBIDDEN);
+  }
+
+  @ResponseStatus(HttpStatus.CONFLICT)
+  @ExceptionHandler(AlreadyExistsException.class)
+  public ResponseEntity<String> handleAlreadyExistsException(
+      AlreadyExistsException exception, WebRequest request) {
+    return new ResponseEntity<>(exception.getMessage(), HttpStatus.CONFLICT);
   }
 
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)

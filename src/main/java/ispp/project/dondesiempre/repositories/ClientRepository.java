@@ -1,6 +1,6 @@
 package ispp.project.dondesiempre.repositories;
 
-import ispp.project.dondesiempre.models.Client;
+import ispp.project.dondesiempre.models.clients.Client;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;

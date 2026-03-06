@@ -14,7 +14,7 @@ import static org.mockito.Mockito.when;
 import ispp.project.dondesiempre.exceptions.InvalidBoundingBoxException;
 import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.mockEntities.StoreMockEntities;
-import ispp.project.dondesiempre.models.Client;
+import ispp.project.dondesiempre.models.clients.Client;
 import ispp.project.dondesiempre.models.storefronts.Storefront;
 import ispp.project.dondesiempre.models.stores.SocialNetwork;
 import ispp.project.dondesiempre.models.stores.Store;

@@ -1,7 +1,7 @@
 package ispp.project.dondesiempre.mockEntities;
 
-import ispp.project.dondesiempre.models.Client;
 import ispp.project.dondesiempre.models.User;
+import ispp.project.dondesiempre.models.clients.Client;
 import ispp.project.dondesiempre.models.storefronts.Storefront;
 import ispp.project.dondesiempre.models.stores.Store;
 import ispp.project.dondesiempre.models.stores.StoreFollower;
