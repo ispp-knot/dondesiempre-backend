@@ -12,7 +12,6 @@ import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.models.storefronts.Storefront;
 import ispp.project.dondesiempre.models.storefronts.dto.StorefrontDTO;
 import ispp.project.dondesiempre.repositories.storefronts.StorefrontRepository;
-import ispp.project.dondesiempre.services.AuthService;
 import ispp.project.dondesiempre.services.storefronts.StorefrontService;
 import java.util.Optional;
 import java.util.UUID;
