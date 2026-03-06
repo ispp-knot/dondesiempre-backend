@@ -63,7 +63,7 @@ class AuthIntegrationTest {
     MvcResult loginResult =
         mockMvc
             .perform(
-                post("/api/v1/auth/logIn")
+                post("/api/v1/auth/login")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(loginDTO)))
             .andExpect(status().isOk())
