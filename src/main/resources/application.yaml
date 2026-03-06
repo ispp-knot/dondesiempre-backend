@@ -21,6 +21,9 @@ cloudinary:
 jwt:
   secret: ${JWT_SECRET:dev-secret-must-be-changed-in-production!!}
   duration: ${JWT_DURATION:2592000}
+  # Secure flag on the JWT cookie. Off by default so plain-HTTP dev works.
+  # This is set to true in the proudction profile
+  secure-cookie: ${JWT_SECURE_COOKIE:false}
 
 springdoc:
   swagger-ui:
