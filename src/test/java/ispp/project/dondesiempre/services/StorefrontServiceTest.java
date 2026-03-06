@@ -12,6 +12,7 @@ import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.models.storefronts.Storefront;
 import ispp.project.dondesiempre.models.storefronts.dto.StorefrontDTO;
 import ispp.project.dondesiempre.repositories.storefronts.StorefrontRepository;
+import ispp.project.dondesiempre.services.AuthService;
 import ispp.project.dondesiempre.services.storefronts.StorefrontService;
 import java.util.Optional;
 import java.util.UUID;
@@ -28,6 +29,7 @@ public class StorefrontServiceTest {
 
   @Mock private StorefrontRepository storefrontRepository;
   @Mock private ApplicationContext applicationContext;
+  @Mock private AuthService authService;
 
   @InjectMocks private StorefrontService storefrontService;
 

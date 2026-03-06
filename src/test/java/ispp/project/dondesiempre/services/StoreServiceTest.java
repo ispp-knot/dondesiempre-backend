@@ -24,6 +24,7 @@ import ispp.project.dondesiempre.models.stores.dto.StoreDTO;
 import ispp.project.dondesiempre.repositories.stores.StoreFollowerRepository;
 import ispp.project.dondesiempre.repositories.stores.StoreRepository;
 import ispp.project.dondesiempre.repositories.stores.StoreSocialNetworkRepository;
+import ispp.project.dondesiempre.services.AuthService;
 import ispp.project.dondesiempre.services.stores.StoreService;
 import java.util.List;
 import java.util.Optional;
@@ -43,6 +44,7 @@ public class StoreServiceTest {
   @Mock private StoreSocialNetworkRepository socialNetworkRepository;
   @Mock private StoreFollowerRepository storeFollowerRepository;
   @Mock private UserService userService;
+  @Mock private AuthService authService;
 
   @Mock private ApplicationContext applicationContext;
 

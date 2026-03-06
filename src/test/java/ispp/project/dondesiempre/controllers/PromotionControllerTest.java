@@ -68,6 +68,7 @@ public class PromotionControllerTest {
   }
 
   @Test
+  @WithMockUser
   void shouldCreateNewPromotion_shouldReturnForbidden_whenNotAuthorized() throws Exception {
     PromotionCreationDTO createDTO = new PromotionCreationDTO();
     createDTO.setName("Test Promotion");
@@ -134,6 +135,7 @@ public class PromotionControllerTest {
   }
 
   @Test
+  @WithMockUser
   void shouldUpdatePromotion_shouldReturnForbidden_whenNotAuthorized() throws Exception {
     PromotionUpdateDTO updateDTO = new PromotionUpdateDTO();
     updateDTO.setDiscountPercentage(30);
@@ -245,6 +247,7 @@ public class PromotionControllerTest {
   }
 
   @Test
+  @WithMockUser
   void shouldDeletePromotion_shouldReturnForbidden_whenNotAuthorized() throws Exception {
     doThrow(new UnauthorizedException("Not authorized"))
         .when(promotionService)

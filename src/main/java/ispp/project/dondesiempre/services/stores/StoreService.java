@@ -11,6 +11,7 @@ import ispp.project.dondesiempre.models.stores.dto.StoreUpdateDTO;
 import ispp.project.dondesiempre.repositories.stores.StoreFollowerRepository;
 import ispp.project.dondesiempre.repositories.stores.StoreRepository;
 import ispp.project.dondesiempre.repositories.stores.StoreSocialNetworkRepository;
+import ispp.project.dondesiempre.services.AuthService;
 import ispp.project.dondesiempre.services.UserService;
 import java.util.List;
 import java.util.UUID;
@@ -27,6 +28,7 @@ public class StoreService {
   private final ApplicationContext applicationContext;
   private final StoreFollowerRepository storeFollowerRepository;
   private final UserService userService;
+  private final AuthService authService;
 
   @Transactional(readOnly = true, rollbackFor = ResourceNotFoundException.class)
   public Store findById(UUID id) throws ResourceNotFoundException {
@@ -64,6 +66,7 @@ public class StoreService {
     Store storeToUpdate;
 
     storeToUpdate = applicationContext.getBean(StoreService.class).findById(id);
+    authService.assertUserOwnsStore(storeToUpdate);
 
     if (dto.getName() != null) storeToUpdate.setName(dto.getName());
     if (dto.getEmail() != null) storeToUpdate.setEmail(dto.getEmail());

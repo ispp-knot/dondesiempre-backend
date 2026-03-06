@@ -3,6 +3,7 @@ package ispp.project.dondesiempre.config;
 import ispp.project.dondesiempre.security.JwtAuthFilter;
 import ispp.project.dondesiempre.services.JwtService;
 import java.util.Arrays;
+import org.springframework.http.HttpMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +42,53 @@ public class SecurityConfig implements WebMvcConfigurer {
     http.csrf(AbstractHttpConfigurer::disable)
         .cors(Customizer.withDefaults())
         .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-        .authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
+        .authorizeHttpRequests(
+            auth ->
+                auth
+                    // Login is public
+                    .requestMatchers(HttpMethod.POST, "/api/v1/auth/logIn").permitAll()
+                    // Store reads are public
+                    .requestMatchers(HttpMethod.GET, "/api/v1/stores", "/api/v1/stores/all")
+                    .permitAll()
+                    .requestMatchers(HttpMethod.GET, "/api/v1/stores/*/outfits")
+                    .permitAll()
+                    .requestMatchers(HttpMethod.GET, "/api/v1/stores/*/promotions")
+                    .permitAll()
+                    .requestMatchers(HttpMethod.GET, "/api/v1/stores/*")
+                    .permitAll()
+                    // Product reads are public
+                    .requestMatchers(
+                        HttpMethod.GET, "/api/v1/products", "/api/v1/products/discounted")
+                    .permitAll()
+                    .requestMatchers(HttpMethod.GET, "/api/v1/products/*")
+                    .permitAll()
+                    // Storefront reads are public
+                    .requestMatchers(HttpMethod.GET, "/api/v1/storefronts/*/products")
+                    .permitAll()
+                    .requestMatchers(HttpMethod.GET, "/api/v1/storefronts/*/outfits")
+                    .permitAll()
+                    .requestMatchers(HttpMethod.GET, "/api/v1/storefronts/*")
+                    .permitAll()
+                    // Outfit reads are public
+                    .requestMatchers(HttpMethod.GET, "/api/v1/outfits/*")
+                    .permitAll()
+                    // Promotion reads are public
+                    .requestMatchers(
+                        HttpMethod.GET, "/api/v1/promotions", "/api/v1/promotions/*")
+                    .permitAll()
+                    // Health check and error handler
+                    .requestMatchers(HttpMethod.GET, "/api/v1/health")
+                    .permitAll()
+                    .requestMatchers("/error")
+                    .permitAll()
+                    // Swagger UI (dev profile only)
+                    .requestMatchers("/api/v1/swagger-ui/**", "/api/v1/api-docs/**")
+                    .permitAll()
+                    .requestMatchers("/swagger-ui/**", "/v3/api-docs/**")
+                    .permitAll()
+                    // Everything else requires authentication
+                    .anyRequest()
+                    .authenticated());
 
     if (jwtService != null) {
       http.addFilterBefore(

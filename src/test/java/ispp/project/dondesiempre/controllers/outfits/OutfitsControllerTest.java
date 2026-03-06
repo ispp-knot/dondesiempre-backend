@@ -33,6 +33,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockPart;
@@ -162,6 +163,7 @@ class OutfitsControllerTest {
   // -------------------------------------------------------------------------
 
   @Test
+  @WithMockUser
   void create_shouldReturnCreated_whenValidDTO() throws Exception {
     OutfitCreationProductDTO productDTO = new OutfitCreationProductDTO();
     productDTO.setId(productId);
@@ -193,6 +195,7 @@ class OutfitsControllerTest {
   // -------------------------------------------------------------------------
 
   @Test
+  @WithMockUser
   void update_shouldReturnOk_whenOutfitExists() throws Exception {
     OutfitUpdateDTO updateDTO = new OutfitUpdateDTO();
     updateDTO.setName("Updated Outfit");
@@ -217,6 +220,7 @@ class OutfitsControllerTest {
   // -------------------------------------------------------------------------
 
   @Test
+  @WithMockUser
   void addTag_shouldReturnCreated_whenOutfitExists() throws Exception {
     when(outfitService.addTag(eq(outfitId), any())).thenReturn(TEST_TAG);
 
@@ -234,6 +238,7 @@ class OutfitsControllerTest {
   // -------------------------------------------------------------------------
 
   @Test
+  @WithMockUser
   void removeTag_shouldReturnOk_whenTagExists() throws Exception {
     doNothing().when(outfitService).removeTag(eq(outfitId), any());
 
@@ -251,6 +256,7 @@ class OutfitsControllerTest {
   // -------------------------------------------------------------------------
 
   @Test
+  @WithMockUser
   void addProduct_shouldReturnCreated_whenValid() throws Exception {
     OutfitCreationProductDTO productDTO = new OutfitCreationProductDTO();
     productDTO.setId(productId);
@@ -272,6 +278,7 @@ class OutfitsControllerTest {
   // -------------------------------------------------------------------------
 
   @Test
+  @WithMockUser
   void removeProduct_shouldReturnCreated_whenValid() throws Exception {
     when(productService.getProductById(productId)).thenReturn(product);
     doNothing().when(outfitService).removeProduct(eq(outfitId), eq(product));
@@ -287,6 +294,7 @@ class OutfitsControllerTest {
   // -------------------------------------------------------------------------
 
   @Test
+  @WithMockUser
   void sortProducts_shouldReturnOk_whenValid() throws Exception {
     OutfitCreationProductDTO p1 = new OutfitCreationProductDTO();
     p1.setId(productId);
@@ -308,6 +316,7 @@ class OutfitsControllerTest {
   // -------------------------------------------------------------------------
 
   @Test
+  @WithMockUser
   void delete_shouldReturnOk_whenOutfitExists() throws Exception {
     doNothing().when(outfitService).delete(outfitId);
 
