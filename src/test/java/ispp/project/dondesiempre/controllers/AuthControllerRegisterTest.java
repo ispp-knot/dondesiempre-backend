@@ -113,12 +113,40 @@ class AuthControllerRegisterTest {
         .andExpect(status().isConflict());
   }
 
+  // --- password strength ---
+
+  @Test
+  void registerStore_shouldReturn400_whenPasswordIsWeak() throws Exception {
+    RegisterStoreDTO dto = buildStoreDTORequest("store@test.com");
+    dto.setPassword("weak");
+
+    mockMvc
+        .perform(
+            post("/api/v1/auth/register/store")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)))
+        .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  void registerClient_shouldReturn400_whenPasswordIsWeak() throws Exception {
+    RegisterClientDTO dto = buildClientDTORequest("client@test.com");
+    dto.setPassword("weak");
+
+    mockMvc
+        .perform(
+            post("/api/v1/auth/register/client")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)))
+        .andExpect(status().isBadRequest());
+  }
+
   // --- helpers ---
 
   private RegisterStoreDTO buildStoreDTORequest(String email) {
     RegisterStoreDTO dto = new RegisterStoreDTO();
     dto.setEmail(email);
-    dto.setPassword("password");
+    dto.setPassword("Password1!");
     dto.setName("Test Store");
     dto.setStoreID("B12345678");
     dto.setLatitude(40.416775);
@@ -136,7 +164,7 @@ class AuthControllerRegisterTest {
   private RegisterClientDTO buildClientDTORequest(String email) {
     RegisterClientDTO dto = new RegisterClientDTO();
     dto.setEmail(email);
-    dto.setPassword("password");
+    dto.setPassword("Password1!");
     dto.setName("John");
     dto.setSurname("Doe");
     dto.setPhone("+34600000000");

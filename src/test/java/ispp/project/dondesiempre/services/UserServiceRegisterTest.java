@@ -47,7 +47,7 @@ class UserServiceRegisterTest {
   @Test
   void registerStore_shouldCreateUserStorefrontAndStore() {
     when(userRepository.findByEmail("store@test.com")).thenReturn(Optional.empty());
-    when(passwordEncoder.encode("password")).thenReturn("hashed");
+    when(passwordEncoder.encode("Password1!")).thenReturn("hashed");
     when(userRepository.save(any(User.class))).thenReturn(new User());
     when(storefrontRepository.save(any(Storefront.class))).thenReturn(new Storefront());
 
@@ -105,7 +105,7 @@ class UserServiceRegisterTest {
   @Test
   void registerClient_shouldCreateUserAndClient() {
     when(userRepository.findByEmail("client@test.com")).thenReturn(Optional.empty());
-    when(passwordEncoder.encode("password")).thenReturn("hashed");
+    when(passwordEncoder.encode("Password1!")).thenReturn("hashed");
     when(userRepository.save(any(User.class))).thenReturn(new User());
 
     Client savedClient = new Client();
@@ -141,7 +141,7 @@ class UserServiceRegisterTest {
   private RegisterStoreDTO buildStoreDTO(String email) {
     RegisterStoreDTO dto = new RegisterStoreDTO();
     dto.setEmail(email);
-    dto.setPassword("password");
+    dto.setPassword("Password1!");
     dto.setName("Test Store");
     dto.setStoreID("B12345678");
     dto.setLatitude(40.416775);
@@ -159,7 +159,7 @@ class UserServiceRegisterTest {
   private RegisterClientDTO buildClientDTO(String email) {
     RegisterClientDTO dto = new RegisterClientDTO();
     dto.setEmail(email);
-    dto.setPassword("password");
+    dto.setPassword("Password1!");
     dto.setName("John");
     dto.setSurname("Doe");
     dto.setPhone("+34600000000");

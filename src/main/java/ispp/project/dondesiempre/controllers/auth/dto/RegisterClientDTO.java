@@ -1,6 +1,7 @@
 package ispp.project.dondesiempre.controllers.auth.dto;
 
 import ispp.project.dondesiempre.validators.Phone;
+import ispp.project.dondesiempre.validators.StrongPassword;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -14,7 +15,7 @@ public class RegisterClientDTO {
   // User credentials
   @NotBlank @Email private String email;
 
-  @NotBlank private String password;
+  @NotBlank @StrongPassword private String password;
 
   // Client fields (required)
   @NotBlank
