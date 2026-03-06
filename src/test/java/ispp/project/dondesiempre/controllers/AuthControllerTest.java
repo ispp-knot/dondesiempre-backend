@@ -43,7 +43,7 @@ class AuthControllerTest {
 
     mockMvc
         .perform(
-            post("/api/v1/auth/logIn")
+            post("/api/v1/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto)))
         .andExpect(status().isOk())
@@ -60,7 +60,7 @@ class AuthControllerTest {
 
     mockMvc
         .perform(
-            post("/api/v1/auth/logIn")
+            post("/api/v1/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto)))
         .andExpect(status().isForbidden());
