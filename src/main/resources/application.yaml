@@ -22,8 +22,11 @@ jwt:
   secret: ${JWT_SECRET:dev-secret-must-be-changed-in-production!!}
   duration: ${JWT_DURATION:2592000}
   # Secure flag on the JWT cookie. Off by default so plain-HTTP dev works.
-  # This is set to true in the proudction profile
+  # This is set to true in the production profile
   secure-cookie: ${JWT_SECURE_COOKIE:false}
+  # SameSite attribute. Lax in dev; overridden to None in the production profile
+  # (cross-site requests require None, which must be paired with Secure=true).
+  same-site: ${JWT_SAME_SITE:Lax}
 
 springdoc:
   swagger-ui:

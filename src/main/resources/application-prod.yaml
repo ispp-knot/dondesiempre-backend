@@ -11,3 +11,6 @@ jwt:
   # The Secure flag tells the browser to only send the cookie over HTTPS, preventing it from
   # leaking over a plain HTTP connection.
   secure-cookie: true
+  # SameSite=None is required for cross-site requests in production. Must be paired with
+  # Secure=true (enforced above).
+  same-site: None

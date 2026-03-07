@@ -22,7 +22,7 @@ public class StoreMockEntities {
   public static Client sampleClient() {
     User user = new User();
     user.setId(UUID.randomUUID());
-    user.setEmail("owner@laboutique.es");
+    user.setEmail("client@client.com");
 
     Client client = new Client();
     client.setId(UUID.randomUUID());

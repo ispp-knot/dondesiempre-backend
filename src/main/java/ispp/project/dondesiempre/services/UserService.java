@@ -30,20 +30,12 @@ public class UserService {
   /** Email used for the seed store owner. Referenced by DataSeeder. */
   public static final String SEED_USER_EMAIL = "owner@laboutique.es";
 
-  private final UserRepository userRepository;
   private final ClientRepository clientRepository;
   private final StoreRepository storeRepository;
   private final StorefrontRepository storefrontRepository;
+  private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
   private final ApplicationContext applicationContext;
-
-  @Transactional(rollbackFor = Exception.class)
-  public User register(String email, String password) {
-    User user = new User();
-    user.setEmail(email);
-    user.setPassword(passwordEncoder.encode(password));
-    return userRepository.save(user);
-  }
 
   public boolean checkPassword(User user, String rawPassword) {
     return passwordEncoder.matches(rawPassword, user.getPassword());
@@ -113,5 +105,15 @@ public class UserService {
     return clientRepository
         .findByUserId(currentUser.getId())
         .orElseThrow(() -> new ResourceNotFoundException("Current client not found."));
+  }
+
+  @Transactional(
+      readOnly = true,
+      rollbackFor = {ResourceNotFoundException.class, UnauthorizedException.class})
+  public Store getCurrentStore() throws ResourceNotFoundException, UnauthorizedException {
+    User currentUser = applicationContext.getBean(AuthService.class).getCurrentUser();
+    return storeRepository
+        .findByUserId(currentUser.getId())
+        .orElseThrow(() -> new ResourceNotFoundException("Current store not found."));
   }
 }

@@ -23,4 +23,11 @@ public class JwtProperties {
    * via the JWT_SECURE_COOKIE env var, or forced to true by the prod Spring profile.
    */
   private boolean secureCookie = false;
+
+  /**
+   * SameSite attribute for the JWT cookie. "Lax" in development (allows normal navigation); "None"
+   * in production (required for cross-site requests, must be paired with Secure=true). Controlled
+   * via the JWT_SAME_SITE env var, or forced to "None" by the prod Spring profile.
+   */
+  private String sameSite = "Lax";
 }

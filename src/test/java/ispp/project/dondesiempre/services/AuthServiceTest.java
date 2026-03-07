@@ -2,7 +2,11 @@ package ispp.project.dondesiempre.services;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
 import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
@@ -14,15 +18,18 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationContext;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @ExtendWith(MockitoExtension.class)
 class AuthServiceTest {
@@ -30,8 +37,15 @@ class AuthServiceTest {
   @Mock private UserRepository userRepository;
   @Mock private UserService userService;
   @Mock private JwtService jwtService;
+  @Mock private PasswordEncoder passwordEncoder;
+  @Mock private ApplicationContext applicationContext;
 
   @InjectMocks private AuthService authService;
+
+  @BeforeEach
+  void setUp() {
+    lenient().when(applicationContext.getBean(AuthService.class)).thenReturn(authService);
+  }
 
   @AfterEach
   void clearSecurityContext() {
@@ -145,5 +159,23 @@ class AuthServiceTest {
     when(userService.checkPassword(user, "wrong")).thenReturn(false);
 
     assertThrows(UnauthorizedException.class, () -> authService.logIn("user@test.com", "wrong"));
+  }
+
+  // --- register ---
+
+  @Test
+  void register_shouldCreateUserWithHashedPassword() {
+    when(passwordEncoder.encode(anyString())).thenReturn("hashed-password");
+    User saved = new User();
+    saved.setId(UUID.randomUUID());
+    saved.setEmail("test@example.com");
+    saved.setPassword("hashed-password");
+    when(userRepository.save(any(User.class))).thenReturn(saved);
+
+    User result = authService.register("test@example.com", "raw-password");
+
+    assertNotNull(result.getId());
+    assertEquals("test@example.com", result.getEmail());
+    assertEquals("hashed-password", result.getPassword());
   }
 }
