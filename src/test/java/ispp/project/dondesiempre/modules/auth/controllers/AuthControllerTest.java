@@ -1,4 +1,4 @@
-package ispp.project.dondesiempre.controllers;
+package ispp.project.dondesiempre.modules.auth.controllers;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
@@ -11,7 +11,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ispp.project.dondesiempre.config.JwtProperties;
-import ispp.project.dondesiempre.modules.auth.controllers.AuthController;
 import ispp.project.dondesiempre.modules.auth.dtos.LoginRequestDTO;
 import ispp.project.dondesiempre.modules.auth.models.User;
 import ispp.project.dondesiempre.modules.auth.services.AuthService;

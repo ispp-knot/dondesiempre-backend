@@ -1,4 +1,4 @@
-package ispp.project.dondesiempre;
+package ispp.project.dondesiempre.modules.auth.controllers;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
