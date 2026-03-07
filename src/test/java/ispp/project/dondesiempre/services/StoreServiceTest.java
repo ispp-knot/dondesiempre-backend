@@ -43,6 +43,7 @@ public class StoreServiceTest {
   @Mock private StoreSocialNetworkRepository socialNetworkRepository;
   @Mock private StoreFollowerRepository storeFollowerRepository;
   @Mock private UserService userService;
+  @Mock private AuthService authService;
 
   @Mock private ApplicationContext applicationContext;
 

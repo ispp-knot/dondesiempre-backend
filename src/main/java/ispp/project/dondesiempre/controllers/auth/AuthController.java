@@ -30,7 +30,13 @@ public class AuthController {
     String token = authService.logIn(dto.email(), dto.password());
     ResponseCookie cookie =
         ResponseCookie.from("token", token)
+            // Prevent JavaScript from reading the cookie (XSS mitigation).
             .httpOnly(true)
+            // Only send the cookie over HTTPS. Disabled in dev (no TLS); enabled in prod
+            // via jwt.secure-cookie=true (set in application-prod.yaml or JWT_SECURE_COOKIE
+            // env).
+            .secure(jwtProperties.isSecureCookie())
+            .sameSite(jwtProperties.getSameSite())
             .path("/")
             .maxAge(jwtProperties.getDuration())
             .build();
