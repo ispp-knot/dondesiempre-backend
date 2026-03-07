@@ -28,7 +28,7 @@ import ispp.project.dondesiempre.models.stores.Store;
 import ispp.project.dondesiempre.repositories.outfits.OutfitProductRepository;
 import ispp.project.dondesiempre.repositories.outfits.OutfitRepository;
 import ispp.project.dondesiempre.repositories.outfits.OutfitTagRelationRepository;
-import ispp.project.dondesiempre.services.UserService;
+import ispp.project.dondesiempre.services.AuthService;
 import ispp.project.dondesiempre.services.products.ProductService;
 import ispp.project.dondesiempre.services.storefronts.StorefrontService;
 import java.util.ArrayList;
@@ -50,7 +50,7 @@ class OutfitServiceTest {
   @Mock private OutfitProductRepository outfitProductRepository;
   @Mock private OutfitTagRelationRepository outfitTagRelationRepository;
   @Mock private ProductService productService;
-  @Mock private UserService userService;
+  @Mock private AuthService authService;
   @Mock private StorefrontService storefrontService;
   @Mock private OutfitTagService outfitTagService;
   @Mock private ApplicationContext applicationContext;
@@ -346,7 +346,7 @@ class OutfitServiceTest {
     when(outfitRepository.findOutfitOutfitTagsById(outfitId)).thenReturn(List.of());
 
     // Evitamos que falle la validación de ownership
-    doNothing().when(userService).assertUserOwnsStore(any());
+    doNothing().when(authService).assertUserOwnsStore(any());
 
     // Ejecutamos
     outfitService.delete(outfitId);
@@ -505,7 +505,7 @@ class OutfitServiceTest {
     relation.setTag(tag);
 
     when(outfitRepository.findById(outfitId)).thenReturn(Optional.of(outfit));
-    doNothing().when(userService).assertUserOwnsStore(any());
+    doNothing().when(authService).assertUserOwnsStore(any());
     when(outfitTagService.findByName(tagName)).thenReturn(tag);
     when(outfitRepository.findTagRelation(outfitId, tagId)).thenReturn(Optional.of(relation));
 
@@ -522,7 +522,7 @@ class OutfitServiceTest {
     nonExistentTag.setId(nonExistentTagId);
 
     when(outfitRepository.findById(outfitId)).thenReturn(Optional.of(outfit));
-    doNothing().when(userService).assertUserOwnsStore(any());
+    doNothing().when(authService).assertUserOwnsStore(any());
     when(outfitTagService.findByName(tagName)).thenReturn(nonExistentTag); // Tag doesn't exist
     when(outfitRepository.findTagRelation(outfitId, nonExistentTagId))
         .thenReturn(Optional.empty()); // No relation found

@@ -18,6 +18,10 @@ cloudinary:
   url: ${CLOUDINARY_URL:}
   folder-prefix: ${CLOUDINARY_FOLDER_PREFIX:dev}
 
+jwt:
+  secret: ${JWT_SECRET:dev-secret-must-be-changed-in-production!!}
+  duration: ${JWT_DURATION:2592000}
+
 springdoc:
   swagger-ui:
     enabled: false

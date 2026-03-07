@@ -1,80 +1,45 @@
 package ispp.project.dondesiempre.services;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
-import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
-import ispp.project.dondesiempre.exceptions.UnauthorizedException;
 import ispp.project.dondesiempre.models.User;
-import ispp.project.dondesiempre.models.stores.Store;
-import ispp.project.dondesiempre.repositories.UserRepository;
-import java.util.Optional;
-import java.util.UUID;
-import org.junit.jupiter.api.Disabled;
+import ispp.project.dondesiempre.repositories.ClientRepository;
+import ispp.project.dondesiempre.repositories.stores.StoreRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationContext;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
 
-  @Mock private UserRepository userRepository;
+  @Mock private ClientRepository clientRepository;
+  @Mock private StoreRepository storeRepository;
+  @Mock private PasswordEncoder passwordEncoder;
   @Mock private ApplicationContext applicationContext;
 
   @InjectMocks private UserService userService;
 
   @Test
-  void getCurrentUser_shouldReturnUser_whenFound() {
+  void checkPassword_shouldReturnTrue_whenPasswordMatches() {
     User user = new User();
-    user.setId(UUID.randomUUID());
-    user.setEmail(UserService.SEED_USER_EMAIL);
-    when(userRepository.findByEmail(UserService.SEED_USER_EMAIL)).thenReturn(Optional.of(user));
+    user.setPassword("hashed-password");
+    when(passwordEncoder.matches("raw-password", "hashed-password")).thenReturn(true);
 
-    User result = userService.getCurrentUser();
-
-    assertEquals(user, result);
+    assertTrue(userService.checkPassword(user, "raw-password"));
   }
 
   @Test
-  void getCurrentUser_shouldThrowResourceNotFoundException_whenNotFound() {
-    when(userRepository.findByEmail(UserService.SEED_USER_EMAIL)).thenReturn(Optional.empty());
-
-    assertThrows(ResourceNotFoundException.class, () -> userService.getCurrentUser());
-  }
-
-  @Test
-  void assertUserOwnsStore_shouldNotThrow_whenUserOwnsStore() {
+  void checkPassword_shouldReturnFalse_whenPasswordDoesNotMatch() {
     User user = new User();
-    user.setId(UUID.randomUUID());
-    when(userRepository.findByEmail(UserService.SEED_USER_EMAIL)).thenReturn(Optional.of(user));
-    when(applicationContext.getBean(UserService.class)).thenReturn(userService);
+    user.setPassword("hashed-password");
+    when(passwordEncoder.matches("wrong-password", "hashed-password")).thenReturn(false);
 
-    Store store = new Store();
-    store.setUser(user);
-
-    assertDoesNotThrow(() -> userService.assertUserOwnsStore(store));
-  }
-
-  @Disabled("This test is disabled")
-  @Test
-  void assertUserOwnsStore_shouldThrowUnauthorizedException_whenUserDoesNotOwnStore() {
-    User currentUser = new User();
-    currentUser.setId(UUID.randomUUID());
-    when(userRepository.findByEmail(UserService.SEED_USER_EMAIL))
-        .thenReturn(Optional.of(currentUser));
-    when(applicationContext.getBean(UserService.class)).thenReturn(userService);
-
-    User otherUser = new User();
-    otherUser.setId(UUID.randomUUID());
-
-    Store store = new Store();
-    store.setUser(otherUser);
-
-    assertThrows(UnauthorizedException.class, () -> userService.assertUserOwnsStore(store));
+    assertFalse(userService.checkPassword(user, "wrong-password"));
   }
 }

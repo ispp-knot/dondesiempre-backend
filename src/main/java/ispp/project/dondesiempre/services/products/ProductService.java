@@ -8,8 +8,8 @@ import ispp.project.dondesiempre.models.storefronts.Storefront;
 import ispp.project.dondesiempre.models.stores.Store;
 import ispp.project.dondesiempre.repositories.products.ProductRepository;
 import ispp.project.dondesiempre.repositories.stores.StoreRepository;
+import ispp.project.dondesiempre.services.AuthService;
 import ispp.project.dondesiempre.services.CloudinaryService;
-import ispp.project.dondesiempre.services.UserService;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +24,7 @@ public class ProductService {
   private final ProductRepository productRepository;
   private final StoreRepository storeRepository;
   private final ProductTypeService productTypeService;
-  private final UserService userService;
+  private final AuthService authService;
   private final CloudinaryService cloudinaryService;
 
   @Transactional(rollbackFor = InvalidRequestException.class)
@@ -40,7 +40,7 @@ public class ProductService {
                 () ->
                     new ResourceNotFoundException(
                         "Store with ID " + dto.getStoreId() + " not found."));
-    userService.assertUserOwnsStore(store);
+    authService.assertUserOwnsStore(store);
     Product product = new Product();
     product.setName(dto.getName());
     product.setPriceInCents(dto.getPriceInCents());
@@ -76,7 +76,7 @@ public class ProductService {
   @Transactional
   public Product updateProductDiscount(UUID id, Integer discountedPriceInCents) {
     Product product = getProductById(id);
-    userService.assertUserOwnsStore(product.getStore());
+    authService.assertUserOwnsStore(product.getStore());
     if (discountedPriceInCents > product.getPriceInCents()) {
       throw new InvalidRequestException("Discounted price cannot be greater than original price");
     }

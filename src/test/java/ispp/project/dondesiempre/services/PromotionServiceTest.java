@@ -50,7 +50,7 @@ public class PromotionServiceTest {
   @Autowired private ProductTypeRepository productTypeRepository;
   @Autowired private ProductService productService;
   @Autowired private UserRepository userRepository;
-  @MockitoBean private UserService userService;
+  @MockitoBean private AuthService authService;
 
   private Storefront createStorefront() {
     Storefront storefront = new Storefront();
@@ -324,7 +324,7 @@ public class PromotionServiceTest {
   @Test
   public void shouldThrowUnauthorizedException_WhenCreatingPromotionWithoutAuthorization() {
     doThrow(new UnauthorizedException("Not authorized"))
-        .when(userService)
+        .when(authService)
         .assertUserOwnsStore(any());
 
     Store store = createAndSaveStore("Test Store", "test@test.com", "test-store");
@@ -348,7 +348,7 @@ public class PromotionServiceTest {
         createPromotion("Test Promotion", 20, true, List.of(product.getId()), store.getId());
 
     doThrow(new UnauthorizedException("Not authorized"))
-        .when(userService)
+        .when(authService)
         .assertUserOwnsStore(any());
 
     PromotionUpdateDTO updateDTO = new PromotionUpdateDTO();
@@ -368,7 +368,7 @@ public class PromotionServiceTest {
         createPromotion("Test Promotion", 20, true, List.of(product.getId()), store.getId());
 
     doThrow(new UnauthorizedException("Not authorized"))
-        .when(userService)
+        .when(authService)
         .assertUserOwnsStore(any());
 
     assertThrows(
@@ -387,7 +387,7 @@ public class PromotionServiceTest {
         createProduct("Test Product 2", 1000, 800, productType.getId(), store.getId());
 
     doThrow(new UnauthorizedException("Not authorized"))
-        .when(userService)
+        .when(authService)
         .assertUserOwnsStore(any());
 
     assertThrows(

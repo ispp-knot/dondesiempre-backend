@@ -5,7 +5,6 @@ import ispp.project.dondesiempre.models.User;
 import ispp.project.dondesiempre.models.storefronts.Storefront;
 import ispp.project.dondesiempre.models.stores.Store;
 import ispp.project.dondesiempre.models.stores.StoreFollower;
-import ispp.project.dondesiempre.services.UserService;
 import java.util.UUID;
 
 public class StoreMockEntities {
@@ -23,7 +22,7 @@ public class StoreMockEntities {
   public static Client sampleClient() {
     User user = new User();
     user.setId(UUID.randomUUID());
-    user.setEmail(UserService.SEED_USER_EMAIL);
+    user.setEmail("client@client.com");
 
     Client client = new Client();
     client.setId(UUID.randomUUID());

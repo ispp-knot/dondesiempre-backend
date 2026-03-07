@@ -12,7 +12,7 @@ import ispp.project.dondesiempre.repositories.products.ProductRepository;
 import ispp.project.dondesiempre.repositories.promotions.PromotionProductRepository;
 import ispp.project.dondesiempre.repositories.promotions.PromotionRepository;
 import ispp.project.dondesiempre.repositories.stores.StoreRepository;
-import ispp.project.dondesiempre.services.UserService;
+import ispp.project.dondesiempre.services.AuthService;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -28,7 +28,7 @@ public class PromotionService {
   private final ProductRepository productRepository;
   private final PromotionProductRepository promotionProductRepository;
   private final StoreRepository storeRepository;
-  private final UserService userService;
+  private final AuthService authService;
 
   @Transactional
   public Promotion savePromotion(PromotionCreationDTO dto)
@@ -50,7 +50,7 @@ public class PromotionService {
                     new ResourceNotFoundException("Store not found with id: " + dto.getStoreId()));
     promotion.setStore(store);
 
-    userService.assertUserOwnsStore(store);
+    authService.assertUserOwnsStore(store);
 
     Set<Product> products =
         dto.getProductIds().stream()
@@ -93,8 +93,8 @@ public class PromotionService {
     PromotionProduct promotionProduct = new PromotionProduct();
     promotionProduct.setPromotion(promotion);
     promotionProduct.setProduct(product);
-    userService.assertUserOwnsStore(product.getStore());
-    userService.assertUserOwnsStore(promotion.getStore());
+    authService.assertUserOwnsStore(product.getStore());
+    authService.assertUserOwnsStore(promotion.getStore());
 
     try {
       return promotionProductRepository.save(promotionProduct);
@@ -136,7 +136,7 @@ public class PromotionService {
       throws ResourceNotFoundException, InvalidRequestException {
 
     Promotion promotion = getPromotionById(id);
-    userService.assertUserOwnsStore(promotion.getStore());
+    authService.assertUserOwnsStore(promotion.getStore());
 
     if (dto.getName() != null) {
       promotion.setName(dto.getName());
@@ -189,7 +189,7 @@ public class PromotionService {
   @Transactional
   public void deletePromotion(UUID id) {
     Promotion promotion = getPromotionById(id);
-    userService.assertUserOwnsStore(promotion.getStore());
+    authService.assertUserOwnsStore(promotion.getStore());
     promotionProductRepository.findByPromotionId(id).forEach(promotionProductRepository::delete);
     promotionRepository.delete(promotion);
   }
