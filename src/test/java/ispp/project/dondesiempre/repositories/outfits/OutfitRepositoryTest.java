@@ -4,10 +4,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import ispp.project.dondesiempre.models.outfits.Outfit;
-import ispp.project.dondesiempre.models.outfits.OutfitProduct;
 import ispp.project.dondesiempre.modules.auth.models.User;
 import ispp.project.dondesiempre.modules.auth.repositories.UserRepository;
+import ispp.project.dondesiempre.modules.outfits.models.Outfit;
+import ispp.project.dondesiempre.modules.outfits.models.OutfitProduct;
+import ispp.project.dondesiempre.modules.outfits.repositories.OutfitProductRepository;
+import ispp.project.dondesiempre.modules.outfits.repositories.OutfitRepository;
 import ispp.project.dondesiempre.modules.products.models.Product;
 import ispp.project.dondesiempre.modules.products.models.ProductType;
 import ispp.project.dondesiempre.modules.products.repositories.ProductRepository;

@@ -1,7 +1,7 @@
-package ispp.project.dondesiempre.models.outfits.dto;
+package ispp.project.dondesiempre.modules.outfits.dtos;
 
-import ispp.project.dondesiempre.models.outfits.Outfit;
-import ispp.project.dondesiempre.models.outfits.OutfitProduct;
+import ispp.project.dondesiempre.modules.outfits.models.Outfit;
+import ispp.project.dondesiempre.modules.outfits.models.OutfitProduct;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;

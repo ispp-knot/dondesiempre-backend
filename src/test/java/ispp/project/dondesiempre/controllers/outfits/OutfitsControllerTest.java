@@ -14,11 +14,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import ispp.project.dondesiempre.models.outfits.Outfit;
-import ispp.project.dondesiempre.models.outfits.OutfitProduct;
-import ispp.project.dondesiempre.models.outfits.dto.OutfitCreationDTO;
-import ispp.project.dondesiempre.models.outfits.dto.OutfitCreationProductDTO;
-import ispp.project.dondesiempre.models.outfits.dto.OutfitUpdateDTO;
+import ispp.project.dondesiempre.modules.outfits.controllers.OutfitController;
+import ispp.project.dondesiempre.modules.outfits.dtos.OutfitCreationDTO;
+import ispp.project.dondesiempre.modules.outfits.dtos.OutfitCreationProductDTO;
+import ispp.project.dondesiempre.modules.outfits.dtos.OutfitUpdateDTO;
+import ispp.project.dondesiempre.modules.outfits.models.Outfit;
+import ispp.project.dondesiempre.modules.outfits.models.OutfitProduct;
+import ispp.project.dondesiempre.modules.outfits.services.OutfitService;
 import ispp.project.dondesiempre.modules.products.models.Product;
 import ispp.project.dondesiempre.modules.products.models.ProductType;
 import ispp.project.dondesiempre.modules.products.services.ProductService;
@@ -26,7 +28,6 @@ import ispp.project.dondesiempre.modules.stores.models.Store;
 import ispp.project.dondesiempre.modules.stores.models.Storefront;
 import ispp.project.dondesiempre.modules.stores.services.StoreService;
 import ispp.project.dondesiempre.modules.stores.services.StorefrontService;
-import ispp.project.dondesiempre.services.outfits.OutfitService;
 import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;

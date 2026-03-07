@@ -1,4 +1,4 @@
-package ispp.project.dondesiempre.models.outfits;
+package ispp.project.dondesiempre.modules.outfits.models;
 
 import ispp.project.dondesiempre.modules.common.models.BaseEntity;
 import jakarta.persistence.Entity;

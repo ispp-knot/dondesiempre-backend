@@ -1,6 +1,6 @@
-package ispp.project.dondesiempre.repositories.outfits;
+package ispp.project.dondesiempre.modules.outfits.repositories;
 
-import ispp.project.dondesiempre.models.outfits.OutfitTag;
+import ispp.project.dondesiempre.modules.outfits.models.OutfitTag;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;

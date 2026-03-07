@@ -1,8 +1,8 @@
-package ispp.project.dondesiempre.repositories.outfits;
+package ispp.project.dondesiempre.modules.outfits.repositories;
 
-import ispp.project.dondesiempre.models.outfits.Outfit;
-import ispp.project.dondesiempre.models.outfits.OutfitProduct;
-import ispp.project.dondesiempre.models.outfits.OutfitTagRelation;
+import ispp.project.dondesiempre.modules.outfits.models.Outfit;
+import ispp.project.dondesiempre.modules.outfits.models.OutfitProduct;
+import ispp.project.dondesiempre.modules.outfits.models.OutfitTagRelation;
 import ispp.project.dondesiempre.modules.products.models.Product;
 import java.util.List;
 import java.util.Optional;

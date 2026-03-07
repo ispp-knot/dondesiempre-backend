@@ -1,8 +1,8 @@
-package ispp.project.dondesiempre.services.outfits;
+package ispp.project.dondesiempre.modules.outfits.services;
 
 import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
-import ispp.project.dondesiempre.models.outfits.OutfitTag;
-import ispp.project.dondesiempre.repositories.outfits.OutfitTagRepository;
+import ispp.project.dondesiempre.modules.outfits.models.OutfitTag;
+import ispp.project.dondesiempre.modules.outfits.repositories.OutfitTagRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
