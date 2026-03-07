@@ -36,6 +36,7 @@ public class AuthController {
             // via jwt.secure-cookie=true (set in application-prod.yaml or JWT_SECURE_COOKIE
             // env).
             .secure(jwtProperties.isSecureCookie())
+            .sameSite(jwtProperties.getSameSite())
             .path("/")
             .maxAge(jwtProperties.getDuration())
             .build();
