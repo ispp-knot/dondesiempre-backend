@@ -1,15 +1,15 @@
-package ispp.project.dondesiempre.validators;
+package ispp.project.dondesiempre.modules.stores.validators;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import java.util.regex.Pattern;
 
-public class PhoneValidator implements ConstraintValidator<Phone, String> {
+public class HexColorValidator implements ConstraintValidator<HexColor, String> {
 
-  private static final Pattern PATTERN = Pattern.compile("^(\\+\\d{1,3}[- ]?)?\\d{7,15}$");
+  private static final Pattern PATTERN = Pattern.compile("^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$");
 
   @Override
-  public void initialize(Phone constraintAnnotation) {
+  public void initialize(HexColor constraintAnnotation) {
     // no-op
   }
 

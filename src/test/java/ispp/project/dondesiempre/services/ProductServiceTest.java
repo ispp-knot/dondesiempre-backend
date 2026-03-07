@@ -14,6 +14,7 @@ import ispp.project.dondesiempre.modules.products.services.ProductService;
 import ispp.project.dondesiempre.modules.stores.models.Store;
 import ispp.project.dondesiempre.modules.stores.models.Storefront;
 import ispp.project.dondesiempre.modules.stores.repositories.StoreRepository;
+import ispp.project.dondesiempre.utils.cloudinary.CloudinaryService;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

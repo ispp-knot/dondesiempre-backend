@@ -9,7 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import ispp.project.dondesiempre.modules.auth.dtos.LoginRequestDTO;
 import ispp.project.dondesiempre.modules.auth.models.User;
 import ispp.project.dondesiempre.modules.auth.repositories.UserRepository;
-import ispp.project.dondesiempre.services.CloudinaryService;
+import ispp.project.dondesiempre.utils.cloudinary.CloudinaryService;
 import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

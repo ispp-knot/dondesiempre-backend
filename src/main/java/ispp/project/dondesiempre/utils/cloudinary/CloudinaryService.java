@@ -1,4 +1,4 @@
-package ispp.project.dondesiempre.services;
+package ispp.project.dondesiempre.utils.cloudinary;
 
 import org.springframework.web.multipart.MultipartFile;
 

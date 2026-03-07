@@ -18,7 +18,7 @@ import ispp.project.dondesiempre.modules.products.services.ProductService;
 import ispp.project.dondesiempre.modules.stores.models.Store;
 import ispp.project.dondesiempre.modules.stores.models.Storefront;
 import ispp.project.dondesiempre.modules.stores.services.StorefrontService;
-import ispp.project.dondesiempre.services.CloudinaryService;
+import ispp.project.dondesiempre.utils.cloudinary.CloudinaryService;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.UUID;

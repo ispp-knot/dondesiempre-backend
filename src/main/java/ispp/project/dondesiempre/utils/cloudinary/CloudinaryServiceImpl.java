@@ -1,4 +1,4 @@
-package ispp.project.dondesiempre.services;
+package ispp.project.dondesiempre.utils.cloudinary;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;

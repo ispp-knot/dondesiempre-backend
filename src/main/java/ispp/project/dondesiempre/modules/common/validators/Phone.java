@@ -1,4 +1,4 @@
-package ispp.project.dondesiempre.validators;
+package ispp.project.dondesiempre.modules.common.validators;
 
 import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
 import static java.lang.annotation.ElementType.FIELD;

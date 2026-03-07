@@ -9,7 +9,7 @@ import ispp.project.dondesiempre.modules.products.repositories.ProductRepository
 import ispp.project.dondesiempre.modules.stores.models.Store;
 import ispp.project.dondesiempre.modules.stores.models.Storefront;
 import ispp.project.dondesiempre.modules.stores.repositories.StoreRepository;
-import ispp.project.dondesiempre.services.CloudinaryService;
+import ispp.project.dondesiempre.utils.cloudinary.CloudinaryService;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;

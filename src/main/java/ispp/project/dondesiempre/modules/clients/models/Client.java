@@ -2,7 +2,7 @@ package ispp.project.dondesiempre.modules.clients.models;
 
 import ispp.project.dondesiempre.modules.auth.models.User;
 import ispp.project.dondesiempre.modules.common.models.BaseEntity;
-import ispp.project.dondesiempre.validators.Phone;
+import ispp.project.dondesiempre.modules.common.validators.Phone;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
