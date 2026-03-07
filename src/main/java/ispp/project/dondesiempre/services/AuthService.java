@@ -6,9 +6,11 @@ import ispp.project.dondesiempre.models.User;
 import ispp.project.dondesiempre.models.stores.Store;
 import ispp.project.dondesiempre.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationContext;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +21,8 @@ public class AuthService {
   private final UserRepository userRepository;
   private final UserService userService;
   private final JwtService jwtService;
+  private final PasswordEncoder passwordEncoder;
+  private final ApplicationContext applicationContext;
 
   @Transactional(
       readOnly = true,
@@ -38,7 +42,7 @@ public class AuthService {
 
   @Transactional(readOnly = true, rollbackFor = UnauthorizedException.class)
   public void assertUserOwnsStore(Store store) throws UnauthorizedException {
-    User currentUser = getCurrentUser();
+    User currentUser = applicationContext.getBean(AuthService.class).getCurrentUser();
     if (!store.getUser().equals(currentUser)) {
       throw new UnauthorizedException("You do not own this store.");
     }
@@ -54,5 +58,13 @@ public class AuthService {
       throw new UnauthorizedException("Invalid credentials.");
     }
     return jwtService.generateToken(user.getEmail());
+  }
+
+  @Transactional(rollbackFor = Exception.class)
+  public User register(String email, String password) {
+    User user = new User();
+    user.setEmail(email);
+    user.setPassword(passwordEncoder.encode(password));
+    return userRepository.save(user);
   }
 }
