@@ -9,14 +9,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import ispp.project.dondesiempre.config.GlobalExceptionHandler;
-import ispp.project.dondesiempre.controllers.stores.StoreController;
 import ispp.project.dondesiempre.mockEntities.StoreMockEntities;
 import ispp.project.dondesiempre.models.Client;
-import ispp.project.dondesiempre.models.stores.Store;
 import ispp.project.dondesiempre.models.stores.StoreFollower;
-import ispp.project.dondesiempre.models.stores.dto.StoreDTO;
 import ispp.project.dondesiempre.modules.auth.services.UserService;
-import ispp.project.dondesiempre.services.stores.StoreService;
+import ispp.project.dondesiempre.modules.stores.controllers.StoreController;
+import ispp.project.dondesiempre.modules.stores.dtos.StoreDTO;
+import ispp.project.dondesiempre.modules.stores.models.Store;
+import ispp.project.dondesiempre.modules.stores.services.StoreService;
+
 import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;

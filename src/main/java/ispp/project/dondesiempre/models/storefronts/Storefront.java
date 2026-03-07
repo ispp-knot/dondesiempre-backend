@@ -1,7 +1,7 @@
 package ispp.project.dondesiempre.models.storefronts;
 
-import ispp.project.dondesiempre.models.stores.Store;
 import ispp.project.dondesiempre.modules.common.models.BaseEntity;
+import ispp.project.dondesiempre.modules.stores.models.Store;
 import ispp.project.dondesiempre.validators.HexColor;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

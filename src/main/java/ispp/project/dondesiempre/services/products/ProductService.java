@@ -5,9 +5,9 @@ import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.models.products.Product;
 import ispp.project.dondesiempre.models.products.dto.ProductCreationDTO;
 import ispp.project.dondesiempre.models.storefronts.Storefront;
-import ispp.project.dondesiempre.models.stores.Store;
+import ispp.project.dondesiempre.modules.stores.models.Store;
+import ispp.project.dondesiempre.modules.stores.repositories.StoreRepository;
 import ispp.project.dondesiempre.repositories.products.ProductRepository;
-import ispp.project.dondesiempre.repositories.stores.StoreRepository;
 import ispp.project.dondesiempre.services.AuthService;
 import ispp.project.dondesiempre.services.CloudinaryService;
 import java.util.List;
@@ -33,13 +33,11 @@ public class ProductService {
     if (dto.getDiscountedPriceInCents() > dto.getPriceInCents()) {
       throw new InvalidRequestException("Discounted price cannot be greater than original price");
     }
-    Store store =
-        storeRepository
-            .findById(dto.getStoreId())
-            .orElseThrow(
-                () ->
-                    new ResourceNotFoundException(
-                        "Store with ID " + dto.getStoreId() + " not found."));
+    Store store = storeRepository
+        .findById(dto.getStoreId())
+        .orElseThrow(
+            () -> new ResourceNotFoundException(
+                "Store with ID " + dto.getStoreId() + " not found."));
     authService.assertUserOwnsStore(store);
     Product product = new Product();
     product.setName(dto.getName());
@@ -56,10 +54,9 @@ public class ProductService {
 
   @Transactional(readOnly = true)
   public Product getProductById(UUID id) {
-    Product product =
-        productRepository
-            .findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+    Product product = productRepository
+        .findById(id)
+        .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
     return product;
   }
 

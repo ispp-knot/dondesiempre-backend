@@ -22,11 +22,12 @@ import ispp.project.dondesiempre.models.outfits.dto.OutfitUpdateDTO;
 import ispp.project.dondesiempre.models.products.Product;
 import ispp.project.dondesiempre.models.products.ProductType;
 import ispp.project.dondesiempre.models.storefronts.Storefront;
-import ispp.project.dondesiempre.models.stores.Store;
+import ispp.project.dondesiempre.modules.stores.models.Store;
+import ispp.project.dondesiempre.modules.stores.services.StoreService;
 import ispp.project.dondesiempre.services.outfits.OutfitService;
 import ispp.project.dondesiempre.services.products.ProductService;
 import ispp.project.dondesiempre.services.storefronts.StorefrontService;
-import ispp.project.dondesiempre.services.stores.StoreService;
+
 import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
@@ -42,14 +43,20 @@ import org.springframework.test.web.servlet.MockMvc;
 @WebMvcTest(controllers = OutfitController.class)
 class OutfitsControllerTest {
 
-  @Autowired private MockMvc mockMvc;
-  @Autowired private ObjectMapper objectMapper;
+  @Autowired
+  private MockMvc mockMvc;
+  @Autowired
+  private ObjectMapper objectMapper;
 
   // --- Todas las dependencias del controlador deben estar mockeadas ---
-  @MockitoBean private OutfitService outfitService;
-  @MockitoBean private ProductService productService;
-  @MockitoBean private StoreService storeService;
-  @MockitoBean private StorefrontService storefrontService;
+  @MockitoBean
+  private OutfitService outfitService;
+  @MockitoBean
+  private ProductService productService;
+  @MockitoBean
+  private StoreService storeService;
+  @MockitoBean
+  private StorefrontService storefrontService;
 
   private UUID outfitId;
   private UUID storeId;

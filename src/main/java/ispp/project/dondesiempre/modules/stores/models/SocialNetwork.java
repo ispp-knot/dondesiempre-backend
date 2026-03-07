@@ -1,4 +1,4 @@
-package ispp.project.dondesiempre.models.stores;
+package ispp.project.dondesiempre.modules.stores.models;
 
 import ispp.project.dondesiempre.modules.common.models.BaseEntity;
 import jakarta.persistence.Column;

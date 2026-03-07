@@ -7,11 +7,11 @@ import ispp.project.dondesiempre.models.promotions.Promotion;
 import ispp.project.dondesiempre.models.promotions.PromotionProduct;
 import ispp.project.dondesiempre.models.promotions.dto.PromotionCreationDTO;
 import ispp.project.dondesiempre.models.promotions.dto.PromotionUpdateDTO;
-import ispp.project.dondesiempre.models.stores.Store;
+import ispp.project.dondesiempre.modules.stores.models.Store;
+import ispp.project.dondesiempre.modules.stores.repositories.StoreRepository;
 import ispp.project.dondesiempre.repositories.products.ProductRepository;
 import ispp.project.dondesiempre.repositories.promotions.PromotionProductRepository;
 import ispp.project.dondesiempre.repositories.promotions.PromotionRepository;
-import ispp.project.dondesiempre.repositories.stores.StoreRepository;
 import ispp.project.dondesiempre.services.AuthService;
 import java.util.List;
 import java.util.Set;
@@ -42,27 +42,22 @@ public class PromotionService {
     promotion.setDiscountPercentage(dto.getDiscountPercentage());
     promotion.setDescription(dto.getDescription());
 
-    Store store =
-        storeRepository
-            .findById(dto.getStoreId())
-            .orElseThrow(
-                () ->
-                    new ResourceNotFoundException("Store not found with id: " + dto.getStoreId()));
+    Store store = storeRepository
+        .findById(dto.getStoreId())
+        .orElseThrow(
+            () -> new ResourceNotFoundException("Store not found with id: " + dto.getStoreId()));
     promotion.setStore(store);
 
     authService.assertUserOwnsStore(store);
 
-    Set<Product> products =
-        dto.getProductIds().stream()
-            .map(
-                productId ->
-                    productRepository
-                        .findById(productId)
-                        .orElseThrow(
-                            () ->
-                                new ResourceNotFoundException(
-                                    "Product not found with id: " + productId)))
-            .collect(java.util.stream.Collectors.toSet());
+    Set<Product> products = dto.getProductIds().stream()
+        .map(
+            productId -> productRepository
+                .findById(productId)
+                .orElseThrow(
+                    () -> new ResourceNotFoundException(
+                        "Product not found with id: " + productId)))
+        .collect(java.util.stream.Collectors.toSet());
 
     if (products.stream()
         .anyMatch(product -> !product.getStore().getId().equals(dto.getStoreId()))) {
@@ -83,13 +78,11 @@ public class PromotionService {
   public PromotionProduct addProduct(UUID promotionId, UUID productId)
       throws ResourceNotFoundException, InvalidRequestException {
     Promotion promotion = getPromotionById(promotionId);
-    Product product =
-        productRepository
-            .findById(productId)
-            .orElseThrow(
-                () ->
-                    new ResourceNotFoundException(
-                        "Unable to add product. Product not found with id: " + productId));
+    Product product = productRepository
+        .findById(productId)
+        .orElseThrow(
+            () -> new ResourceNotFoundException(
+                "Unable to add product. Product not found with id: " + productId));
     PromotionProduct promotionProduct = new PromotionProduct();
     promotionProduct.setPromotion(promotion);
     promotionProduct.setProduct(product);
@@ -155,17 +148,14 @@ public class PromotionService {
     }
 
     if (dto.getProductIds() != null && !dto.getProductIds().isEmpty()) {
-      Set<Product> products =
-          dto.getProductIds().stream()
-              .map(
-                  productId ->
-                      productRepository
-                          .findById(productId)
-                          .orElseThrow(
-                              () ->
-                                  new ResourceNotFoundException(
-                                      "Product not found with id: " + productId)))
-              .collect(java.util.stream.Collectors.toSet());
+      Set<Product> products = dto.getProductIds().stream()
+          .map(
+              productId -> productRepository
+                  .findById(productId)
+                  .orElseThrow(
+                      () -> new ResourceNotFoundException(
+                          "Product not found with id: " + productId)))
+          .collect(java.util.stream.Collectors.toSet());
 
       if (products.stream()
           .anyMatch(product -> !product.getStore().getId().equals(promotion.getStore().getId()))) {

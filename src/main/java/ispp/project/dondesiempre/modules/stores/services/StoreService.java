@@ -1,17 +1,17 @@
-package ispp.project.dondesiempre.services.stores;
+package ispp.project.dondesiempre.modules.stores.services;
 
 import ispp.project.dondesiempre.exceptions.InvalidBoundingBoxException;
 import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.models.Client;
-import ispp.project.dondesiempre.models.stores.Store;
 import ispp.project.dondesiempre.models.stores.StoreFollower;
-import ispp.project.dondesiempre.models.stores.dto.StoreDTO;
-import ispp.project.dondesiempre.models.stores.dto.StoreSocialNetworkDTO;
-import ispp.project.dondesiempre.models.stores.dto.StoreUpdateDTO;
 import ispp.project.dondesiempre.modules.auth.services.UserService;
+import ispp.project.dondesiempre.modules.stores.dtos.StoreDTO;
+import ispp.project.dondesiempre.modules.stores.dtos.StoreSocialNetworkDTO;
+import ispp.project.dondesiempre.modules.stores.dtos.StoreUpdateDTO;
+import ispp.project.dondesiempre.modules.stores.models.Store;
+import ispp.project.dondesiempre.modules.stores.repositories.StoreRepository;
+import ispp.project.dondesiempre.modules.stores.repositories.StoreSocialNetworkRepository;
 import ispp.project.dondesiempre.repositories.stores.StoreFollowerRepository;
-import ispp.project.dondesiempre.repositories.stores.StoreRepository;
-import ispp.project.dondesiempre.repositories.stores.StoreSocialNetworkRepository;
 
 import java.util.List;
 import java.util.UUID;

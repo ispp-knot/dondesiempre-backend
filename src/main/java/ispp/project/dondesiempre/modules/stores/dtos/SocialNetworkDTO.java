@@ -1,6 +1,6 @@
-package ispp.project.dondesiempre.models.stores.dto;
+package ispp.project.dondesiempre.modules.stores.dtos;
 
-import ispp.project.dondesiempre.models.stores.StoreSocialNetwork;
+import ispp.project.dondesiempre.modules.stores.models.StoreSocialNetwork;
 import lombok.Getter;
 import lombok.Setter;
 

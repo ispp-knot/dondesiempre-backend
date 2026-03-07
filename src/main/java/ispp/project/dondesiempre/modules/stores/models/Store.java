@@ -1,4 +1,4 @@
-package ispp.project.dondesiempre.models.stores;
+package ispp.project.dondesiempre.modules.stores.models;
 
 import ispp.project.dondesiempre.models.storefronts.Storefront;
 import ispp.project.dondesiempre.modules.auth.models.User;
