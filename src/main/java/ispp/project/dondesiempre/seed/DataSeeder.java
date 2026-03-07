@@ -92,16 +92,21 @@ public class DataSeeder implements CommandLineRunner {
 
   private void loadManualData() {
     // Fetch reference data
-    Map<String, SocialNetwork> socialNetworks = socialNetworkRepository.findAll().stream()
-        .collect(Collectors.toMap(SocialNetwork::getName, sn -> sn));
-    Map<String, ProductType> productTypes = productTypeRepository.findAll().stream()
-        .collect(Collectors.toMap(ProductType::getType, pt -> pt));
-    Map<String, ProductColor> productColors = productColorRepository.findAll().stream()
-        .collect(Collectors.toMap(ProductColor::getColor, pc -> pc));
-    Map<String, ProductSize> productSizes = productSizeRepository.findAll().stream()
-        .collect(Collectors.toMap(ProductSize::getSize, ps -> ps));
-    Map<String, OutfitTag> outfitTags = outfitTagRepository.findAll().stream()
-        .collect(Collectors.toMap(OutfitTag::getName, ot -> ot));
+    Map<String, SocialNetwork> socialNetworks =
+        socialNetworkRepository.findAll().stream()
+            .collect(Collectors.toMap(SocialNetwork::getName, sn -> sn));
+    Map<String, ProductType> productTypes =
+        productTypeRepository.findAll().stream()
+            .collect(Collectors.toMap(ProductType::getType, pt -> pt));
+    Map<String, ProductColor> productColors =
+        productColorRepository.findAll().stream()
+            .collect(Collectors.toMap(ProductColor::getColor, pc -> pc));
+    Map<String, ProductSize> productSizes =
+        productSizeRepository.findAll().stream()
+            .collect(Collectors.toMap(ProductSize::getSize, ps -> ps));
+    Map<String, OutfitTag> outfitTags =
+        outfitTagRepository.findAll().stream()
+            .collect(Collectors.toMap(OutfitTag::getName, ot -> ot));
 
     // Create user that owns the manual store (this is the seed user for
     // getCurrentUser())
@@ -146,34 +151,38 @@ public class DataSeeder implements CommandLineRunner {
     storeSocialNetworkRepository.save(ssn2);
 
     // Products
-    Product p1 = createProduct(
-        "Camiseta Lino Mediterráneo",
-        2999,
-        2999,
-        "Camiseta de lino natural de verano.",
-        productTypes.get("Camiseta"),
-        store);
-    Product p2 = createProduct(
-        "Pantalón Palazzo Verano",
-        4999,
-        3999,
-        "Pantalón fluido perfecto para el verano.",
-        productTypes.get("Pantalón"),
-        store);
-    Product p3 = createProduct(
-        "Vestido Midi Floral",
-        6999,
-        6999,
-        "Vestido midi con estampado floral primaveral.",
-        productTypes.get("Vestido"),
-        store);
-    Product p4 = createProduct(
-        "Chaqueta Punto Artesanal",
-        8999,
-        7499,
-        "Chaqueta de punto tejida a mano.",
-        productTypes.get("Chaqueta"),
-        store);
+    Product p1 =
+        createProduct(
+            "Camiseta Lino Mediterráneo",
+            2999,
+            2999,
+            "Camiseta de lino natural de verano.",
+            productTypes.get("Camiseta"),
+            store);
+    Product p2 =
+        createProduct(
+            "Pantalón Palazzo Verano",
+            4999,
+            3999,
+            "Pantalón fluido perfecto para el verano.",
+            productTypes.get("Pantalón"),
+            store);
+    Product p3 =
+        createProduct(
+            "Vestido Midi Floral",
+            6999,
+            6999,
+            "Vestido midi con estampado floral primaveral.",
+            productTypes.get("Vestido"),
+            store);
+    Product p4 =
+        createProduct(
+            "Chaqueta Punto Artesanal",
+            8999,
+            7499,
+            "Chaqueta de punto tejida a mano.",
+            productTypes.get("Chaqueta"),
+            store);
 
     // Product variants
     createVariant(p1, productSizes.get("S"), productColors.get("Blanco"), true);
@@ -299,13 +308,14 @@ public class DataSeeder implements CommandLineRunner {
         boolean hasDiscount = rng.nextBoolean();
         int discountedPrice = hasDiscount ? (int) (price * (0.6 + rng.nextDouble() * 0.35)) : price;
 
-        Product product = createProduct(
-            pick(productNames, rng),
-            price,
-            discountedPrice,
-            null,
-            pick(allProductTypes, rng),
-            store);
+        Product product =
+            createProduct(
+                pick(productNames, rng),
+                price,
+                discountedPrice,
+                null,
+                pick(allProductTypes, rng),
+                store);
         storeProducts.add(product);
 
         // 1-3 variants per product
@@ -332,21 +342,23 @@ public class DataSeeder implements CommandLineRunner {
     for (int i = 0; i < props.getClientCount(); i++) {
       String name = pick(firstNames, rng);
       String surname = pick(surnames, rng);
-      String normalizedName = name.toLowerCase()
-          .replace("á", "a")
-          .replace("é", "e")
-          .replace("í", "i")
-          .replace("ó", "o")
-          .replace("ú", "u")
-          .replace("ñ", "n");
-      String normalizedSurname = surname
-          .toLowerCase()
-          .replace("á", "a")
-          .replace("é", "e")
-          .replace("í", "i")
-          .replace("ó", "o")
-          .replace("ú", "u")
-          .replace("ñ", "n");
+      String normalizedName =
+          name.toLowerCase()
+              .replace("á", "a")
+              .replace("é", "e")
+              .replace("í", "i")
+              .replace("ó", "o")
+              .replace("ú", "u")
+              .replace("ñ", "n");
+      String normalizedSurname =
+          surname
+              .toLowerCase()
+              .replace("á", "a")
+              .replace("é", "e")
+              .replace("í", "i")
+              .replace("ó", "o")
+              .replace("ú", "u")
+              .replace("ñ", "n");
 
       String clientEmail = normalizedName + "." + normalizedSurname + i + "@ejemplo.es";
 
@@ -426,7 +438,8 @@ public class DataSeeder implements CommandLineRunner {
     if (is == null) {
       throw new IllegalStateException("Seed file not found: " + path);
     }
-    try (BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
+    try (BufferedReader reader =
+        new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
       return reader
           .lines()
           .map(

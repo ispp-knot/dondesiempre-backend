@@ -27,173 +27,175 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-@WebMvcTest(controllers = StoreController.class, excludeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = {
-        GlobalExceptionHandler.class }))
+@WebMvcTest(
+    controllers = StoreController.class,
+    excludeFilters =
+        @ComponentScan.Filter(
+            type = FilterType.ASSIGNABLE_TYPE,
+            classes = {GlobalExceptionHandler.class}))
 public class StoreControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+  @Autowired private MockMvc mockMvc;
 
-    @MockitoBean
-    private StoreService storeService;
-    @MockitoBean
-    private UserService userService;
+  @MockitoBean private StoreService storeService;
+  @MockitoBean private UserService userService;
 
-    private static final Client TEST_CLIENT = StoreMockEntities.sampleClient();
-    private static final UUID TEST_STORE_ID = UUID.randomUUID();
-    private static final Store TEST_STORE = StoreMockEntities.sampleStore(TEST_STORE_ID);
-    private static final StoreFollower TEST_FOLLOWER = StoreMockEntities.sampleFollower(TEST_CLIENT, TEST_STORE);
+  private static final Client TEST_CLIENT = StoreMockEntities.sampleClient();
+  private static final UUID TEST_STORE_ID = UUID.randomUUID();
+  private static final Store TEST_STORE = StoreMockEntities.sampleStore(TEST_STORE_ID);
+  private static final StoreFollower TEST_FOLLOWER =
+      StoreMockEntities.sampleFollower(TEST_CLIENT, TEST_STORE);
 
-    @Test
-    void shouldReturnOkAndListOfStores_whenValidParamsProvided() throws Exception {
-        // Dado
-        double minLon = -6.0, minLat = 37.0, maxLon = -5.0, maxLat = 38.0;
+  @Test
+  void shouldReturnOkAndListOfStores_whenValidParamsProvided() throws Exception {
+    // Dado
+    double minLon = -6.0, minLat = 37.0, maxLon = -5.0, maxLat = 38.0;
 
-        StoreDTO storeDTO = new StoreDTO();
-        storeDTO.setName("Tienda Centro");
-        storeDTO.setLatitude(37.5);
-        storeDTO.setLongitude(-5.5);
+    StoreDTO storeDTO = new StoreDTO();
+    storeDTO.setName("Tienda Centro");
+    storeDTO.setLatitude(37.5);
+    storeDTO.setLongitude(-5.5);
 
-        when(storeService.findStoresInBoundingBox(minLon, minLat, maxLon, maxLat))
-                .thenReturn(List.of(TEST_STORE));
-        when(storeService.toDTO(TEST_STORE)).thenReturn(storeDTO);
+    when(storeService.findStoresInBoundingBox(minLon, minLat, maxLon, maxLat))
+        .thenReturn(List.of(TEST_STORE));
+    when(storeService.toDTO(TEST_STORE)).thenReturn(storeDTO);
 
-        mockMvc
-                .perform(
-                        get("/api/v1/stores")
-                                .param("minLon", String.valueOf(minLon))
-                                .param("minLat", String.valueOf(minLat))
-                                .param("maxLon", String.valueOf(maxLon))
-                                .param("maxLat", String.valueOf(maxLat)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.size()").value(1))
-                .andExpect(jsonPath("$[0].name").value("Tienda Centro"))
-                .andExpect(jsonPath("$[0].latitude").value(37.5))
-                .andExpect(jsonPath("$[0].longitude").value(-5.5));
-    }
+    mockMvc
+        .perform(
+            get("/api/v1/stores")
+                .param("minLon", String.valueOf(minLon))
+                .param("minLat", String.valueOf(minLat))
+                .param("maxLon", String.valueOf(maxLon))
+                .param("maxLat", String.valueOf(maxLat)))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.size()").value(1))
+        .andExpect(jsonPath("$[0].name").value("Tienda Centro"))
+        .andExpect(jsonPath("$[0].latitude").value(37.5))
+        .andExpect(jsonPath("$[0].longitude").value(-5.5));
+  }
 
-    @Test
-    void shouldReturnBadRequest_whenRequiredParamsAreMissing() throws Exception {
-        mockMvc
-                .perform(get("/api/v1/stores").param("minLon", "-6.0"))
-                .andExpect(status().isBadRequest());
-    }
+  @Test
+  void shouldReturnBadRequest_whenRequiredParamsAreMissing() throws Exception {
+    mockMvc
+        .perform(get("/api/v1/stores").param("minLon", "-6.0"))
+        .andExpect(status().isBadRequest());
+  }
 
-    /*
-     * @Test
-     * void shouldReturnOkAndStoreDTO_whenGetStoreByIdExists() throws Exception {
-     * UUID storeId = UUID.randomUUID();
-     * Store store = StoreMockEntities.sampleStore(storeId);
-     * StoreDTO storeDTO = new StoreDTO();
-     * storeDTO.setName("La Boutique");
-     * storeDTO.setAddress("Calle Mayor 1");
-     *
-     * when(storeService.findById(storeId)).thenReturn(store);
-     * when(storeService.toDTO(store)).thenReturn(storeDTO);
-     *
-     * mockMvc
-     * .perform(get("/api/v1/stores/{id}", storeId))
-     * .andExpect(status().isOk())
-     * .andExpect(jsonPath("$.name").value("La Boutique"))
-     * .andExpect(jsonPath("$.address").value("Calle Mayor 1"));
-     * }
-     *
-     * @Test
-     * void followStore_shouldReturnForbidden_whenNotAuthorized() throws Exception {
-     * mockMvc
-     * .perform(post("/api/v1/stores/{storeId}/followers", TEST_STORE_ID))
-     * .andExpect(status().is(403));
-     * }
-     */
+  /*
+   * @Test
+   * void shouldReturnOkAndStoreDTO_whenGetStoreByIdExists() throws Exception {
+   * UUID storeId = UUID.randomUUID();
+   * Store store = StoreMockEntities.sampleStore(storeId);
+   * StoreDTO storeDTO = new StoreDTO();
+   * storeDTO.setName("La Boutique");
+   * storeDTO.setAddress("Calle Mayor 1");
+   *
+   * when(storeService.findById(storeId)).thenReturn(store);
+   * when(storeService.toDTO(store)).thenReturn(storeDTO);
+   *
+   * mockMvc
+   * .perform(get("/api/v1/stores/{id}", storeId))
+   * .andExpect(status().isOk())
+   * .andExpect(jsonPath("$.name").value("La Boutique"))
+   * .andExpect(jsonPath("$.address").value("Calle Mayor 1"));
+   * }
+   *
+   * @Test
+   * void followStore_shouldReturnForbidden_whenNotAuthorized() throws Exception {
+   * mockMvc
+   * .perform(post("/api/v1/stores/{storeId}/followers", TEST_STORE_ID))
+   * .andExpect(status().is(403));
+   * }
+   */
 
-    @Test
-    @WithMockUser(username = "testUser")
-    void followStore_shouldFollowStore_whenAuthorized() throws Exception {
-        when(storeService.followStore(TEST_STORE_ID)).thenReturn(TEST_FOLLOWER);
-        mockMvc
-                .perform(post("/api/v1/stores/{storeId}/followers", TEST_STORE_ID))
-                .andExpect(status().isCreated());
-    }
+  @Test
+  @WithMockUser(username = "testUser")
+  void followStore_shouldFollowStore_whenAuthorized() throws Exception {
+    when(storeService.followStore(TEST_STORE_ID)).thenReturn(TEST_FOLLOWER);
+    mockMvc
+        .perform(post("/api/v1/stores/{storeId}/followers", TEST_STORE_ID))
+        .andExpect(status().isCreated());
+  }
 
-    /*
-     * @Test
-     * void unfollowStore_shouldReturnForbidden_whenNotAuthorized() throws Exception
-     * {
-     * mockMvc
-     * .perform(delete("/api/v1/stores/{storeId}/followers/me", TEST_STORE_ID))
-     * .andExpect(status().is(403));
-     * }
-     */
+  /*
+   * @Test
+   * void unfollowStore_shouldReturnForbidden_whenNotAuthorized() throws Exception
+   * {
+   * mockMvc
+   * .perform(delete("/api/v1/stores/{storeId}/followers/me", TEST_STORE_ID))
+   * .andExpect(status().is(403));
+   * }
+   */
 
-    @Test
-    @WithMockUser(username = "testUser")
-    void unfollowStore_shouldUnfollowStore_whenAuthorized() throws Exception {
-        doNothing().when(storeService).unfollowStore(TEST_STORE_ID);
-        mockMvc
-                .perform(delete("/api/v1/stores/{storeId}/followers/me", TEST_STORE_ID))
-                .andExpect(status().isOk());
-    }
+  @Test
+  @WithMockUser(username = "testUser")
+  void unfollowStore_shouldUnfollowStore_whenAuthorized() throws Exception {
+    doNothing().when(storeService).unfollowStore(TEST_STORE_ID);
+    mockMvc
+        .perform(delete("/api/v1/stores/{storeId}/followers/me", TEST_STORE_ID))
+        .andExpect(status().isOk());
+  }
 
-    /*
-     * @Test
-     * void getMyFollowedStores_shouldReturnForbidden_whenNotAuthorized() throws
-     * Exception {
-     * mockMvc.perform(get("/api/v1/clients/me/followed-stores")).andExpect(status()
-     * .is(403));
-     * }
-     */
+  /*
+   * @Test
+   * void getMyFollowedStores_shouldReturnForbidden_whenNotAuthorized() throws
+   * Exception {
+   * mockMvc.perform(get("/api/v1/clients/me/followed-stores")).andExpect(status()
+   * .is(403));
+   * }
+   */
 
-    @Test
-    @WithMockUser(username = "testUser")
-    void getMyFollowedStores_shouldReturnFollowedStores_whenAuthorized() throws Exception {
-        StoreDTO storeDTO = new StoreDTO();
-        storeDTO.setId(TEST_STORE_ID);
+  @Test
+  @WithMockUser(username = "testUser")
+  void getMyFollowedStores_shouldReturnFollowedStores_whenAuthorized() throws Exception {
+    StoreDTO storeDTO = new StoreDTO();
+    storeDTO.setId(TEST_STORE_ID);
 
-        when(storeService.getMyFollowedStores()).thenReturn(List.of(TEST_STORE));
-        when(storeService.toDTO(TEST_STORE)).thenReturn(storeDTO);
+    when(storeService.getMyFollowedStores()).thenReturn(List.of(TEST_STORE));
+    when(storeService.toDTO(TEST_STORE)).thenReturn(storeDTO);
 
-        mockMvc
-                .perform(get("/api/v1/clients/me/followed-stores"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(1))
-                .andExpect(jsonPath("$[0].id").value(TEST_STORE_ID.toString()));
-    }
+    mockMvc
+        .perform(get("/api/v1/clients/me/followed-stores"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.length()").value(1))
+        .andExpect(jsonPath("$[0].id").value(TEST_STORE_ID.toString()));
+  }
 
-    /*
-     * @Test
-     * void checkIfIFollowStore_shouldReturnForbidden_whenNotAuthorized() throws
-     * Exception {
-     * mockMvc
-     * .perform(get("/api/v1/stores/{storeId}/followers/me", TEST_STORE_ID))
-     * .andExpect(status().is(403));
-     * }
-     */
-    @Test
-    @WithMockUser(username = "testUser")
-    void checkIfIFollowStore_shouldReturnFollowingDTO_whenAuthorizedAndFollowing() throws Exception {
-        when(userService.getCurrentClient()).thenReturn(TEST_CLIENT);
-        when(storeService.checkIfClientFollowsStore(TEST_CLIENT.getId(), TEST_STORE_ID))
-                .thenReturn(true);
-        mockMvc
-                .perform(get("/api/v1/stores/{storeId}/followers/me", TEST_STORE_ID))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.clientId").value(TEST_CLIENT.getId().toString()))
-                .andExpect(jsonPath("$.storeId").value(TEST_STORE_ID.toString()))
-                .andExpect(jsonPath("$.isFollowing").value(true));
-    }
+  /*
+   * @Test
+   * void checkIfIFollowStore_shouldReturnForbidden_whenNotAuthorized() throws
+   * Exception {
+   * mockMvc
+   * .perform(get("/api/v1/stores/{storeId}/followers/me", TEST_STORE_ID))
+   * .andExpect(status().is(403));
+   * }
+   */
+  @Test
+  @WithMockUser(username = "testUser")
+  void checkIfIFollowStore_shouldReturnFollowingDTO_whenAuthorizedAndFollowing() throws Exception {
+    when(userService.getCurrentClient()).thenReturn(TEST_CLIENT);
+    when(storeService.checkIfClientFollowsStore(TEST_CLIENT.getId(), TEST_STORE_ID))
+        .thenReturn(true);
+    mockMvc
+        .perform(get("/api/v1/stores/{storeId}/followers/me", TEST_STORE_ID))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.clientId").value(TEST_CLIENT.getId().toString()))
+        .andExpect(jsonPath("$.storeId").value(TEST_STORE_ID.toString()))
+        .andExpect(jsonPath("$.isFollowing").value(true));
+  }
 
-    @Test
-    @WithMockUser(username = "testUser")
-    void checkIfIFollowStore_shouldReturnNotFollowingDTO_whenAuthorizedAndNotFollowing()
-            throws Exception {
-        when(userService.getCurrentClient()).thenReturn(TEST_CLIENT);
-        when(storeService.checkIfClientFollowsStore(TEST_CLIENT.getId(), TEST_STORE_ID))
-                .thenReturn(false);
-        mockMvc
-                .perform(get("/api/v1/stores/{storeId}/followers/me", TEST_STORE_ID))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.clientId").value(TEST_CLIENT.getId().toString()))
-                .andExpect(jsonPath("$.storeId").value(TEST_STORE_ID.toString()))
-                .andExpect(jsonPath("$.isFollowing").value(false));
-    }
+  @Test
+  @WithMockUser(username = "testUser")
+  void checkIfIFollowStore_shouldReturnNotFollowingDTO_whenAuthorizedAndNotFollowing()
+      throws Exception {
+    when(userService.getCurrentClient()).thenReturn(TEST_CLIENT);
+    when(storeService.checkIfClientFollowsStore(TEST_CLIENT.getId(), TEST_STORE_ID))
+        .thenReturn(false);
+    mockMvc
+        .perform(get("/api/v1/stores/{storeId}/followers/me", TEST_STORE_ID))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.clientId").value(TEST_CLIENT.getId().toString()))
+        .andExpect(jsonPath("$.storeId").value(TEST_STORE_ID.toString()))
+        .andExpect(jsonPath("$.isFollowing").value(false));
+  }
 }

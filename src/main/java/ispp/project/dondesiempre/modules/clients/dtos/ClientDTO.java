@@ -1,5 +1,6 @@
-package ispp.project.dondesiempre.models.clients;
+package ispp.project.dondesiempre.modules.clients.dtos;
 
+import ispp.project.dondesiempre.modules.clients.models.Client;
 import java.util.UUID;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

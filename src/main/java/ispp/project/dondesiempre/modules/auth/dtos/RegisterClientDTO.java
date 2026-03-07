@@ -13,13 +13,9 @@ import lombok.Setter;
 public class RegisterClientDTO {
 
   // User credentials
-  @NotBlank
-  @Email
-  private String email;
+  @NotBlank @Email private String email;
 
-  @NotBlank
-  @StrongPassword
-  private String password;
+  @NotBlank @StrongPassword private String password;
 
   // Client fields (required)
   @NotBlank
@@ -31,9 +27,7 @@ public class RegisterClientDTO {
   private String surname;
 
   // Client fields (required)
-  @NotBlank
-  @Phone
-  private String phone;
+  @NotBlank @Phone private String phone;
 
   @NotBlank
   @Size(max = 255)

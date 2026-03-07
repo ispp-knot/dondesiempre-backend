@@ -15,13 +15,9 @@ import lombok.Setter;
 public class RegisterStoreDTO {
 
   // User credentials
-  @NotBlank
-  @Email
-  private String email;
+  @NotBlank @Email private String email;
 
-  @NotBlank
-  @StrongPassword
-  private String password;
+  @NotBlank @StrongPassword private String password;
 
   // Store fields (required)
   @NotBlank
@@ -32,11 +28,9 @@ public class RegisterStoreDTO {
   @Size(max = 255)
   private String storeID;
 
-  @NotNull
-  private Double latitude;
+  @NotNull private Double latitude;
 
-  @NotNull
-  private Double longitude;
+  @NotNull private Double longitude;
 
   @NotBlank
   @Size(max = 255)
@@ -46,23 +40,16 @@ public class RegisterStoreDTO {
   @Size(max = 255)
   private String openingHours;
 
-  @NotNull
-  private Boolean acceptsShipping;
+  @NotNull private Boolean acceptsShipping;
 
-  @NotBlank
-  @Phone
-  private String phone;
+  @NotBlank @Phone private String phone;
 
   @NotBlank
   @Size(max = 5000)
   private String aboutUs;
 
   // Storefront fields (required)
-  @NotBlank
-  @HexColor
-  private String primaryColor;
+  @NotBlank @HexColor private String primaryColor;
 
-  @NotBlank
-  @HexColor
-  private String secondaryColor;
+  @NotBlank @HexColor private String secondaryColor;
 }

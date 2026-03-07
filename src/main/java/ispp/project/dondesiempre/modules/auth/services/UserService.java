@@ -1,11 +1,11 @@
 package ispp.project.dondesiempre.modules.auth.services;
 
-import ispp.project.dondesiempre.models.clients.Client;
-import ispp.project.dondesiempre.models.clients.ClientDTO;
 import ispp.project.dondesiempre.modules.auth.dtos.RegisterClientDTO;
 import ispp.project.dondesiempre.modules.auth.dtos.RegisterStoreDTO;
 import ispp.project.dondesiempre.modules.auth.models.User;
 import ispp.project.dondesiempre.modules.auth.repositories.UserRepository;
+import ispp.project.dondesiempre.modules.clients.dtos.ClientDTO;
+import ispp.project.dondesiempre.modules.clients.models.Client;
 import ispp.project.dondesiempre.modules.clients.repositories.ClientRepository;
 import ispp.project.dondesiempre.modules.common.exceptions.AlreadyExistsException;
 import ispp.project.dondesiempre.modules.common.exceptions.ResourceNotFoundException;
@@ -53,10 +53,8 @@ public class UserService {
     userRepository.save(user);
 
     Storefront storefront = new Storefront();
-    if (dto.getPrimaryColor() != null)
-      storefront.setPrimaryColor(dto.getPrimaryColor());
-    if (dto.getSecondaryColor() != null)
-      storefront.setSecondaryColor(dto.getSecondaryColor());
+    if (dto.getPrimaryColor() != null) storefront.setPrimaryColor(dto.getPrimaryColor());
+    if (dto.getSecondaryColor() != null) storefront.setSecondaryColor(dto.getSecondaryColor());
     storefrontRepository.save(storefront);
 
     GeometryFactory gf = new GeometryFactory(new PrecisionModel(), 4326);
@@ -99,7 +97,9 @@ public class UserService {
     return new ClientDTO(clientRepository.save(client));
   }
 
-  @Transactional(readOnly = true, rollbackFor = { ResourceNotFoundException.class, UnauthorizedException.class })
+  @Transactional(
+      readOnly = true,
+      rollbackFor = {ResourceNotFoundException.class, UnauthorizedException.class})
   public Client getCurrentClient() throws ResourceNotFoundException, UnauthorizedException {
     User currentUser = applicationContext.getBean(AuthService.class).getCurrentUser();
     return clientRepository
@@ -107,7 +107,9 @@ public class UserService {
         .orElseThrow(() -> new ResourceNotFoundException("Current client not found."));
   }
 
-  @Transactional(readOnly = true, rollbackFor = { ResourceNotFoundException.class, UnauthorizedException.class })
+  @Transactional(
+      readOnly = true,
+      rollbackFor = {ResourceNotFoundException.class, UnauthorizedException.class})
   public Store getCurrentStore() throws ResourceNotFoundException, UnauthorizedException {
     User currentUser = applicationContext.getBean(AuthService.class).getCurrentUser();
     return storeRepository

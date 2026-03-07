@@ -20,7 +20,6 @@ import ispp.project.dondesiempre.modules.stores.models.Store;
 import ispp.project.dondesiempre.modules.stores.models.Storefront;
 import ispp.project.dondesiempre.modules.stores.repositories.StoreRepository;
 import ispp.project.dondesiempre.modules.stores.repositories.StorefrontRepository;
-
 import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
@@ -34,21 +33,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @ExtendWith(MockitoExtension.class)
 class UserServiceRegisterTest {
 
-  @Mock
-  private UserRepository userRepository;
-  @Mock
-  private ClientRepository clientRepository;
-  @Mock
-  private StoreRepository storeRepository;
-  @Mock
-  private StorefrontRepository storefrontRepository;
-  @Mock
-  private PasswordEncoder passwordEncoder;
-  @Mock
-  private ApplicationContext applicationContext;
+  @Mock private UserRepository userRepository;
+  @Mock private ClientRepository clientRepository;
+  @Mock private StoreRepository storeRepository;
+  @Mock private StorefrontRepository storefrontRepository;
+  @Mock private PasswordEncoder passwordEncoder;
+  @Mock private ApplicationContext applicationContext;
 
-  @InjectMocks
-  private UserService userService;
+  @InjectMocks private UserService userService;
 
   // --- registerStore ---
 
@@ -92,8 +84,9 @@ class UserServiceRegisterTest {
     verify(storefrontRepository)
         .save(
             org.mockito.ArgumentMatchers.argThat(
-                sf -> "#000000".equals(sf.getPrimaryColor())
-                    && "#ffffff".equals(sf.getSecondaryColor())));
+                sf ->
+                    "#000000".equals(sf.getPrimaryColor())
+                        && "#ffffff".equals(sf.getSecondaryColor())));
   }
 
   @Test

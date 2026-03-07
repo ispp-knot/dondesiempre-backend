@@ -18,7 +18,6 @@ import ispp.project.dondesiempre.modules.common.exceptions.AlreadyExistsExceptio
 import ispp.project.dondesiempre.modules.stores.dtos.StoreDTO;
 import ispp.project.dondesiempre.modules.stores.models.Store;
 import ispp.project.dondesiempre.modules.stores.services.StoreService;
-
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,19 +29,13 @@ import org.springframework.test.web.servlet.MockMvc;
 @WebMvcTest(AuthController.class)
 class AuthControllerRegisterTest {
 
-  @Autowired
-  private MockMvc mockMvc;
-  @Autowired
-  private ObjectMapper objectMapper;
+  @Autowired private MockMvc mockMvc;
+  @Autowired private ObjectMapper objectMapper;
 
-  @MockitoBean
-  private AuthService authService;
-  @MockitoBean
-  private UserService userService;
-  @MockitoBean
-  private StoreService storeService;
-  @MockitoBean
-  private JwtProperties jwtProperties;
+  @MockitoBean private AuthService authService;
+  @MockitoBean private UserService userService;
+  @MockitoBean private StoreService storeService;
+  @MockitoBean private JwtProperties jwtProperties;
 
   // --- registerStore ---
 

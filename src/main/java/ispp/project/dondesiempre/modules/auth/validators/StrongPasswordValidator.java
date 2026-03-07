@@ -1,4 +1,4 @@
-package ispp.project.dondesiempre.validators;
+package ispp.project.dondesiempre.modules.auth.validators;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;

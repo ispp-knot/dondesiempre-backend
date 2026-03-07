@@ -39,17 +39,18 @@ public class AuthController {
   public ResponseEntity<Void> logIn(
       @RequestBody LoginRequestDTO dto, HttpServletResponse response) {
     String token = authService.logIn(dto.email(), dto.password());
-    ResponseCookie cookie = ResponseCookie.from("token", token)
-        // Prevent JavaScript from reading the cookie (XSS mitigation).
-        .httpOnly(true)
-        // Only send the cookie over HTTPS. Disabled in dev (no TLS); enabled in prod
-        // via jwt.secure-cookie=true (set in application-prod.yaml or JWT_SECURE_COOKIE
-        // env).
-        .secure(jwtProperties.isSecureCookie())
-        .sameSite(jwtProperties.getSameSite())
-        .path("/")
-        .maxAge(jwtProperties.getDuration())
-        .build();
+    ResponseCookie cookie =
+        ResponseCookie.from("token", token)
+            // Prevent JavaScript from reading the cookie (XSS mitigation).
+            .httpOnly(true)
+            // Only send the cookie over HTTPS. Disabled in dev (no TLS); enabled in prod
+            // via jwt.secure-cookie=true (set in application-prod.yaml or JWT_SECURE_COOKIE
+            // env).
+            .secure(jwtProperties.isSecureCookie())
+            .sameSite(jwtProperties.getSameSite())
+            .path("/")
+            .maxAge(jwtProperties.getDuration())
+            .build();
     response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
     return ResponseEntity.ok().build();
   }

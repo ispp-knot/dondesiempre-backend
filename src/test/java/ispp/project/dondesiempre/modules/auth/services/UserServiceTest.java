@@ -9,7 +9,6 @@ import ispp.project.dondesiempre.modules.auth.repositories.UserRepository;
 import ispp.project.dondesiempre.modules.clients.repositories.ClientRepository;
 import ispp.project.dondesiempre.modules.stores.repositories.StoreRepository;
 import ispp.project.dondesiempre.modules.stores.repositories.StorefrontRepository;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -21,21 +20,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
 
-  @Mock
-  private ClientRepository clientRepository;
-  @Mock
-  private StoreRepository storeRepository;
-  @Mock
-  private StorefrontRepository storefrontRepository;
-  @Mock
-  private UserRepository userRepository;
-  @Mock
-  private PasswordEncoder passwordEncoder;
-  @Mock
-  private ApplicationContext applicationContext;
+  @Mock private ClientRepository clientRepository;
+  @Mock private StoreRepository storeRepository;
+  @Mock private StorefrontRepository storefrontRepository;
+  @Mock private UserRepository userRepository;
+  @Mock private PasswordEncoder passwordEncoder;
+  @Mock private ApplicationContext applicationContext;
 
-  @InjectMocks
-  private UserService userService;
+  @InjectMocks private UserService userService;
 
   @Test
   void checkPassword_shouldReturnTrue_whenPasswordMatches() {

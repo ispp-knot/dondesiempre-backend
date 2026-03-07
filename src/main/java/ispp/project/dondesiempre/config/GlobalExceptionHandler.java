@@ -47,10 +47,11 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(MethodArgumentNotValidException.class)
   public ResponseEntity<String> handleMethodArgumentNotValid(
       MethodArgumentNotValidException exception, WebRequest request) {
-    String message = exception.getBindingResult().getFieldErrors().stream()
-        .map(e -> e.getField() + ": " + e.getDefaultMessage())
-        .findFirst()
-        .orElse("Validation failed");
+    String message =
+        exception.getBindingResult().getFieldErrors().stream()
+            .map(e -> e.getField() + ": " + e.getDefaultMessage())
+            .findFirst()
+            .orElse("Validation failed");
     return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
   }
 

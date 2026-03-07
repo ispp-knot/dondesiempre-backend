@@ -31,14 +31,9 @@ public class Client extends BaseEntity {
   @Size(max = 255)
   String surname;
 
-  @Column
-  @NotBlank
-  @Email
-  String email;
+  @Column @NotBlank @Email String email;
 
-  @Column
-  @Phone
-  String phone;
+  @Column @Phone String phone;
 
   @Column
   @Size(max = 255)
