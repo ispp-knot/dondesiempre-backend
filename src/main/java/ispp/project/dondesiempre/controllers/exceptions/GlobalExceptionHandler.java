@@ -1,11 +1,13 @@
 package ispp.project.dondesiempre.controllers.exceptions;
 
+import ispp.project.dondesiempre.exceptions.AlreadyExistsException;
 import ispp.project.dondesiempre.exceptions.InvalidBoundingBoxException;
 import ispp.project.dondesiempre.exceptions.InvalidRequestException;
 import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.exceptions.UnauthorizedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -39,6 +41,25 @@ public class GlobalExceptionHandler {
   public ResponseEntity<String> handleUnauthorizedException(
       UnauthorizedException exception, WebRequest request) {
     return new ResponseEntity<>(exception.getMessage(), HttpStatus.FORBIDDEN);
+  }
+
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  @ExceptionHandler(MethodArgumentNotValidException.class)
+  public ResponseEntity<String> handleMethodArgumentNotValid(
+      MethodArgumentNotValidException exception, WebRequest request) {
+    String message =
+        exception.getBindingResult().getFieldErrors().stream()
+            .map(e -> e.getField() + ": " + e.getDefaultMessage())
+            .findFirst()
+            .orElse("Validation failed");
+    return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
+  }
+
+  @ResponseStatus(HttpStatus.CONFLICT)
+  @ExceptionHandler(AlreadyExistsException.class)
+  public ResponseEntity<String> handleAlreadyExistsException(
+      AlreadyExistsException exception, WebRequest request) {
+    return new ResponseEntity<>(exception.getMessage(), HttpStatus.CONFLICT);
   }
 
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)

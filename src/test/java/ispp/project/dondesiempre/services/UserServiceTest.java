@@ -6,6 +6,8 @@ import static org.mockito.Mockito.when;
 
 import ispp.project.dondesiempre.models.User;
 import ispp.project.dondesiempre.repositories.ClientRepository;
+import ispp.project.dondesiempre.repositories.UserRepository;
+import ispp.project.dondesiempre.repositories.storefronts.StorefrontRepository;
 import ispp.project.dondesiempre.repositories.stores.StoreRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,6 +22,8 @@ class UserServiceTest {
 
   @Mock private ClientRepository clientRepository;
   @Mock private StoreRepository storeRepository;
+  @Mock private StorefrontRepository storefrontRepository;
+  @Mock private UserRepository userRepository;
   @Mock private PasswordEncoder passwordEncoder;
   @Mock private ApplicationContext applicationContext;
 

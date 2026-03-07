@@ -1,6 +1,6 @@
 package ispp.project.dondesiempre.controllers.stores;
 
-import ispp.project.dondesiempre.models.Client;
+import ispp.project.dondesiempre.models.clients.Client;
 import ispp.project.dondesiempre.models.stores.dto.StoreDTO;
 import ispp.project.dondesiempre.models.stores.dto.StoreFollowerDTO;
 import ispp.project.dondesiempre.models.stores.dto.StoreUpdateDTO;
