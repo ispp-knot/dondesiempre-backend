@@ -1,4 +1,4 @@
-package ispp.project.dondesiempre.services;
+package ispp.project.dondesiempre.modules.promotions.services;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -22,7 +22,6 @@ import ispp.project.dondesiempre.modules.promotions.dtos.PromotionCreationDTO;
 import ispp.project.dondesiempre.modules.promotions.dtos.PromotionUpdateDTO;
 import ispp.project.dondesiempre.modules.promotions.models.Promotion;
 import ispp.project.dondesiempre.modules.promotions.models.PromotionProduct;
-import ispp.project.dondesiempre.modules.promotions.services.PromotionService;
 import ispp.project.dondesiempre.modules.stores.models.Store;
 import ispp.project.dondesiempre.modules.stores.models.Storefront;
 import ispp.project.dondesiempre.modules.stores.repositories.StoreRepository;

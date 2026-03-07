@@ -1,11 +1,10 @@
-package ispp.project.dondesiempre.services;
+package ispp.project.dondesiempre.modules.auth.services;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 import ispp.project.dondesiempre.modules.auth.models.User;
-import ispp.project.dondesiempre.modules.auth.services.UserService;
 import ispp.project.dondesiempre.modules.clients.repositories.ClientRepository;
 import ispp.project.dondesiempre.modules.stores.repositories.StoreRepository;
 import org.junit.jupiter.api.Test;
