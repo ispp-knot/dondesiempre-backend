@@ -1,6 +1,5 @@
 package ispp.project.dondesiempre.modules.stores.models;
 
-import ispp.project.dondesiempre.models.storefronts.Storefront;
 import ispp.project.dondesiempre.modules.auth.models.User;
 import ispp.project.dondesiempre.modules.common.models.BaseEntity;
 import ispp.project.dondesiempre.validators.Phone;
@@ -31,10 +30,7 @@ public class Store extends BaseEntity {
   @Size(max = 255)
   String name;
 
-  @Column
-  @NotBlank
-  @Email
-  String email;
+  @Column @NotBlank @Email String email;
 
   // NIF
   @Column
@@ -57,17 +53,13 @@ public class Store extends BaseEntity {
   @Size(max = 255)
   String openingHours;
 
-  @Column
-  @Phone
-  String phone;
+  @Column @Phone String phone;
 
   @Column(columnDefinition = "TEXT")
   @Size(max = 5000)
   String aboutUs;
 
-  @Column
-  @NotNull
-  Boolean acceptsShipping;
+  @Column @NotNull Boolean acceptsShipping;
 
   @OneToOne(cascade = CascadeType.ALL)
   @JoinColumn(name = "storefront_id", referencedColumnName = "id", nullable = false)

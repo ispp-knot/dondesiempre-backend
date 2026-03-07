@@ -1,7 +1,7 @@
 package ispp.project.dondesiempre.models.outfits;
 
-import ispp.project.dondesiempre.models.storefronts.Storefront;
 import ispp.project.dondesiempre.modules.common.models.BaseEntity;
+import ispp.project.dondesiempre.modules.stores.models.Storefront;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -36,10 +36,7 @@ public class Outfit extends BaseEntity {
   @Size(max = 5000)
   private String description;
 
-  @Column
-  @Nullable
-  @URL
-  private String image;
+  @Column @Nullable @URL private String image;
 
   @Column
   @NotNull

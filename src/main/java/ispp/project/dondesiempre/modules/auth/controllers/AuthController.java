@@ -28,11 +28,12 @@ public class AuthController {
   public ResponseEntity<Void> logIn(
       @RequestBody LoginRequestDTO dto, HttpServletResponse response) {
     String token = authService.logIn(dto.email(), dto.password());
-    ResponseCookie cookie = ResponseCookie.from("token", token)
-        .httpOnly(true)
-        .path("/")
-        .maxAge(jwtProperties.getDuration())
-        .build();
+    ResponseCookie cookie =
+        ResponseCookie.from("token", token)
+            .httpOnly(true)
+            .path("/")
+            .maxAge(jwtProperties.getDuration())
+            .build();
     response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
     return ResponseEntity.ok().build();
   }

@@ -10,15 +10,14 @@ import java.util.UUID;
 import lombok.EqualsAndHashCode;
 
 @MappedSuperclass
-@EqualsAndHashCode(of = { "id" })
+@EqualsAndHashCode(of = {"id"})
 public class BaseEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
   protected UUID id;
 
-  @Version
-  private Integer version;
+  @Version private Integer version;
 
   public UUID getId() {
     return id;

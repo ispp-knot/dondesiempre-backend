@@ -41,10 +41,7 @@ public class Product extends BaseEntity {
   @Size(max = 5000)
   String description;
 
-  @Column
-  @Nullable
-  @URL
-  private String image;
+  @Column @Nullable @URL private String image;
 
   @NotNull
   @ManyToOne(optional = false)

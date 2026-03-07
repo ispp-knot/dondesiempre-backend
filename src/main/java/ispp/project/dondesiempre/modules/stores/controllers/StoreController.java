@@ -6,7 +6,6 @@ import ispp.project.dondesiempre.modules.follows.dtos.StoreFollowerDTO;
 import ispp.project.dondesiempre.modules.stores.dtos.StoreDTO;
 import ispp.project.dondesiempre.modules.stores.dtos.StoreUpdateDTO;
 import ispp.project.dondesiempre.modules.stores.services.StoreService;
-
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -80,7 +79,8 @@ public class StoreController {
   @GetMapping("/clients/me/followed-stores")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<List<StoreDTO>> getMyFollowedStores() {
-    List<StoreDTO> followedStores = storeService.getMyFollowedStores().stream().map(storeService::toDTO).toList();
+    List<StoreDTO> followedStores =
+        storeService.getMyFollowedStores().stream().map(storeService::toDTO).toList();
     return new ResponseEntity<>(followedStores, HttpStatus.OK);
   }
 

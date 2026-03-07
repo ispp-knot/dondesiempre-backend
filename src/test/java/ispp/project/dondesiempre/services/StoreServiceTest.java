@@ -14,7 +14,6 @@ import static org.mockito.Mockito.when;
 import ispp.project.dondesiempre.exceptions.InvalidBoundingBoxException;
 import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.mockEntities.StoreMockEntities;
-import ispp.project.dondesiempre.models.storefronts.Storefront;
 import ispp.project.dondesiempre.modules.auth.services.UserService;
 import ispp.project.dondesiempre.modules.clients.models.Client;
 import ispp.project.dondesiempre.modules.follows.models.StoreFollower;
@@ -23,10 +22,10 @@ import ispp.project.dondesiempre.modules.stores.dtos.StoreDTO;
 import ispp.project.dondesiempre.modules.stores.models.SocialNetwork;
 import ispp.project.dondesiempre.modules.stores.models.Store;
 import ispp.project.dondesiempre.modules.stores.models.StoreSocialNetwork;
+import ispp.project.dondesiempre.modules.stores.models.Storefront;
 import ispp.project.dondesiempre.modules.stores.repositories.StoreRepository;
 import ispp.project.dondesiempre.modules.stores.repositories.StoreSocialNetworkRepository;
 import ispp.project.dondesiempre.modules.stores.services.StoreService;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -41,20 +40,14 @@ import org.springframework.context.ApplicationContext;
 @ExtendWith(MockitoExtension.class)
 public class StoreServiceTest {
 
-  @Mock
-  private StoreRepository storeRepository;
-  @Mock
-  private StoreSocialNetworkRepository socialNetworkRepository;
-  @Mock
-  private StoreFollowerRepository storeFollowerRepository;
-  @Mock
-  private UserService userService;
+  @Mock private StoreRepository storeRepository;
+  @Mock private StoreSocialNetworkRepository socialNetworkRepository;
+  @Mock private StoreFollowerRepository storeFollowerRepository;
+  @Mock private UserService userService;
 
-  @Mock
-  private ApplicationContext applicationContext;
+  @Mock private ApplicationContext applicationContext;
 
-  @InjectMocks
-  private StoreService storeService;
+  @InjectMocks private StoreService storeService;
 
   private Store store;
   private UUID storeId;
@@ -73,7 +66,8 @@ public class StoreServiceTest {
   private static final Client TEST_CLIENT = StoreMockEntities.sampleClient();
   private static final UUID TEST_STORE_ID = UUID.randomUUID();
   private static final Store TEST_STORE = StoreMockEntities.sampleStore(TEST_STORE_ID);
-  private static final StoreFollower TEST_FOLLOWER = StoreMockEntities.sampleFollower(TEST_CLIENT, TEST_STORE);
+  private static final StoreFollower TEST_FOLLOWER =
+      StoreMockEntities.sampleFollower(TEST_CLIENT, TEST_STORE);
 
   @Test
   void shouldReturnStore_whenFindByIdExists() {

@@ -16,7 +16,6 @@ import ispp.project.dondesiempre.modules.auth.controllers.AuthController;
 import ispp.project.dondesiempre.modules.auth.dtos.LoginRequestDTO;
 import ispp.project.dondesiempre.modules.auth.models.User;
 import ispp.project.dondesiempre.modules.auth.services.AuthService;
-
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,15 +28,11 @@ import org.springframework.test.web.servlet.MockMvc;
 @WebMvcTest(AuthController.class)
 class AuthControllerTest {
 
-  @Autowired
-  private MockMvc mockMvc;
-  @Autowired
-  private ObjectMapper objectMapper;
+  @Autowired private MockMvc mockMvc;
+  @Autowired private ObjectMapper objectMapper;
 
-  @MockitoBean
-  private AuthService authService;
-  @MockitoBean
-  private JwtProperties jwtProperties;
+  @MockitoBean private AuthService authService;
+  @MockitoBean private JwtProperties jwtProperties;
 
   @Test
   void logIn_shouldReturn200AndSetCookie_whenCredentialsAreValid() throws Exception {

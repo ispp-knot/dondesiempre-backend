@@ -31,9 +31,7 @@ public class Promotion extends BaseEntity {
   @Max(100)
   private Integer discountPercentage;
 
-  @Column
-  @NotNull
-  private boolean isActive;
+  @Column @NotNull private boolean isActive;
 
   @ManyToOne(optional = false)
   @NotNull

@@ -1,9 +1,9 @@
-package ispp.project.dondesiempre.services.storefronts;
+package ispp.project.dondesiempre.modules.stores.services;
 
 import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
-import ispp.project.dondesiempre.models.storefronts.Storefront;
-import ispp.project.dondesiempre.models.storefronts.dto.StorefrontDTO;
-import ispp.project.dondesiempre.repositories.storefronts.StorefrontRepository;
+import ispp.project.dondesiempre.modules.stores.dtos.StorefrontDTO;
+import ispp.project.dondesiempre.modules.stores.models.Storefront;
+import ispp.project.dondesiempre.modules.stores.repositories.StorefrontRepository;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;

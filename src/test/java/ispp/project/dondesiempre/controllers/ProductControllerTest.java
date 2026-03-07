@@ -10,11 +10,11 @@ import ispp.project.dondesiempre.models.products.ProductType;
 import ispp.project.dondesiempre.models.products.dto.DiscountModificationDTO;
 import ispp.project.dondesiempre.models.products.dto.ProductCreationDTO;
 import ispp.project.dondesiempre.models.products.dto.ProductDTO;
-import ispp.project.dondesiempre.models.storefronts.Storefront;
 import ispp.project.dondesiempre.modules.auth.models.User;
 import ispp.project.dondesiempre.modules.auth.repositories.UserRepository;
 import ispp.project.dondesiempre.modules.auth.services.AuthService;
 import ispp.project.dondesiempre.modules.stores.models.Store;
+import ispp.project.dondesiempre.modules.stores.models.Storefront;
 import ispp.project.dondesiempre.modules.stores.repositories.StoreRepository;
 import ispp.project.dondesiempre.repositories.products.ProductTypeRepository;
 import ispp.project.dondesiempre.services.CloudinaryService;
@@ -41,18 +41,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class ProductControllerTest {
 
-  @Autowired
-  private ProductController productController;
-  @Autowired
-  private ProductTypeRepository productTypeRepository;
-  @Autowired
-  private StoreRepository storeRepository;
-  @Autowired
-  private UserRepository userRepository;
-  @MockitoBean
-  private AuthService authService;
-  @MockitoBean
-  private CloudinaryService cloudinaryService;
+  @Autowired private ProductController productController;
+  @Autowired private ProductTypeRepository productTypeRepository;
+  @Autowired private StoreRepository storeRepository;
+  @Autowired private UserRepository userRepository;
+  @MockitoBean private AuthService authService;
+  @MockitoBean private CloudinaryService cloudinaryService;
 
   private User testUser;
 
@@ -83,7 +77,7 @@ public class ProductControllerTest {
     store.setStoreID("test-store");
     store.setLocation(
         new Point(
-            new CoordinateArraySequence(new Coordinate[] { new Coordinate(0.0, 0.0) }),
+            new CoordinateArraySequence(new Coordinate[] {new Coordinate(0.0, 0.0)}),
             new GeometryFactory(new PrecisionModel(PrecisionModel.FIXED), 0)));
     store.setAddress("123 Test Street");
     store.setOpeningHours("9am - 5pm");
@@ -126,7 +120,7 @@ public class ProductControllerTest {
     store.setStoreID("test-store");
     store.setLocation(
         new Point(
-            new CoordinateArraySequence(new Coordinate[] { new Coordinate(0.0, 0.0) }),
+            new CoordinateArraySequence(new Coordinate[] {new Coordinate(0.0, 0.0)}),
             new GeometryFactory(new PrecisionModel(PrecisionModel.FIXED), 0)));
     store.setAddress("123 Test Street");
     store.setOpeningHours("9am - 5pm");
@@ -169,7 +163,7 @@ public class ProductControllerTest {
     store.setStoreID("test-store");
     store.setLocation(
         new Point(
-            new CoordinateArraySequence(new Coordinate[] { new Coordinate(0.0, 0.0) }),
+            new CoordinateArraySequence(new Coordinate[] {new Coordinate(0.0, 0.0)}),
             new GeometryFactory(new PrecisionModel(PrecisionModel.FIXED), 0)));
     store.setAddress("123 Test Street");
     store.setOpeningHours("9am - 5pm");
@@ -229,7 +223,7 @@ public class ProductControllerTest {
     store.setStoreID("test-store");
     store.setLocation(
         new Point(
-            new CoordinateArraySequence(new Coordinate[] { new Coordinate(0.0, 0.0) }),
+            new CoordinateArraySequence(new Coordinate[] {new Coordinate(0.0, 0.0)}),
             new GeometryFactory(new PrecisionModel(PrecisionModel.FIXED), 0)));
     store.setAddress("123 Test Street");
     store.setOpeningHours("9am - 5pm");
@@ -284,7 +278,7 @@ public class ProductControllerTest {
     store.setStoreID("test-store");
     store.setLocation(
         new Point(
-            new CoordinateArraySequence(new Coordinate[] { new Coordinate(0.0, 0.0) }),
+            new CoordinateArraySequence(new Coordinate[] {new Coordinate(0.0, 0.0)}),
             new GeometryFactory(new PrecisionModel(PrecisionModel.FIXED), 0)));
     store.setAddress("123 Test Street");
     store.setOpeningHours("9am - 5pm");
@@ -329,7 +323,7 @@ public class ProductControllerTest {
     store.setStoreID("test-store");
     store.setLocation(
         new Point(
-            new CoordinateArraySequence(new Coordinate[] { new Coordinate(0.0, 0.0) }),
+            new CoordinateArraySequence(new Coordinate[] {new Coordinate(0.0, 0.0)}),
             new GeometryFactory(new PrecisionModel(PrecisionModel.FIXED), 0)));
     store.setAddress("123 Test Street");
     store.setOpeningHours("9am - 5pm");
@@ -376,7 +370,7 @@ public class ProductControllerTest {
     store.setStoreID("test-store");
     store.setLocation(
         new Point(
-            new CoordinateArraySequence(new Coordinate[] { new Coordinate(0.0, 0.0) }),
+            new CoordinateArraySequence(new Coordinate[] {new Coordinate(0.0, 0.0)}),
             new GeometryFactory(new PrecisionModel(PrecisionModel.FIXED), 0)));
     store.setAddress("123 Test Street");
     store.setOpeningHours("9am - 5pm");

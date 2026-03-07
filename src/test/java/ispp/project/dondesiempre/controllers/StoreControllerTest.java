@@ -17,7 +17,6 @@ import ispp.project.dondesiempre.modules.stores.controllers.StoreController;
 import ispp.project.dondesiempre.modules.stores.dtos.StoreDTO;
 import ispp.project.dondesiempre.modules.stores.models.Store;
 import ispp.project.dondesiempre.modules.stores.services.StoreService;
-
 import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
@@ -29,22 +28,24 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-@WebMvcTest(controllers = StoreController.class, excludeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = {
-    GlobalExceptionHandler.class }))
+@WebMvcTest(
+    controllers = StoreController.class,
+    excludeFilters =
+        @ComponentScan.Filter(
+            type = FilterType.ASSIGNABLE_TYPE,
+            classes = {GlobalExceptionHandler.class}))
 public class StoreControllerTest {
 
-  @Autowired
-  private MockMvc mockMvc;
+  @Autowired private MockMvc mockMvc;
 
-  @MockitoBean
-  private StoreService storeService;
-  @MockitoBean
-  private UserService userService;
+  @MockitoBean private StoreService storeService;
+  @MockitoBean private UserService userService;
 
   private static final Client TEST_CLIENT = StoreMockEntities.sampleClient();
   private static final UUID TEST_STORE_ID = UUID.randomUUID();
   private static final Store TEST_STORE = StoreMockEntities.sampleStore(TEST_STORE_ID);
-  private static final StoreFollower TEST_FOLLOWER = StoreMockEntities.sampleFollower(TEST_CLIENT, TEST_STORE);
+  private static final StoreFollower TEST_FOLLOWER =
+      StoreMockEntities.sampleFollower(TEST_CLIENT, TEST_STORE);
 
   @Test
   void shouldReturnOkAndListOfStores_whenValidParamsProvided() throws Exception {
@@ -89,17 +90,17 @@ public class StoreControllerTest {
    * StoreDTO storeDTO = new StoreDTO();
    * storeDTO.setName("La Boutique");
    * storeDTO.setAddress("Calle Mayor 1");
-   * 
+   *
    * when(storeService.findById(storeId)).thenReturn(store);
    * when(storeService.toDTO(store)).thenReturn(storeDTO);
-   * 
+   *
    * mockMvc
    * .perform(get("/api/v1/stores/{id}", storeId))
    * .andExpect(status().isOk())
    * .andExpect(jsonPath("$.name").value("La Boutique"))
    * .andExpect(jsonPath("$.address").value("Calle Mayor 1"));
    * }
-   * 
+   *
    * @Test
    * void followStore_shouldReturnForbidden_whenNotAuthorized() throws Exception {
    * mockMvc

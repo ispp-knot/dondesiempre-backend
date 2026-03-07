@@ -9,10 +9,10 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
-import ispp.project.dondesiempre.models.storefronts.Storefront;
-import ispp.project.dondesiempre.models.storefronts.dto.StorefrontDTO;
-import ispp.project.dondesiempre.repositories.storefronts.StorefrontRepository;
-import ispp.project.dondesiempre.services.storefronts.StorefrontService;
+import ispp.project.dondesiempre.modules.stores.dtos.StorefrontDTO;
+import ispp.project.dondesiempre.modules.stores.models.Storefront;
+import ispp.project.dondesiempre.modules.stores.repositories.StorefrontRepository;
+import ispp.project.dondesiempre.modules.stores.services.StorefrontService;
 import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;

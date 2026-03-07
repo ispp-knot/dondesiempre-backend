@@ -1,6 +1,6 @@
-package ispp.project.dondesiempre.repositories.storefronts;
+package ispp.project.dondesiempre.modules.stores.repositories;
 
-import ispp.project.dondesiempre.models.storefronts.Storefront;
+import ispp.project.dondesiempre.modules.stores.models.Storefront;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 

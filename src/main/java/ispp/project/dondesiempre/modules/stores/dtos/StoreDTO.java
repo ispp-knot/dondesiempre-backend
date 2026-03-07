@@ -1,8 +1,6 @@
 package ispp.project.dondesiempre.modules.stores.dtos;
 
-import ispp.project.dondesiempre.models.storefronts.dto.StorefrontDTO;
 import ispp.project.dondesiempre.modules.stores.models.Store;
-
 import java.util.List;
 import java.util.UUID;
 import lombok.Getter;
@@ -27,8 +25,7 @@ public class StoreDTO {
   private List<StoreSocialNetworkDTO> socialNetworks;
 
   public StoreDTO(Store store) {
-    if (store == null)
-      return;
+    if (store == null) return;
 
     this.id = store.getId();
     this.name = store.getName();
@@ -46,6 +43,5 @@ public class StoreDTO {
     this.storefront = new StorefrontDTO(store.getStorefront());
   }
 
-  public StoreDTO() {
-  }
+  public StoreDTO() {}
 }

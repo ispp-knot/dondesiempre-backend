@@ -22,15 +22,15 @@ import ispp.project.dondesiempre.models.outfits.dto.OutfitCreationDTO;
 import ispp.project.dondesiempre.models.outfits.dto.OutfitCreationProductDTO;
 import ispp.project.dondesiempre.models.outfits.dto.OutfitUpdateDTO;
 import ispp.project.dondesiempre.models.products.Product;
-import ispp.project.dondesiempre.models.storefronts.Storefront;
 import ispp.project.dondesiempre.modules.auth.models.User;
 import ispp.project.dondesiempre.modules.auth.services.AuthService;
 import ispp.project.dondesiempre.modules.stores.models.Store;
+import ispp.project.dondesiempre.modules.stores.models.Storefront;
+import ispp.project.dondesiempre.modules.stores.services.StorefrontService;
 import ispp.project.dondesiempre.repositories.outfits.OutfitProductRepository;
 import ispp.project.dondesiempre.repositories.outfits.OutfitRepository;
 import ispp.project.dondesiempre.repositories.outfits.OutfitTagRelationRepository;
 import ispp.project.dondesiempre.services.products.ProductService;
-import ispp.project.dondesiempre.services.storefronts.StorefrontService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -46,25 +46,16 @@ import org.springframework.context.ApplicationContext;
 @ExtendWith(MockitoExtension.class)
 class OutfitServiceTest {
 
-  @Mock
-  private OutfitRepository outfitRepository;
-  @Mock
-  private OutfitProductRepository outfitProductRepository;
-  @Mock
-  private OutfitTagRelationRepository outfitTagRelationRepository;
-  @Mock
-  private ProductService productService;
-  @Mock
-  private AuthService authService;
-  @Mock
-  private StorefrontService storefrontService;
-  @Mock
-  private OutfitTagService outfitTagService;
-  @Mock
-  private ApplicationContext applicationContext;
+  @Mock private OutfitRepository outfitRepository;
+  @Mock private OutfitProductRepository outfitProductRepository;
+  @Mock private OutfitTagRelationRepository outfitTagRelationRepository;
+  @Mock private ProductService productService;
+  @Mock private AuthService authService;
+  @Mock private StorefrontService storefrontService;
+  @Mock private OutfitTagService outfitTagService;
+  @Mock private ApplicationContext applicationContext;
 
-  @InjectMocks
-  private OutfitService outfitService;
+  @InjectMocks private OutfitService outfitService;
 
   private UUID outfitId;
   private UUID productId;

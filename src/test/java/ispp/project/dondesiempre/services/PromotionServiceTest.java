@@ -17,11 +17,11 @@ import ispp.project.dondesiempre.models.promotions.Promotion;
 import ispp.project.dondesiempre.models.promotions.PromotionProduct;
 import ispp.project.dondesiempre.models.promotions.dto.PromotionCreationDTO;
 import ispp.project.dondesiempre.models.promotions.dto.PromotionUpdateDTO;
-import ispp.project.dondesiempre.models.storefronts.Storefront;
 import ispp.project.dondesiempre.modules.auth.models.User;
 import ispp.project.dondesiempre.modules.auth.repositories.UserRepository;
 import ispp.project.dondesiempre.modules.auth.services.AuthService;
 import ispp.project.dondesiempre.modules.stores.models.Store;
+import ispp.project.dondesiempre.modules.stores.models.Storefront;
 import ispp.project.dondesiempre.modules.stores.repositories.StoreRepository;
 import ispp.project.dondesiempre.repositories.products.ProductTypeRepository;
 import ispp.project.dondesiempre.services.products.ProductService;
@@ -46,18 +46,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class PromotionServiceTest {
 
-  @Autowired
-  private PromotionService promotionService;
-  @Autowired
-  private StoreRepository storeRepository;
-  @Autowired
-  private ProductTypeRepository productTypeRepository;
-  @Autowired
-  private ProductService productService;
-  @Autowired
-  private UserRepository userRepository;
-  @MockitoBean
-  private AuthService authService;
+  @Autowired private PromotionService promotionService;
+  @Autowired private StoreRepository storeRepository;
+  @Autowired private ProductTypeRepository productTypeRepository;
+  @Autowired private ProductService productService;
+  @Autowired private UserRepository userRepository;
+  @MockitoBean private AuthService authService;
 
   private Storefront createStorefront() {
     Storefront storefront = new Storefront();
@@ -80,7 +74,7 @@ public class PromotionServiceTest {
     store.setStoreID(storeId);
     store.setLocation(
         new Point(
-            new CoordinateArraySequence(new Coordinate[] { new Coordinate(0.0, 0.0) }),
+            new CoordinateArraySequence(new Coordinate[] {new Coordinate(0.0, 0.0)}),
             new GeometryFactory(new PrecisionModel(PrecisionModel.FIXED), 0)));
     store.setAddress("123 Test Street");
     store.setOpeningHours("9am - 5pm");
@@ -128,7 +122,8 @@ public class PromotionServiceTest {
     Store store = createAndSaveStore("Test Store", "test@example.com", "test-store");
     ProductType productType = createAndSaveProductType("Test Product Type");
     Product product = createProduct("Test Product", 1000, 800, productType.getId(), store.getId());
-    Promotion promotion = createPromotion("Test Promotion", 20, true, List.of(product.getId()), store.getId());
+    Promotion promotion =
+        createPromotion("Test Promotion", 20, true, List.of(product.getId()), store.getId());
 
     assertNotNull(promotion);
     assertEquals("Test Promotion", promotion.getName());
@@ -177,7 +172,8 @@ public class PromotionServiceTest {
     ProductType productType = createAndSaveProductType("Test Product Type");
 
     Product product = createProduct("Test Product", 1000, 800, productType.getId(), store.getId());
-    Product anotherProduct = createProduct("Another-product", 1000, 800, productType.getId(), anotherStore.getId());
+    Product anotherProduct =
+        createProduct("Another-product", 1000, 800, productType.getId(), anotherStore.getId());
 
     PromotionCreationDTO promotionCreationDTO = new PromotionCreationDTO();
     promotionCreationDTO.setName("Test Promotion");
@@ -195,12 +191,14 @@ public class PromotionServiceTest {
     Integer originalPrice = 1000; // $10.00
     Integer discountPercentage = 25; // 25% discount
     Integer expectedPrice = 750; // $7.50 after discount
-    Integer discountedPrice = promotionService.calculateDiscountedPrice(originalPrice, discountPercentage);
+    Integer discountedPrice =
+        promotionService.calculateDiscountedPrice(originalPrice, discountPercentage);
     assertEquals(expectedPrice, discountedPrice);
   }
 
   @Test
-  public void shouldThrowInvalidRequestException_WhenCalculatingDiscountedPriceWithInvalidDiscount() {
+  public void
+      shouldThrowInvalidRequestException_WhenCalculatingDiscountedPriceWithInvalidDiscount() {
     Integer originalPrice = 1000; // $10.00
     Integer invalidDiscountPercentage = 150; // Invalid discount percentage
     assertThrows(
@@ -222,7 +220,8 @@ public class PromotionServiceTest {
     Store store = createAndSaveStore("Test Store", "test@example.com", "test-store");
     ProductType productType = createAndSaveProductType("Test Product Type");
     Product product = createProduct("Test Product", 1000, 800, productType.getId(), store.getId());
-    Promotion promotion = createPromotion("Test Promotion", 20, true, List.of(product.getId()), store.getId());
+    Promotion promotion =
+        createPromotion("Test Promotion", 20, true, List.of(product.getId()), store.getId());
 
     UUID expectedId = promotion.getId();
     Promotion foundPromotion = promotionService.getPromotionById(expectedId);
@@ -248,7 +247,8 @@ public class PromotionServiceTest {
     Store store = createAndSaveStore("Test Store", "test@example.com", "test-store");
     ProductType productType = createAndSaveProductType("Test Product Type");
     Product product = createProduct("Test Product", 1000, 800, productType.getId(), store.getId());
-    Promotion promotion = createPromotion("Test Promotion", 20, true, List.of(product.getId()), store.getId());
+    Promotion promotion =
+        createPromotion("Test Promotion", 20, true, List.of(product.getId()), store.getId());
     UUID promotionId = promotion.getId();
     PromotionUpdateDTO updateDTO = new PromotionUpdateDTO();
     Integer newDiscount = 30;
@@ -264,7 +264,8 @@ public class PromotionServiceTest {
     Store store = createAndSaveStore("Test Store", "test@example.com", "test-store");
     ProductType productType = createAndSaveProductType("Test Product Type");
     Product product = createProduct("Test Product", 1000, 800, productType.getId(), store.getId());
-    Promotion promotion = createPromotion("Test Promotion", 20, true, List.of(product.getId()), store.getId());
+    Promotion promotion =
+        createPromotion("Test Promotion", 20, true, List.of(product.getId()), store.getId());
     UUID promotionId = promotion.getId();
 
     PromotionUpdateDTO updateDTO = new PromotionUpdateDTO();
@@ -280,7 +281,8 @@ public class PromotionServiceTest {
     Store store = createAndSaveStore("Test Store", "test@example.com", "test-store");
     ProductType productType = createAndSaveProductType("Test Product Type");
     Product product = createProduct("Test Product", 1000, 800, productType.getId(), store.getId());
-    Promotion promotion = createPromotion("Test Promotion", 20, true, List.of(product.getId()), store.getId());
+    Promotion promotion =
+        createPromotion("Test Promotion", 20, true, List.of(product.getId()), store.getId());
 
     UUID promotionId = promotion.getId();
     promotionService.deletePromotion(promotionId);
@@ -294,8 +296,10 @@ public class PromotionServiceTest {
     Store store = createAndSaveStore("Test Store", "test@test.com", "test-store");
     ProductType productType = createAndSaveProductType("Test Product Type");
     Product product = createProduct("Test Product", 1000, 800, productType.getId(), store.getId());
-    Product product2 = createProduct("Test Product 2", 1000, 800, productType.getId(), store.getId());
-    Promotion promotion = createPromotion("Test Promotion", 20, true, List.of(product.getId()), store.getId());
+    Product product2 =
+        createProduct("Test Product 2", 1000, 800, productType.getId(), store.getId());
+    Promotion promotion =
+        createPromotion("Test Promotion", 20, true, List.of(product.getId()), store.getId());
     UUID promotionId = promotion.getId();
     PromotionProduct promotionProduct = promotionService.addProduct(promotionId, product2.getId());
 
@@ -309,7 +313,8 @@ public class PromotionServiceTest {
     Store store = createAndSaveStore("Test Store", "test@test.com", "test-store");
     ProductType productType = createAndSaveProductType("Test Product Type");
     Product product = createProduct("Test Product", 1000, 800, productType.getId(), store.getId());
-    Promotion promotion = createPromotion("Test Promotion", 20, true, List.of(product.getId()), store.getId());
+    Promotion promotion =
+        createPromotion("Test Promotion", 20, true, List.of(product.getId()), store.getId());
     UUID promotionId = promotion.getId();
 
     assertThrows(
@@ -340,7 +345,8 @@ public class PromotionServiceTest {
     Store store = createAndSaveStore("Test Store", "test@example.com", "test-store");
     ProductType productType = createAndSaveProductType("Test Product Type");
     Product product = createProduct("Test Product", 1000, 800, productType.getId(), store.getId());
-    Promotion promotion = createPromotion("Test Promotion", 20, true, List.of(product.getId()), store.getId());
+    Promotion promotion =
+        createPromotion("Test Promotion", 20, true, List.of(product.getId()), store.getId());
 
     doThrow(new UnauthorizedException("Not authorized"))
         .when(authService)
@@ -359,7 +365,8 @@ public class PromotionServiceTest {
     Store store = createAndSaveStore("Test Store", "test@example.com", "test-store");
     ProductType productType = createAndSaveProductType("Test Product Type");
     Product product = createProduct("Test Product", 1000, 800, productType.getId(), store.getId());
-    Promotion promotion = createPromotion("Test Promotion", 20, true, List.of(product.getId()), store.getId());
+    Promotion promotion =
+        createPromotion("Test Promotion", 20, true, List.of(product.getId()), store.getId());
 
     doThrow(new UnauthorizedException("Not authorized"))
         .when(authService)
@@ -374,9 +381,11 @@ public class PromotionServiceTest {
     Store store = createAndSaveStore("Test Store", "test@test.com", "test-store");
     ProductType productType = createAndSaveProductType("Test Product Type");
     Product product = createProduct("Test Product", 1000, 800, productType.getId(), store.getId());
-    Promotion promotion = createPromotion("Test Promotion", 20, true, List.of(product.getId()), store.getId());
+    Promotion promotion =
+        createPromotion("Test Promotion", 20, true, List.of(product.getId()), store.getId());
 
-    Product product2 = createProduct("Test Product 2", 1000, 800, productType.getId(), store.getId());
+    Product product2 =
+        createProduct("Test Product 2", 1000, 800, productType.getId(), store.getId());
 
     doThrow(new UnauthorizedException("Not authorized"))
         .when(authService)

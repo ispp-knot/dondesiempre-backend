@@ -11,12 +11,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ispp.project.dondesiempre.config.GlobalExceptionHandler;
-import ispp.project.dondesiempre.controllers.storefronts.StorefrontController;
 import ispp.project.dondesiempre.exceptions.UnauthorizedException;
-import ispp.project.dondesiempre.models.storefronts.Storefront;
-import ispp.project.dondesiempre.models.storefronts.dto.StorefrontDTO;
 import ispp.project.dondesiempre.modules.auth.services.UserService;
-import ispp.project.dondesiempre.services.storefronts.StorefrontService;
+import ispp.project.dondesiempre.modules.stores.controllers.StorefrontController;
+import ispp.project.dondesiempre.modules.stores.dtos.StorefrontDTO;
+import ispp.project.dondesiempre.modules.stores.models.Storefront;
+import ispp.project.dondesiempre.modules.stores.services.StorefrontService;
 import java.util.UUID;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -28,21 +28,21 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-@WebMvcTest(controllers = StorefrontController.class, excludeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = {
-    GlobalExceptionHandler.class }))
+@WebMvcTest(
+    controllers = StorefrontController.class,
+    excludeFilters =
+        @ComponentScan.Filter(
+            type = FilterType.ASSIGNABLE_TYPE,
+            classes = {GlobalExceptionHandler.class}))
 public class StorefrontControllerTest {
 
-  @Autowired
-  private MockMvc mockMvc;
+  @Autowired private MockMvc mockMvc;
 
-  @Autowired
-  private ObjectMapper objectMapper;
+  @Autowired private ObjectMapper objectMapper;
 
-  @MockitoBean
-  private StorefrontService storefrontService;
+  @MockitoBean private StorefrontService storefrontService;
 
-  @MockitoBean
-  private UserService userService;
+  @MockitoBean private UserService userService;
 
   @Test
   void getStorefront_shouldReturnStorefrontDTO_whenValidIdProvided() throws Exception {

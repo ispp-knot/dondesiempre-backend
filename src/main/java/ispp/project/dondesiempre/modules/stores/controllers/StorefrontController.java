@@ -1,9 +1,9 @@
-package ispp.project.dondesiempre.controllers.storefronts;
+package ispp.project.dondesiempre.modules.stores.controllers;
 
-import ispp.project.dondesiempre.models.storefronts.Storefront;
-import ispp.project.dondesiempre.models.storefronts.dto.StorefrontDTO;
 import ispp.project.dondesiempre.modules.auth.services.UserService;
-import ispp.project.dondesiempre.services.storefronts.StorefrontService;
+import ispp.project.dondesiempre.modules.stores.dtos.StorefrontDTO;
+import ispp.project.dondesiempre.modules.stores.models.Storefront;
+import ispp.project.dondesiempre.modules.stores.services.StorefrontService;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

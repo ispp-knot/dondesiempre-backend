@@ -8,15 +8,14 @@ import ispp.project.dondesiempre.models.outfits.Outfit;
 import ispp.project.dondesiempre.models.outfits.OutfitProduct;
 import ispp.project.dondesiempre.models.products.Product;
 import ispp.project.dondesiempre.models.products.ProductType;
-import ispp.project.dondesiempre.models.storefronts.Storefront;
 import ispp.project.dondesiempre.modules.auth.models.User;
 import ispp.project.dondesiempre.modules.auth.repositories.UserRepository;
 import ispp.project.dondesiempre.modules.stores.models.Store;
+import ispp.project.dondesiempre.modules.stores.models.Storefront;
 import ispp.project.dondesiempre.modules.stores.repositories.StoreRepository;
+import ispp.project.dondesiempre.modules.stores.repositories.StorefrontRepository;
 import ispp.project.dondesiempre.repositories.products.ProductRepository;
 import ispp.project.dondesiempre.repositories.products.ProductTypeRepository;
-import ispp.project.dondesiempre.repositories.storefronts.StorefrontRepository;
-
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -33,20 +32,13 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 class OutfitRepositoryTest {
-  @Autowired
-  private OutfitRepository outfitRepository;
-  @Autowired
-  private StoreRepository storeRepository;
-  @Autowired
-  private StorefrontRepository storefrontRepository;
-  @Autowired
-  private ProductRepository productRepository;
-  @Autowired
-  private OutfitProductRepository outfitProductRepository;
-  @Autowired
-  private ProductTypeRepository typeRepository;
-  @Autowired
-  private UserRepository userRepository;
+  @Autowired private OutfitRepository outfitRepository;
+  @Autowired private StoreRepository storeRepository;
+  @Autowired private StorefrontRepository storefrontRepository;
+  @Autowired private ProductRepository productRepository;
+  @Autowired private OutfitProductRepository outfitProductRepository;
+  @Autowired private ProductTypeRepository typeRepository;
+  @Autowired private UserRepository userRepository;
 
   private int testUserIndex = 0;
 
@@ -73,7 +65,7 @@ class OutfitRepositoryTest {
     store.setStorefront(storefront);
     store.setLocation(
         new Point(
-            new CoordinateArraySequence(new Coordinate[] { new Coordinate(0.0, 0.0) }),
+            new CoordinateArraySequence(new Coordinate[] {new Coordinate(0.0, 0.0)}),
             new GeometryFactory(new PrecisionModel(PrecisionModel.FIXED), 0)));
     store.setAboutUs("Test description");
     store.setOpeningHours("Test opening hours");
@@ -110,7 +102,7 @@ class OutfitRepositoryTest {
     store.setStorefront(storefront);
     store.setLocation(
         new Point(
-            new CoordinateArraySequence(new Coordinate[] { new Coordinate(0.0, 0.0) }),
+            new CoordinateArraySequence(new Coordinate[] {new Coordinate(0.0, 0.0)}),
             new GeometryFactory(new PrecisionModel(PrecisionModel.FIXED), 0)));
     store.setAboutUs("Test description");
     store.setOpeningHours("Test opening hours");
@@ -178,7 +170,7 @@ class OutfitRepositoryTest {
     store1.setStorefront(storefront1);
     store1.setLocation(
         new Point(
-            new CoordinateArraySequence(new Coordinate[] { new Coordinate(0.0, 0.0) }),
+            new CoordinateArraySequence(new Coordinate[] {new Coordinate(0.0, 0.0)}),
             new GeometryFactory(new PrecisionModel(PrecisionModel.FIXED), 0)));
     store1.setAboutUs("Test description");
     store1.setOpeningHours("Test opening hours");
@@ -194,7 +186,7 @@ class OutfitRepositoryTest {
     store2.setStorefront(storefront2);
     store2.setLocation(
         new Point(
-            new CoordinateArraySequence(new Coordinate[] { new Coordinate(0.0, 0.0) }),
+            new CoordinateArraySequence(new Coordinate[] {new Coordinate(0.0, 0.0)}),
             new GeometryFactory(new PrecisionModel(PrecisionModel.FIXED), 0)));
     store2.setAboutUs("Test description");
     store2.setOpeningHours("Test opening hours");
@@ -240,9 +232,10 @@ class OutfitRepositoryTest {
       product.setPriceInCents(i * 1000); // Set price in cents (e.g., 1000 = $10.00)
       product.setDiscountedPriceInCents(i * 1000); // Set discounted price in cents
       product.setType(type);
-      Store storeToSet = (i < 3)
-          ? store1
-          : store2; // First 3 products belong to store1, last product belongs to store2
+      Store storeToSet =
+          (i < 3)
+              ? store1
+              : store2; // First 3 products belong to store1, last product belongs to store2
       product.setStore(storeToSet);
       product = productRepository.save(product);
 

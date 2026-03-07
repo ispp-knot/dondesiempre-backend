@@ -25,7 +25,9 @@ public class AuthService {
   private final PasswordEncoder passwordEncoder;
   private final ApplicationContext applicationContext;
 
-  @Transactional(readOnly = true, rollbackFor = { UnauthorizedException.class, ResourceNotFoundException.class })
+  @Transactional(
+      readOnly = true,
+      rollbackFor = {UnauthorizedException.class, ResourceNotFoundException.class})
   public User getCurrentUser() throws UnauthorizedException, ResourceNotFoundException {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     if (authentication == null
@@ -49,9 +51,10 @@ public class AuthService {
 
   @Transactional(readOnly = true, rollbackFor = UnauthorizedException.class)
   public String logIn(String email, String password) throws UnauthorizedException {
-    User user = userRepository
-        .findByEmail(email)
-        .orElseThrow(() -> new UnauthorizedException("Invalid credentials."));
+    User user =
+        userRepository
+            .findByEmail(email)
+            .orElseThrow(() -> new UnauthorizedException("Invalid credentials."));
     if (!userService.checkPassword(user, password)) {
       throw new UnauthorizedException("Invalid credentials.");
     }
