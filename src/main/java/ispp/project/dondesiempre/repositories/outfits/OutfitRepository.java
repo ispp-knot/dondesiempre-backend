@@ -3,7 +3,7 @@ package ispp.project.dondesiempre.repositories.outfits;
 import ispp.project.dondesiempre.models.outfits.Outfit;
 import ispp.project.dondesiempre.models.outfits.OutfitProduct;
 import ispp.project.dondesiempre.models.outfits.OutfitTagRelation;
-import ispp.project.dondesiempre.models.products.Product;
+import ispp.project.dondesiempre.modules.products.models.Product;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;

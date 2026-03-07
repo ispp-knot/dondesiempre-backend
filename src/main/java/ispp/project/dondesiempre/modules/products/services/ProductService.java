@@ -1,14 +1,14 @@
-package ispp.project.dondesiempre.services.products;
+package ispp.project.dondesiempre.modules.products.services;
 
 import ispp.project.dondesiempre.exceptions.InvalidRequestException;
 import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
-import ispp.project.dondesiempre.models.products.Product;
-import ispp.project.dondesiempre.models.products.dto.ProductCreationDTO;
 import ispp.project.dondesiempre.modules.auth.services.AuthService;
+import ispp.project.dondesiempre.modules.products.dtos.ProductCreationDTO;
+import ispp.project.dondesiempre.modules.products.models.Product;
+import ispp.project.dondesiempre.modules.products.repositories.ProductRepository;
 import ispp.project.dondesiempre.modules.stores.models.Store;
 import ispp.project.dondesiempre.modules.stores.models.Storefront;
 import ispp.project.dondesiempre.modules.stores.repositories.StoreRepository;
-import ispp.project.dondesiempre.repositories.products.ProductRepository;
 import ispp.project.dondesiempre.services.CloudinaryService;
 import java.util.List;
 import java.util.UUID;

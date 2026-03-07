@@ -1,13 +1,13 @@
-package ispp.project.dondesiempre.controllers.products;
+package ispp.project.dondesiempre.modules.products.controllers;
 
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
-import ispp.project.dondesiempre.models.products.Product;
-import ispp.project.dondesiempre.models.products.dto.DiscountModificationDTO;
-import ispp.project.dondesiempre.models.products.dto.ProductCreationDTO;
-import ispp.project.dondesiempre.models.products.dto.ProductDTO;
+import ispp.project.dondesiempre.modules.products.dtos.DiscountModificationDTO;
+import ispp.project.dondesiempre.modules.products.dtos.ProductCreationDTO;
+import ispp.project.dondesiempre.modules.products.dtos.ProductDTO;
+import ispp.project.dondesiempre.modules.products.models.Product;
+import ispp.project.dondesiempre.modules.products.services.ProductService;
 import ispp.project.dondesiempre.modules.stores.models.Storefront;
 import ispp.project.dondesiempre.modules.stores.services.StorefrontService;
-import ispp.project.dondesiempre.services.products.ProductService;
 import jakarta.validation.Valid;
 import java.util.List;
 import java.util.UUID;

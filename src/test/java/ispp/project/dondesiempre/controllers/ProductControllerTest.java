@@ -2,21 +2,21 @@ package ispp.project.dondesiempre.controllers;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import ispp.project.dondesiempre.controllers.products.ProductController;
 import ispp.project.dondesiempre.exceptions.InvalidRequestException;
 import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
-import ispp.project.dondesiempre.models.products.Product;
-import ispp.project.dondesiempre.models.products.ProductType;
-import ispp.project.dondesiempre.models.products.dto.DiscountModificationDTO;
-import ispp.project.dondesiempre.models.products.dto.ProductCreationDTO;
-import ispp.project.dondesiempre.models.products.dto.ProductDTO;
 import ispp.project.dondesiempre.modules.auth.models.User;
 import ispp.project.dondesiempre.modules.auth.repositories.UserRepository;
 import ispp.project.dondesiempre.modules.auth.services.AuthService;
+import ispp.project.dondesiempre.modules.products.controllers.ProductController;
+import ispp.project.dondesiempre.modules.products.dtos.DiscountModificationDTO;
+import ispp.project.dondesiempre.modules.products.dtos.ProductCreationDTO;
+import ispp.project.dondesiempre.modules.products.dtos.ProductDTO;
+import ispp.project.dondesiempre.modules.products.models.Product;
+import ispp.project.dondesiempre.modules.products.models.ProductType;
+import ispp.project.dondesiempre.modules.products.repositories.ProductTypeRepository;
 import ispp.project.dondesiempre.modules.stores.models.Store;
 import ispp.project.dondesiempre.modules.stores.models.Storefront;
 import ispp.project.dondesiempre.modules.stores.repositories.StoreRepository;
-import ispp.project.dondesiempre.repositories.products.ProductTypeRepository;
 import ispp.project.dondesiempre.services.CloudinaryService;
 import java.util.List;
 import java.util.UUID;

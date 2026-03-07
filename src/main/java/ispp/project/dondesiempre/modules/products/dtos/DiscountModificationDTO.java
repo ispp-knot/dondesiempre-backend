@@ -1,4 +1,4 @@
-package ispp.project.dondesiempre.models.products.dto;
+package ispp.project.dondesiempre.modules.products.dtos;
 
 import lombok.Getter;
 import lombok.Setter;

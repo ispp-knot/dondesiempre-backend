@@ -1,4 +1,4 @@
-package ispp.project.dondesiempre.models.products;
+package ispp.project.dondesiempre.modules.products.models;
 
 import ispp.project.dondesiempre.modules.common.models.BaseEntity;
 import ispp.project.dondesiempre.modules.stores.models.Store;

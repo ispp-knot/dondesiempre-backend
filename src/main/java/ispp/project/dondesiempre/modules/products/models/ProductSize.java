@@ -1,4 +1,4 @@
-package ispp.project.dondesiempre.models.products;
+package ispp.project.dondesiempre.modules.products.models;
 
 import ispp.project.dondesiempre.modules.common.models.BaseEntity;
 import jakarta.persistence.Column;
@@ -12,11 +12,11 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-@Table(name = "product_colors")
-public class ProductColor extends BaseEntity {
+@Table(name = "product_sizes")
+public class ProductSize extends BaseEntity {
 
   @Column
   @NotNull
   @Size(max = 255)
-  String color;
+  String size;
 }
