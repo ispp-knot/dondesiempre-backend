@@ -1,4 +1,4 @@
-package ispp.project.dondesiempre.models;
+package ispp.project.dondesiempre.modules.clients.models;
 
 import ispp.project.dondesiempre.modules.auth.models.User;
 import ispp.project.dondesiempre.modules.common.models.BaseEntity;

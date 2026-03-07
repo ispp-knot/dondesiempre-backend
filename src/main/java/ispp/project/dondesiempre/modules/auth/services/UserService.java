@@ -2,12 +2,11 @@ package ispp.project.dondesiempre.modules.auth.services;
 
 import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.exceptions.UnauthorizedException;
-import ispp.project.dondesiempre.models.Client;
 import ispp.project.dondesiempre.modules.auth.models.User;
+import ispp.project.dondesiempre.modules.clients.models.Client;
+import ispp.project.dondesiempre.modules.clients.repositories.ClientRepository;
 import ispp.project.dondesiempre.modules.stores.models.Store;
 import ispp.project.dondesiempre.modules.stores.repositories.StoreRepository;
-import ispp.project.dondesiempre.repositories.ClientRepository;
-import ispp.project.dondesiempre.services.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.crypto.password.PasswordEncoder;

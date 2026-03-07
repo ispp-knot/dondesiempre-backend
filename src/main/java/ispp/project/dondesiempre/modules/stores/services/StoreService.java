@@ -2,8 +2,8 @@ package ispp.project.dondesiempre.modules.stores.services;
 
 import ispp.project.dondesiempre.exceptions.InvalidBoundingBoxException;
 import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
-import ispp.project.dondesiempre.models.Client;
 import ispp.project.dondesiempre.modules.auth.services.UserService;
+import ispp.project.dondesiempre.modules.clients.models.Client;
 import ispp.project.dondesiempre.modules.follows.models.StoreFollower;
 import ispp.project.dondesiempre.modules.follows.repositories.StoreFollowerRepository;
 import ispp.project.dondesiempre.modules.stores.dtos.StoreDTO;

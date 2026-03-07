@@ -10,8 +10,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import ispp.project.dondesiempre.config.GlobalExceptionHandler;
 import ispp.project.dondesiempre.mockEntities.StoreMockEntities;
-import ispp.project.dondesiempre.models.Client;
 import ispp.project.dondesiempre.modules.auth.services.UserService;
+import ispp.project.dondesiempre.modules.clients.models.Client;
 import ispp.project.dondesiempre.modules.follows.models.StoreFollower;
 import ispp.project.dondesiempre.modules.stores.controllers.StoreController;
 import ispp.project.dondesiempre.modules.stores.dtos.StoreDTO;

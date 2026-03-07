@@ -13,6 +13,7 @@ import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.exceptions.UnauthorizedException;
 import ispp.project.dondesiempre.modules.auth.models.User;
 import ispp.project.dondesiempre.modules.auth.repositories.UserRepository;
+import ispp.project.dondesiempre.modules.auth.services.AuthService;
 import ispp.project.dondesiempre.modules.auth.services.UserService;
 import ispp.project.dondesiempre.modules.stores.models.Store;
 

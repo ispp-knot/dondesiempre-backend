@@ -4,9 +4,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import ispp.project.dondesiempre.models.Client;
 import ispp.project.dondesiempre.modules.auth.models.User;
 import ispp.project.dondesiempre.modules.auth.repositories.UserRepository;
+import ispp.project.dondesiempre.modules.clients.models.Client;
+import ispp.project.dondesiempre.modules.clients.repositories.ClientRepository;
 
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;

@@ -6,8 +6,8 @@ import static org.mockito.Mockito.when;
 
 import ispp.project.dondesiempre.modules.auth.models.User;
 import ispp.project.dondesiempre.modules.auth.services.UserService;
+import ispp.project.dondesiempre.modules.clients.repositories.ClientRepository;
 import ispp.project.dondesiempre.modules.stores.repositories.StoreRepository;
-import ispp.project.dondesiempre.repositories.ClientRepository;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

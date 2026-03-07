@@ -1,6 +1,5 @@
 package ispp.project.dondesiempre.seed;
 
-import ispp.project.dondesiempre.models.Client;
 import ispp.project.dondesiempre.models.outfits.Outfit;
 import ispp.project.dondesiempre.models.outfits.OutfitProduct;
 import ispp.project.dondesiempre.models.outfits.OutfitTag;
@@ -14,13 +13,14 @@ import ispp.project.dondesiempre.models.storefronts.Storefront;
 import ispp.project.dondesiempre.modules.auth.models.User;
 import ispp.project.dondesiempre.modules.auth.repositories.UserRepository;
 import ispp.project.dondesiempre.modules.auth.services.UserService;
+import ispp.project.dondesiempre.modules.clients.models.Client;
+import ispp.project.dondesiempre.modules.clients.repositories.ClientRepository;
 import ispp.project.dondesiempre.modules.stores.models.SocialNetwork;
 import ispp.project.dondesiempre.modules.stores.models.Store;
 import ispp.project.dondesiempre.modules.stores.models.StoreSocialNetwork;
 import ispp.project.dondesiempre.modules.stores.repositories.SocialNetworkRepository;
 import ispp.project.dondesiempre.modules.stores.repositories.StoreRepository;
 import ispp.project.dondesiempre.modules.stores.repositories.StoreSocialNetworkRepository;
-import ispp.project.dondesiempre.repositories.ClientRepository;
 import ispp.project.dondesiempre.repositories.outfits.OutfitProductRepository;
 import ispp.project.dondesiempre.repositories.outfits.OutfitRepository;
 import ispp.project.dondesiempre.repositories.outfits.OutfitTagRelationRepository;

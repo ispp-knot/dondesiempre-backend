@@ -15,7 +15,8 @@ import ispp.project.dondesiempre.exceptions.UnauthorizedException;
 import ispp.project.dondesiempre.modules.auth.controllers.AuthController;
 import ispp.project.dondesiempre.modules.auth.dtos.LoginRequestDTO;
 import ispp.project.dondesiempre.modules.auth.models.User;
-import ispp.project.dondesiempre.services.AuthService;
+import ispp.project.dondesiempre.modules.auth.services.AuthService;
+
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

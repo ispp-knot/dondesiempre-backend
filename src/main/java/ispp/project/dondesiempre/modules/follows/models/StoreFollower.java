@@ -1,6 +1,6 @@
 package ispp.project.dondesiempre.modules.follows.models;
 
-import ispp.project.dondesiempre.models.Client;
+import ispp.project.dondesiempre.modules.clients.models.Client;
 import ispp.project.dondesiempre.modules.common.models.BaseEntity;
 import ispp.project.dondesiempre.modules.stores.models.Store;
 import jakarta.persistence.Entity;

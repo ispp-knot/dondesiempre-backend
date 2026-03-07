@@ -4,7 +4,7 @@ import ispp.project.dondesiempre.config.JwtProperties;
 import ispp.project.dondesiempre.modules.auth.dtos.LoginRequestDTO;
 import ispp.project.dondesiempre.modules.auth.dtos.UserResponseDTO;
 import ispp.project.dondesiempre.modules.auth.models.User;
-import ispp.project.dondesiempre.services.AuthService;
+import ispp.project.dondesiempre.modules.auth.services.AuthService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
