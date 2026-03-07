@@ -1,5 +1,6 @@
 package ispp.project.dondesiempre.modules.stores.services;
 
+import ispp.project.dondesiempre.modules.auth.services.AuthService;
 import ispp.project.dondesiempre.modules.auth.services.UserService;
 import ispp.project.dondesiempre.modules.clients.models.Client;
 import ispp.project.dondesiempre.modules.common.exceptions.InvalidBoundingBoxException;
@@ -27,6 +28,7 @@ public class StoreService {
   private final ApplicationContext applicationContext;
   private final StoreFollowerRepository storeFollowerRepository;
   private final UserService userService;
+  private final AuthService authService;
 
   @Transactional(readOnly = true, rollbackFor = ResourceNotFoundException.class)
   public Store findById(UUID id) throws ResourceNotFoundException {
@@ -64,14 +66,22 @@ public class StoreService {
     Store storeToUpdate;
 
     storeToUpdate = applicationContext.getBean(StoreService.class).findById(id);
+    authService.assertUserOwnsStore(storeToUpdate);
 
-    if (dto.getName() != null) storeToUpdate.setName(dto.getName());
-    if (dto.getEmail() != null) storeToUpdate.setEmail(dto.getEmail());
-    if (dto.getStoreID() != null) storeToUpdate.setStoreID(dto.getStoreID());
-    if (dto.getAddress() != null) storeToUpdate.setAddress(dto.getAddress());
-    if (dto.getOpeningHours() != null) storeToUpdate.setOpeningHours(dto.getOpeningHours());
-    if (dto.getPhone() != null) storeToUpdate.setPhone(dto.getPhone());
-    if (dto.getAboutUs() != null) storeToUpdate.setAboutUs(dto.getAboutUs());
+    if (dto.getName() != null)
+      storeToUpdate.setName(dto.getName());
+    if (dto.getEmail() != null)
+      storeToUpdate.setEmail(dto.getEmail());
+    if (dto.getStoreID() != null)
+      storeToUpdate.setStoreID(dto.getStoreID());
+    if (dto.getAddress() != null)
+      storeToUpdate.setAddress(dto.getAddress());
+    if (dto.getOpeningHours() != null)
+      storeToUpdate.setOpeningHours(dto.getOpeningHours());
+    if (dto.getPhone() != null)
+      storeToUpdate.setPhone(dto.getPhone());
+    if (dto.getAboutUs() != null)
+      storeToUpdate.setAboutUs(dto.getAboutUs());
 
     return new StoreDTO(storeRepository.save(storeToUpdate));
   }
@@ -92,10 +102,9 @@ public class StoreService {
   public void unfollowStore(UUID storeId) throws ResourceNotFoundException {
     Client currentClient = userService.getCurrentClient();
 
-    StoreFollower follow =
-        storeFollowerRepository
-            .findByClientIdAndStoreId(currentClient.getId(), storeId)
-            .orElseThrow(() -> new ResourceNotFoundException("You don't follow that store."));
+    StoreFollower follow = storeFollowerRepository
+        .findByClientIdAndStoreId(currentClient.getId(), storeId)
+        .orElseThrow(() -> new ResourceNotFoundException("You don't follow that store."));
 
     storeFollowerRepository.delete(follow);
   }

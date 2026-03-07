@@ -27,6 +27,7 @@ public class StorefrontServiceTest {
 
   @Mock private StorefrontRepository storefrontRepository;
   @Mock private ApplicationContext applicationContext;
+  @Mock private AuthService authService;
 
   @InjectMocks private StorefrontService storefrontService;
 

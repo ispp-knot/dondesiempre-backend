@@ -1,5 +1,6 @@
 package ispp.project.dondesiempre.modules.stores.services;
 
+import ispp.project.dondesiempre.modules.auth.services.AuthService;
 import ispp.project.dondesiempre.modules.common.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.modules.stores.dtos.StorefrontDTO;
 import ispp.project.dondesiempre.modules.stores.models.Storefront;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class StorefrontService {
   private final StorefrontRepository storefrontRepository;
   private final ApplicationContext applicationContext;
+  private final AuthService authService;
 
   @Transactional(readOnly = true, rollbackFor = ResourceNotFoundException.class)
   public Storefront findById(UUID id) throws ResourceNotFoundException {
@@ -28,6 +30,7 @@ public class StorefrontService {
   public StorefrontDTO updateStorefront(UUID id, StorefrontDTO dto)
       throws ResourceNotFoundException {
     Storefront storefront = applicationContext.getBean(StorefrontService.class).findById(id);
+    authService.assertUserOwnsStore(storefront.getStore());
 
     storefront.setIsFirstCollections(dto.getIsFirstCollections());
     storefront.setPrimaryColor(dto.getPrimaryColor());

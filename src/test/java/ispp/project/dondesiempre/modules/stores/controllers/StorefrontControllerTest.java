@@ -17,13 +17,13 @@ import ispp.project.dondesiempre.modules.stores.dtos.StorefrontDTO;
 import ispp.project.dondesiempre.modules.stores.models.Storefront;
 import ispp.project.dondesiempre.modules.stores.services.StorefrontService;
 import java.util.UUID;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -60,6 +60,7 @@ public class StorefrontControllerTest {
   }
 
   @Test
+  @WithMockUser
   void updateStorefront_shouldUpdateStorefront_whenUserIsOwner() throws Exception {
     UUID id = UUID.randomUUID();
     Storefront storefront = new Storefront();
@@ -82,8 +83,8 @@ public class StorefrontControllerTest {
         .andExpect(jsonPath("$.primaryColor").value("#000000"));
   }
 
-  @Disabled("This test is disabled")
   @Test
+  @WithMockUser
   void updateStorefront_shouldReturnForbidden_whenUserIsNotOwner() throws Exception {
     UUID id = UUID.randomUUID();
     Storefront storefront = new Storefront();

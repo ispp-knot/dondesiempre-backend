@@ -19,8 +19,10 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 class ClientRepositoryTest {
 
-  @Autowired private ClientRepository clientRepository;
-  @Autowired private UserRepository userRepository;
+  @Autowired
+  private ClientRepository clientRepository;
+  @Autowired
+  private UserRepository userRepository;
 
   private static final AtomicInteger userCounter = new AtomicInteger(0);
 
