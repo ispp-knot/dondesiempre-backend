@@ -1,0 +1,18 @@
+package ispp.project.dondesiempre.modules.products.dtos;
+
+import java.util.UUID;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+public class ProductCreationDTO {
+
+  private String name;
+  private Integer priceInCents;
+  private Integer discountedPriceInCents;
+  private String description;
+
+  private UUID typeId;
+  private UUID storeId;
+}

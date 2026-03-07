@@ -1,10 +1,10 @@
 package ispp.project.dondesiempre.mockEntities;
 
-import ispp.project.dondesiempre.models.User;
-import ispp.project.dondesiempre.models.clients.Client;
-import ispp.project.dondesiempre.models.storefronts.Storefront;
-import ispp.project.dondesiempre.models.stores.Store;
-import ispp.project.dondesiempre.models.stores.StoreFollower;
+import ispp.project.dondesiempre.modules.auth.models.User;
+import ispp.project.dondesiempre.modules.clients.models.Client;
+import ispp.project.dondesiempre.modules.follows.models.StoreFollower;
+import ispp.project.dondesiempre.modules.stores.models.Store;
+import ispp.project.dondesiempre.modules.stores.models.Storefront;
 import java.util.UUID;
 
 public class StoreMockEntities {

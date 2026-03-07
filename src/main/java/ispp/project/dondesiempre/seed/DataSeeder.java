@@ -1,35 +1,35 @@
 package ispp.project.dondesiempre.seed;
 
-import ispp.project.dondesiempre.models.User;
-import ispp.project.dondesiempre.models.clients.Client;
-import ispp.project.dondesiempre.models.outfits.Outfit;
-import ispp.project.dondesiempre.models.outfits.OutfitProduct;
-import ispp.project.dondesiempre.models.outfits.OutfitTag;
-import ispp.project.dondesiempre.models.outfits.OutfitTagRelation;
-import ispp.project.dondesiempre.models.products.Product;
-import ispp.project.dondesiempre.models.products.ProductColor;
-import ispp.project.dondesiempre.models.products.ProductSize;
-import ispp.project.dondesiempre.models.products.ProductType;
-import ispp.project.dondesiempre.models.products.ProductVariant;
-import ispp.project.dondesiempre.models.storefronts.Storefront;
-import ispp.project.dondesiempre.models.stores.SocialNetwork;
-import ispp.project.dondesiempre.models.stores.Store;
-import ispp.project.dondesiempre.models.stores.StoreSocialNetwork;
-import ispp.project.dondesiempre.repositories.ClientRepository;
-import ispp.project.dondesiempre.repositories.UserRepository;
-import ispp.project.dondesiempre.repositories.outfits.OutfitProductRepository;
-import ispp.project.dondesiempre.repositories.outfits.OutfitRepository;
-import ispp.project.dondesiempre.repositories.outfits.OutfitTagRelationRepository;
-import ispp.project.dondesiempre.repositories.outfits.OutfitTagRepository;
-import ispp.project.dondesiempre.repositories.products.ProductColorRepository;
-import ispp.project.dondesiempre.repositories.products.ProductRepository;
-import ispp.project.dondesiempre.repositories.products.ProductSizeRepository;
-import ispp.project.dondesiempre.repositories.products.ProductTypeRepository;
-import ispp.project.dondesiempre.repositories.products.ProductVariantRepository;
-import ispp.project.dondesiempre.repositories.stores.SocialNetworkRepository;
-import ispp.project.dondesiempre.repositories.stores.StoreRepository;
-import ispp.project.dondesiempre.repositories.stores.StoreSocialNetworkRepository;
-import ispp.project.dondesiempre.services.UserService;
+import ispp.project.dondesiempre.modules.auth.models.User;
+import ispp.project.dondesiempre.modules.auth.repositories.UserRepository;
+import ispp.project.dondesiempre.modules.auth.services.UserService;
+import ispp.project.dondesiempre.modules.clients.models.Client;
+import ispp.project.dondesiempre.modules.clients.repositories.ClientRepository;
+import ispp.project.dondesiempre.modules.outfits.models.Outfit;
+import ispp.project.dondesiempre.modules.outfits.models.OutfitProduct;
+import ispp.project.dondesiempre.modules.outfits.models.OutfitTag;
+import ispp.project.dondesiempre.modules.outfits.models.OutfitTagRelation;
+import ispp.project.dondesiempre.modules.outfits.repositories.OutfitProductRepository;
+import ispp.project.dondesiempre.modules.outfits.repositories.OutfitRepository;
+import ispp.project.dondesiempre.modules.outfits.repositories.OutfitTagRelationRepository;
+import ispp.project.dondesiempre.modules.outfits.repositories.OutfitTagRepository;
+import ispp.project.dondesiempre.modules.products.models.Product;
+import ispp.project.dondesiempre.modules.products.models.ProductColor;
+import ispp.project.dondesiempre.modules.products.models.ProductSize;
+import ispp.project.dondesiempre.modules.products.models.ProductType;
+import ispp.project.dondesiempre.modules.products.models.ProductVariant;
+import ispp.project.dondesiempre.modules.products.repositories.ProductColorRepository;
+import ispp.project.dondesiempre.modules.products.repositories.ProductRepository;
+import ispp.project.dondesiempre.modules.products.repositories.ProductSizeRepository;
+import ispp.project.dondesiempre.modules.products.repositories.ProductTypeRepository;
+import ispp.project.dondesiempre.modules.products.repositories.ProductVariantRepository;
+import ispp.project.dondesiempre.modules.stores.models.SocialNetwork;
+import ispp.project.dondesiempre.modules.stores.models.Store;
+import ispp.project.dondesiempre.modules.stores.models.StoreSocialNetwork;
+import ispp.project.dondesiempre.modules.stores.models.Storefront;
+import ispp.project.dondesiempre.modules.stores.repositories.SocialNetworkRepository;
+import ispp.project.dondesiempre.modules.stores.repositories.StoreRepository;
+import ispp.project.dondesiempre.modules.stores.repositories.StoreSocialNetworkRepository;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -108,7 +108,8 @@ public class DataSeeder implements CommandLineRunner {
         outfitTagRepository.findAll().stream()
             .collect(Collectors.toMap(OutfitTag::getName, ot -> ot));
 
-    // Create user that owns the manual store (this is the seed user for getCurrentUser())
+    // Create user that owns the manual store (this is the seed user for
+    // getCurrentUser())
     User storeOwner = new User();
     storeOwner.setEmail(UserService.SEED_USER_EMAIL);
     storeOwner.setPassword("password123");
