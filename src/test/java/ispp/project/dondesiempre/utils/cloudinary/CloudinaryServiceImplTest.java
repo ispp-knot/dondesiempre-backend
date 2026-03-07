@@ -1,4 +1,4 @@
-package ispp.project.dondesiempre.services;
+package ispp.project.dondesiempre.utils.cloudinary;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -9,7 +9,6 @@ import com.cloudinary.Cloudinary;
 import com.cloudinary.Uploader;
 import ispp.project.dondesiempre.config.CloudinaryProperties;
 import ispp.project.dondesiempre.modules.common.exceptions.InvalidRequestException;
-import ispp.project.dondesiempre.utils.cloudinary.CloudinaryServiceImpl;
 import java.io.IOException;
 import java.util.Map;
 import org.junit.jupiter.api.Test;

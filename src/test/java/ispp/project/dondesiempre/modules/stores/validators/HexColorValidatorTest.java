@@ -1,8 +1,7 @@
-package ispp.project.dondesiempre.validators;
+package ispp.project.dondesiempre.modules.stores.validators;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import ispp.project.dondesiempre.modules.stores.validators.HexColorValidator;
 import org.junit.jupiter.api.Test;
 
 public class HexColorValidatorTest {

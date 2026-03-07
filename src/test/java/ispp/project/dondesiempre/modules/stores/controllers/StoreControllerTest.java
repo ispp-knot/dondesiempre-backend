@@ -1,4 +1,4 @@
-package ispp.project.dondesiempre.controllers;
+package ispp.project.dondesiempre.modules.stores.controllers;
 
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
@@ -13,7 +13,6 @@ import ispp.project.dondesiempre.mockEntities.StoreMockEntities;
 import ispp.project.dondesiempre.modules.auth.services.UserService;
 import ispp.project.dondesiempre.modules.clients.models.Client;
 import ispp.project.dondesiempre.modules.follows.models.StoreFollower;
-import ispp.project.dondesiempre.modules.stores.controllers.StoreController;
 import ispp.project.dondesiempre.modules.stores.dtos.StoreDTO;
 import ispp.project.dondesiempre.modules.stores.models.Store;
 import ispp.project.dondesiempre.modules.stores.services.StoreService;
