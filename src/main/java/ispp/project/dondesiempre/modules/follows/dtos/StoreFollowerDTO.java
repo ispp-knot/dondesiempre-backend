@@ -1,4 +1,4 @@
-package ispp.project.dondesiempre.models.stores.dto;
+package ispp.project.dondesiempre.modules.follows.dtos;
 
 import java.util.UUID;
 import lombok.Getter;

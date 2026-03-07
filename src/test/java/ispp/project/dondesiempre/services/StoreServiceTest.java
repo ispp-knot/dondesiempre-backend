@@ -16,8 +16,9 @@ import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.mockEntities.StoreMockEntities;
 import ispp.project.dondesiempre.models.Client;
 import ispp.project.dondesiempre.models.storefronts.Storefront;
-import ispp.project.dondesiempre.models.stores.StoreFollower;
 import ispp.project.dondesiempre.modules.auth.services.UserService;
+import ispp.project.dondesiempre.modules.follows.models.StoreFollower;
+import ispp.project.dondesiempre.modules.follows.repositories.StoreFollowerRepository;
 import ispp.project.dondesiempre.modules.stores.dtos.StoreDTO;
 import ispp.project.dondesiempre.modules.stores.models.SocialNetwork;
 import ispp.project.dondesiempre.modules.stores.models.Store;
@@ -25,7 +26,6 @@ import ispp.project.dondesiempre.modules.stores.models.StoreSocialNetwork;
 import ispp.project.dondesiempre.modules.stores.repositories.StoreRepository;
 import ispp.project.dondesiempre.modules.stores.repositories.StoreSocialNetworkRepository;
 import ispp.project.dondesiempre.modules.stores.services.StoreService;
-import ispp.project.dondesiempre.repositories.stores.StoreFollowerRepository;
 
 import java.util.List;
 import java.util.Optional;

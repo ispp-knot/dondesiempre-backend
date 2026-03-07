@@ -1,4 +1,4 @@
-package ispp.project.dondesiempre.models.stores;
+package ispp.project.dondesiempre.modules.follows.models;
 
 import ispp.project.dondesiempre.models.Client;
 import ispp.project.dondesiempre.modules.common.models.BaseEntity;
