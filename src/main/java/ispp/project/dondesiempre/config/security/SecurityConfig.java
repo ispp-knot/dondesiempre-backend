@@ -1,7 +1,6 @@
-package ispp.project.dondesiempre.config;
+package ispp.project.dondesiempre.config.security;
 
-import ispp.project.dondesiempre.security.JwtAuthFilter;
-import ispp.project.dondesiempre.services.JwtService;
+import ispp.project.dondesiempre.modules.auth.services.JwtService;
 import java.util.Arrays;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

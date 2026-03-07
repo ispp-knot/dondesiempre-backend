@@ -1,6 +1,6 @@
-package ispp.project.dondesiempre.models.promotions.dto;
+package ispp.project.dondesiempre.modules.promotions.dtos;
 
-import ispp.project.dondesiempre.models.promotions.Promotion;
+import ispp.project.dondesiempre.modules.promotions.models.Promotion;
 import java.util.List;
 import java.util.UUID;
 import lombok.Getter;

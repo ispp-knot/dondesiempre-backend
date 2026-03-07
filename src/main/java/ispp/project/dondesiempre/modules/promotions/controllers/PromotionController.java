@@ -1,10 +1,10 @@
-package ispp.project.dondesiempre.controllers.promotions;
+package ispp.project.dondesiempre.modules.promotions.controllers;
 
-import ispp.project.dondesiempre.models.promotions.Promotion;
-import ispp.project.dondesiempre.models.promotions.dto.PromotionCreationDTO;
-import ispp.project.dondesiempre.models.promotions.dto.PromotionDTO;
-import ispp.project.dondesiempre.models.promotions.dto.PromotionUpdateDTO;
-import ispp.project.dondesiempre.services.promotions.PromotionService;
+import ispp.project.dondesiempre.modules.promotions.dtos.PromotionCreationDTO;
+import ispp.project.dondesiempre.modules.promotions.dtos.PromotionDTO;
+import ispp.project.dondesiempre.modules.promotions.dtos.PromotionUpdateDTO;
+import ispp.project.dondesiempre.modules.promotions.models.Promotion;
+import ispp.project.dondesiempre.modules.promotions.services.PromotionService;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;

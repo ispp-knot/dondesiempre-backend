@@ -1,6 +1,6 @@
-package ispp.project.dondesiempre.repositories.promotions;
+package ispp.project.dondesiempre.modules.promotions.repositories;
 
-import ispp.project.dondesiempre.models.promotions.Promotion;
+import ispp.project.dondesiempre.modules.promotions.models.Promotion;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;

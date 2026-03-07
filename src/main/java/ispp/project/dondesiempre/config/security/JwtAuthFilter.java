@@ -1,6 +1,6 @@
-package ispp.project.dondesiempre.security;
+package ispp.project.dondesiempre.config.security;
 
-import ispp.project.dondesiempre.services.JwtService;
+import ispp.project.dondesiempre.modules.auth.services.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;

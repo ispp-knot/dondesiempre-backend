@@ -1,4 +1,4 @@
-package ispp.project.dondesiempre.services;
+package ispp.project.dondesiempre.modules.auth.services;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;

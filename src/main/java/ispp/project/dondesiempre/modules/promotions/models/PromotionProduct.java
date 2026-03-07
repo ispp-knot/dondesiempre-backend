@@ -1,4 +1,4 @@
-package ispp.project.dondesiempre.models.promotions;
+package ispp.project.dondesiempre.modules.promotions.models;
 
 import ispp.project.dondesiempre.modules.common.models.BaseEntity;
 import ispp.project.dondesiempre.modules.products.models.Product;

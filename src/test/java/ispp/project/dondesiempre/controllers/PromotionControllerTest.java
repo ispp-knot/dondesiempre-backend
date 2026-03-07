@@ -12,14 +12,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ispp.project.dondesiempre.config.GlobalExceptionHandler;
-import ispp.project.dondesiempre.controllers.promotions.PromotionController;
 import ispp.project.dondesiempre.exceptions.UnauthorizedException;
-import ispp.project.dondesiempre.models.promotions.Promotion;
-import ispp.project.dondesiempre.models.promotions.dto.PromotionCreationDTO;
-import ispp.project.dondesiempre.models.promotions.dto.PromotionUpdateDTO;
 import ispp.project.dondesiempre.modules.auth.services.UserService;
+import ispp.project.dondesiempre.modules.promotions.controllers.PromotionController;
+import ispp.project.dondesiempre.modules.promotions.dtos.PromotionCreationDTO;
+import ispp.project.dondesiempre.modules.promotions.dtos.PromotionUpdateDTO;
+import ispp.project.dondesiempre.modules.promotions.models.Promotion;
+import ispp.project.dondesiempre.modules.promotions.services.PromotionService;
 import ispp.project.dondesiempre.modules.stores.models.Store;
-import ispp.project.dondesiempre.services.promotions.PromotionService;
 import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;

@@ -1,18 +1,18 @@
-package ispp.project.dondesiempre.services.promotions;
+package ispp.project.dondesiempre.modules.promotions.services;
 
 import ispp.project.dondesiempre.exceptions.InvalidRequestException;
 import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
-import ispp.project.dondesiempre.models.promotions.Promotion;
-import ispp.project.dondesiempre.models.promotions.PromotionProduct;
-import ispp.project.dondesiempre.models.promotions.dto.PromotionCreationDTO;
-import ispp.project.dondesiempre.models.promotions.dto.PromotionUpdateDTO;
 import ispp.project.dondesiempre.modules.auth.services.AuthService;
 import ispp.project.dondesiempre.modules.products.models.Product;
 import ispp.project.dondesiempre.modules.products.repositories.ProductRepository;
+import ispp.project.dondesiempre.modules.promotions.dtos.PromotionCreationDTO;
+import ispp.project.dondesiempre.modules.promotions.dtos.PromotionUpdateDTO;
+import ispp.project.dondesiempre.modules.promotions.models.Promotion;
+import ispp.project.dondesiempre.modules.promotions.models.PromotionProduct;
+import ispp.project.dondesiempre.modules.promotions.repositories.PromotionProductRepository;
+import ispp.project.dondesiempre.modules.promotions.repositories.PromotionRepository;
 import ispp.project.dondesiempre.modules.stores.models.Store;
 import ispp.project.dondesiempre.modules.stores.repositories.StoreRepository;
-import ispp.project.dondesiempre.repositories.promotions.PromotionProductRepository;
-import ispp.project.dondesiempre.repositories.promotions.PromotionRepository;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
