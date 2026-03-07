@@ -27,9 +27,6 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class UserService {
 
-  /** Email used for the seed store owner. Referenced by DataSeeder. */
-  public static final String SEED_USER_EMAIL = "owner@laboutique.es";
-
   private final ClientRepository clientRepository;
   private final StoreRepository storeRepository;
   private final StorefrontRepository storefrontRepository;

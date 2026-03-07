@@ -132,15 +132,14 @@ class AuthServiceTest {
   // --- logIn ---
 
   @Test
-  void logIn_shouldReturnToken_whenCredentialsAreValid() {
+  void logIn_shouldReturnUser_whenCredentialsAreValid() {
     User user = new User();
     user.setEmail("user@test.com");
     user.setPassword("hashed");
     when(userRepository.findByEmail("user@test.com")).thenReturn(Optional.of(user));
     when(userService.checkPassword(user, "raw-password")).thenReturn(true);
-    when(jwtService.generateToken("user@test.com")).thenReturn("jwt-token");
 
-    assertEquals("jwt-token", authService.logIn("user@test.com", "raw-password"));
+    assertEquals(user, authService.logIn("user@test.com", "raw-password"));
   }
 
   @Test

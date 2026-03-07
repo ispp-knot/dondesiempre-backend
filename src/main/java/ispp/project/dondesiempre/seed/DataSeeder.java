@@ -29,7 +29,6 @@ import ispp.project.dondesiempre.repositories.products.ProductVariantRepository;
 import ispp.project.dondesiempre.repositories.stores.SocialNetworkRepository;
 import ispp.project.dondesiempre.repositories.stores.StoreRepository;
 import ispp.project.dondesiempre.repositories.stores.StoreSocialNetworkRepository;
-import ispp.project.dondesiempre.services.UserService;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -49,6 +48,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -59,6 +59,7 @@ public class DataSeeder implements CommandLineRunner {
   private static final Logger log = LoggerFactory.getLogger(DataSeeder.class);
 
   private final SeedProperties props;
+  private final PasswordEncoder passwordEncoder;
   private final UserRepository userRepository;
   private final StoreRepository storeRepository;
   private final SocialNetworkRepository socialNetworkRepository;
@@ -83,11 +84,55 @@ public class DataSeeder implements CommandLineRunner {
       return;
     }
 
+    log.info("Seeding reference data...");
+    // This is needed when running on dev, because it doesn't run migrations
+    seedReferenceData();
     log.info("Seeding database with manual example data...");
     loadManualData();
     log.info("Seeding database with random data...");
     loadRandomData();
     log.info("Database seeding complete.");
+  }
+
+  private void seedReferenceData() {
+    if (socialNetworkRepository.count() == 0) {
+      for (String name : List.of("Instagram", "Facebook", "TikTok", "X", "WhatsApp")) {
+        SocialNetwork sn = new SocialNetwork();
+        sn.setName(name);
+        socialNetworkRepository.save(sn);
+      }
+    }
+    if (productTypeRepository.count() == 0) {
+      for (String type :
+          List.of("Camiseta", "Pantalón", "Vestido", "Chaqueta", "Zapatos", "Accesorio")) {
+        ProductType pt = new ProductType();
+        pt.setType(type);
+        productTypeRepository.save(pt);
+      }
+    }
+    if (productColorRepository.count() == 0) {
+      for (String color :
+          List.of("Negro", "Blanco", "Rojo", "Azul", "Verde", "Rosa", "Gris", "Beige")) {
+        ProductColor pc = new ProductColor();
+        pc.setColor(color);
+        productColorRepository.save(pc);
+      }
+    }
+    if (productSizeRepository.count() == 0) {
+      for (String size : List.of("XS", "S", "M", "L", "XL", "XXL")) {
+        ProductSize ps = new ProductSize();
+        ps.setSize(size);
+        productSizeRepository.save(ps);
+      }
+    }
+    if (outfitTagRepository.count() == 0) {
+      for (String name :
+          List.of("Verano", "Invierno", "Casual", "Formal", "Deportivo", "Elegante")) {
+        OutfitTag tag = new OutfitTag();
+        tag.setName(name);
+        outfitTagRepository.save(tag);
+      }
+    }
   }
 
   private void loadManualData() {
@@ -108,10 +153,11 @@ public class DataSeeder implements CommandLineRunner {
         outfitTagRepository.findAll().stream()
             .collect(Collectors.toMap(OutfitTag::getName, ot -> ot));
 
-    // Create user that owns the manual store (this is the seed user for getCurrentUser())
+    // Create user that owns the manual store (this is the seed user for
+    // getCurrentUser())
     User storeOwner = new User();
-    storeOwner.setEmail(UserService.SEED_USER_EMAIL);
-    storeOwner.setPassword("password123");
+    storeOwner.setEmail("store@store.com");
+    storeOwner.setPassword(passwordEncoder.encode("Password123!"));
     userRepository.save(storeOwner);
 
     // Create storefront (saved via CascadeType.ALL on Store.storefront)
@@ -123,7 +169,7 @@ public class DataSeeder implements CommandLineRunner {
     // Create store
     Store store = new Store();
     store.setName("La Boutique de Sevilla");
-    store.setEmail("laboutique@ejemplo.es");
+    store.setEmail("store@store.com");
     store.setStoreID("TIENDA-MAN-001");
     store.setLocation(GF.createPoint(new Coordinate(-5.923503017051423, 37.28749765023422)));
     store.setAddress("Calle Sierpes, nº 45, Sevilla");
@@ -207,14 +253,14 @@ public class DataSeeder implements CommandLineRunner {
 
     // Client
     User clientUser = new User();
-    clientUser.setEmail("ana.garcia@ejemplo.es");
-    clientUser.setPassword("password123");
+    clientUser.setEmail("client@client.com");
+    clientUser.setPassword(passwordEncoder.encode("Password123!"));
     userRepository.save(clientUser);
 
     Client client = new Client();
     client.setName("Ana");
     client.setSurname("García");
-    client.setEmail("ana.garcia@ejemplo.es");
+    client.setEmail("client@client.com");
     client.setPhone("+34 623456789");
     client.setAddress("Calle San Fernando, nº 12, Sevilla");
     client.setUser(clientUser);
@@ -258,7 +304,7 @@ public class DataSeeder implements CommandLineRunner {
 
       User storeUser = new User();
       storeUser.setEmail(storeEmail);
-      storeUser.setPassword("password123");
+      storeUser.setPassword(passwordEncoder.encode("Password123!"));
       userRepository.save(storeUser);
 
       Storefront storefront = new Storefront();
@@ -363,7 +409,7 @@ public class DataSeeder implements CommandLineRunner {
 
       User clientUser = new User();
       clientUser.setEmail(clientEmail);
-      clientUser.setPassword("password123");
+      clientUser.setPassword(passwordEncoder.encode("Password123!"));
       userRepository.save(clientUser);
 
       Client client = new Client();

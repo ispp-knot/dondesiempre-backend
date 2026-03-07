@@ -18,6 +18,9 @@ cloudinary:
   url: ${CLOUDINARY_URL:}
   folder-prefix: ${CLOUDINARY_FOLDER_PREFIX:dev}
 
+frontend:
+  url: ${FRONTEND_URL}
+
 jwt:
   secret: ${JWT_SECRET:dev-secret-must-be-changed-in-production!!}
   duration: ${JWT_DURATION:2592000}

@@ -16,6 +16,7 @@ import ispp.project.dondesiempre.models.clients.ClientDTO;
 import ispp.project.dondesiempre.models.stores.Store;
 import ispp.project.dondesiempre.models.stores.dto.StoreDTO;
 import ispp.project.dondesiempre.services.AuthService;
+import ispp.project.dondesiempre.services.JwtService;
 import ispp.project.dondesiempre.services.UserService;
 import ispp.project.dondesiempre.services.stores.StoreService;
 import java.util.UUID;
@@ -35,6 +36,7 @@ class AuthControllerRegisterTest {
   @MockitoBean private AuthService authService;
   @MockitoBean private UserService userService;
   @MockitoBean private StoreService storeService;
+  @MockitoBean private JwtService jwtService;
   @MockitoBean private JwtProperties jwtProperties;
 
   // --- registerStore ---

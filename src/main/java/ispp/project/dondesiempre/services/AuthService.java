@@ -1,10 +1,19 @@
 package ispp.project.dondesiempre.services;
 
+import ispp.project.dondesiempre.controllers.auth.dto.UserResponseDTO;
 import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.exceptions.UnauthorizedException;
 import ispp.project.dondesiempre.models.User;
+import ispp.project.dondesiempre.models.clients.Client;
+import ispp.project.dondesiempre.models.clients.ClientDTO;
 import ispp.project.dondesiempre.models.stores.Store;
+import ispp.project.dondesiempre.models.stores.dto.StoreDTO;
+import ispp.project.dondesiempre.repositories.ClientRepository;
 import ispp.project.dondesiempre.repositories.UserRepository;
+import ispp.project.dondesiempre.repositories.stores.StoreRepository;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -23,6 +32,8 @@ public class AuthService {
   private final JwtService jwtService;
   private final PasswordEncoder passwordEncoder;
   private final ApplicationContext applicationContext;
+  private final StoreRepository storeRepository;
+  private final ClientRepository clientRepository;
 
   @Transactional(
       readOnly = true,
@@ -49,7 +60,7 @@ public class AuthService {
   }
 
   @Transactional(readOnly = true, rollbackFor = UnauthorizedException.class)
-  public String logIn(String email, String password) throws UnauthorizedException {
+  public User logIn(String email, String password) throws UnauthorizedException {
     User user =
         userRepository
             .findByEmail(email)
@@ -57,7 +68,7 @@ public class AuthService {
     if (!userService.checkPassword(user, password)) {
       throw new UnauthorizedException("Invalid credentials.");
     }
-    return jwtService.generateToken(user.getEmail());
+    return user;
   }
 
   @Transactional(rollbackFor = Exception.class)
@@ -66,5 +77,23 @@ public class AuthService {
     user.setEmail(email);
     user.setPassword(passwordEncoder.encode(password));
     return userRepository.save(user);
+  }
+
+  @Transactional(readOnly = true)
+  public UserResponseDTO buildUserResponse(User user, String rawToken) {
+    Optional<Store> storeOpt = storeRepository.findByUserId(user.getId());
+    Optional<Client> clientOpt = clientRepository.findByUserId(user.getId());
+
+    List<String> roles = new ArrayList<>();
+    if (storeOpt.isPresent()) roles.add("STORE");
+    if (clientOpt.isPresent()) roles.add("CLIENT");
+
+    return new UserResponseDTO(
+        user.getId(),
+        user.getEmail(),
+        roles,
+        jwtService.getExpiresAt(rawToken),
+        storeOpt.map(StoreDTO::new).orElse(null),
+        clientOpt.map(ClientDTO::new).orElse(null));
   }
 }

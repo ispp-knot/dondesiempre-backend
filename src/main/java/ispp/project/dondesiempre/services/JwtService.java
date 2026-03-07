@@ -6,6 +6,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import ispp.project.dondesiempre.config.JwtProperties;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 import java.util.Date;
 import javax.crypto.SecretKey;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +35,10 @@ public class JwtService {
 
   public String extractEmail(String token) {
     return parseClaims(token).getSubject();
+  }
+
+  public Instant getExpiresAt(String token) {
+    return parseClaims(token).getExpiration().toInstant();
   }
 
   public boolean isTokenValid(String token) {

@@ -6,6 +6,7 @@ import java.util.Arrays;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,6 +28,9 @@ public class SecurityConfig implements WebMvcConfigurer {
 
   Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
 
+  @Value("${frontend.url}")
+  private String frontendUrl;
+
   @Autowired(required = false)
   private JwtService jwtService;
 
@@ -42,6 +46,7 @@ public class SecurityConfig implements WebMvcConfigurer {
                     .requestMatchers(
                         HttpMethod.POST,
                         "/api/v1/auth/login",
+                        "/api/v1/auth/logout",
                         "/api/v1/auth/register/store",
                         "/api/v1/auth/register/client")
                     .permitAll()
@@ -99,10 +104,14 @@ public class SecurityConfig implements WebMvcConfigurer {
   CorsConfigurationSource corsConfigurationSource() {
     logger.info("Configuring CORS");
 
+    logger.info("Allowed CORS origin: {}", frontendUrl);
+
     CorsConfiguration configuration = new CorsConfiguration();
-    configuration.setAllowedOrigins(Arrays.asList("*"));
-    configuration.setAllowedMethods(Arrays.asList("*"));
-    configuration.setAllowedHeaders(Arrays.asList("*"));
+    configuration.setAllowedOrigins(Arrays.asList(frontendUrl));
+    configuration.setAllowedMethods(
+        Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+    configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Accept"));
+    configuration.setAllowCredentials(true);
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
     source.registerCorsConfiguration("/**", configuration);
     return source;
