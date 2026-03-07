@@ -1,8 +1,8 @@
 package ispp.project.dondesiempre.modules.promotions.services;
 
-import ispp.project.dondesiempre.exceptions.InvalidRequestException;
-import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.modules.auth.services.AuthService;
+import ispp.project.dondesiempre.modules.common.exceptions.InvalidRequestException;
+import ispp.project.dondesiempre.modules.common.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.modules.products.models.Product;
 import ispp.project.dondesiempre.modules.products.repositories.ProductRepository;
 import ispp.project.dondesiempre.modules.promotions.dtos.PromotionCreationDTO;

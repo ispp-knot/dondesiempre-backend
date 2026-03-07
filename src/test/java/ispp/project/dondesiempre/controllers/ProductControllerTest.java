@@ -2,11 +2,11 @@ package ispp.project.dondesiempre.controllers;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import ispp.project.dondesiempre.exceptions.InvalidRequestException;
-import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.modules.auth.models.User;
 import ispp.project.dondesiempre.modules.auth.repositories.UserRepository;
 import ispp.project.dondesiempre.modules.auth.services.AuthService;
+import ispp.project.dondesiempre.modules.common.exceptions.InvalidRequestException;
+import ispp.project.dondesiempre.modules.common.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.modules.products.controllers.ProductController;
 import ispp.project.dondesiempre.modules.products.dtos.DiscountModificationDTO;
 import ispp.project.dondesiempre.modules.products.dtos.ProductCreationDTO;

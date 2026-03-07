@@ -3,7 +3,7 @@ package ispp.project.dondesiempre.services;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import ispp.project.dondesiempre.config.CloudinaryProperties;
-import ispp.project.dondesiempre.exceptions.InvalidRequestException;
+import ispp.project.dondesiempre.modules.common.exceptions.InvalidRequestException;
 import java.io.IOException;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;

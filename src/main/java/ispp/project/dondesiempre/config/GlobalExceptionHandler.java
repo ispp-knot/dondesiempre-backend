@@ -1,9 +1,9 @@
 package ispp.project.dondesiempre.config;
 
-import ispp.project.dondesiempre.exceptions.InvalidBoundingBoxException;
-import ispp.project.dondesiempre.exceptions.InvalidRequestException;
-import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
-import ispp.project.dondesiempre.exceptions.UnauthorizedException;
+import ispp.project.dondesiempre.modules.common.exceptions.InvalidBoundingBoxException;
+import ispp.project.dondesiempre.modules.common.exceptions.InvalidRequestException;
+import ispp.project.dondesiempre.modules.common.exceptions.ResourceNotFoundException;
+import ispp.project.dondesiempre.modules.common.exceptions.UnauthorizedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;

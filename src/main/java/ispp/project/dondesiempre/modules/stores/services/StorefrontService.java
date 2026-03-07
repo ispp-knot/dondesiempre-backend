@@ -1,6 +1,6 @@
 package ispp.project.dondesiempre.modules.stores.services;
 
-import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
+import ispp.project.dondesiempre.modules.common.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.modules.stores.dtos.StorefrontDTO;
 import ispp.project.dondesiempre.modules.stores.models.Storefront;
 import ispp.project.dondesiempre.modules.stores.repositories.StorefrontRepository;

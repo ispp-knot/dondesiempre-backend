@@ -11,11 +11,11 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import ispp.project.dondesiempre.exceptions.InvalidBoundingBoxException;
-import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.mockEntities.StoreMockEntities;
 import ispp.project.dondesiempre.modules.auth.services.UserService;
 import ispp.project.dondesiempre.modules.clients.models.Client;
+import ispp.project.dondesiempre.modules.common.exceptions.InvalidBoundingBoxException;
+import ispp.project.dondesiempre.modules.common.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.modules.follows.models.StoreFollower;
 import ispp.project.dondesiempre.modules.follows.repositories.StoreFollowerRepository;
 import ispp.project.dondesiempre.modules.stores.dtos.StoreDTO;

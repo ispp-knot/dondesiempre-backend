@@ -12,8 +12,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ispp.project.dondesiempre.config.GlobalExceptionHandler;
-import ispp.project.dondesiempre.exceptions.UnauthorizedException;
 import ispp.project.dondesiempre.modules.auth.services.UserService;
+import ispp.project.dondesiempre.modules.common.exceptions.UnauthorizedException;
 import ispp.project.dondesiempre.modules.promotions.controllers.PromotionController;
 import ispp.project.dondesiempre.modules.promotions.dtos.PromotionCreationDTO;
 import ispp.project.dondesiempre.modules.promotions.dtos.PromotionUpdateDTO;

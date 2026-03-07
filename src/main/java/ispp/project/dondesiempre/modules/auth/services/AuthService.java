@@ -1,9 +1,9 @@
 package ispp.project.dondesiempre.modules.auth.services;
 
-import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
-import ispp.project.dondesiempre.exceptions.UnauthorizedException;
 import ispp.project.dondesiempre.modules.auth.models.User;
 import ispp.project.dondesiempre.modules.auth.repositories.UserRepository;
+import ispp.project.dondesiempre.modules.common.exceptions.ResourceNotFoundException;
+import ispp.project.dondesiempre.modules.common.exceptions.UnauthorizedException;
 import ispp.project.dondesiempre.modules.stores.models.Store;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;

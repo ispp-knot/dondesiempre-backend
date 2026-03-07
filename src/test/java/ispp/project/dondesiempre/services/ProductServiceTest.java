@@ -2,10 +2,10 @@ package ispp.project.dondesiempre.services;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import ispp.project.dondesiempre.exceptions.InvalidRequestException;
 import ispp.project.dondesiempre.modules.auth.models.User;
 import ispp.project.dondesiempre.modules.auth.repositories.UserRepository;
 import ispp.project.dondesiempre.modules.auth.services.AuthService;
+import ispp.project.dondesiempre.modules.common.exceptions.InvalidRequestException;
 import ispp.project.dondesiempre.modules.products.dtos.ProductCreationDTO;
 import ispp.project.dondesiempre.modules.products.models.Product;
 import ispp.project.dondesiempre.modules.products.models.ProductType;

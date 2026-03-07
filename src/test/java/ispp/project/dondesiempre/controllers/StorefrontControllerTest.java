@@ -11,8 +11,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ispp.project.dondesiempre.config.GlobalExceptionHandler;
-import ispp.project.dondesiempre.exceptions.UnauthorizedException;
 import ispp.project.dondesiempre.modules.auth.services.UserService;
+import ispp.project.dondesiempre.modules.common.exceptions.UnauthorizedException;
 import ispp.project.dondesiempre.modules.stores.controllers.StorefrontController;
 import ispp.project.dondesiempre.modules.stores.dtos.StorefrontDTO;
 import ispp.project.dondesiempre.modules.stores.models.Storefront;
