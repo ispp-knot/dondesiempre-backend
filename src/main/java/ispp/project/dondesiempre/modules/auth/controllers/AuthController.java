@@ -7,6 +7,7 @@ import ispp.project.dondesiempre.modules.auth.dtos.RegisterStoreDTO;
 import ispp.project.dondesiempre.modules.auth.dtos.UserResponseDTO;
 import ispp.project.dondesiempre.modules.auth.models.User;
 import ispp.project.dondesiempre.modules.auth.services.AuthService;
+import ispp.project.dondesiempre.modules.auth.services.JwtService;
 import ispp.project.dondesiempre.modules.auth.services.UserService;
 import ispp.project.dondesiempre.modules.clients.dtos.ClientDTO;
 import ispp.project.dondesiempre.modules.stores.dtos.StoreDTO;
@@ -19,6 +20,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -33,13 +35,16 @@ public class AuthController {
   private final AuthService authService;
   private final UserService userService;
   private final StoreService storeService;
+  private final JwtService jwtService;
   private final JwtProperties jwtProperties;
 
   @PostMapping("/login")
-  public ResponseEntity<Void> logIn(
+  public ResponseEntity<UserResponseDTO> logIn(
       @RequestBody LoginRequestDTO dto, HttpServletResponse response) {
-    String token = authService.logIn(dto.email(), dto.password());
-    ResponseCookie cookie =
+    User user = authService.logIn(dto.email(), dto.password());
+    String token = jwtService.generateToken(user.getEmail());
+
+    ResponseCookie tokenCookie =
         ResponseCookie.from("token", token)
             // Prevent JavaScript from reading the cookie (XSS mitigation).
             .httpOnly(true)
@@ -51,14 +56,29 @@ public class AuthController {
             .path("/")
             .maxAge(jwtProperties.getDuration())
             .build();
-    response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
-    return ResponseEntity.ok().build();
+    response.addHeader(HttpHeaders.SET_COOKIE, tokenCookie.toString());
+
+    return ResponseEntity.ok(authService.buildUserResponse(user, token));
+  }
+
+  @PostMapping("/logout")
+  public ResponseEntity<Void> logOut(HttpServletResponse response) {
+    ResponseCookie clearCookie =
+        ResponseCookie.from("token", "")
+            .httpOnly(true)
+            .secure(jwtProperties.isSecureCookie())
+            .sameSite(jwtProperties.getSameSite())
+            .path("/")
+            .maxAge(0)
+            .build();
+    response.addHeader(HttpHeaders.SET_COOKIE, clearCookie.toString());
+    return ResponseEntity.noContent().build();
   }
 
   @GetMapping("/me")
-  public ResponseEntity<UserResponseDTO> me() {
+  public ResponseEntity<UserResponseDTO> me(@CookieValue("token") String token) {
     User user = authService.getCurrentUser();
-    return ResponseEntity.ok(new UserResponseDTO(user.getId(), user.getEmail()));
+    return ResponseEntity.ok(authService.buildUserResponse(user, token));
   }
 
   @PostMapping("/register/store")
