@@ -1,4 +1,4 @@
-package ispp.project.dondesiempre.controllers.exceptions;
+package ispp.project.dondesiempre.config;
 
 import ispp.project.dondesiempre.exceptions.InvalidBoundingBoxException;
 import ispp.project.dondesiempre.exceptions.InvalidRequestException;
