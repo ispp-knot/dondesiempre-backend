@@ -1,4 +1,4 @@
-package ispp.project.dondesiempre.services.outfits;
+package ispp.project.dondesiempre.modules.outfits.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -11,7 +11,6 @@ import static org.mockito.Mockito.when;
 import ispp.project.dondesiempre.modules.common.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.modules.outfits.models.OutfitTag;
 import ispp.project.dondesiempre.modules.outfits.repositories.OutfitTagRepository;
-import ispp.project.dondesiempre.modules.outfits.services.OutfitTagService;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

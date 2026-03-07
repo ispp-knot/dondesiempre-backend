@@ -1,4 +1,4 @@
-package ispp.project.dondesiempre.services.outfits;
+package ispp.project.dondesiempre.modules.outfits.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -26,8 +26,6 @@ import ispp.project.dondesiempre.modules.outfits.models.OutfitTagRelation;
 import ispp.project.dondesiempre.modules.outfits.repositories.OutfitProductRepository;
 import ispp.project.dondesiempre.modules.outfits.repositories.OutfitRepository;
 import ispp.project.dondesiempre.modules.outfits.repositories.OutfitTagRelationRepository;
-import ispp.project.dondesiempre.modules.outfits.services.OutfitService;
-import ispp.project.dondesiempre.modules.outfits.services.OutfitTagService;
 import ispp.project.dondesiempre.modules.products.models.Product;
 import ispp.project.dondesiempre.modules.products.services.ProductService;
 import ispp.project.dondesiempre.modules.stores.models.Store;
