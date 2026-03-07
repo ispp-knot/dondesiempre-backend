@@ -5,10 +5,11 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import ispp.project.dondesiempre.models.User;
 import ispp.project.dondesiempre.models.storefronts.Storefront;
 import ispp.project.dondesiempre.models.stores.Store;
-import ispp.project.dondesiempre.repositories.UserRepository;
+import ispp.project.dondesiempre.modules.auth.models.User;
+import ispp.project.dondesiempre.modules.auth.repositories.UserRepository;
+
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,8 +26,10 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 public class StoreRepositoryTest {
 
-  @Autowired private StoreRepository storeRepository;
-  @Autowired private UserRepository userRepository;
+  @Autowired
+  private StoreRepository storeRepository;
+  @Autowired
+  private UserRepository userRepository;
 
   private final GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
   private int testUserIndex = 0;
@@ -71,11 +74,10 @@ public class StoreRepositoryTest {
     createTestStore("Tienda Dos Hermanas", -5.932650, 37.290025);
 
     // Cuando: Buscamos en un cuadrado amplio que la contiene
-    List<Store> result =
-        storeRepository.findStoresInBoundingBox(
-            -6.000000, 37.000000, // minLon, minLat (Suroeste)
-            -5.800000, 37.500000, // maxLon, maxLat (Noreste)
-            500);
+    List<Store> result = storeRepository.findStoresInBoundingBox(
+        -6.000000, 37.000000, // minLon, minLat (Suroeste)
+        -5.800000, 37.500000, // maxLon, maxLat (Noreste)
+        500);
 
     // Entonces: Debería encontrarla
     assertEquals(1, result.size());
@@ -90,7 +92,8 @@ public class StoreRepositoryTest {
     // Cuando: Recuperamos la tienda
     List<Store> result = storeRepository.findStoresInBoundingBox(-6.0, 37.0, -5.8, 37.5, 500);
 
-    // Entonces: Verificamos que el mapeo nativo de PostgreSQL con comillas dobles funcionó
+    // Entonces: Verificamos que el mapeo nativo de PostgreSQL con comillas dobles
+    // funcionó
     assertFalse(result.isEmpty());
     Store store = result.getFirst();
 
@@ -108,11 +111,11 @@ public class StoreRepositoryTest {
     // Dado: Una tienda
     createTestStore("Tienda Límite", -5.90, 37.30);
 
-    // Cuando: Buscamos donde uno de los bordes del cuadrado toca exactamente la tienda
-    List<Store> result =
-        storeRepository.findStoresInBoundingBox(
-            -5.90, 37.00, // minLon coincide exactamente con la tienda
-            -5.00, 38.00, 500);
+    // Cuando: Buscamos donde uno de los bordes del cuadrado toca exactamente la
+    // tienda
+    List<Store> result = storeRepository.findStoresInBoundingBox(
+        -5.90, 37.00, // minLon coincide exactamente con la tienda
+        -5.00, 38.00, 500);
 
     // Entonces: ST_MakeEnvelope es inclusivo (>= y <=), por lo que debe encontrarla
     assertEquals(1, result.size());

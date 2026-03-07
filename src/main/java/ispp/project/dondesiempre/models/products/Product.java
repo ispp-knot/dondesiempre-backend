@@ -1,7 +1,7 @@
 package ispp.project.dondesiempre.models.products;
 
-import ispp.project.dondesiempre.models.BaseEntity;
 import ispp.project.dondesiempre.models.stores.Store;
+import ispp.project.dondesiempre.modules.common.models.BaseEntity;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -41,7 +41,10 @@ public class Product extends BaseEntity {
   @Size(max = 5000)
   String description;
 
-  @Column @Nullable @URL private String image;
+  @Column
+  @Nullable
+  @URL
+  private String image;
 
   @NotNull
   @ManyToOne(optional = false)

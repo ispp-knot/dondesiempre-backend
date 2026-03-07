@@ -2,7 +2,7 @@ package ispp.project.dondesiempre.controllers.storefronts;
 
 import ispp.project.dondesiempre.models.storefronts.Storefront;
 import ispp.project.dondesiempre.models.storefronts.dto.StorefrontDTO;
-import ispp.project.dondesiempre.services.UserService;
+import ispp.project.dondesiempre.modules.auth.services.UserService;
 import ispp.project.dondesiempre.services.storefronts.StorefrontService;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +29,8 @@ public class StorefrontController {
     return new ResponseEntity<>(new StorefrontDTO(storefrontService.findById(id)), HttpStatus.OK);
   }
 
-  // TODO: Descomentar la línea 39 para validar que el usuario es dueño de la tienda
+  // TODO: Descomentar la línea 39 para validar que el usuario es dueño de la
+  // tienda
   @PutMapping("/{id}")
   public ResponseEntity<StorefrontDTO> updateStorefront(
       @PathVariable UUID id, @RequestBody StorefrontDTO storefrontDTO) {

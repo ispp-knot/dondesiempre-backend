@@ -8,10 +8,11 @@ import ispp.project.dondesiempre.models.stores.StoreFollower;
 import ispp.project.dondesiempre.models.stores.dto.StoreDTO;
 import ispp.project.dondesiempre.models.stores.dto.StoreSocialNetworkDTO;
 import ispp.project.dondesiempre.models.stores.dto.StoreUpdateDTO;
+import ispp.project.dondesiempre.modules.auth.services.UserService;
 import ispp.project.dondesiempre.repositories.stores.StoreFollowerRepository;
 import ispp.project.dondesiempre.repositories.stores.StoreRepository;
 import ispp.project.dondesiempre.repositories.stores.StoreSocialNetworkRepository;
-import ispp.project.dondesiempre.services.UserService;
+
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -65,13 +66,20 @@ public class StoreService {
 
     storeToUpdate = applicationContext.getBean(StoreService.class).findById(id);
 
-    if (dto.getName() != null) storeToUpdate.setName(dto.getName());
-    if (dto.getEmail() != null) storeToUpdate.setEmail(dto.getEmail());
-    if (dto.getStoreID() != null) storeToUpdate.setStoreID(dto.getStoreID());
-    if (dto.getAddress() != null) storeToUpdate.setAddress(dto.getAddress());
-    if (dto.getOpeningHours() != null) storeToUpdate.setOpeningHours(dto.getOpeningHours());
-    if (dto.getPhone() != null) storeToUpdate.setPhone(dto.getPhone());
-    if (dto.getAboutUs() != null) storeToUpdate.setAboutUs(dto.getAboutUs());
+    if (dto.getName() != null)
+      storeToUpdate.setName(dto.getName());
+    if (dto.getEmail() != null)
+      storeToUpdate.setEmail(dto.getEmail());
+    if (dto.getStoreID() != null)
+      storeToUpdate.setStoreID(dto.getStoreID());
+    if (dto.getAddress() != null)
+      storeToUpdate.setAddress(dto.getAddress());
+    if (dto.getOpeningHours() != null)
+      storeToUpdate.setOpeningHours(dto.getOpeningHours());
+    if (dto.getPhone() != null)
+      storeToUpdate.setPhone(dto.getPhone());
+    if (dto.getAboutUs() != null)
+      storeToUpdate.setAboutUs(dto.getAboutUs());
 
     return new StoreDTO(storeRepository.save(storeToUpdate));
   }
@@ -92,10 +100,9 @@ public class StoreService {
   public void unfollowStore(UUID storeId) throws ResourceNotFoundException {
     Client currentClient = userService.getCurrentClient();
 
-    StoreFollower follow =
-        storeFollowerRepository
-            .findByClientIdAndStoreId(currentClient.getId(), storeId)
-            .orElseThrow(() -> new ResourceNotFoundException("You don't follow that store."));
+    StoreFollower follow = storeFollowerRepository
+        .findByClientIdAndStoreId(currentClient.getId(), storeId)
+        .orElseThrow(() -> new ResourceNotFoundException("You don't follow that store."));
 
     storeFollowerRepository.delete(follow);
   }

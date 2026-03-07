@@ -4,7 +4,7 @@ import ispp.project.dondesiempre.models.Client;
 import ispp.project.dondesiempre.models.stores.dto.StoreDTO;
 import ispp.project.dondesiempre.models.stores.dto.StoreFollowerDTO;
 import ispp.project.dondesiempre.models.stores.dto.StoreUpdateDTO;
-import ispp.project.dondesiempre.services.UserService;
+import ispp.project.dondesiempre.modules.auth.services.UserService;
 import ispp.project.dondesiempre.services.stores.StoreService;
 import java.util.List;
 import java.util.UUID;
@@ -79,8 +79,7 @@ public class StoreController {
   @GetMapping("/clients/me/followed-stores")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<List<StoreDTO>> getMyFollowedStores() {
-    List<StoreDTO> followedStores =
-        storeService.getMyFollowedStores().stream().map(storeService::toDTO).toList();
+    List<StoreDTO> followedStores = storeService.getMyFollowedStores().stream().map(storeService::toDTO).toList();
     return new ResponseEntity<>(followedStores, HttpStatus.OK);
   }
 

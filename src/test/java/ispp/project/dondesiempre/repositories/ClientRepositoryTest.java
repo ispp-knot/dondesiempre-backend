@@ -5,7 +5,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import ispp.project.dondesiempre.models.Client;
-import ispp.project.dondesiempre.models.User;
+import ispp.project.dondesiempre.modules.auth.models.User;
+import ispp.project.dondesiempre.modules.auth.repositories.UserRepository;
+
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.jupiter.api.Test;
@@ -18,8 +20,10 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 class ClientRepositoryTest {
 
-  @Autowired private ClientRepository clientRepository;
-  @Autowired private UserRepository userRepository;
+  @Autowired
+  private ClientRepository clientRepository;
+  @Autowired
+  private UserRepository userRepository;
 
   private static final AtomicInteger userCounter = new AtomicInteger(0);
 

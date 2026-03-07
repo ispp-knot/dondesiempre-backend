@@ -8,14 +8,14 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import ispp.project.dondesiempre.controllers.exceptions.GlobalExceptionHandler;
+import ispp.project.dondesiempre.config.GlobalExceptionHandler;
 import ispp.project.dondesiempre.controllers.stores.StoreController;
 import ispp.project.dondesiempre.mockEntities.StoreMockEntities;
 import ispp.project.dondesiempre.models.Client;
 import ispp.project.dondesiempre.models.stores.Store;
 import ispp.project.dondesiempre.models.stores.StoreFollower;
 import ispp.project.dondesiempre.models.stores.dto.StoreDTO;
-import ispp.project.dondesiempre.services.UserService;
+import ispp.project.dondesiempre.modules.auth.services.UserService;
 import ispp.project.dondesiempre.services.stores.StoreService;
 import java.util.List;
 import java.util.UUID;
@@ -28,24 +28,22 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-@WebMvcTest(
-    controllers = StoreController.class,
-    excludeFilters =
-        @ComponentScan.Filter(
-            type = FilterType.ASSIGNABLE_TYPE,
-            classes = {GlobalExceptionHandler.class}))
+@WebMvcTest(controllers = StoreController.class, excludeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = {
+    GlobalExceptionHandler.class }))
 public class StoreControllerTest {
 
-  @Autowired private MockMvc mockMvc;
+  @Autowired
+  private MockMvc mockMvc;
 
-  @MockitoBean private StoreService storeService;
-  @MockitoBean private UserService userService;
+  @MockitoBean
+  private StoreService storeService;
+  @MockitoBean
+  private UserService userService;
 
   private static final Client TEST_CLIENT = StoreMockEntities.sampleClient();
   private static final UUID TEST_STORE_ID = UUID.randomUUID();
   private static final Store TEST_STORE = StoreMockEntities.sampleStore(TEST_STORE_ID);
-  private static final StoreFollower TEST_FOLLOWER =
-      StoreMockEntities.sampleFollower(TEST_CLIENT, TEST_STORE);
+  private static final StoreFollower TEST_FOLLOWER = StoreMockEntities.sampleFollower(TEST_CLIENT, TEST_STORE);
 
   @Test
   void shouldReturnOkAndListOfStores_whenValidParamsProvided() throws Exception {
@@ -83,31 +81,31 @@ public class StoreControllerTest {
   }
 
   /*
-  @Test
-  void shouldReturnOkAndStoreDTO_whenGetStoreByIdExists() throws Exception {
-    UUID storeId = UUID.randomUUID();
-    Store store = StoreMockEntities.sampleStore(storeId);
-    StoreDTO storeDTO = new StoreDTO();
-    storeDTO.setName("La Boutique");
-    storeDTO.setAddress("Calle Mayor 1");
-
-    when(storeService.findById(storeId)).thenReturn(store);
-    when(storeService.toDTO(store)).thenReturn(storeDTO);
-
-    mockMvc
-        .perform(get("/api/v1/stores/{id}", storeId))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$.name").value("La Boutique"))
-        .andExpect(jsonPath("$.address").value("Calle Mayor 1"));
-  }
-
-  @Test
-  void followStore_shouldReturnForbidden_whenNotAuthorized() throws Exception {
-    mockMvc
-        .perform(post("/api/v1/stores/{storeId}/followers", TEST_STORE_ID))
-        .andExpect(status().is(403));
-  }
-  */
+   * @Test
+   * void shouldReturnOkAndStoreDTO_whenGetStoreByIdExists() throws Exception {
+   * UUID storeId = UUID.randomUUID();
+   * Store store = StoreMockEntities.sampleStore(storeId);
+   * StoreDTO storeDTO = new StoreDTO();
+   * storeDTO.setName("La Boutique");
+   * storeDTO.setAddress("Calle Mayor 1");
+   * 
+   * when(storeService.findById(storeId)).thenReturn(store);
+   * when(storeService.toDTO(store)).thenReturn(storeDTO);
+   * 
+   * mockMvc
+   * .perform(get("/api/v1/stores/{id}", storeId))
+   * .andExpect(status().isOk())
+   * .andExpect(jsonPath("$.name").value("La Boutique"))
+   * .andExpect(jsonPath("$.address").value("Calle Mayor 1"));
+   * }
+   * 
+   * @Test
+   * void followStore_shouldReturnForbidden_whenNotAuthorized() throws Exception {
+   * mockMvc
+   * .perform(post("/api/v1/stores/{storeId}/followers", TEST_STORE_ID))
+   * .andExpect(status().is(403));
+   * }
+   */
 
   @Test
   @WithMockUser(username = "testUser")
@@ -119,13 +117,14 @@ public class StoreControllerTest {
   }
 
   /*
-    @Test
-    void unfollowStore_shouldReturnForbidden_whenNotAuthorized() throws Exception {
-      mockMvc
-          .perform(delete("/api/v1/stores/{storeId}/followers/me", TEST_STORE_ID))
-          .andExpect(status().is(403));
-    }
-  */
+   * @Test
+   * void unfollowStore_shouldReturnForbidden_whenNotAuthorized() throws Exception
+   * {
+   * mockMvc
+   * .perform(delete("/api/v1/stores/{storeId}/followers/me", TEST_STORE_ID))
+   * .andExpect(status().is(403));
+   * }
+   */
 
   @Test
   @WithMockUser(username = "testUser")
@@ -137,11 +136,13 @@ public class StoreControllerTest {
   }
 
   /*
-  @Test
-  void getMyFollowedStores_shouldReturnForbidden_whenNotAuthorized() throws Exception {
-    mockMvc.perform(get("/api/v1/clients/me/followed-stores")).andExpect(status().is(403));
-  }
-  */
+   * @Test
+   * void getMyFollowedStores_shouldReturnForbidden_whenNotAuthorized() throws
+   * Exception {
+   * mockMvc.perform(get("/api/v1/clients/me/followed-stores")).andExpect(status()
+   * .is(403));
+   * }
+   */
 
   @Test
   @WithMockUser(username = "testUser")
@@ -160,13 +161,14 @@ public class StoreControllerTest {
   }
 
   /*
-    @Test
-    void checkIfIFollowStore_shouldReturnForbidden_whenNotAuthorized() throws Exception {
-      mockMvc
-          .perform(get("/api/v1/stores/{storeId}/followers/me", TEST_STORE_ID))
-          .andExpect(status().is(403));
-    }
-  */
+   * @Test
+   * void checkIfIFollowStore_shouldReturnForbidden_whenNotAuthorized() throws
+   * Exception {
+   * mockMvc
+   * .perform(get("/api/v1/stores/{storeId}/followers/me", TEST_STORE_ID))
+   * .andExpect(status().is(403));
+   * }
+   */
   @Test
   @WithMockUser(username = "testUser")
   void checkIfIFollowStore_shouldReturnFollowingDTO_whenAuthorizedAndFollowing() throws Exception {

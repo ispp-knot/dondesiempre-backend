@@ -6,9 +6,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import ispp.project.dondesiempre.controllers.auth.dto.LoginRequestDTO;
-import ispp.project.dondesiempre.models.User;
-import ispp.project.dondesiempre.repositories.UserRepository;
+
+import ispp.project.dondesiempre.modules.auth.dtos.LoginRequestDTO;
+import ispp.project.dondesiempre.modules.auth.models.User;
+import ispp.project.dondesiempre.modules.auth.repositories.UserRepository;
 import ispp.project.dondesiempre.services.CloudinaryService;
 import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.AfterEach;
@@ -35,11 +36,16 @@ class AuthIntegrationTest {
   private static final String TEST_EMAIL = "auth-integration@test.com";
   private static final String TEST_PASSWORD = "integration-password";
 
-  @Autowired private MockMvc mockMvc;
-  @Autowired private ObjectMapper objectMapper;
-  @Autowired private UserRepository userRepository;
-  @Autowired private PasswordEncoder passwordEncoder;
-  @MockitoBean private CloudinaryService cloudinaryService;
+  @Autowired
+  private MockMvc mockMvc;
+  @Autowired
+  private ObjectMapper objectMapper;
+  @Autowired
+  private UserRepository userRepository;
+  @Autowired
+  private PasswordEncoder passwordEncoder;
+  @MockitoBean
+  private CloudinaryService cloudinaryService;
 
   @BeforeEach
   void setUp() {
@@ -60,14 +66,13 @@ class AuthIntegrationTest {
   void logInAndGetMe_shouldReturnAuthenticatedUserInfo() throws Exception {
     LoginRequestDTO loginDTO = new LoginRequestDTO(TEST_EMAIL, TEST_PASSWORD);
 
-    MvcResult loginResult =
-        mockMvc
-            .perform(
-                post("/api/v1/auth/login")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(loginDTO)))
-            .andExpect(status().isOk())
-            .andReturn();
+    MvcResult loginResult = mockMvc
+        .perform(
+            post("/api/v1/auth/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(loginDTO)))
+        .andExpect(status().isOk())
+        .andReturn();
 
     String setCookieHeader = loginResult.getResponse().getHeader("Set-Cookie");
     String jwtToken = setCookieHeader.split(";")[0].split("=", 2)[1];

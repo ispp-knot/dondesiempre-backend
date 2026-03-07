@@ -1,5 +1,6 @@
-package ispp.project.dondesiempre.models;
+package ispp.project.dondesiempre.modules.auth.models;
 
+import ispp.project.dondesiempre.modules.common.models.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -19,5 +20,7 @@ public class User extends BaseEntity {
   @Email
   String email;
 
-  @Column @NotBlank String password;
+  @Column
+  @NotBlank
+  String password;
 }

@@ -11,9 +11,11 @@ import static org.mockito.Mockito.when;
 
 import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.exceptions.UnauthorizedException;
-import ispp.project.dondesiempre.models.User;
 import ispp.project.dondesiempre.models.stores.Store;
-import ispp.project.dondesiempre.repositories.UserRepository;
+import ispp.project.dondesiempre.modules.auth.models.User;
+import ispp.project.dondesiempre.modules.auth.repositories.UserRepository;
+import ispp.project.dondesiempre.modules.auth.services.UserService;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -34,13 +36,19 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @ExtendWith(MockitoExtension.class)
 class AuthServiceTest {
 
-  @Mock private UserRepository userRepository;
-  @Mock private UserService userService;
-  @Mock private JwtService jwtService;
-  @Mock private PasswordEncoder passwordEncoder;
-  @Mock private ApplicationContext applicationContext;
+  @Mock
+  private UserRepository userRepository;
+  @Mock
+  private UserService userService;
+  @Mock
+  private JwtService jwtService;
+  @Mock
+  private PasswordEncoder passwordEncoder;
+  @Mock
+  private ApplicationContext applicationContext;
 
-  @InjectMocks private AuthService authService;
+  @InjectMocks
+  private AuthService authService;
 
   @BeforeEach
   void setUp() {

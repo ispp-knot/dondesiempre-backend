@@ -1,5 +1,7 @@
 package ispp.project.dondesiempre.models;
 
+import ispp.project.dondesiempre.modules.auth.models.User;
+import ispp.project.dondesiempre.modules.common.models.BaseEntity;
 import ispp.project.dondesiempre.validators.Phone;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -29,9 +31,14 @@ public class Client extends BaseEntity {
   @Size(max = 255)
   String surname;
 
-  @Column @NotBlank @Email String email;
+  @Column
+  @NotBlank
+  @Email
+  String email;
 
-  @Column @Phone String phone;
+  @Column
+  @Phone
+  String phone;
 
   @Column
   @Size(max = 255)

@@ -1,12 +1,13 @@
-package ispp.project.dondesiempre.services;
+package ispp.project.dondesiempre.modules.auth.services;
 
 import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.exceptions.UnauthorizedException;
 import ispp.project.dondesiempre.models.Client;
-import ispp.project.dondesiempre.models.User;
 import ispp.project.dondesiempre.models.stores.Store;
+import ispp.project.dondesiempre.modules.auth.models.User;
 import ispp.project.dondesiempre.repositories.ClientRepository;
 import ispp.project.dondesiempre.repositories.stores.StoreRepository;
+import ispp.project.dondesiempre.services.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -29,9 +30,7 @@ public class UserService {
     return passwordEncoder.matches(rawPassword, user.getPassword());
   }
 
-  @Transactional(
-      readOnly = true,
-      rollbackFor = {ResourceNotFoundException.class, UnauthorizedException.class})
+  @Transactional(readOnly = true, rollbackFor = { ResourceNotFoundException.class, UnauthorizedException.class })
   public Client getCurrentClient() throws ResourceNotFoundException, UnauthorizedException {
     User currentUser = applicationContext.getBean(AuthService.class).getCurrentUser();
     return clientRepository
@@ -39,9 +38,7 @@ public class UserService {
         .orElseThrow(() -> new ResourceNotFoundException("Current client not found."));
   }
 
-  @Transactional(
-      readOnly = true,
-      rollbackFor = {ResourceNotFoundException.class, UnauthorizedException.class})
+  @Transactional(readOnly = true, rollbackFor = { ResourceNotFoundException.class, UnauthorizedException.class })
   public Store getCurrentStore() throws ResourceNotFoundException, UnauthorizedException {
     User currentUser = applicationContext.getBean(AuthService.class).getCurrentUser();
     return storeRepository

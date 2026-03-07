@@ -14,7 +14,6 @@ import static org.mockito.Mockito.when;
 
 import ispp.project.dondesiempre.exceptions.InvalidRequestException;
 import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
-import ispp.project.dondesiempre.models.User;
 import ispp.project.dondesiempre.models.outfits.Outfit;
 import ispp.project.dondesiempre.models.outfits.OutfitProduct;
 import ispp.project.dondesiempre.models.outfits.OutfitTag;
@@ -25,6 +24,7 @@ import ispp.project.dondesiempre.models.outfits.dto.OutfitUpdateDTO;
 import ispp.project.dondesiempre.models.products.Product;
 import ispp.project.dondesiempre.models.storefronts.Storefront;
 import ispp.project.dondesiempre.models.stores.Store;
+import ispp.project.dondesiempre.modules.auth.models.User;
 import ispp.project.dondesiempre.repositories.outfits.OutfitProductRepository;
 import ispp.project.dondesiempre.repositories.outfits.OutfitRepository;
 import ispp.project.dondesiempre.repositories.outfits.OutfitTagRelationRepository;
@@ -46,16 +46,25 @@ import org.springframework.context.ApplicationContext;
 @ExtendWith(MockitoExtension.class)
 class OutfitServiceTest {
 
-  @Mock private OutfitRepository outfitRepository;
-  @Mock private OutfitProductRepository outfitProductRepository;
-  @Mock private OutfitTagRelationRepository outfitTagRelationRepository;
-  @Mock private ProductService productService;
-  @Mock private AuthService authService;
-  @Mock private StorefrontService storefrontService;
-  @Mock private OutfitTagService outfitTagService;
-  @Mock private ApplicationContext applicationContext;
+  @Mock
+  private OutfitRepository outfitRepository;
+  @Mock
+  private OutfitProductRepository outfitProductRepository;
+  @Mock
+  private OutfitTagRelationRepository outfitTagRelationRepository;
+  @Mock
+  private ProductService productService;
+  @Mock
+  private AuthService authService;
+  @Mock
+  private StorefrontService storefrontService;
+  @Mock
+  private OutfitTagService outfitTagService;
+  @Mock
+  private ApplicationContext applicationContext;
 
-  @InjectMocks private OutfitService outfitService;
+  @InjectMocks
+  private OutfitService outfitService;
 
   private UUID outfitId;
   private UUID productId;
@@ -321,7 +330,8 @@ class OutfitServiceTest {
 
     when(outfitRepository.findById(outfitId)).thenReturn(Optional.of(outfit));
     when(productService.getProductById(productId)).thenReturn(product);
-    // 'product' already in the outfit; adding it again makes distinct count (1) < total (2)
+    // 'product' already in the outfit; adding it again makes distinct count (1) <
+    // total (2)
     when(outfitRepository.findOutfitProductsById(outfitId))
         .thenReturn(new ArrayList<>(List.of(product)));
     when(outfitRepository.findOutfitProductIndicesById(outfitId))

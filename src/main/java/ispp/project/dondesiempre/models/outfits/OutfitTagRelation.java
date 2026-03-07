@@ -1,6 +1,5 @@
 package ispp.project.dondesiempre.models.outfits;
 
-import ispp.project.dondesiempre.models.BaseEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -9,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+
+import ispp.project.dondesiempre.modules.common.models.BaseEntity;
 
 @Entity
 @Getter

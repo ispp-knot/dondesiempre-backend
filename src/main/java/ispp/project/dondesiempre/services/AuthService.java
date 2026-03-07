@@ -2,9 +2,10 @@ package ispp.project.dondesiempre.services;
 
 import ispp.project.dondesiempre.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.exceptions.UnauthorizedException;
-import ispp.project.dondesiempre.models.User;
 import ispp.project.dondesiempre.models.stores.Store;
-import ispp.project.dondesiempre.repositories.UserRepository;
+import ispp.project.dondesiempre.modules.auth.models.User;
+import ispp.project.dondesiempre.modules.auth.repositories.UserRepository;
+import ispp.project.dondesiempre.modules.auth.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -24,9 +25,7 @@ public class AuthService {
   private final PasswordEncoder passwordEncoder;
   private final ApplicationContext applicationContext;
 
-  @Transactional(
-      readOnly = true,
-      rollbackFor = {UnauthorizedException.class, ResourceNotFoundException.class})
+  @Transactional(readOnly = true, rollbackFor = { UnauthorizedException.class, ResourceNotFoundException.class })
   public User getCurrentUser() throws UnauthorizedException, ResourceNotFoundException {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     if (authentication == null
@@ -50,10 +49,9 @@ public class AuthService {
 
   @Transactional(readOnly = true, rollbackFor = UnauthorizedException.class)
   public String logIn(String email, String password) throws UnauthorizedException {
-    User user =
-        userRepository
-            .findByEmail(email)
-            .orElseThrow(() -> new UnauthorizedException("Invalid credentials."));
+    User user = userRepository
+        .findByEmail(email)
+        .orElseThrow(() -> new UnauthorizedException("Invalid credentials."));
     if (!userService.checkPassword(user, password)) {
       throw new UnauthorizedException("Invalid credentials.");
     }

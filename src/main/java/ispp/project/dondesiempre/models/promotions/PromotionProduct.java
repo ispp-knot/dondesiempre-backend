@@ -1,7 +1,7 @@
 package ispp.project.dondesiempre.models.promotions;
 
-import ispp.project.dondesiempre.models.BaseEntity;
 import ispp.project.dondesiempre.models.products.Product;
+import ispp.project.dondesiempre.modules.common.models.BaseEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;

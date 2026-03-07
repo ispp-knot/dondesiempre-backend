@@ -1,9 +1,9 @@
-package ispp.project.dondesiempre.controllers.auth;
+package ispp.project.dondesiempre.modules.auth.controllers;
 
 import ispp.project.dondesiempre.config.JwtProperties;
-import ispp.project.dondesiempre.controllers.auth.dto.LoginRequestDTO;
-import ispp.project.dondesiempre.controllers.auth.dto.UserResponseDTO;
-import ispp.project.dondesiempre.models.User;
+import ispp.project.dondesiempre.modules.auth.dtos.LoginRequestDTO;
+import ispp.project.dondesiempre.modules.auth.dtos.UserResponseDTO;
+import ispp.project.dondesiempre.modules.auth.models.User;
 import ispp.project.dondesiempre.services.AuthService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -28,12 +28,11 @@ public class AuthController {
   public ResponseEntity<Void> logIn(
       @RequestBody LoginRequestDTO dto, HttpServletResponse response) {
     String token = authService.logIn(dto.email(), dto.password());
-    ResponseCookie cookie =
-        ResponseCookie.from("token", token)
-            .httpOnly(true)
-            .path("/")
-            .maxAge(jwtProperties.getDuration())
-            .build();
+    ResponseCookie cookie = ResponseCookie.from("token", token)
+        .httpOnly(true)
+        .path("/")
+        .maxAge(jwtProperties.getDuration())
+        .build();
     response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
     return ResponseEntity.ok().build();
   }
