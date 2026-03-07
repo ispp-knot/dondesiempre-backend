@@ -1,11 +1,10 @@
-package ispp.project.dondesiempre.services;
+package ispp.project.dondesiempre.modules.products.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import ispp.project.dondesiempre.modules.products.models.ProductType;
 import ispp.project.dondesiempre.modules.products.repositories.ProductTypeRepository;
-import ispp.project.dondesiempre.modules.products.services.ProductTypeService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;

@@ -1,4 +1,4 @@
-package ispp.project.dondesiempre.repositories;
+package ispp.project.dondesiempre.modules.products.repositories;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -8,8 +8,6 @@ import ispp.project.dondesiempre.modules.auth.models.User;
 import ispp.project.dondesiempre.modules.auth.repositories.UserRepository;
 import ispp.project.dondesiempre.modules.products.models.Product;
 import ispp.project.dondesiempre.modules.products.models.ProductType;
-import ispp.project.dondesiempre.modules.products.repositories.ProductRepository;
-import ispp.project.dondesiempre.modules.products.repositories.ProductTypeRepository;
 import ispp.project.dondesiempre.modules.stores.models.Store;
 import ispp.project.dondesiempre.modules.stores.models.Storefront;
 import ispp.project.dondesiempre.modules.stores.repositories.StoreRepository;

@@ -1,4 +1,4 @@
-package ispp.project.dondesiempre.services;
+package ispp.project.dondesiempre.modules.products.services;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -10,7 +10,6 @@ import ispp.project.dondesiempre.modules.products.dtos.ProductCreationDTO;
 import ispp.project.dondesiempre.modules.products.models.Product;
 import ispp.project.dondesiempre.modules.products.models.ProductType;
 import ispp.project.dondesiempre.modules.products.repositories.ProductTypeRepository;
-import ispp.project.dondesiempre.modules.products.services.ProductService;
 import ispp.project.dondesiempre.modules.stores.models.Store;
 import ispp.project.dondesiempre.modules.stores.models.Storefront;
 import ispp.project.dondesiempre.modules.stores.repositories.StoreRepository;
