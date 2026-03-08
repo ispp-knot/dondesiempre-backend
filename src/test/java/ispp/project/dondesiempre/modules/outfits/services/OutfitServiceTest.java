@@ -46,25 +46,16 @@ import org.springframework.context.ApplicationContext;
 @ExtendWith(MockitoExtension.class)
 class OutfitServiceTest {
 
-  @Mock
-  private OutfitRepository outfitRepository;
-  @Mock
-  private OutfitProductRepository outfitProductRepository;
-  @Mock
-  private OutfitTagRelationRepository outfitTagRelationRepository;
-  @Mock
-  private ProductService productService;
-  @Mock
-  private AuthService authService;
-  @Mock
-  private StorefrontService storefrontService;
-  @Mock
-  private OutfitTagService outfitTagService;
-  @Mock
-  private ApplicationContext applicationContext;
+  @Mock private OutfitRepository outfitRepository;
+  @Mock private OutfitProductRepository outfitProductRepository;
+  @Mock private OutfitTagRelationRepository outfitTagRelationRepository;
+  @Mock private ProductService productService;
+  @Mock private AuthService authService;
+  @Mock private StorefrontService storefrontService;
+  @Mock private OutfitTagService outfitTagService;
+  @Mock private ApplicationContext applicationContext;
 
-  @InjectMocks
-  private OutfitService outfitService;
+  @InjectMocks private OutfitService outfitService;
 
   private UUID outfitId;
   private UUID productId;

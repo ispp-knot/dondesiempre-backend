@@ -105,11 +105,12 @@ public class OutfitService {
   private Integer calculatePriceOnCreation(List<OutfitCreationProductDTO> dtos)
       throws EntityNotFoundException {
     return dtos.stream()
-        .mapToInt(dto -> productService.getProductById(dto.getProductId()).getDiscountedPriceInCents())
+        .mapToInt(
+            dto -> productService.getProductById(dto.getProductId()).getDiscountedPriceInCents())
         .sum();
   }
 
-  @Transactional(rollbackFor = { ResourceNotFoundException.class, InvalidRequestException.class })
+  @Transactional(rollbackFor = {ResourceNotFoundException.class, InvalidRequestException.class})
   public Outfit update(UUID id, OutfitUpdateDTO dto, MultipartFile image)
       throws ResourceNotFoundException, InvalidRequestException {
     Outfit outfitToUpdate;
@@ -156,14 +157,15 @@ public class OutfitService {
     authService.assertUserOwnsStore(outfit.getStorefront().getStore());
     tag = outfitTagService.findByName(tagName);
 
-    relation = outfitRepository
-        .findTagRelation(outfit.getId(), tag.getId())
-        .orElseThrow(
-            () -> new ResourceNotFoundException("Requested tag does not belong to outfit."));
+    relation =
+        outfitRepository
+            .findTagRelation(outfit.getId(), tag.getId())
+            .orElseThrow(
+                () -> new ResourceNotFoundException("Requested tag does not belong to outfit."));
     outfitTagRelationRepository.delete(relation);
   }
 
-  @Transactional(rollbackFor = { ResourceNotFoundException.class, InvalidRequestException.class })
+  @Transactional(rollbackFor = {ResourceNotFoundException.class, InvalidRequestException.class})
   public OutfitProduct addProduct(UUID outfitId, OutfitCreationProductDTO dto)
       throws ResourceNotFoundException, InvalidRequestException {
     Outfit outfit;
@@ -204,10 +206,12 @@ public class OutfitService {
 
     outfit = applicationContext.getBean(OutfitService.class).findById(outfitId);
     authService.assertUserOwnsStore(outfit.getStorefront().getStore());
-    relation = outfitRepository
-        .findProductRelation(outfit.getId(), product.getId())
-        .orElseThrow(
-            () -> new ResourceNotFoundException("Requested product does not belong to outfit."));
+    relation =
+        outfitRepository
+            .findProductRelation(outfit.getId(), product.getId())
+            .orElseThrow(
+                () ->
+                    new ResourceNotFoundException("Requested product does not belong to outfit."));
     outfitProductRepository.delete(relation);
   }
 
@@ -224,12 +228,14 @@ public class OutfitService {
     for (OutfitProduct relation : relations) {
       OutfitCreationProductDTO product;
 
-      product = products.stream()
-          .filter(p -> relation.getProduct().getId().equals(p.getProductId()))
-          .findFirst()
-          .orElseThrow(
-              () -> new ResourceNotFoundException(
-                  "Could not find association entity between requested outfit and product."));
+      product =
+          products.stream()
+              .filter(p -> relation.getProduct().getId().equals(p.getProductId()))
+              .findFirst()
+              .orElseThrow(
+                  () ->
+                      new ResourceNotFoundException(
+                          "Could not find association entity between requested outfit and product."));
       relation.setIndex(product.getIndex());
     }
     outfitProductRepository.saveAll(relations);
