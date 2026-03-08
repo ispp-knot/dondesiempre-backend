@@ -8,7 +8,6 @@ import lombok.Setter;
 public class StoreUpdateDTO {
   private String name;
   private String email;
-  private String storeID;
   private String address;
   private String openingHours;
   private String phone;

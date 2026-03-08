@@ -70,7 +70,6 @@ public class PromotionServiceTest {
     Store store = new Store();
     store.setName(name);
     store.setEmail(email);
-    store.setStoreID(storeId);
     store.setLocation(
         new Point(
             new CoordinateArraySequence(new Coordinate[] {new Coordinate(0.0, 0.0)}),
