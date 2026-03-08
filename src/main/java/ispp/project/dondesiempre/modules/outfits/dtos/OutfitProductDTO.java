@@ -4,10 +4,12 @@ import ispp.project.dondesiempre.modules.outfits.models.OutfitProduct;
 import ispp.project.dondesiempre.modules.products.models.ProductType;
 import java.util.UUID;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class OutfitProductDTO {
   private UUID id;
 
@@ -22,19 +24,17 @@ public class OutfitProductDTO {
   private Integer index;
   private UUID storeId;
 
-  public static OutfitProductDTO from(OutfitProduct product) {
-    OutfitProductDTO dto = new OutfitProductDTO();
-    dto.id = product.getProduct().getId();
+  public OutfitProductDTO(OutfitProduct product) {
+    this.id = product.getProduct().getId();
 
-    dto.name = product.getProduct().getName();
-    dto.description = product.getProduct().getDescription();
-    dto.image = product.getProduct().getImage();
+    this.name = product.getProduct().getName();
+    this.description = product.getProduct().getDescription();
+    this.image = product.getProduct().getImage();
 
-    dto.priceInCents = product.getProduct().getDiscountedPriceInCents();
-    dto.type = product.getProduct().getType();
+    this.priceInCents = product.getProduct().getDiscountedPriceInCents();
+    this.type = product.getProduct().getType();
 
-    dto.index = product.getIndex();
-    dto.storeId = product.getProduct().getStore().getId();
-    return dto;
+    this.index = product.getIndex();
+    this.storeId = product.getProduct().getStore().getId();
   }
 }

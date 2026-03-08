@@ -6,10 +6,12 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class OutfitDTO {
   private UUID id;
 
@@ -26,26 +28,24 @@ public class OutfitDTO {
   private List<String> tags;
   private List<OutfitProductDTO> products;
 
-  public static OutfitDTO from(Outfit outfit, List<String> tags, List<OutfitProduct> products) {
-    OutfitDTO dto = new OutfitDTO();
-    dto.id = outfit.getId();
+  public OutfitDTO(Outfit outfit, List<String> tags, List<OutfitProduct> products) {
+    this.id = outfit.getId();
 
-    dto.name = outfit.getName();
-    dto.description = outfit.getDescription();
-    dto.image = outfit.getImage();
+    this.name = outfit.getName();
+    this.description = outfit.getDescription();
+    this.image = outfit.getImage();
 
-    dto.discountedPriceInCents = outfit.getDiscountedPriceInCents();
+    this.discountedPriceInCents = outfit.getDiscountedPriceInCents();
 
-    dto.index = outfit.getIndex();
-    dto.storefrontId = outfit.getStorefront().getId();
+    this.index = outfit.getIndex();
+    this.storefrontId = outfit.getStorefront().getId();
 
-    dto.tags = tags;
-    dto.products =
+    this.tags = tags;
+    this.products =
         products.stream()
-            .map(OutfitProductDTO::from)
+            .map(OutfitProductDTO::new)
             .sorted(Comparator.comparing(OutfitProductDTO::getIndex))
             .toList();
-    dto.priceInCents = dto.products.stream().mapToInt(OutfitProductDTO::getPriceInCents).sum();
-    return dto;
+    this.priceInCents = this.products.stream().mapToInt(OutfitProductDTO::getPriceInCents).sum();
   }
 }

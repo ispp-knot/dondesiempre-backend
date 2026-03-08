@@ -27,7 +27,7 @@ public class PromotionController {
   public ResponseEntity<PromotionDTO> createPromotion(@RequestBody PromotionCreationDTO dto) {
     Promotion promotion = promotionService.savePromotion(dto);
     PromotionDTO promotionDTO =
-        PromotionDTO.fromPromotion(
+        new PromotionDTO(
             promotion, promotionService.getAllProductsByPromotionId(promotion.getId()));
     return ResponseEntity.ok(promotionDTO);
   }
@@ -38,7 +38,7 @@ public class PromotionController {
         promotionService.getAllPromotions().stream()
             .map(
                 promotion ->
-                    PromotionDTO.fromPromotion(
+                    new PromotionDTO(
                         promotion, promotionService.getAllProductsByPromotionId(promotion.getId())))
             .toList());
   }
@@ -47,7 +47,7 @@ public class PromotionController {
   public ResponseEntity<PromotionDTO> getPromotionById(@PathVariable UUID id) {
     Promotion promotion = promotionService.getPromotionById(id);
     PromotionDTO promotionDTO =
-        PromotionDTO.fromPromotion(
+        new PromotionDTO(
             promotion, promotionService.getAllProductsByPromotionId(promotion.getId()));
     return ResponseEntity.ok(promotionDTO);
   }
@@ -58,7 +58,7 @@ public class PromotionController {
 
     Promotion promotion = promotionService.updatePromotion(id, updateDTO);
     return ResponseEntity.ok(
-        PromotionDTO.fromPromotion(
+        new PromotionDTO(
             promotion, promotionService.getAllProductsByPromotionId(promotion.getId())));
   }
 
@@ -74,7 +74,7 @@ public class PromotionController {
         promotionService.getPromotionsByStoreId(storeId).stream()
             .map(
                 promotion ->
-                    PromotionDTO.fromPromotion(
+                    new PromotionDTO(
                         promotion, promotionService.getAllProductsByPromotionId(promotion.getId())))
             .toList());
   }
