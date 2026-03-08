@@ -43,14 +43,20 @@ import org.springframework.test.web.servlet.MockMvc;
 @WebMvcTest(controllers = OutfitController.class)
 class OutfitsControllerTest {
 
-  @Autowired private MockMvc mockMvc;
-  @Autowired private ObjectMapper objectMapper;
+  @Autowired
+  private MockMvc mockMvc;
+  @Autowired
+  private ObjectMapper objectMapper;
 
   // --- Todas las dependencias del controlador deben estar mockeadas ---
-  @MockitoBean private OutfitService outfitService;
-  @MockitoBean private ProductService productService;
-  @MockitoBean private StoreService storeService;
-  @MockitoBean private StorefrontService storefrontService;
+  @MockitoBean
+  private OutfitService outfitService;
+  @MockitoBean
+  private ProductService productService;
+  @MockitoBean
+  private StoreService storeService;
+  @MockitoBean
+  private StorefrontService storefrontService;
 
   private UUID outfitId;
   private UUID storeId;
@@ -166,7 +172,7 @@ class OutfitsControllerTest {
   @WithMockUser
   void create_shouldReturnCreated_whenValidDTO() throws Exception {
     OutfitCreationProductDTO productDTO = new OutfitCreationProductDTO();
-    productDTO.setId(productId);
+    productDTO.setProductId(productId);
     productDTO.setIndex(0);
 
     OutfitCreationDTO creationDTO = new OutfitCreationDTO();
@@ -259,7 +265,7 @@ class OutfitsControllerTest {
   @WithMockUser
   void addProduct_shouldReturnCreated_whenValid() throws Exception {
     OutfitCreationProductDTO productDTO = new OutfitCreationProductDTO();
-    productDTO.setId(productId);
+    productDTO.setProductId(productId);
     productDTO.setIndex(0);
 
     when(outfitService.addProduct(eq(outfitId), any())).thenReturn(outfitProduct);
@@ -297,7 +303,7 @@ class OutfitsControllerTest {
   @WithMockUser
   void sortProducts_shouldReturnOk_whenValid() throws Exception {
     OutfitCreationProductDTO p1 = new OutfitCreationProductDTO();
-    p1.setId(productId);
+    p1.setProductId(productId);
     p1.setIndex(0);
 
     doNothing().when(outfitService).sortProducts(eq(outfitId), any());

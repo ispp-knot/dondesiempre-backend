@@ -46,16 +46,25 @@ import org.springframework.context.ApplicationContext;
 @ExtendWith(MockitoExtension.class)
 class OutfitServiceTest {
 
-  @Mock private OutfitRepository outfitRepository;
-  @Mock private OutfitProductRepository outfitProductRepository;
-  @Mock private OutfitTagRelationRepository outfitTagRelationRepository;
-  @Mock private ProductService productService;
-  @Mock private AuthService authService;
-  @Mock private StorefrontService storefrontService;
-  @Mock private OutfitTagService outfitTagService;
-  @Mock private ApplicationContext applicationContext;
+  @Mock
+  private OutfitRepository outfitRepository;
+  @Mock
+  private OutfitProductRepository outfitProductRepository;
+  @Mock
+  private OutfitTagRelationRepository outfitTagRelationRepository;
+  @Mock
+  private ProductService productService;
+  @Mock
+  private AuthService authService;
+  @Mock
+  private StorefrontService storefrontService;
+  @Mock
+  private OutfitTagService outfitTagService;
+  @Mock
+  private ApplicationContext applicationContext;
 
-  @InjectMocks private OutfitService outfitService;
+  @InjectMocks
+  private OutfitService outfitService;
 
   private UUID outfitId;
   private UUID productId;
@@ -155,7 +164,7 @@ class OutfitServiceTest {
 
   private OutfitCreationProductDTO createValidProductDTO() {
     OutfitCreationProductDTO productDTO = new OutfitCreationProductDTO();
-    productDTO.setId(productId);
+    productDTO.setProductId(productId);
     productDTO.setIndex(0);
     return productDTO;
   }
@@ -273,7 +282,7 @@ class OutfitServiceTest {
   @Test
   void shouldAddProduct_whenValidData() {
     OutfitCreationProductDTO dto = new OutfitCreationProductDTO();
-    dto.setId(productId);
+    dto.setProductId(productId);
     dto.setIndex(0);
 
     when(outfitRepository.findById(outfitId)).thenReturn(Optional.of(outfit));
@@ -299,7 +308,7 @@ class OutfitServiceTest {
     otherProduct.setStore(otherStore);
 
     OutfitCreationProductDTO dto = new OutfitCreationProductDTO();
-    dto.setId(otherProduct.getId());
+    dto.setProductId(otherProduct.getId());
     dto.setIndex(1);
 
     when(outfitRepository.findById(outfitId)).thenReturn(Optional.of(outfit));
@@ -316,7 +325,7 @@ class OutfitServiceTest {
   void shouldThrowInvalidRequestException_whenDuplicateProduct() {
     // Adding the same product that already exists in the outfit
     OutfitCreationProductDTO dto = new OutfitCreationProductDTO();
-    dto.setId(productId);
+    dto.setProductId(productId);
     dto.setIndex(1);
 
     when(outfitRepository.findById(outfitId)).thenReturn(Optional.of(outfit));
@@ -378,11 +387,11 @@ class OutfitServiceTest {
     outfitProduct2.setProduct(product2);
 
     OutfitCreationProductDTO dto1 = new OutfitCreationProductDTO();
-    dto1.setId(productId);
+    dto1.setProductId(productId);
     dto1.setIndex(1); // Changed index
 
     OutfitCreationProductDTO dto2 = new OutfitCreationProductDTO();
-    dto2.setId(productId2);
+    dto2.setProductId(productId2);
     dto2.setIndex(0); // Changed index
 
     List<OutfitCreationProductDTO> products = List.of(dto1, dto2);
@@ -416,7 +425,7 @@ class OutfitServiceTest {
 
     // Only providing index update for one product, but outfit has two products
     OutfitCreationProductDTO dto1 = new OutfitCreationProductDTO();
-    dto1.setId(productId);
+    dto1.setProductId(productId);
     dto1.setIndex(0);
 
     List<OutfitCreationProductDTO> products = List.of(dto1); // Missing product2
