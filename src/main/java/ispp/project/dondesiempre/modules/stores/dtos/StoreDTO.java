@@ -26,8 +26,7 @@ public class StoreDTO {
   private List<StoreSocialNetworkDTO> socialNetworks;
 
   public StoreDTO(Store store) {
-    if (store == null)
-      return;
+    if (store == null) return;
 
     this.id = store.getId();
     this.name = store.getName();
