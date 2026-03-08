@@ -21,12 +21,12 @@ public class PromotionDTO {
   private List<UUID> productIds;
 
   public PromotionDTO(Promotion promotion, List<UUID> productIds) {
-    this.setId(promotion.getId());
-    this.setName(promotion.getName());
-    this.setDiscountPercentage(promotion.getDiscountPercentage());
-    this.setActive(promotion.isActive());
-    this.setDescription(promotion.getDescription());
-    this.setStoreId(promotion.getStore().getId());
-    this.setProductIds(productIds);
+    this.id = promotion.getId();
+    this.name = promotion.getName();
+    this.discountPercentage = promotion.getDiscountPercentage();
+    this.isActive = promotion.isActive();
+    this.description = promotion.getDescription();
+    this.storeId = promotion.getStore().getId();
+    this.productIds = productIds;
   }
 }

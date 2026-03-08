@@ -22,13 +22,13 @@ public class ProductDTO {
   private UUID storeId;
 
   public ProductDTO(Product product) {
-    this.setId(product.getId());
-    this.setName(product.getName());
-    this.setPriceInCents(product.getPriceInCents());
-    this.setDiscountedPriceInCents(product.getDiscountedPriceInCents());
-    this.setDescription(product.getDescription());
-    this.setImage(product.getImage());
-    this.setTypeId(product.getType().getId());
-    this.setStoreId(product.getStore().getId());
+    this.id = product.getId();
+    this.name = product.getName();
+    this.priceInCents = product.getPriceInCents();
+    this.discountedPriceInCents = product.getDiscountedPriceInCents();
+    this.description = product.getDescription();
+    this.image = product.getImage();
+    this.typeId = product.getType().getId();
+    this.storeId = product.getStore().getId();
   }
 }
