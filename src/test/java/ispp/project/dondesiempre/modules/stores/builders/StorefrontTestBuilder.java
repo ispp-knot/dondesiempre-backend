@@ -2,6 +2,9 @@ package ispp.project.dondesiempre.modules.stores.builders;
 
 import ispp.project.dondesiempre.modules.stores.models.Storefront;
 import ispp.project.dondesiempre.modules.stores.repositories.StorefrontRepository;
+
+import java.util.UUID;
+
 import ispp.project.dondesiempre.mockEntities.RandomBasicDataGenerator;
 import lombok.Builder;
 
@@ -11,6 +14,9 @@ import lombok.Builder;
  */
 @Builder
 public class StorefrontTestBuilder {
+
+    @Builder.Default
+    UUID id = null;
 
     @Builder.Default
     private Boolean isFirstCollections = Boolean.TRUE;
@@ -29,6 +35,7 @@ public class StorefrontTestBuilder {
      */
     public Storefront entity() {
         Storefront storefront = new Storefront();
+        storefront.setId(id);
         storefront.setIsFirstCollections(isFirstCollections);
         storefront.setPrimaryColor(primaryColor);
         storefront.setSecondaryColor(secondaryColor);

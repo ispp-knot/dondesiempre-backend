@@ -23,7 +23,7 @@ import lombok.Builder;
 public class StoreTestBuilder {
 
     @Builder.Default
-    UUID id = UUID.randomUUID();
+    UUID id = null;
 
     @Builder.Default
     String name = RandomBasicDataGenerator.generateRandomName("store");

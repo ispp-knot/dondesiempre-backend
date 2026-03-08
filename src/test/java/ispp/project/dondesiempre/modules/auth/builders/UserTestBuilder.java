@@ -2,6 +2,9 @@ package ispp.project.dondesiempre.modules.auth.builders;
 
 import ispp.project.dondesiempre.modules.auth.models.User;
 import ispp.project.dondesiempre.modules.auth.repositories.UserRepository;
+
+import java.util.UUID;
+
 import ispp.project.dondesiempre.mockEntities.RandomBasicDataGenerator;
 import lombok.Builder;
 
@@ -11,6 +14,9 @@ import lombok.Builder;
  */
 @Builder
 public class UserTestBuilder {
+
+    @Builder.Default
+    UUID id = null;
 
     @Builder.Default
     private String email = RandomBasicDataGenerator.generateRandomEmail("user");
@@ -23,6 +29,7 @@ public class UserTestBuilder {
      */
     public User entity() {
         User user = new User();
+        user.setId(id);
         user.setEmail(email);
         user.setPassword(password);
         return user;
