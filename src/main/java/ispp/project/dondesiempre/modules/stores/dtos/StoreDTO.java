@@ -15,7 +15,6 @@ public class StoreDTO {
   private UUID id;
   private String name;
   private String email;
-  private String storeID;
   private String address;
   private String openingHours;
   private String phone;
@@ -27,7 +26,8 @@ public class StoreDTO {
   private List<StoreSocialNetworkDTO> socialNetworks;
 
   public StoreDTO(Store store) {
-    if (store == null) return;
+    if (store == null)
+      return;
 
     this.id = store.getId();
     this.name = store.getName();
