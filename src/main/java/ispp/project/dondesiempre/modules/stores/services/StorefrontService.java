@@ -1,15 +1,18 @@
 package ispp.project.dondesiempre.modules.stores.services;
 
-import ispp.project.dondesiempre.modules.auth.services.AuthService;
-import ispp.project.dondesiempre.modules.common.exceptions.ResourceNotFoundException;
-import ispp.project.dondesiempre.modules.stores.dtos.StorefrontDTO;
-import ispp.project.dondesiempre.modules.stores.models.Storefront;
-import ispp.project.dondesiempre.modules.stores.repositories.StorefrontRepository;
 import java.util.UUID;
-import lombok.RequiredArgsConstructor;
+
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import ispp.project.dondesiempre.modules.auth.services.AuthService;
+import ispp.project.dondesiempre.modules.common.exceptions.ResourceNotFoundException;
+import ispp.project.dondesiempre.modules.common.exceptions.UnauthorizedException;
+import ispp.project.dondesiempre.modules.stores.dtos.StorefrontDTO;
+import ispp.project.dondesiempre.modules.stores.models.Storefront;
+import ispp.project.dondesiempre.modules.stores.repositories.StorefrontRepository;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -26,9 +29,9 @@ public class StorefrontService {
             () -> new ResourceNotFoundException("Storefront with ID " + id + " not found."));
   }
 
-  @Transactional(rollbackFor = ResourceNotFoundException.class)
+  @Transactional(rollbackFor = { UnauthorizedException.class, ResourceNotFoundException.class })
   public StorefrontDTO updateStorefront(UUID id, StorefrontDTO dto)
-      throws ResourceNotFoundException {
+      throws UnauthorizedException, ResourceNotFoundException {
     Storefront storefront = applicationContext.getBean(StorefrontService.class).findById(id);
     authService.assertUserOwnsStore(storefront.getStore());
 

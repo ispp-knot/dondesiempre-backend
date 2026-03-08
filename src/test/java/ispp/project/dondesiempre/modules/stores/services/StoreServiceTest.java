@@ -40,15 +40,22 @@ import org.springframework.context.ApplicationContext;
 @ExtendWith(MockitoExtension.class)
 public class StoreServiceTest {
 
-  @Mock private StoreRepository storeRepository;
-  @Mock private StoreSocialNetworkRepository socialNetworkRepository;
-  @Mock private StoreFollowerRepository storeFollowerRepository;
-  @Mock private UserService userService;
-  @Mock private AuthService authService;
+  @Mock
+  private StoreRepository storeRepository;
+  @Mock
+  private StoreSocialNetworkRepository socialNetworkRepository;
+  @Mock
+  private StoreFollowerRepository storeFollowerRepository;
+  @Mock
+  private UserService userService;
+  @Mock
+  private AuthService authService;
 
-  @Mock private ApplicationContext applicationContext;
+  @Mock
+  private ApplicationContext applicationContext;
 
-  @InjectMocks private StoreService storeService;
+  @InjectMocks
+  private StoreService storeService;
 
   private Store store;
   private UUID storeId;
@@ -67,8 +74,7 @@ public class StoreServiceTest {
   private static final Client TEST_CLIENT = StoreMockEntities.sampleClient();
   private static final UUID TEST_STORE_ID = UUID.randomUUID();
   private static final Store TEST_STORE = StoreMockEntities.sampleStore(TEST_STORE_ID);
-  private static final StoreFollower TEST_FOLLOWER =
-      StoreMockEntities.sampleFollower(TEST_CLIENT, TEST_STORE);
+  private static final StoreFollower TEST_FOLLOWER = StoreMockEntities.sampleFollower(TEST_CLIENT, TEST_STORE);
 
   @Test
   void shouldReturnStore_whenFindByIdExists() {
@@ -145,12 +151,14 @@ public class StoreServiceTest {
     when(userService.getCurrentClient()).thenReturn(TEST_CLIENT);
     when(storeRepository.findById(TEST_STORE_ID)).thenReturn(Optional.of(TEST_STORE));
     when(storeFollowerRepository.save(any())).thenReturn(TEST_FOLLOWER);
+    when(applicationContext.getBean(StoreService.class)).thenReturn(storeService);
 
     StoreFollower follow = storeService.followStore(TEST_STORE_ID);
 
     assertEquals(follow.getClient().getId(), TEST_FOLLOWER.getClient().getId());
     assertEquals(follow.getStore().getId(), TEST_FOLLOWER.getStore().getId());
     verify(storeFollowerRepository).save(follow);
+    verify(applicationContext).getBean(StoreService.class);
   }
 
   @Test
