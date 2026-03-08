@@ -29,19 +29,13 @@ import org.springframework.test.web.servlet.MockMvc;
 @WebMvcTest(AuthController.class)
 class AuthControllerRegisterTest {
 
-  @Autowired
-  private MockMvc mockMvc;
-  @Autowired
-  private ObjectMapper objectMapper;
+  @Autowired private MockMvc mockMvc;
+  @Autowired private ObjectMapper objectMapper;
 
-  @MockitoBean
-  private AuthService authService;
-  @MockitoBean
-  private UserService userService;
-  @MockitoBean
-  private StoreService storeService;
-  @MockitoBean
-  private JwtProperties jwtProperties;
+  @MockitoBean private AuthService authService;
+  @MockitoBean private UserService userService;
+  @MockitoBean private StoreService storeService;
+  @MockitoBean private JwtProperties jwtProperties;
 
   // --- registerStore ---
 
