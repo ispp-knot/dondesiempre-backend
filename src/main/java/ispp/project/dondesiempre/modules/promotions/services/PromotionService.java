@@ -3,6 +3,7 @@ package ispp.project.dondesiempre.modules.promotions.services;
 import ispp.project.dondesiempre.modules.auth.services.AuthService;
 import ispp.project.dondesiempre.modules.common.exceptions.InvalidRequestException;
 import ispp.project.dondesiempre.modules.common.exceptions.ResourceNotFoundException;
+import ispp.project.dondesiempre.modules.common.exceptions.UnauthorizedException;
 import ispp.project.dondesiempre.modules.products.models.Product;
 import ispp.project.dondesiempre.modules.products.repositories.ProductRepository;
 import ispp.project.dondesiempre.modules.promotions.dtos.PromotionCreationDTO;
@@ -16,7 +17,9 @@ import ispp.project.dondesiempre.modules.stores.repositories.StoreRepository;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,15 +27,21 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class PromotionService {
 
+  private final ApplicationContext applicationContext;
   private final PromotionRepository promotionRepository;
   private final ProductRepository productRepository;
   private final PromotionProductRepository promotionProductRepository;
   private final StoreRepository storeRepository;
   private final AuthService authService;
 
-  @Transactional
+  @Transactional(
+      rollbackFor = {
+        UnauthorizedException.class,
+        ResourceNotFoundException.class,
+        InvalidRequestException.class
+      })
   public Promotion savePromotion(PromotionCreationDTO dto)
-      throws ResourceNotFoundException, InvalidRequestException {
+      throws UnauthorizedException, ResourceNotFoundException, InvalidRequestException {
     Promotion promotion = new Promotion();
     promotion.setName(dto.getName());
     if (dto.getDiscountPercentage() < 1 || dto.getDiscountPercentage() > 100) {
@@ -79,10 +88,16 @@ public class PromotionService {
     }
   }
 
-  @Transactional
+  @Transactional(
+      rollbackFor = {
+        UnauthorizedException.class,
+        ResourceNotFoundException.class,
+        InvalidRequestException.class
+      })
   public PromotionProduct addProduct(UUID promotionId, UUID productId)
-      throws ResourceNotFoundException, InvalidRequestException {
-    Promotion promotion = getPromotionById(promotionId);
+      throws UnauthorizedException, ResourceNotFoundException, InvalidRequestException {
+    Promotion promotion =
+        applicationContext.getBean(PromotionService.class).getPromotionById(promotionId);
     Product product =
         productRepository
             .findById(productId)
@@ -104,7 +119,7 @@ public class PromotionService {
     }
   }
 
-  @Transactional(readOnly = true)
+  @Transactional(readOnly = true, rollbackFor = ResourceNotFoundException.class)
   public Promotion getPromotionById(UUID id) throws ResourceNotFoundException {
     return promotionRepository
         .findById(id)
@@ -131,11 +146,16 @@ public class PromotionService {
     return (int) Math.round(discounted);
   }
 
-  @Transactional
+  @Transactional(
+      rollbackFor = {
+        UnauthorizedException.class,
+        ResourceNotFoundException.class,
+        InvalidRequestException.class
+      })
   public Promotion updatePromotion(UUID id, PromotionUpdateDTO dto)
-      throws ResourceNotFoundException, InvalidRequestException {
+      throws UnauthorizedException, ResourceNotFoundException, InvalidRequestException {
 
-    Promotion promotion = getPromotionById(id);
+    Promotion promotion = applicationContext.getBean(PromotionService.class).getPromotionById(id);
     authService.assertUserOwnsStore(promotion.getStore());
 
     if (dto.getName() != null) {
@@ -165,7 +185,7 @@ public class PromotionService {
                               () ->
                                   new ResourceNotFoundException(
                                       "Product not found with id: " + productId)))
-              .collect(java.util.stream.Collectors.toSet());
+              .collect(Collectors.toSet());
 
       if (products.stream()
           .anyMatch(product -> !product.getStore().getId().equals(promotion.getStore().getId()))) {
@@ -177,7 +197,9 @@ public class PromotionService {
       promotionProductRepository.findByPromotionId(id).forEach(promotionProductRepository::delete);
 
       // Add new associations
-      products.forEach(product -> addProduct(id, product.getId()));
+      products.forEach(
+          product ->
+              applicationContext.getBean(PromotionService.class).addProduct(id, product.getId()));
     }
     try {
       return promotionRepository.save(promotion);
@@ -186,17 +208,19 @@ public class PromotionService {
     }
   }
 
-  @Transactional
-  public void deletePromotion(UUID id) {
-    Promotion promotion = getPromotionById(id);
+  @Transactional(rollbackFor = {UnauthorizedException.class, ResourceNotFoundException.class})
+  public void deletePromotion(UUID id) throws UnauthorizedException, ResourceNotFoundException {
+    Promotion promotion = applicationContext.getBean(PromotionService.class).getPromotionById(id);
     authService.assertUserOwnsStore(promotion.getStore());
     promotionProductRepository.findByPromotionId(id).forEach(promotionProductRepository::delete);
     promotionRepository.delete(promotion);
   }
 
-  @Transactional(readOnly = true)
-  public List<UUID> getAllProductsByPromotionId(UUID promotionId) {
-    getPromotionById(promotionId); // Ensure promotion exists
+  @Transactional(readOnly = true, rollbackFor = ResourceNotFoundException.class)
+  public List<UUID> getAllProductsByPromotionId(UUID promotionId) throws ResourceNotFoundException {
+    applicationContext
+        .getBean(PromotionService.class)
+        .getPromotionById(promotionId); // Ensure promotion exists
     return promotionProductRepository.findProductIdsByPromotionId(promotionId);
   }
 

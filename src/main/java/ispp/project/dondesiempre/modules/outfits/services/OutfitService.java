@@ -3,6 +3,7 @@ package ispp.project.dondesiempre.modules.outfits.services;
 import ispp.project.dondesiempre.modules.auth.services.AuthService;
 import ispp.project.dondesiempre.modules.common.exceptions.InvalidRequestException;
 import ispp.project.dondesiempre.modules.common.exceptions.ResourceNotFoundException;
+import ispp.project.dondesiempre.modules.common.exceptions.UnauthorizedException;
 import ispp.project.dondesiempre.modules.outfits.dtos.OutfitCreationDTO;
 import ispp.project.dondesiempre.modules.outfits.dtos.OutfitCreationProductDTO;
 import ispp.project.dondesiempre.modules.outfits.dtos.OutfitUpdateDTO;
@@ -19,7 +20,6 @@ import ispp.project.dondesiempre.modules.stores.models.Store;
 import ispp.project.dondesiempre.modules.stores.models.Storefront;
 import ispp.project.dondesiempre.modules.stores.services.StorefrontService;
 import ispp.project.dondesiempre.utils.cloudinary.CloudinaryService;
-import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -71,8 +71,14 @@ public class OutfitService {
     return outfitRepository.findByStorefrontId(storefront.getId());
   }
 
-  @Transactional(rollbackFor = InvalidRequestException.class)
-  public Outfit create(OutfitCreationDTO dto, MultipartFile image) throws InvalidRequestException {
+  @Transactional(
+      rollbackFor = {
+        UnauthorizedException.class,
+        ResourceNotFoundException.class,
+        InvalidRequestException.class
+      })
+  public Outfit create(OutfitCreationDTO dto, MultipartFile image)
+      throws UnauthorizedException, ResourceNotFoundException, InvalidRequestException {
     Outfit outfit;
     UUID outfitId;
 
@@ -96,22 +102,32 @@ public class OutfitService {
     outfit = outfitRepository.save(outfit);
     outfitId = outfit.getId();
 
-    dto.getTags().stream().forEach(name -> addTag(outfitId, name));
-    dto.getProducts().stream().forEach(product -> addProduct(outfitId, product));
+    dto.getTags().stream()
+        .forEach(name -> applicationContext.getBean(OutfitService.class).addTag(outfitId, name));
+    dto.getProducts().stream()
+        .forEach(
+            product ->
+                applicationContext.getBean(OutfitService.class).addProduct(outfitId, product));
 
     return outfit;
   }
 
+  @Transactional(readOnly = true, rollbackFor = ResourceNotFoundException.class)
   private Integer calculatePriceOnCreation(List<OutfitCreationProductDTO> dtos)
-      throws EntityNotFoundException {
+      throws ResourceNotFoundException {
     return dtos.stream()
         .mapToInt(dto -> productService.getProductById(dto.getId()).getDiscountedPriceInCents())
         .sum();
   }
 
-  @Transactional(rollbackFor = {ResourceNotFoundException.class, InvalidRequestException.class})
+  @Transactional(
+      rollbackFor = {
+        UnauthorizedException.class,
+        ResourceNotFoundException.class,
+        InvalidRequestException.class
+      })
   public Outfit update(UUID id, OutfitUpdateDTO dto, MultipartFile image)
-      throws ResourceNotFoundException, InvalidRequestException {
+      throws UnauthorizedException, ResourceNotFoundException, InvalidRequestException {
     Outfit outfitToUpdate;
 
     outfitToUpdate = applicationContext.getBean(OutfitService.class).findById(id);
@@ -128,8 +144,9 @@ public class OutfitService {
     return outfitRepository.save(outfitToUpdate);
   }
 
-  @Transactional(rollbackFor = ResourceNotFoundException.class)
-  public String addTag(UUID outfitId, String tagName) throws ResourceNotFoundException {
+  @Transactional(rollbackFor = {UnauthorizedException.class, ResourceNotFoundException.class})
+  public String addTag(UUID outfitId, String tagName)
+      throws UnauthorizedException, ResourceNotFoundException {
     Outfit outfit;
     OutfitTag tag;
     OutfitTagRelation outfitTag;
@@ -146,8 +163,9 @@ public class OutfitService {
     return tag.getName();
   }
 
-  @Transactional(rollbackFor = ResourceNotFoundException.class)
-  public void removeTag(UUID outfitId, String tagName) throws ResourceNotFoundException {
+  @Transactional(rollbackFor = {UnauthorizedException.class, ResourceNotFoundException.class})
+  public void removeTag(UUID outfitId, String tagName)
+      throws UnauthorizedException, ResourceNotFoundException {
     Outfit outfit;
     OutfitTag tag;
     OutfitTagRelation relation;
@@ -164,9 +182,14 @@ public class OutfitService {
     outfitTagRelationRepository.delete(relation);
   }
 
-  @Transactional(rollbackFor = {ResourceNotFoundException.class, InvalidRequestException.class})
+  @Transactional(
+      rollbackFor = {
+        UnauthorizedException.class,
+        ResourceNotFoundException.class,
+        InvalidRequestException.class
+      })
   public OutfitProduct addProduct(UUID outfitId, OutfitCreationProductDTO dto)
-      throws ResourceNotFoundException, InvalidRequestException {
+      throws UnauthorizedException, ResourceNotFoundException, InvalidRequestException {
     Outfit outfit;
     Product product;
     OutfitProduct outfitProduct;
@@ -198,8 +221,9 @@ public class OutfitService {
     return outfitProduct;
   }
 
-  @Transactional(rollbackFor = ResourceNotFoundException.class)
-  public void removeProduct(UUID outfitId, Product product) throws ResourceNotFoundException {
+  @Transactional(rollbackFor = {UnauthorizedException.class, ResourceNotFoundException.class})
+  public void removeProduct(UUID outfitId, Product product)
+      throws UnauthorizedException, ResourceNotFoundException {
     Outfit outfit;
     OutfitProduct relation;
 
@@ -214,9 +238,9 @@ public class OutfitService {
     outfitProductRepository.delete(relation);
   }
 
-  @Transactional(rollbackFor = ResourceNotFoundException.class)
+  @Transactional(rollbackFor = {UnauthorizedException.class, ResourceNotFoundException.class})
   public void sortProducts(UUID outfitId, List<OutfitCreationProductDTO> products)
-      throws ResourceNotFoundException {
+      throws UnauthorizedException, ResourceNotFoundException {
     Outfit outfit;
     List<OutfitProduct> relations;
 
@@ -240,8 +264,8 @@ public class OutfitService {
     outfitProductRepository.saveAll(relations);
   }
 
-  @Transactional
-  public void delete(UUID id) {
+  @Transactional(rollbackFor = {UnauthorizedException.class, ResourceNotFoundException.class})
+  public void delete(UUID id) throws UnauthorizedException, ResourceNotFoundException {
     Outfit outfit = applicationContext.getBean(OutfitService.class).findById(id);
     authService.assertUserOwnsStore(outfit.getStorefront().getStore());
     outfitRepository.findOutfitOutfitProductsById(id).stream()

@@ -40,8 +40,11 @@ public class AuthService {
         .orElseThrow(() -> new ResourceNotFoundException("Authenticated user not found."));
   }
 
-  @Transactional(readOnly = true, rollbackFor = UnauthorizedException.class)
-  public void assertUserOwnsStore(Store store) throws UnauthorizedException {
+  @Transactional(
+      readOnly = true,
+      rollbackFor = {UnauthorizedException.class, ResourceNotFoundException.class})
+  public void assertUserOwnsStore(Store store)
+      throws UnauthorizedException, ResourceNotFoundException {
     User currentUser = applicationContext.getBean(AuthService.class).getCurrentUser();
     if (!store.getUser().equals(currentUser)) {
       throw new UnauthorizedException("You do not own this store.");
