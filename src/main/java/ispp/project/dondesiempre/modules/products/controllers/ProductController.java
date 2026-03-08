@@ -35,7 +35,7 @@ public class ProductController {
   @GetMapping("products")
   public ResponseEntity<List<ProductDTO>> getAllProducts() {
     List<Product> products = productService.getAllProducts();
-    List<ProductDTO> dtos = products.stream().map(ProductDTO::fromProduct).toList();
+    List<ProductDTO> dtos = products.stream().map(ProductDTO::new).toList();
     return new ResponseEntity<>(dtos, HttpStatus.OK);
   }
 
@@ -43,14 +43,14 @@ public class ProductController {
   public ResponseEntity<ProductDTO> getProductById(@PathVariable UUID id) {
 
     Product product = productService.getProductById(id);
-    ProductDTO dto = ProductDTO.fromProduct(product);
+    ProductDTO dto = new ProductDTO(product);
     return new ResponseEntity<>(dto, HttpStatus.OK);
   }
 
   @GetMapping("products/discounted")
   public ResponseEntity<List<ProductDTO>> getDiscountedProducts() {
     List<Product> products = productService.getAllDiscountedProducts();
-    List<ProductDTO> dtos = products.stream().map(ProductDTO::fromProduct).toList();
+    List<ProductDTO> dtos = products.stream().map(ProductDTO::new).toList();
     return new ResponseEntity<>(dtos, HttpStatus.OK);
   }
 
@@ -74,7 +74,7 @@ public class ProductController {
   public ResponseEntity<List<ProductDTO>> getByStorefrontId(@PathVariable UUID storefrontId) {
     Storefront storefront = storefrontService.findById(storefrontId);
     List<ProductDTO> dtos =
-        productService.findByStorefront(storefront).stream().map(ProductDTO::fromProduct).toList();
+        productService.findByStorefront(storefront).stream().map(ProductDTO::new).toList();
     return new ResponseEntity<>(dtos, HttpStatus.OK);
   }
 }

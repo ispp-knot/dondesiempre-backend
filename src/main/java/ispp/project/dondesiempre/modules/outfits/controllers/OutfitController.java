@@ -44,7 +44,7 @@ public class OutfitController {
   public ResponseEntity<OutfitDTO> getById(@PathVariable("id") UUID id) {
     Outfit outfit = outfitService.findById(id);
     OutfitDTO dto =
-        OutfitDTO.from(
+        new OutfitDTO(
             outfit,
             outfitService.findTagsByOutfitId(id),
             outfitService.findOutfitProductsByOutfitId(id));
@@ -59,7 +59,7 @@ public class OutfitController {
         outfitService.findByStorefront(storefrontService.findById(storefrontId)).stream()
             .map(
                 outfit ->
-                    OutfitDTO.from(
+                    new OutfitDTO(
                         outfit,
                         outfitService.findTagsByOutfitId(outfit.getId()),
                         outfitService.findOutfitProductsByOutfitId(outfit.getId())))
@@ -74,7 +74,7 @@ public class OutfitController {
         outfitService.findByStore(storeService.findById(storeId)).stream()
             .map(
                 outfit ->
-                    OutfitDTO.from(
+                    new OutfitDTO(
                         outfit,
                         outfitService.findTagsByOutfitId(outfit.getId()),
                         outfitService.findOutfitProductsByOutfitId(outfit.getId())))
@@ -89,7 +89,7 @@ public class OutfitController {
       @RequestPart(value = "image", required = false) MultipartFile image) {
     Outfit outfit = outfitService.create(dto, image);
     OutfitDTO outfitDTO =
-        OutfitDTO.from(
+        new OutfitDTO(
             outfit,
             outfitService.findTagsByOutfitId(outfit.getId()),
             outfitService.findOutfitProductsByOutfitId(outfit.getId()));
@@ -104,7 +104,7 @@ public class OutfitController {
       @RequestPart(value = "image", required = false) MultipartFile image) {
     Outfit outfit = outfitService.update(id, dto, image);
     OutfitDTO outfitDTO =
-        OutfitDTO.from(
+        new OutfitDTO(
             outfit,
             outfitService.findTagsByOutfitId(id),
             outfitService.findOutfitProductsByOutfitId(id));
@@ -129,7 +129,7 @@ public class OutfitController {
   public ResponseEntity<OutfitProductDTO> addProduct(
       @PathVariable("id") UUID id, @RequestBody OutfitCreationProductDTO dto) {
     return new ResponseEntity<>(
-        OutfitProductDTO.from(outfitService.addProduct(id, dto)), HttpStatus.CREATED);
+        new OutfitProductDTO(outfitService.addProduct(id, dto)), HttpStatus.CREATED);
   }
 
   @DeleteMapping("outfits/{id}/products/{productId}")

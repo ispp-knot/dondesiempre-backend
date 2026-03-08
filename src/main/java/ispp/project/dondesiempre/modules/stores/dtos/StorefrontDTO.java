@@ -3,10 +3,12 @@ package ispp.project.dondesiempre.modules.stores.dtos;
 import ispp.project.dondesiempre.modules.stores.models.Storefront;
 import java.util.UUID;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class StorefrontDTO {
 
   private UUID id;
@@ -24,6 +26,4 @@ public class StorefrontDTO {
     this.secondaryColor = storefront.getSecondaryColor();
     this.bannerImageUrl = storefront.getBannerImageUrl();
   }
-
-  public StorefrontDTO() {}
 }

@@ -4,10 +4,12 @@ import ispp.project.dondesiempre.modules.stores.models.Store;
 import java.util.List;
 import java.util.UUID;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class StoreDTO {
 
   private UUID id;
@@ -41,6 +43,4 @@ public class StoreDTO {
     }
     this.storefront = new StorefrontDTO(store.getStorefront());
   }
-
-  public StoreDTO() {}
 }
