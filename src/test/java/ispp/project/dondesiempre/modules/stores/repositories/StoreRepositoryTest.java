@@ -51,7 +51,6 @@ public class StoreRepositoryTest {
     Store store = new Store();
     store.setName(name);
     store.setEmail("test@test.com");
-    store.setStoreID("ST-001");
     store.setAddress("Direccion de prueba");
     store.setOpeningHours("09:00-18:00");
     store.setPhone("123456789");
@@ -97,7 +96,6 @@ public class StoreRepositoryTest {
 
     assertNotNull(store.getId());
     assertEquals("Tienda Mapeo", store.getName());
-    assertEquals("ST-001", store.getStoreID());
     assertEquals("09:00-18:00", store.getOpeningHours());
     assertTrue(store.getAcceptsShipping());
     assertEquals(37.290025, store.getLocation().getY());

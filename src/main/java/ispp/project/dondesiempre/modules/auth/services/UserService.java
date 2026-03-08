@@ -62,7 +62,6 @@ public class UserService {
     Store store = new Store();
     store.setName(dto.getName());
     store.setEmail(dto.getEmail());
-    store.setStoreID(dto.getStoreID());
     store.setLocation(gf.createPoint(new Coordinate(dto.getLongitude(), dto.getLatitude())));
     store.setAddress(dto.getAddress());
     store.setOpeningHours(dto.getOpeningHours());

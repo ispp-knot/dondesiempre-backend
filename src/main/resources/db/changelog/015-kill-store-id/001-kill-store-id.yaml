@@ -1,0 +1,8 @@
+databaseChangeLog:
+- changeSet:
+    id: 20260308-1
+    author: pepe
+    changes:
+      - dropColumn:
+          tableName: stores
+          columnName: storeid
