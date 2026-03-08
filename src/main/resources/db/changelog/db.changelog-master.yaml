@@ -23,3 +23,5 @@ databaseChangeLog:
       file: db/changelog/012-added-images-to-promotions/images-on-promotions.changelog.yaml
   - include:
       file: db/changelog/014-add-store-followers/add-store-followers.changelog.yaml
+  - include:
+      file: db/changelog/015-kill-store-id/kill-store-id.changelog.yaml

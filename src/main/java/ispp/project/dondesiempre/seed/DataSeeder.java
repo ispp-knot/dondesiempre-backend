@@ -125,7 +125,6 @@ public class DataSeeder implements CommandLineRunner {
     Store store = new Store();
     store.setName("La Boutique de Sevilla");
     store.setEmail("laboutique@ejemplo.es");
-    store.setStoreID("TIENDA-MAN-001");
     store.setLocation(GF.createPoint(new Coordinate(-5.923503017051423, 37.28749765023422)));
     store.setAddress("Calle Sierpes, nº 45, Sevilla");
     store.setOpeningHours("Lun-Sáb: 10:00-21:00");
@@ -275,7 +274,6 @@ public class DataSeeder implements CommandLineRunner {
       Store store = new Store();
       store.setName(pick(storeNames, rng));
       store.setEmail(storeEmail);
-      store.setStoreID(String.format("TIENDA-RND-%03d", i));
       store.setLocation(location);
       store.setAddress(pick(addresses, rng));
       store.setOpeningHours(pick(openingHours, rng));

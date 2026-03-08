@@ -30,7 +30,6 @@ public class StoreDTO {
     this.id = store.getId();
     this.name = store.getName();
     this.email = store.getEmail();
-    this.storeID = store.getStoreID();
     this.address = store.getAddress();
     this.openingHours = store.getOpeningHours();
     this.phone = store.getPhone();

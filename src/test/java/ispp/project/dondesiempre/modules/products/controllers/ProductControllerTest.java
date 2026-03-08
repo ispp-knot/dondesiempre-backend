@@ -73,7 +73,6 @@ public class ProductControllerTest {
     Store store = new Store();
     store.setName("Test Store");
     store.setEmail("test@example.com");
-    store.setStoreID("test-store");
     store.setLocation(
         new Point(
             new CoordinateArraySequence(new Coordinate[] {new Coordinate(0.0, 0.0)}),
@@ -116,7 +115,6 @@ public class ProductControllerTest {
     Store store = new Store();
     store.setName("Test Store");
     store.setEmail("test@example.com");
-    store.setStoreID("test-store");
     store.setLocation(
         new Point(
             new CoordinateArraySequence(new Coordinate[] {new Coordinate(0.0, 0.0)}),
@@ -159,7 +157,6 @@ public class ProductControllerTest {
     Store store = new Store();
     store.setName("Test Store");
     store.setEmail("test@example.com");
-    store.setStoreID("test-store");
     store.setLocation(
         new Point(
             new CoordinateArraySequence(new Coordinate[] {new Coordinate(0.0, 0.0)}),
@@ -219,7 +216,6 @@ public class ProductControllerTest {
     Store store = new Store();
     store.setName("Test Store");
     store.setEmail("test@example.com");
-    store.setStoreID("test-store");
     store.setLocation(
         new Point(
             new CoordinateArraySequence(new Coordinate[] {new Coordinate(0.0, 0.0)}),
@@ -274,7 +270,6 @@ public class ProductControllerTest {
     Store store = new Store();
     store.setName("Test Store");
     store.setEmail("test@example.com");
-    store.setStoreID("test-store");
     store.setLocation(
         new Point(
             new CoordinateArraySequence(new Coordinate[] {new Coordinate(0.0, 0.0)}),
@@ -319,7 +314,6 @@ public class ProductControllerTest {
     Store store = new Store();
     store.setName("Test Store");
     store.setEmail("test@example.com");
-    store.setStoreID("test-store");
     store.setLocation(
         new Point(
             new CoordinateArraySequence(new Coordinate[] {new Coordinate(0.0, 0.0)}),
@@ -366,7 +360,6 @@ public class ProductControllerTest {
     Store store = new Store();
     store.setName("Test Store");
     store.setEmail("test@example.com");
-    store.setStoreID("test-store");
     store.setLocation(
         new Point(
             new CoordinateArraySequence(new Coordinate[] {new Coordinate(0.0, 0.0)}),
