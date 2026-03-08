@@ -33,14 +33,21 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @ExtendWith(MockitoExtension.class)
 class UserServiceRegisterTest {
 
-  @Mock private UserRepository userRepository;
-  @Mock private ClientRepository clientRepository;
-  @Mock private StoreRepository storeRepository;
-  @Mock private StorefrontRepository storefrontRepository;
-  @Mock private PasswordEncoder passwordEncoder;
-  @Mock private ApplicationContext applicationContext;
+  @Mock
+  private UserRepository userRepository;
+  @Mock
+  private ClientRepository clientRepository;
+  @Mock
+  private StoreRepository storeRepository;
+  @Mock
+  private StorefrontRepository storefrontRepository;
+  @Mock
+  private PasswordEncoder passwordEncoder;
+  @Mock
+  private ApplicationContext applicationContext;
 
-  @InjectMocks private UserService userService;
+  @InjectMocks
+  private UserService userService;
 
   // --- registerStore ---
 
@@ -84,9 +91,8 @@ class UserServiceRegisterTest {
     verify(storefrontRepository)
         .save(
             org.mockito.ArgumentMatchers.argThat(
-                sf ->
-                    "#000000".equals(sf.getPrimaryColor())
-                        && "#ffffff".equals(sf.getSecondaryColor())));
+                sf -> "#000000".equals(sf.getPrimaryColor())
+                    && "#ffffff".equals(sf.getSecondaryColor())));
   }
 
   @Test
@@ -143,7 +149,6 @@ class UserServiceRegisterTest {
     dto.setEmail(email);
     dto.setPassword("Password1!");
     dto.setName("Test Store");
-    dto.setStoreID("B12345678");
     dto.setLatitude(40.416775);
     dto.setLongitude(-3.703790);
     dto.setAddress("Gran Vía 1, Madrid");
