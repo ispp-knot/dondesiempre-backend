@@ -63,7 +63,7 @@ public class StoreTestBuilder {
      *
      * @return fully initialized {@link Store} object
      */
-    public Store build() {
+    public Store entity() {
         Store store = new Store();
         store.setId(id);
         store.setName(name);
@@ -91,9 +91,13 @@ public class StoreTestBuilder {
      */
     public Store persist(UserRepository userRepo, StoreRepository storeRepo, StorefrontRepository storefrontRepo) {
 
-        Store store = this.build();
+        Store store = this.entity();
         user = userRepo.save(store.getUser());
+        store.setUser(user);
+
         storefront = storefrontRepo.save(store.getStorefront());
+        store.setStorefront(storefront);
+
         return storeRepo.save(store);
     }
 
