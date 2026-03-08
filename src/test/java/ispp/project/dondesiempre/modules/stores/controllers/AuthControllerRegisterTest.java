@@ -148,7 +148,6 @@ class AuthControllerRegisterTest {
     dto.setEmail(email);
     dto.setPassword("Password1!");
     dto.setName("Test Store");
-    dto.setStoreID("B12345678");
     dto.setLatitude(40.416775);
     dto.setLongitude(-3.703790);
     dto.setAddress("Gran Vía 1, Madrid");

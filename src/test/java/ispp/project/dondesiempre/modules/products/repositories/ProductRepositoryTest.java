@@ -47,7 +47,6 @@ public class ProductRepositoryTest {
     Store store = new Store();
     store.setName("Test Store");
     store.setEmail("test@test.com");
-    store.setStoreID("test-store-id");
     store.setAddress("Test address");
     store.setOpeningHours("9-5");
     store.setAcceptsShipping(false);
