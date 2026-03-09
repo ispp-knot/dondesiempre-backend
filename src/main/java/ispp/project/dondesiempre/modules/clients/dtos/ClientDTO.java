@@ -23,7 +23,7 @@ public class ClientDTO {
     this.name = client.getName();
     this.surname = client.getSurname();
     this.email = client.getEmail();
-    this.phone = client.getPhone();
-    this.address = client.getAddress();
+    this.phone = client.getPhone().orElse(null);
+    this.address = client.getAddress().orElse(null);
   }
 }
