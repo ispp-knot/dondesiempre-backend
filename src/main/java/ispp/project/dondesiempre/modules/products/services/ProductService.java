@@ -36,18 +36,16 @@ public class ProductService {
         ResourceNotFoundException.class,
         InvalidRequestException.class
       })
-  public Product saveProduct(ProductCreationDTO dto, MultipartFile image)
+  public Product saveProduct(ProductCreationDTO dto, MultipartFile image, UUID storeId)
       throws UnauthorizedException, ResourceNotFoundException, InvalidRequestException {
     if (dto.getDiscountedPriceInCents() > dto.getPriceInCents()) {
       throw new InvalidRequestException("Discounted price cannot be greater than original price");
     }
     Store store =
         storeRepository
-            .findById(dto.getStoreId())
+            .findById(storeId)
             .orElseThrow(
-                () ->
-                    new ResourceNotFoundException(
-                        "Store with ID " + dto.getStoreId() + " not found."));
+                () -> new ResourceNotFoundException("Store with ID " + storeId + " not found."));
     authService.assertUserOwnsStore(store);
     Product product = new Product();
     product.setName(dto.getName());

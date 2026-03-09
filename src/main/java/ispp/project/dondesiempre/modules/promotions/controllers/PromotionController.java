@@ -28,7 +28,7 @@ public class PromotionController {
     Promotion promotion = promotionService.savePromotion(dto);
     PromotionDTO promotionDTO =
         new PromotionDTO(
-            promotion, promotionService.getAllProductsByPromotionId(promotion.getId()));
+            promotion, promotionService.getAllProductsDTOByPromotionId(promotion.getId()));
     return ResponseEntity.ok(promotionDTO);
   }
 
@@ -39,7 +39,8 @@ public class PromotionController {
             .map(
                 promotion ->
                     new PromotionDTO(
-                        promotion, promotionService.getAllProductsByPromotionId(promotion.getId())))
+                        promotion,
+                        promotionService.getAllProductsDTOByPromotionId(promotion.getId())))
             .toList());
   }
 
@@ -48,7 +49,7 @@ public class PromotionController {
     Promotion promotion = promotionService.getPromotionById(id);
     PromotionDTO promotionDTO =
         new PromotionDTO(
-            promotion, promotionService.getAllProductsByPromotionId(promotion.getId()));
+            promotion, promotionService.getAllProductsDTOByPromotionId(promotion.getId()));
     return ResponseEntity.ok(promotionDTO);
   }
 
@@ -59,7 +60,7 @@ public class PromotionController {
     Promotion promotion = promotionService.updatePromotion(id, updateDTO);
     return ResponseEntity.ok(
         new PromotionDTO(
-            promotion, promotionService.getAllProductsByPromotionId(promotion.getId())));
+            promotion, promotionService.getAllProductsDTOByPromotionId(promotion.getId())));
   }
 
   @DeleteMapping("/api/v1/promotions/{id}")
@@ -75,7 +76,8 @@ public class PromotionController {
             .map(
                 promotion ->
                     new PromotionDTO(
-                        promotion, promotionService.getAllProductsByPromotionId(promotion.getId())))
+                        promotion,
+                        promotionService.getAllProductsDTOByPromotionId(promotion.getId())))
             .toList());
   }
 }

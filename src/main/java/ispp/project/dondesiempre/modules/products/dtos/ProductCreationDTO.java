@@ -14,5 +14,4 @@ public class ProductCreationDTO {
   private String description;
 
   private UUID typeId;
-  private UUID storeId;
 }

@@ -4,6 +4,7 @@ import ispp.project.dondesiempre.modules.auth.services.AuthService;
 import ispp.project.dondesiempre.modules.common.exceptions.InvalidRequestException;
 import ispp.project.dondesiempre.modules.common.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.modules.common.exceptions.UnauthorizedException;
+import ispp.project.dondesiempre.modules.products.dtos.ProductDTO;
 import ispp.project.dondesiempre.modules.products.models.Product;
 import ispp.project.dondesiempre.modules.products.repositories.ProductRepository;
 import ispp.project.dondesiempre.modules.promotions.dtos.PromotionCreationDTO;
@@ -217,11 +218,13 @@ public class PromotionService {
   }
 
   @Transactional(readOnly = true, rollbackFor = ResourceNotFoundException.class)
-  public List<UUID> getAllProductsByPromotionId(UUID promotionId) throws ResourceNotFoundException {
+  public List<ProductDTO> getAllProductsDTOByPromotionId(UUID promotionId)
+      throws ResourceNotFoundException {
     applicationContext
         .getBean(PromotionService.class)
         .getPromotionById(promotionId); // Ensure promotion exists
-    return promotionProductRepository.findProductIdsByPromotionId(promotionId);
+    List<Product> products = promotionProductRepository.findProductsByPromotionId(promotionId);
+    return products.stream().map(ProductDTO::new).collect(Collectors.toList());
   }
 
   @Transactional(readOnly = true)

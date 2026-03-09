@@ -1,5 +1,6 @@
 package ispp.project.dondesiempre.modules.promotions.repositories;
 
+import ispp.project.dondesiempre.modules.products.models.Product;
 import ispp.project.dondesiempre.modules.promotions.models.Promotion;
 import ispp.project.dondesiempre.modules.promotions.models.PromotionProduct;
 import java.util.List;
@@ -11,8 +12,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PromotionProductRepository extends JpaRepository<PromotionProduct, UUID> {
 
-  @Query("SELECT pp.product.id FROM PromotionProduct pp WHERE pp.promotion.id = :promotionId")
-  public List<UUID> findProductIdsByPromotionId(UUID promotionId);
+  @Query("SELECT pp.product FROM PromotionProduct pp WHERE pp.promotion.id = :promotionId")
+  public List<Product> findProductsByPromotionId(UUID promotionId);
 
   @Query("SELECT pp FROM PromotionProduct pp WHERE pp.promotion.id = :promotionId")
   public List<PromotionProduct> findByPromotionId(UUID promotionId);

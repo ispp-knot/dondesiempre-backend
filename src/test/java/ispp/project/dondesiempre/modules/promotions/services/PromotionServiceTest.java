@@ -100,8 +100,7 @@ public class PromotionServiceTest {
     dto.setDiscountedPriceInCents(discountedPriceInCents);
     dto.setDescription("This is a test product");
     dto.setTypeId(typeId);
-    dto.setStoreId(storeId);
-    return productService.saveProduct(dto, null);
+    return productService.saveProduct(dto, null, storeId);
   }
 
   private Promotion createPromotion(
@@ -127,7 +126,7 @@ public class PromotionServiceTest {
     assertEquals("Test Promotion", promotion.getName());
     assertEquals(20, promotion.getDiscountPercentage());
     assertEquals(true, promotion.isActive());
-    assertEquals(1, promotionService.getAllProductsByPromotionId(promotion.getId()).size());
+    assertEquals(1, promotionService.getAllProductsDTOByPromotionId(promotion.getId()).size());
   }
 
   @Test

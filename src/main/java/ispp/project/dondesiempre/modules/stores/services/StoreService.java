@@ -1,13 +1,9 @@
 package ispp.project.dondesiempre.modules.stores.services;
 
 import ispp.project.dondesiempre.modules.auth.services.AuthService;
-import ispp.project.dondesiempre.modules.auth.services.UserService;
-import ispp.project.dondesiempre.modules.clients.models.Client;
 import ispp.project.dondesiempre.modules.common.exceptions.InvalidBoundingBoxException;
 import ispp.project.dondesiempre.modules.common.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.modules.common.exceptions.UnauthorizedException;
-import ispp.project.dondesiempre.modules.follows.models.StoreFollower;
-import ispp.project.dondesiempre.modules.follows.repositories.StoreFollowerRepository;
 import ispp.project.dondesiempre.modules.stores.dtos.StoreDTO;
 import ispp.project.dondesiempre.modules.stores.dtos.StoreSocialNetworkDTO;
 import ispp.project.dondesiempre.modules.stores.dtos.StoreUpdateDTO;
@@ -27,8 +23,6 @@ public class StoreService {
   private final StoreRepository storeRepository;
   private final StoreSocialNetworkRepository storeSocialNetworkRepository;
   private final ApplicationContext applicationContext;
-  private final StoreFollowerRepository storeFollowerRepository;
-  private final UserService userService;
   private final AuthService authService;
 
   @Transactional(readOnly = true, rollbackFor = ResourceNotFoundException.class)
@@ -79,45 +73,5 @@ public class StoreService {
     if (dto.getAboutUs() != null) storeToUpdate.setAboutUs(dto.getAboutUs());
 
     return new StoreDTO(storeRepository.save(storeToUpdate));
-  }
-
-  @Transactional(rollbackFor = {UnauthorizedException.class, ResourceNotFoundException.class})
-  public StoreFollower followStore(UUID storeId)
-      throws UnauthorizedException, ResourceNotFoundException {
-    Client currentClient = userService.getCurrentClient();
-
-    StoreFollower follow = new StoreFollower();
-    follow.setClient(currentClient);
-    follow.setStore(applicationContext.getBean(StoreService.class).findById(storeId));
-
-    StoreFollower createdFollow = storeFollowerRepository.save(follow);
-    return createdFollow;
-  }
-
-  @Transactional(rollbackFor = {UnauthorizedException.class, ResourceNotFoundException.class})
-  public void unfollowStore(UUID storeId) throws UnauthorizedException, ResourceNotFoundException {
-    Client currentClient = userService.getCurrentClient();
-
-    StoreFollower follow =
-        storeFollowerRepository
-            .findByClientIdAndStoreId(currentClient.getId(), storeId)
-            .orElseThrow(() -> new ResourceNotFoundException("You don't follow that store."));
-
-    storeFollowerRepository.delete(follow);
-  }
-
-  @Transactional(
-      readOnly = true,
-      rollbackFor = {UnauthorizedException.class, ResourceNotFoundException.class})
-  public List<Store> getMyFollowedStores() throws UnauthorizedException, ResourceNotFoundException {
-    Client currentClient = userService.getCurrentClient();
-    return storeFollowerRepository.findByClientId(currentClient.getId()).stream()
-        .map(follower -> follower.getStore())
-        .toList();
-  }
-
-  @Transactional(readOnly = true)
-  public boolean checkIfClientFollowsStore(UUID clientId, UUID storeId) {
-    return storeFollowerRepository.existsByClientIdAndStoreId(clientId, storeId);
   }
 }

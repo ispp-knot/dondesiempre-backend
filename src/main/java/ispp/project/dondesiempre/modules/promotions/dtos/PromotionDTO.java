@@ -1,5 +1,6 @@
 package ispp.project.dondesiempre.modules.promotions.dtos;
 
+import ispp.project.dondesiempre.modules.products.dtos.ProductDTO;
 import ispp.project.dondesiempre.modules.promotions.models.Promotion;
 import java.util.List;
 import java.util.UUID;
@@ -18,15 +19,15 @@ public class PromotionDTO {
   private boolean isActive;
   private String description;
   private UUID storeId;
-  private List<UUID> productIds;
+  private List<ProductDTO> products;
 
-  public PromotionDTO(Promotion promotion, List<UUID> productIds) {
+  public PromotionDTO(Promotion promotion, List<ProductDTO> products) {
     this.id = promotion.getId();
     this.name = promotion.getName();
     this.discountPercentage = promotion.getDiscountPercentage();
     this.isActive = promotion.isActive();
     this.description = promotion.getDescription().orElse(null);
     this.storeId = promotion.getStore().getId();
-    this.productIds = productIds;
+    this.products = products;
   }
 }

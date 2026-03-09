@@ -99,7 +99,7 @@ public class PromotionControllerTest {
     createDTO.setStoreId(TEST_STORE_ID);
 
     when(promotionService.savePromotion(any())).thenReturn(samplePromotion());
-    when(promotionService.getAllProductsByPromotionId(TEST_PROMOTION_ID)).thenReturn(List.of());
+    when(promotionService.getAllProductsDTOByPromotionId(TEST_PROMOTION_ID)).thenReturn(List.of());
 
     mockMvc
         .perform(
@@ -112,7 +112,7 @@ public class PromotionControllerTest {
   @Test
   void shouldGetAllPromotions() throws Exception {
     when(promotionService.getAllPromotions()).thenReturn(List.of(samplePromotion()));
-    when(promotionService.getAllProductsByPromotionId(TEST_PROMOTION_ID)).thenReturn(List.of());
+    when(promotionService.getAllProductsDTOByPromotionId(TEST_PROMOTION_ID)).thenReturn(List.of());
 
     mockMvc
         .perform(get("/api/v1/promotions"))
@@ -124,7 +124,7 @@ public class PromotionControllerTest {
   @Test
   void shouldGetPromotionById() throws Exception {
     when(promotionService.getPromotionById(TEST_PROMOTION_ID)).thenReturn(samplePromotion());
-    when(promotionService.getAllProductsByPromotionId(TEST_PROMOTION_ID)).thenReturn(List.of());
+    when(promotionService.getAllProductsDTOByPromotionId(TEST_PROMOTION_ID)).thenReturn(List.of());
 
     mockMvc
         .perform(get("/api/v1/promotions/{id}", TEST_PROMOTION_ID))
@@ -162,7 +162,7 @@ public class PromotionControllerTest {
 
     when(promotionService.updatePromotion(any(UUID.class), any(PromotionUpdateDTO.class)))
         .thenReturn(updatedPromotion);
-    when(promotionService.getAllProductsByPromotionId(TEST_PROMOTION_ID)).thenReturn(List.of());
+    when(promotionService.getAllProductsDTOByPromotionId(TEST_PROMOTION_ID)).thenReturn(List.of());
 
     mockMvc
         .perform(
@@ -184,7 +184,7 @@ public class PromotionControllerTest {
 
     when(promotionService.updatePromotion(any(UUID.class), any(PromotionUpdateDTO.class)))
         .thenReturn(updatedPromotion);
-    when(promotionService.getAllProductsByPromotionId(TEST_PROMOTION_ID)).thenReturn(List.of());
+    when(promotionService.getAllProductsDTOByPromotionId(TEST_PROMOTION_ID)).thenReturn(List.of());
 
     mockMvc
         .perform(
@@ -206,7 +206,7 @@ public class PromotionControllerTest {
 
     when(promotionService.updatePromotion(any(UUID.class), any(PromotionUpdateDTO.class)))
         .thenReturn(updatedPromotion);
-    when(promotionService.getAllProductsByPromotionId(TEST_PROMOTION_ID)).thenReturn(List.of());
+    when(promotionService.getAllProductsDTOByPromotionId(TEST_PROMOTION_ID)).thenReturn(List.of());
 
     mockMvc
         .perform(
@@ -232,7 +232,7 @@ public class PromotionControllerTest {
 
     when(promotionService.updatePromotion(any(UUID.class), any(PromotionUpdateDTO.class)))
         .thenReturn(updatedPromotion);
-    when(promotionService.getAllProductsByPromotionId(TEST_PROMOTION_ID)).thenReturn(List.of());
+    when(promotionService.getAllProductsDTOByPromotionId(TEST_PROMOTION_ID)).thenReturn(List.of());
 
     mockMvc
         .perform(
