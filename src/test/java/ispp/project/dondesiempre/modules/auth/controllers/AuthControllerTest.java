@@ -43,15 +43,22 @@ class AuthControllerTest {
   @MockitoBean private JwtService jwtService;
   @MockitoBean private JwtProperties jwtProperties;
 
-  @Test
-  void logIn_shouldReturn200AndSetCookie_whenCredentialsAreValid() throws Exception {
+  private User createTestUser() {
     User user = new User();
     user.setId(UUID.randomUUID());
     user.setEmail("user@test.com");
+    return user;
+  }
 
-    UserResponseDTO responseDTO =
-        new UserResponseDTO(
-            user.getId(), user.getEmail(), List.of(), Instant.now().plusSeconds(3600), null, null);
+  private UserResponseDTO createTestUserResponseDTO(User user) {
+    return new UserResponseDTO(
+        user.getId(), user.getEmail(), List.of(), Instant.now().plusSeconds(3600), null, null);
+  }
+
+  @Test
+  void logIn_shouldReturn200AndSetCookie_whenCredentialsAreValid() throws Exception {
+    User user = createTestUser();
+    UserResponseDTO responseDTO = createTestUserResponseDTO(user);
 
     when(authService.logIn("user@test.com", "password")).thenReturn(user);
     when(jwtService.generateToken("user@test.com")).thenReturn("jwt-token");
@@ -102,13 +109,8 @@ class AuthControllerTest {
   @Test
   @WithMockUser
   void me_shouldReturnUserInfo_whenAuthenticated() throws Exception {
-    User user = new User();
-    user.setId(UUID.randomUUID());
-    user.setEmail("user@test.com");
-
-    UserResponseDTO responseDTO =
-        new UserResponseDTO(
-            user.getId(), user.getEmail(), List.of(), Instant.now().plusSeconds(3600), null, null);
+    User user = createTestUser();
+    UserResponseDTO responseDTO = createTestUserResponseDTO(user);
 
     when(authService.getCurrentUser()).thenReturn(user);
     when(authService.buildUserResponse(any(), any())).thenReturn(responseDTO);

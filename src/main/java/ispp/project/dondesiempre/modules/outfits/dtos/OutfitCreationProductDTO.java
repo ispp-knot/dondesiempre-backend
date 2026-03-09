@@ -7,6 +7,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class OutfitCreationProductDTO {
-  private UUID id;
+  private UUID productId;
   private Integer index;
 }

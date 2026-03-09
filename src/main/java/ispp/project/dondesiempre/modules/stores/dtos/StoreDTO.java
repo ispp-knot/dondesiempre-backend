@@ -4,16 +4,17 @@ import ispp.project.dondesiempre.modules.stores.models.Store;
 import java.util.List;
 import java.util.UUID;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class StoreDTO {
 
   private UUID id;
   private String name;
   private String email;
-  private String storeID;
   private String address;
   private String openingHours;
   private String phone;
@@ -30,7 +31,6 @@ public class StoreDTO {
     this.id = store.getId();
     this.name = store.getName();
     this.email = store.getEmail();
-    this.storeID = store.getStoreID();
     this.address = store.getAddress();
     this.openingHours = store.getOpeningHours();
     this.phone = store.getPhone();
@@ -42,6 +42,4 @@ public class StoreDTO {
     }
     this.storefront = new StorefrontDTO(store.getStorefront());
   }
-
-  public StoreDTO() {}
 }

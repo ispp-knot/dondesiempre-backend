@@ -32,12 +32,6 @@ public class Store extends BaseEntity {
 
   @Column @NotBlank @Email String email;
 
-  // NIF
-  @Column
-  @NotBlank
-  @Size(max = 255)
-  String storeID;
-
   @Column(columnDefinition = "geometry(Point, 4326)")
   @JdbcTypeCode(SqlTypes.GEOMETRY)
   @NotNull

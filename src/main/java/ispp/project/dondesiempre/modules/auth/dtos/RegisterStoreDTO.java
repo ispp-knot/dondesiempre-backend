@@ -24,10 +24,6 @@ public class RegisterStoreDTO {
   @Size(max = 255)
   private String name;
 
-  @NotBlank
-  @Size(max = 255)
-  private String storeID;
-
   @NotNull private Double latitude;
 
   @NotNull private Double longitude;

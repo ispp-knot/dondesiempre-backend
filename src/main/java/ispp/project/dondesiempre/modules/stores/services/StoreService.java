@@ -70,7 +70,6 @@ public class StoreService {
 
     if (dto.getName() != null) storeToUpdate.setName(dto.getName());
     if (dto.getEmail() != null) storeToUpdate.setEmail(dto.getEmail());
-    if (dto.getStoreID() != null) storeToUpdate.setStoreID(dto.getStoreID());
     if (dto.getAddress() != null) storeToUpdate.setAddress(dto.getAddress());
     if (dto.getOpeningHours() != null) storeToUpdate.setOpeningHours(dto.getOpeningHours());
     if (dto.getPhone() != null) storeToUpdate.setPhone(dto.getPhone());

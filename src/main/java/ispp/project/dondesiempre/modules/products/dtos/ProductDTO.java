@@ -3,10 +3,12 @@ package ispp.project.dondesiempre.modules.products.dtos;
 import ispp.project.dondesiempre.modules.products.models.Product;
 import java.util.UUID;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class ProductDTO {
 
   private UUID id;
@@ -19,16 +21,14 @@ public class ProductDTO {
   private UUID typeId;
   private UUID storeId;
 
-  public static ProductDTO fromProduct(Product product) {
-    ProductDTO dto = new ProductDTO();
-    dto.setId(product.getId());
-    dto.setName(product.getName());
-    dto.setPriceInCents(product.getPriceInCents());
-    dto.setDiscountedPriceInCents(product.getDiscountedPriceInCents());
-    dto.setDescription(product.getDescription());
-    dto.setImage(product.getImage());
-    dto.setTypeId(product.getType().getId());
-    dto.setStoreId(product.getStore().getId());
-    return dto;
+  public ProductDTO(Product product) {
+    this.id = product.getId();
+    this.name = product.getName();
+    this.priceInCents = product.getPriceInCents();
+    this.discountedPriceInCents = product.getDiscountedPriceInCents();
+    this.description = product.getDescription();
+    this.image = product.getImage();
+    this.typeId = product.getType().getId();
+    this.storeId = product.getStore().getId();
   }
 }
