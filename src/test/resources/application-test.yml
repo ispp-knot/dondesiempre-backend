@@ -4,3 +4,6 @@ spring:
     username: testuser
     password: testpass
     driver-class-name: org.postgresql.Driver
+
+frontend:
+  url: http://localhost:3000
