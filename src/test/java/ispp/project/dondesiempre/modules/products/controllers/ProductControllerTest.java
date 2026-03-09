@@ -95,9 +95,8 @@ public class ProductControllerTest {
     dto.setDiscountedPriceInCents(800);
     dto.setDescription("This is a test product");
     dto.setTypeId(savedProductType.getId());
-    dto.setStoreId(saved_store.getId());
 
-    Product product = productController.createProduct(dto, null).getBody();
+    Product product = productController.createProduct(dto, null, saved_store.getId()).getBody();
     assert product != null;
     assert product.getId() != null;
     assert product.getName().equals(dto.getName());
@@ -137,12 +136,11 @@ public class ProductControllerTest {
     dto.setDiscountedPriceInCents(1200); // Invalid discounted price
     dto.setDescription("This is a test product");
     dto.setTypeId(savedProductType.getId());
-    dto.setStoreId(saved_store.getId());
 
     assertThrows(
         InvalidRequestException.class,
         () -> {
-          productController.createProduct(dto, null);
+          productController.createProduct(dto, null, saved_store.getId());
         });
   }
 
@@ -179,9 +177,8 @@ public class ProductControllerTest {
     dto.setDiscountedPriceInCents(800);
     dto.setDescription("This is a test product");
     dto.setTypeId(savedProductType.getId());
-    dto.setStoreId(saved_store.getId());
 
-    Product product = productController.createProduct(dto, null).getBody();
+    Product product = productController.createProduct(dto, null, saved_store.getId()).getBody();
 
     DiscountModificationDTO discount = new DiscountModificationDTO();
     discount.setDiscountedPriceInCents(700);
@@ -238,9 +235,8 @@ public class ProductControllerTest {
     dto.setDiscountedPriceInCents(800);
     dto.setDescription("This is a test product");
     dto.setTypeId(savedProductType.getId());
-    dto.setStoreId(saved_store.getId());
 
-    Product product = productController.createProduct(dto, null).getBody();
+    Product product = productController.createProduct(dto, null, saved_store.getId()).getBody();
     DiscountModificationDTO discount = new DiscountModificationDTO();
     discount.setDiscountedPriceInCents(1200); // Invalid discounted price
     assertThrows(
@@ -292,9 +288,8 @@ public class ProductControllerTest {
     dto.setDiscountedPriceInCents(800);
     dto.setDescription("This is a test product");
     dto.setTypeId(savedProductType.getId());
-    dto.setStoreId(saved_store.getId());
 
-    Product product = productController.createProduct(dto, null).getBody();
+    Product product = productController.createProduct(dto, null, saved_store.getId()).getBody();
 
     ResponseEntity<ProductDTO> response = productController.getProductById(product.getId());
     assert response.getStatusCode() == HttpStatus.OK;
@@ -336,11 +331,10 @@ public class ProductControllerTest {
     dto.setDiscountedPriceInCents(800);
     dto.setDescription("This is a test product");
     dto.setTypeId(savedProductType.getId());
-    dto.setStoreId(saved_store.getId());
 
-    productController.createProduct(dto, null);
+    productController.createProduct(dto, null, saved_store.getId());
     dto.setName("Test Product 2");
-    productController.createProduct(dto, null);
+    productController.createProduct(dto, null, saved_store.getId());
 
     ResponseEntity<List<ProductDTO>> response = productController.getAllProducts();
     assert response.getStatusCode() == HttpStatus.OK;
@@ -382,12 +376,11 @@ public class ProductControllerTest {
     dto.setDiscountedPriceInCents(800);
     dto.setDescription("This is a test product");
     dto.setTypeId(savedProductType.getId());
-    dto.setStoreId(saved_store.getId());
 
-    productController.createProduct(dto, null);
+    productController.createProduct(dto, null, saved_store.getId());
     dto.setName("Test Product 2");
     dto.setDiscountedPriceInCents(1000);
-    productController.createProduct(dto, null);
+    productController.createProduct(dto, null, saved_store.getId());
 
     ResponseEntity<List<ProductDTO>> response = productController.getDiscountedProducts();
     assert response.getStatusCode() == HttpStatus.OK;

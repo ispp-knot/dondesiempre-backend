@@ -84,9 +84,8 @@ public class ProductServiceTest {
     dto.setDiscountedPriceInCents(800);
     dto.setDescription("This is a test product");
     dto.setTypeId(savedProductType.getId());
-    dto.setStoreId(saved_store.getId());
 
-    Product product = productService.saveProduct(dto, null);
+    Product product = productService.saveProduct(dto, null, saved_store.getId());
     assert product != null;
     assert product.getName().equals("Test Product");
   }
@@ -124,12 +123,11 @@ public class ProductServiceTest {
     dto.setDiscountedPriceInCents(1200); // This is greater than the original pricce
     dto.setDescription("This is a test product");
     dto.setTypeId(savedProductType.getId());
-    dto.setStoreId(saved_store.getId());
 
     assertThrows(
         InvalidRequestException.class,
         () -> {
-          productService.saveProduct(dto, null);
+          productService.saveProduct(dto, null, saved_store.getId());
         });
   }
 
@@ -165,9 +163,8 @@ public class ProductServiceTest {
     dto.setDiscountedPriceInCents(800);
     dto.setDescription("This is a test product");
     dto.setTypeId(savedProductType.getId());
-    dto.setStoreId(saved_store.getId());
 
-    Product product = productService.saveProduct(dto, null);
+    Product product = productService.saveProduct(dto, null, saved_store.getId());
     Product updatedProduct = productService.updateProductDiscount(product.getId(), 700);
     assert updatedProduct.getDiscountedPriceInCents() == 700;
     assert updatedProduct.getId().equals(product.getId());
@@ -206,9 +203,8 @@ public class ProductServiceTest {
     dto.setDiscountedPriceInCents(800);
     dto.setDescription("This is a test product");
     dto.setTypeId(savedProductType.getId());
-    dto.setStoreId(saved_store.getId());
 
-    Product product = productService.saveProduct(dto, null);
+    Product product = productService.saveProduct(dto, null, saved_store.getId());
     assertThrows(
         InvalidRequestException.class,
         () -> {
@@ -249,9 +245,8 @@ public class ProductServiceTest {
     dto.setDiscountedPriceInCents(800);
     dto.setDescription("This is a test product");
     dto.setTypeId(savedProductType.getId());
-    dto.setStoreId(saved_store.getId());
 
-    Product product = productService.saveProduct(dto, null);
+    Product product = productService.saveProduct(dto, null, saved_store.getId());
     Product fetchedProduct = productService.getProductById(product.getId());
     assert fetchedProduct != null;
     assert fetchedProduct.getId().equals(product.getId());
@@ -300,11 +295,10 @@ public class ProductServiceTest {
     dto.setDiscountedPriceInCents(800);
     dto.setDescription("This is a test product");
     dto.setTypeId(savedProductType.getId());
-    dto.setStoreId(saved_store.getId());
 
-    productService.saveProduct(dto, null);
+    productService.saveProduct(dto, null, saved_store.getId());
     dto.setName("Another Test Product");
-    productService.saveProduct(dto, null);
+    productService.saveProduct(dto, null, saved_store.getId());
 
     assert productService.getAllProducts().size() >= 2;
   }
@@ -341,12 +335,11 @@ public class ProductServiceTest {
     dto.setDiscountedPriceInCents(800);
     dto.setDescription("This is a test product");
     dto.setTypeId(savedProductType.getId());
-    dto.setStoreId(saved_store.getId());
 
-    productService.saveProduct(dto, null);
+    productService.saveProduct(dto, null, saved_store.getId());
     dto.setName("Non-discounted Product");
     dto.setDiscountedPriceInCents(1000); // No discount
-    productService.saveProduct(dto, null);
+    productService.saveProduct(dto, null, saved_store.getId());
 
     assert productService.getAllDiscountedProducts().size() >= 1;
   }
