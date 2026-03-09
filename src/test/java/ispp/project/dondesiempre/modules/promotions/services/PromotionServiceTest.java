@@ -126,7 +126,7 @@ public class PromotionServiceTest {
     assertEquals("Test Promotion", promotion.getName());
     assertEquals(20, promotion.getDiscountPercentage());
     assertEquals(true, promotion.isActive());
-    assertEquals(1, promotionService.getAllProductsByPromotionId(promotion.getId()).size());
+    assertEquals(1, promotionService.getAllProductsDTOByPromotionId(promotion.getId()).size());
   }
 
   @Test
