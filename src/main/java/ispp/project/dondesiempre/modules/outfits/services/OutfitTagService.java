@@ -3,12 +3,11 @@ package ispp.project.dondesiempre.modules.outfits.services;
 import ispp.project.dondesiempre.modules.common.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.modules.outfits.models.OutfitTag;
 import ispp.project.dondesiempre.modules.outfits.repositories.OutfitTagRepository;
+import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -35,7 +34,7 @@ public class OutfitTagService {
   }
 
   @Transactional(readOnly = true)
-    public List<String> findOutfitTagsById(UUID outfitId) {
-      return outfitTagRepository.findOutfitTagsById(outfitId);
+  public List<String> findOutfitTagsById(UUID outfitId) {
+    return outfitTagRepository.findOutfitTagsById(outfitId);
   }
 }

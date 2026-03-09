@@ -23,9 +23,7 @@ import ispp.project.dondesiempre.modules.outfits.models.Outfit;
 import ispp.project.dondesiempre.modules.outfits.models.OutfitProduct;
 import ispp.project.dondesiempre.modules.outfits.models.OutfitTag;
 import ispp.project.dondesiempre.modules.outfits.models.OutfitTagRelation;
-import ispp.project.dondesiempre.modules.outfits.repositories.OutfitProductRepository;
 import ispp.project.dondesiempre.modules.outfits.repositories.OutfitRepository;
-import ispp.project.dondesiempre.modules.outfits.repositories.OutfitTagRelationRepository;
 import ispp.project.dondesiempre.modules.products.models.Product;
 import ispp.project.dondesiempre.modules.products.services.ProductService;
 import ispp.project.dondesiempre.modules.stores.models.Store;
@@ -276,7 +274,7 @@ class OutfitServiceTest {
     dto.setIndex(0);
 
     when(outfitRepository.findById(outfitId)).thenReturn(Optional.of(outfit));
-    when(productService.getProductById(productId)).thenReturn(product);//
+    when(productService.getProductById(productId)).thenReturn(product); //
     when(productService.getOutfitProductsById(outfitId)).thenReturn(new ArrayList<>());
     when(outfitProductService.findOutfitProductIndicesById(outfitId)).thenReturn(new ArrayList<>());
     when(outfitProductService.save(any())).thenReturn(outfitProduct);
@@ -339,8 +337,7 @@ class OutfitServiceTest {
     when(outfitRepository.findById(outfitId)).thenReturn(Optional.of(outfit));
 
     // Simulamos que hay un producto asociado
-    when(outfitProductService.findOutfitProductsById(outfitId))
-        .thenReturn(List.of(outfitProduct));
+    when(outfitProductService.findOutfitProductsById(outfitId)).thenReturn(List.of(outfitProduct));
 
     // Simulamos que NO hay tags asociados
     when(outfitTagRelationService.findOutfitTagsById(outfitId)).thenReturn(List.of());
@@ -436,8 +433,7 @@ class OutfitServiceTest {
   @Test
   void shouldRemoveProduct_whenProductBelongsToOutfit() throws ResourceNotFoundException {
     when(outfitRepository.findById(outfitId)).thenReturn(Optional.of(outfit));
-    when(outfitProductService.findProductRelation(outfitId, productId))
-        .thenReturn(outfitProduct);
+    when(outfitProductService.findProductRelation(outfitId, productId)).thenReturn(outfitProduct);
 
     outfitService.removeProduct(outfitId, product);
 
@@ -473,8 +469,7 @@ class OutfitServiceTest {
   @Test
   void shouldfindOutfitProductsByOutfitId() throws ResourceNotFoundException {
 
-    when(outfitProductService.findOutfitProductsById(outfitId))
-        .thenReturn(List.of(outfitProduct));
+    when(outfitProductService.findOutfitProductsById(outfitId)).thenReturn(List.of(outfitProduct));
 
     List<OutfitProduct> result = outfitService.findOutfitProductsByOutfitId(outfitId);
     assertNotNull(result);
@@ -525,7 +520,9 @@ class OutfitServiceTest {
     doNothing().when(authService).assertUserOwnsStore(any());
     when(outfitTagService.findByName(tagName)).thenReturn(nonExistentTag); // Tag doesn't exist
     when(outfitTagRelationService.findTagRelation(outfitId, nonExistentTagId))
-        .thenThrow(new ResourceNotFoundException("Requested tag does not belong to outfit.")); // No relation found
+        .thenThrow(
+            new ResourceNotFoundException(
+                "Requested tag does not belong to outfit.")); // No relation found
 
     assertThrows(ResourceNotFoundException.class, () -> outfitService.removeTag(outfitId, tagName));
     verify(outfitTagRelationService, never()).delete(any());
