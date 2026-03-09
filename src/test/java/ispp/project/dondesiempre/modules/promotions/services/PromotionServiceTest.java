@@ -100,8 +100,7 @@ public class PromotionServiceTest {
     dto.setDiscountedPriceInCents(discountedPriceInCents);
     dto.setDescription("This is a test product");
     dto.setTypeId(typeId);
-    dto.setStoreId(storeId);
-    return productService.saveProduct(dto, null);
+    return productService.saveProduct(dto, null, storeId);
   }
 
   private Promotion createPromotion(
