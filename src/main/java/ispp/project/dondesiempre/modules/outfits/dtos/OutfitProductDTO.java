@@ -28,8 +28,8 @@ public class OutfitProductDTO {
     this.id = product.getProduct().getId();
 
     this.name = product.getProduct().getName();
-    this.description = product.getProduct().getDescription();
-    this.image = product.getProduct().getImage();
+    this.description = product.getProduct().getDescription().orElse(null);
+    this.image = product.getProduct().getImage().orElse(null);
 
     this.priceInCents = product.getProduct().getDiscountedPriceInCents();
     this.type = product.getProduct().getType();
