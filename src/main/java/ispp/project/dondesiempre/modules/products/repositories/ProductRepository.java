@@ -16,4 +16,7 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
 
   @Query("select op.product from OutfitProduct op where op.outfit.id = :id order by op.index asc")
   public List<Product> findOutfitProductsById(UUID id);
+
+  @Query("SELECT pp.product FROM PromotionProduct pp WHERE pp.promotion.id = :promotionId")
+  public List<Product> findProductsByPromotionId(UUID promotionId);
 }

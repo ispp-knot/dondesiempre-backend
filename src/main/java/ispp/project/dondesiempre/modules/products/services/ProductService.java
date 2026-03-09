@@ -65,8 +65,13 @@ public class ProductService {
     Product product =
         productRepository
             .findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+            .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + id));
     return product;
+  }
+
+  @Transactional(readOnly = true)
+  public List<Product> findProductsByPromotionId(UUID promotionId) {
+    return productRepository.findProductsByPromotionId(promotionId);
   }
 
   @Transactional(readOnly = true)
