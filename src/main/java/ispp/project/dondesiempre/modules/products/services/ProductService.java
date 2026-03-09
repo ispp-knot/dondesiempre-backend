@@ -75,6 +75,11 @@ public class ProductService {
   }
 
   @Transactional(readOnly = true)
+  public List<Product> getOutfitProductsById(UUID outfitId) {
+    return productRepository.findOutfitProductsById(outfitId);
+  }
+
+  @Transactional(readOnly = true)
   public List<Product> getAllDiscountedProducts() {
     return productRepository.findAllDiscountedProducts();
   }

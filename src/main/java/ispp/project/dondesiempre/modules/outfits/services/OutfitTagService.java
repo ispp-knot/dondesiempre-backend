@@ -7,6 +7,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 public class OutfitTagService {
@@ -29,5 +32,10 @@ public class OutfitTagService {
               tag.setName(tagName);
               return outfitTagRepository.save(tag);
             });
+  }
+
+  @Transactional(readOnly = true)
+    public List<String> findOutfitTagsById(UUID outfitId) {
+      return outfitTagRepository.findOutfitTagsById(outfitId);
   }
 }
