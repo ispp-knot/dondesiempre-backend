@@ -145,12 +145,14 @@ public class StoreServiceTest {
     when(userService.getCurrentClient()).thenReturn(TEST_CLIENT);
     when(storeRepository.findById(TEST_STORE_ID)).thenReturn(Optional.of(TEST_STORE));
     when(storeFollowerRepository.save(any())).thenReturn(TEST_FOLLOWER);
+    when(applicationContext.getBean(StoreService.class)).thenReturn(storeService);
 
     StoreFollower follow = storeService.followStore(TEST_STORE_ID);
 
     assertEquals(follow.getClient().getId(), TEST_FOLLOWER.getClient().getId());
     assertEquals(follow.getStore().getId(), TEST_FOLLOWER.getStore().getId());
     verify(storeFollowerRepository).save(follow);
+    verify(applicationContext).getBean(StoreService.class);
   }
 
   @Test

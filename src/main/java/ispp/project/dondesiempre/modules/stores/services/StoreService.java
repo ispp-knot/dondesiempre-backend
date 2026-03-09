@@ -5,6 +5,7 @@ import ispp.project.dondesiempre.modules.auth.services.UserService;
 import ispp.project.dondesiempre.modules.clients.models.Client;
 import ispp.project.dondesiempre.modules.common.exceptions.InvalidBoundingBoxException;
 import ispp.project.dondesiempre.modules.common.exceptions.ResourceNotFoundException;
+import ispp.project.dondesiempre.modules.common.exceptions.UnauthorizedException;
 import ispp.project.dondesiempre.modules.follows.models.StoreFollower;
 import ispp.project.dondesiempre.modules.follows.repositories.StoreFollowerRepository;
 import ispp.project.dondesiempre.modules.stores.dtos.StoreDTO;
@@ -47,9 +48,10 @@ public class StoreService {
     return dto;
   }
 
-  @Transactional(readOnly = true)
+  @Transactional(readOnly = true, rollbackFor = InvalidBoundingBoxException.class)
   public List<Store> findStoresInBoundingBox(
-      double minLon, double minLat, double maxLon, double maxLat) {
+      double minLon, double minLat, double maxLon, double maxLat)
+      throws InvalidBoundingBoxException {
     if (minLon > maxLon || minLat > maxLat)
       throw new InvalidBoundingBoxException(
           "Invalid bounding box parameters: minimum coordinates cannot be greater than maximum coordinates.");
@@ -61,8 +63,9 @@ public class StoreService {
     return stores.stream().map(StoreDTO::new).toList();
   }
 
-  @Transactional(rollbackFor = ResourceNotFoundException.class)
-  public StoreDTO updateStore(UUID id, StoreUpdateDTO dto) throws ResourceNotFoundException {
+  @Transactional(rollbackFor = {UnauthorizedException.class, ResourceNotFoundException.class})
+  public StoreDTO updateStore(UUID id, StoreUpdateDTO dto)
+      throws UnauthorizedException, ResourceNotFoundException {
     Store storeToUpdate;
 
     storeToUpdate = applicationContext.getBean(StoreService.class).findById(id);
@@ -78,20 +81,21 @@ public class StoreService {
     return new StoreDTO(storeRepository.save(storeToUpdate));
   }
 
-  @Transactional
-  public StoreFollower followStore(UUID storeId) {
+  @Transactional(rollbackFor = {UnauthorizedException.class, ResourceNotFoundException.class})
+  public StoreFollower followStore(UUID storeId)
+      throws UnauthorizedException, ResourceNotFoundException {
     Client currentClient = userService.getCurrentClient();
 
     StoreFollower follow = new StoreFollower();
     follow.setClient(currentClient);
-    follow.setStore(findById(storeId));
+    follow.setStore(applicationContext.getBean(StoreService.class).findById(storeId));
 
     StoreFollower createdFollow = storeFollowerRepository.save(follow);
     return createdFollow;
   }
 
-  @Transactional(rollbackFor = ResourceNotFoundException.class)
-  public void unfollowStore(UUID storeId) throws ResourceNotFoundException {
+  @Transactional(rollbackFor = {UnauthorizedException.class, ResourceNotFoundException.class})
+  public void unfollowStore(UUID storeId) throws UnauthorizedException, ResourceNotFoundException {
     Client currentClient = userService.getCurrentClient();
 
     StoreFollower follow =
@@ -102,8 +106,10 @@ public class StoreService {
     storeFollowerRepository.delete(follow);
   }
 
-  @Transactional(readOnly = true)
-  public List<Store> getMyFollowedStores() {
+  @Transactional(
+      readOnly = true,
+      rollbackFor = {UnauthorizedException.class, ResourceNotFoundException.class})
+  public List<Store> getMyFollowedStores() throws UnauthorizedException, ResourceNotFoundException {
     Client currentClient = userService.getCurrentClient();
     return storeFollowerRepository.findByClientId(currentClient.getId()).stream()
         .map(follower -> follower.getStore())

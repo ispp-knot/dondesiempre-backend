@@ -1,5 +1,6 @@
 package ispp.project.dondesiempre.utils.cloudinary;
 
+import ispp.project.dondesiempre.modules.common.exceptions.InvalidRequestException;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface CloudinaryService {
@@ -8,5 +9,5 @@ public interface CloudinaryService {
    * Uploads a file to Cloudinary under the configured folder prefix and returns the secure URL of
    * the uploaded image.
    */
-  String upload(MultipartFile file);
+  String upload(MultipartFile file) throws InvalidRequestException;
 }

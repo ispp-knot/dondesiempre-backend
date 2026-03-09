@@ -6,6 +6,7 @@ import ispp.project.dondesiempre.modules.products.repositories.ProductTypeReposi
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -13,7 +14,10 @@ public class ProductTypeService {
 
   private final ProductTypeRepository productTypeRepository;
 
-  public ProductType getProductTypeById(UUID id) {
+  @Transactional(
+      readOnly = true,
+      rollbackFor = {ResourceNotFoundException.class})
+  public ProductType getProductTypeById(UUID id) throws ResourceNotFoundException {
     return productTypeRepository
         .findById(id)
         .orElseThrow(() -> new ResourceNotFoundException("Product type not found"));

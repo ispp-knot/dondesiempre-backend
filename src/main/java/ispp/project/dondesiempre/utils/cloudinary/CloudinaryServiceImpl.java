@@ -18,7 +18,7 @@ public class CloudinaryServiceImpl implements CloudinaryService {
   private final CloudinaryProperties properties;
 
   @Override
-  public String upload(MultipartFile file) {
+  public String upload(MultipartFile file) throws InvalidRequestException {
     try {
       Map<?, ?> result =
           cloudinary
