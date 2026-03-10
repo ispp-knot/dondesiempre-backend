@@ -1,6 +1,5 @@
 package ispp.project.dondesiempre.modules.stores.controllers;
 
-import ispp.project.dondesiempre.modules.auth.services.UserService;
 import ispp.project.dondesiempre.modules.stores.dtos.StorefrontDTO;
 import ispp.project.dondesiempre.modules.stores.models.Storefront;
 import ispp.project.dondesiempre.modules.stores.services.StorefrontService;
@@ -21,7 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class StorefrontController {
   private final StorefrontService storefrontService;
-  private final UserService userService;
 
   @GetMapping("/{id}")
   @ResponseStatus(HttpStatus.OK)

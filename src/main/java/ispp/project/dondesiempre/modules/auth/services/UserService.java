@@ -14,10 +14,8 @@ import ispp.project.dondesiempre.modules.stores.models.Store;
 import ispp.project.dondesiempre.modules.stores.models.Storefront;
 import ispp.project.dondesiempre.modules.stores.repositories.StoreRepository;
 import ispp.project.dondesiempre.modules.stores.repositories.StorefrontRepository;
+import ispp.project.dondesiempre.utils.cloudinary.CoordinatesService;
 import lombok.RequiredArgsConstructor;
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.PrecisionModel;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -33,6 +31,7 @@ public class UserService {
   private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
   private final ApplicationContext applicationContext;
+  private final CoordinatesService coordinatesService;
 
   public boolean checkPassword(User user, String rawPassword) {
     return passwordEncoder.matches(rawPassword, user.getPassword());
@@ -54,12 +53,10 @@ public class UserService {
     if (dto.getSecondaryColor() != null) storefront.setSecondaryColor(dto.getSecondaryColor());
     storefrontRepository.save(storefront);
 
-    GeometryFactory gf = new GeometryFactory(new PrecisionModel(), 4326);
-
     Store store = new Store();
     store.setName(dto.getName());
     store.setEmail(dto.getEmail());
-    store.setLocation(gf.createPoint(new Coordinate(dto.getLongitude(), dto.getLatitude())));
+    store.setLocation(coordinatesService.createPoint(dto.getLongitude(), dto.getLatitude()));
     store.setAddress(dto.getAddress());
     store.setOpeningHours(dto.getOpeningHours());
     store.setAcceptsShipping(dto.getAcceptsShipping());
