@@ -1,8 +1,8 @@
 package ispp.project.dondesiempre.modules.outfits.dtos;
 
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import ispp.project.dondesiempre.modules.outfits.models.OutfitProduct;
-import ispp.project.dondesiempre.modules.products.models.ProductType;
-import java.util.UUID;
+import ispp.project.dondesiempre.modules.products.dtos.ProductDTO;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,30 +11,13 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class OutfitProductDTO {
-  private UUID id;
-
-  private String name;
-  private String description;
-  private String image;
-
-  private Integer priceInCents;
-
-  private ProductType type;
 
   private Integer index;
-  private UUID storeId;
+
+  @JsonUnwrapped private ProductDTO product;
 
   public OutfitProductDTO(OutfitProduct product) {
-    this.id = product.getProduct().getId();
-
-    this.name = product.getProduct().getName();
-    this.description = product.getProduct().getDescription();
-    this.image = product.getProduct().getImage();
-
-    this.priceInCents = product.getProduct().getDiscountedPriceInCents();
-    this.type = product.getProduct().getType();
-
     this.index = product.getIndex();
-    this.storeId = product.getProduct().getStore().getId();
+    this.product = new ProductDTO(product.getProduct());
   }
 }
