@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import ispp.project.dondesiempre.config.coordinates.GeometryFactoryConfig;
 import ispp.project.dondesiempre.modules.auth.models.User;
 import ispp.project.dondesiempre.modules.auth.repositories.UserRepository;
 import ispp.project.dondesiempre.modules.products.models.Product;
@@ -12,19 +13,19 @@ import ispp.project.dondesiempre.modules.stores.models.Store;
 import ispp.project.dondesiempre.modules.stores.models.Storefront;
 import ispp.project.dondesiempre.modules.stores.repositories.StoreRepository;
 import ispp.project.dondesiempre.modules.stores.repositories.StorefrontRepository;
+import ispp.project.dondesiempre.utils.cloudinary.CoordinatesService;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.PrecisionModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = Replace.NONE)
+@Import({CoordinatesService.class, GeometryFactoryConfig.class})
 public class ProductRepositoryTest {
 
   @Autowired private ProductRepository productRepository;
@@ -32,6 +33,7 @@ public class ProductRepositoryTest {
   @Autowired private StoreRepository storeRepository;
   @Autowired private StorefrontRepository storefrontRepository;
   @Autowired private UserRepository userRepository;
+  @Autowired private CoordinatesService coordinatesService;
 
   @BeforeEach
   void setUp() {
@@ -43,14 +45,13 @@ public class ProductRepositoryTest {
     Storefront storefront = new Storefront();
     storefrontRepository.save(storefront);
 
-    GeometryFactory gf = new GeometryFactory(new PrecisionModel(), 4326);
     Store store = new Store();
     store.setName("Test Store");
     store.setEmail("test@test.com");
     store.setAddress("Test address");
     store.setOpeningHours("9-5");
     store.setAcceptsShipping(false);
-    store.setLocation(gf.createPoint(new Coordinate(0.0, 0.0)));
+    store.setLocation(coordinatesService.createPoint(0.0, 0.0));
     store.setStorefront(storefront);
     store.setUser(user);
     storeRepository.save(store);

@@ -46,6 +46,7 @@ public class OutfitDTO {
             .map(OutfitProductDTO::new)
             .sorted(Comparator.comparing(OutfitProductDTO::getIndex))
             .toList();
-    this.priceInCents = this.products.stream().mapToInt(OutfitProductDTO::getPriceInCents).sum();
+    this.priceInCents =
+        this.products.stream().mapToInt(p -> p.getProduct().getPriceInCents()).sum();
   }
 }
