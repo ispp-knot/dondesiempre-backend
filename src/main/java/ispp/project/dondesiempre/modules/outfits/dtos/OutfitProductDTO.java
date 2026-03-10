@@ -14,20 +14,12 @@ public class OutfitProductDTO {
 
   private Integer index;
 
-  public OutfitProductDTO(OutfitProduct product) {
-    this.id = product.getProduct().getId();
-
-    this.name = product.getProduct().getName();
-    this.description = product.getProduct().getDescription().orElse(null);
-    this.image = product.getProduct().getImage().orElse(null);
-
-    this.priceInCents = product.getProduct().getDiscountedPriceInCents();
-    this.type = product.getProduct().getType();
-    @JsonUnwrapped private ProductDTO product;
-
+  @JsonUnwrapped
+  private ProductDTO product;
 
   public OutfitProductDTO(OutfitProduct product) {
     this.index = product.getIndex();
     this.product = new ProductDTO(product.getProduct());
+
   }
 }
