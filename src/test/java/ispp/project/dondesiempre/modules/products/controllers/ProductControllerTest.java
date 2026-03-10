@@ -18,7 +18,6 @@ import ispp.project.dondesiempre.modules.stores.models.Storefront;
 import ispp.project.dondesiempre.modules.stores.repositories.StoreRepository;
 import ispp.project.dondesiempre.utils.cloudinary.CloudinaryService;
 import ispp.project.dondesiempre.utils.cloudinary.CoordinatesService;
-
 import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,20 +36,13 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class ProductControllerTest {
 
-  @Autowired
-  private ProductController productController;
-  @Autowired
-  private ProductTypeRepository productTypeRepository;
-  @Autowired
-  private StoreRepository storeRepository;
-  @Autowired
-  private UserRepository userRepository;
-  @MockitoBean
-  private AuthService authService;
-  @MockitoBean
-  private CloudinaryService cloudinaryService;
-  @Autowired
-  private CoordinatesService coordinatesService;
+  @Autowired private ProductController productController;
+  @Autowired private ProductTypeRepository productTypeRepository;
+  @Autowired private StoreRepository storeRepository;
+  @Autowired private UserRepository userRepository;
+  @MockitoBean private AuthService authService;
+  @MockitoBean private CloudinaryService cloudinaryService;
+  @Autowired private CoordinatesService coordinatesService;
 
   private User testUser;
 

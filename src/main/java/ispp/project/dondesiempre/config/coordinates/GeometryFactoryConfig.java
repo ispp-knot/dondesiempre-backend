@@ -8,8 +8,8 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class GeometryFactoryConfig {
 
-    @Bean
-    public GeometryFactory geometryFactory() {
-        return new GeometryFactory(new PrecisionModel(), 4326);
-    }
+  @Bean
+  public GeometryFactory geometryFactory() {
+    return new GeometryFactory(new PrecisionModel(), 4326);
+  }
 }

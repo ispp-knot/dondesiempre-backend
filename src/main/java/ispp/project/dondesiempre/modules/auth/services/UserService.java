@@ -49,10 +49,8 @@ public class UserService {
     userRepository.save(user);
 
     Storefront storefront = new Storefront();
-    if (dto.getPrimaryColor() != null)
-      storefront.setPrimaryColor(dto.getPrimaryColor());
-    if (dto.getSecondaryColor() != null)
-      storefront.setSecondaryColor(dto.getSecondaryColor());
+    if (dto.getPrimaryColor() != null) storefront.setPrimaryColor(dto.getPrimaryColor());
+    if (dto.getSecondaryColor() != null) storefront.setSecondaryColor(dto.getSecondaryColor());
     storefrontRepository.save(storefront);
 
     Store store = new Store();
@@ -92,7 +90,9 @@ public class UserService {
     return new ClientDTO(clientRepository.save(client));
   }
 
-  @Transactional(readOnly = true, rollbackFor = { ResourceNotFoundException.class, UnauthorizedException.class })
+  @Transactional(
+      readOnly = true,
+      rollbackFor = {ResourceNotFoundException.class, UnauthorizedException.class})
   public Client getCurrentClient() throws ResourceNotFoundException, UnauthorizedException {
     User currentUser = applicationContext.getBean(AuthService.class).getCurrentUser();
     return clientRepository
@@ -100,7 +100,9 @@ public class UserService {
         .orElseThrow(() -> new ResourceNotFoundException("Current client not found."));
   }
 
-  @Transactional(readOnly = true, rollbackFor = { ResourceNotFoundException.class, UnauthorizedException.class })
+  @Transactional(
+      readOnly = true,
+      rollbackFor = {ResourceNotFoundException.class, UnauthorizedException.class})
   public Store getCurrentStore() throws ResourceNotFoundException, UnauthorizedException {
     User currentUser = applicationContext.getBean(AuthService.class).getCurrentUser();
     return storeRepository

@@ -33,18 +33,13 @@ import org.springframework.context.ApplicationContext;
 @ExtendWith(MockitoExtension.class)
 public class StoreServiceTest {
 
-  @Mock
-  private StoreRepository storeRepository;
-  @Mock
-  private StoreSocialNetworkRepository socialNetworkRepository;
-  @Mock
-  private AuthService authService;
+  @Mock private StoreRepository storeRepository;
+  @Mock private StoreSocialNetworkRepository socialNetworkRepository;
+  @Mock private AuthService authService;
 
-  @Mock
-  private ApplicationContext applicationContext;
+  @Mock private ApplicationContext applicationContext;
 
-  @InjectMocks
-  private StoreService storeService;
+  @InjectMocks private StoreService storeService;
 
   private Store store;
   private UUID storeId;

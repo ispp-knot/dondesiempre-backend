@@ -14,7 +14,6 @@ import ispp.project.dondesiempre.modules.stores.models.Storefront;
 import ispp.project.dondesiempre.modules.stores.repositories.StoreRepository;
 import ispp.project.dondesiempre.modules.stores.repositories.StorefrontRepository;
 import ispp.project.dondesiempre.utils.cloudinary.CoordinatesService;
-
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,21 +25,15 @@ import org.springframework.context.annotation.Import;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = Replace.NONE)
-@Import({ CoordinatesService.class, GeometryFactoryConfig.class })
+@Import({CoordinatesService.class, GeometryFactoryConfig.class})
 public class ProductRepositoryTest {
 
-  @Autowired
-  private ProductRepository productRepository;
-  @Autowired
-  private ProductTypeRepository productTypeRepository;
-  @Autowired
-  private StoreRepository storeRepository;
-  @Autowired
-  private StorefrontRepository storefrontRepository;
-  @Autowired
-  private UserRepository userRepository;
-  @Autowired
-  private CoordinatesService coordinatesService;
+  @Autowired private ProductRepository productRepository;
+  @Autowired private ProductTypeRepository productTypeRepository;
+  @Autowired private StoreRepository storeRepository;
+  @Autowired private StorefrontRepository storefrontRepository;
+  @Autowired private UserRepository userRepository;
+  @Autowired private CoordinatesService coordinatesService;
 
   @BeforeEach
   void setUp() {
