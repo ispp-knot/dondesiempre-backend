@@ -37,12 +37,6 @@ public class StoreController {
         HttpStatus.OK);
   }
 
-  @GetMapping("/stores/all")
-  @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<List<StoreDTO>> getStores() {
-    return new ResponseEntity<>(storeService.findAll(), HttpStatus.OK);
-  }
-
   @GetMapping("/stores/{id}")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<StoreDTO> getStoreById(@PathVariable UUID id) {

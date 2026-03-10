@@ -38,9 +38,8 @@ public class RegisterStoreDTO {
 
   @NotNull private Boolean acceptsShipping;
 
-  @NotBlank @Phone private String phone;
+  @Phone private String phone;
 
-  @NotBlank
   @Size(max = 5000)
   private String aboutUs;
 
