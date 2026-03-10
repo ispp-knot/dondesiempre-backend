@@ -255,11 +255,12 @@ public class ProductServiceTest {
 
   @Test
   public void shouldThrowException_WhenGettingNonExistentProduct() {
+    UUID id = UUID.randomUUID();
     try {
-      productService.getProductById(UUID.randomUUID());
+      productService.getProductById(id);
       assert false;
     } catch (RuntimeException e) {
-      assert e.getMessage().equals("Product not found");
+      assert e.getMessage().equals("Product not found with id: " + id);
     }
   }
 
