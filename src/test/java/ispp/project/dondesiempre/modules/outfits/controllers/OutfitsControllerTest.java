@@ -172,11 +172,10 @@ class OutfitsControllerTest {
     OutfitCreationDTO creationDTO = new OutfitCreationDTO();
     creationDTO.setName("New Outfit");
     creationDTO.setIndex(0);
-    creationDTO.setStorefrontId(storefrontId);
     creationDTO.setTags(List.of(TEST_TAG));
     creationDTO.setProducts(List.of(productDTO));
 
-    when(outfitService.create(any(), any())).thenReturn(outfit);
+    when(outfitService.create(any(), any(), any())).thenReturn(outfit);
     when(outfitService.findTagsByOutfitId(outfitId)).thenReturn(List.of(TEST_TAG));
     when(outfitService.findOutfitProductsByOutfitId(outfitId)).thenReturn(List.of(outfitProduct));
 
@@ -184,7 +183,7 @@ class OutfitsControllerTest {
     dtoPart.getHeaders().setContentType(MediaType.APPLICATION_JSON);
 
     mockMvc
-        .perform(multipart("/api/v1/outfits").part(dtoPart))
+        .perform(multipart("/api/v1/outfits?storefrontId=" + storefrontId).part(dtoPart))
         .andExpect(status().isCreated())
         .andExpect(jsonPath("$.id").value(outfitId.toString()))
         .andExpect(jsonPath("$.name").value(outfit.getName()));

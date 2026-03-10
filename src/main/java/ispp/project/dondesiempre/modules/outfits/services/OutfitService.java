@@ -75,7 +75,7 @@ public class OutfitService {
         ResourceNotFoundException.class,
         InvalidRequestException.class
       })
-  public Outfit create(OutfitCreationDTO dto, MultipartFile image)
+  public Outfit create(UUID storefrontId, OutfitCreationDTO dto, MultipartFile image)
       throws UnauthorizedException, ResourceNotFoundException, InvalidRequestException {
     Outfit outfit;
     UUID outfitId;
@@ -88,7 +88,7 @@ public class OutfitService {
     if (image != null && !image.isEmpty()) {
       outfit.setImage(cloudinaryService.upload(image));
     }
-    Storefront storefront = storefrontService.findById(dto.getStorefrontId());
+    Storefront storefront = storefrontService.findById(storefrontId);
     authService.assertUserOwnsStore(storefront.getStore());
     outfit.setStorefront(storefront);
 
