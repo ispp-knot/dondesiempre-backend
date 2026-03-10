@@ -23,14 +23,14 @@ public class OutfitTagRelationService {
   @Transactional(readOnly = true)
   public OutfitTagRelation findTagRelation(UUID outfitId, UUID tagId) {
     return outfitTagRelationRepository
-        .findTagRelationByOutfitIdAndTagId(outfitId, tagId)
+        .findByOutfitIdAndTagId(outfitId, tagId)
         .orElseThrow(
             () -> new ResourceNotFoundException("Requested tag does not belong to outfit."));
   }
 
   @Transactional(readOnly = true)
   public List<OutfitTagRelation> findOutfitTagsById(UUID outfitId) {
-    return outfitTagRelationRepository.findOutfitTagsByOutfitId(outfitId);
+    return outfitTagRelationRepository.findByOutfitId(outfitId);
   }
 
   @Transactional

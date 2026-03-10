@@ -129,7 +129,8 @@ class OutfitServiceTest {
 
   @Test
   void shouldReturnListOfOutfitDTOs_whenStoreHasOutfits() {
-    when(outfitRepository.findByStoreId(storeId)).thenReturn(List.of(outfit));
+    when(outfitRepository.findByStorefrontStoreIdOrderByIndexAsc(storeId))
+        .thenReturn(List.of(outfit));
 
     List<Outfit> result = outfitService.findByStore(store);
 
@@ -141,7 +142,8 @@ class OutfitServiceTest {
 
   @Test
   void shouldReturnEmptyList_whenStoreHasNoOutfits() {
-    when(outfitRepository.findByStoreId(storeId)).thenReturn(new ArrayList<>());
+    when(outfitRepository.findByStorefrontStoreIdOrderByIndexAsc(storeId))
+        .thenReturn(new ArrayList<>());
 
     List<Outfit> result = outfitService.findByStore(store);
 

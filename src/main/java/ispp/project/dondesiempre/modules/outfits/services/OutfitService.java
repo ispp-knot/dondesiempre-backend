@@ -61,7 +61,7 @@ public class OutfitService {
 
   @Transactional(readOnly = true)
   public List<Outfit> findByStore(Store store) {
-    return outfitRepository.findByStoreId(store.getId());
+    return outfitRepository.findByStorefrontStoreIdOrderByIndexAsc(store.getId());
   }
 
   @Transactional(readOnly = true)

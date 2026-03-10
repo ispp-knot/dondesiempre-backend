@@ -74,7 +74,7 @@ class OutfitRepositoryTest {
     store.setUser(createTestUser());
     store = storeRepository.save(store);
 
-    result = outfitRepository.findByStoreId(store.getId());
+    result = outfitRepository.findByStorefrontStoreIdOrderByIndexAsc(store.getId());
 
     assertTrue(result.isEmpty());
   }
@@ -135,7 +135,7 @@ class OutfitRepositoryTest {
     outfitProduct.setOutfit(outfit);
     outfitProduct = outfitProductRepository.save(outfitProduct);
 
-    result = outfitRepository.findByStoreId(store.getId());
+    result = outfitRepository.findByStorefrontStoreIdOrderByIndexAsc(store.getId());
 
     assertEquals(1, result.size());
     assertTrue(result.contains(outfit));
@@ -262,7 +262,7 @@ class OutfitRepositoryTest {
     outfitProduct.setOutfit(outfit3);
     outfitProduct = outfitProductRepository.save(outfitProduct);
 
-    result = outfitRepository.findByStoreId(store1.getId());
+    result = outfitRepository.findByStorefrontStoreIdOrderByIndexAsc(store1.getId());
 
     assertEquals(2, result.size());
 

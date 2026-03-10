@@ -12,11 +12,7 @@ public interface OutfitProductRepository extends JpaRepository<OutfitProduct, UU
   @Query("select op.index from OutfitProduct op where op.outfit.id = :id order by op.index asc")
   public List<Integer> findOutfitProductIndicesById(UUID id);
 
-  @Query("select op from OutfitProduct op where op.outfit.id = :id order by op.index asc")
-  public List<OutfitProduct> findOutfitProductsById(UUID id);
+  List<OutfitProduct> findByOutfitIdOrderByIndexAsc(UUID outfitId);
 
-  @Query(
-      "select op from OutfitProduct op where op.outfit.id = :outfitId and op.product.id = :productId")
-  public Optional<OutfitProduct> findProductRelationByOutfitIdAndProductId(
-      UUID outfitId, UUID productId);
+  Optional<OutfitProduct> findByOutfitIdAndProductId(UUID outfitId, UUID productId);
 }
