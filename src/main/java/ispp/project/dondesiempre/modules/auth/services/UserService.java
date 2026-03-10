@@ -14,10 +14,8 @@ import ispp.project.dondesiempre.modules.stores.models.Store;
 import ispp.project.dondesiempre.modules.stores.models.Storefront;
 import ispp.project.dondesiempre.modules.stores.repositories.StoreRepository;
 import ispp.project.dondesiempre.modules.stores.repositories.StorefrontRepository;
+import ispp.project.dondesiempre.utils.cloudinary.CoordinatesService;
 import lombok.RequiredArgsConstructor;
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.PrecisionModel;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -33,6 +31,7 @@ public class UserService {
   private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
   private final ApplicationContext applicationContext;
+  private final CoordinatesService coordinatesService;
 
   public boolean checkPassword(User user, String rawPassword) {
     return passwordEncoder.matches(rawPassword, user.getPassword());
@@ -50,16 +49,16 @@ public class UserService {
     userRepository.save(user);
 
     Storefront storefront = new Storefront();
-    if (dto.getPrimaryColor() != null) storefront.setPrimaryColor(dto.getPrimaryColor());
-    if (dto.getSecondaryColor() != null) storefront.setSecondaryColor(dto.getSecondaryColor());
+    if (dto.getPrimaryColor() != null)
+      storefront.setPrimaryColor(dto.getPrimaryColor());
+    if (dto.getSecondaryColor() != null)
+      storefront.setSecondaryColor(dto.getSecondaryColor());
     storefrontRepository.save(storefront);
-
-    GeometryFactory gf = new GeometryFactory(new PrecisionModel(), 4326);
 
     Store store = new Store();
     store.setName(dto.getName());
     store.setEmail(dto.getEmail());
-    store.setLocation(gf.createPoint(new Coordinate(dto.getLongitude(), dto.getLatitude())));
+    store.setLocation(coordinatesService.createPoint(dto.getLongitude(), dto.getLatitude()));
     store.setAddress(dto.getAddress());
     store.setOpeningHours(dto.getOpeningHours());
     store.setAcceptsShipping(dto.getAcceptsShipping());
@@ -93,9 +92,7 @@ public class UserService {
     return new ClientDTO(clientRepository.save(client));
   }
 
-  @Transactional(
-      readOnly = true,
-      rollbackFor = {ResourceNotFoundException.class, UnauthorizedException.class})
+  @Transactional(readOnly = true, rollbackFor = { ResourceNotFoundException.class, UnauthorizedException.class })
   public Client getCurrentClient() throws ResourceNotFoundException, UnauthorizedException {
     User currentUser = applicationContext.getBean(AuthService.class).getCurrentUser();
     return clientRepository
@@ -103,9 +100,7 @@ public class UserService {
         .orElseThrow(() -> new ResourceNotFoundException("Current client not found."));
   }
 
-  @Transactional(
-      readOnly = true,
-      rollbackFor = {ResourceNotFoundException.class, UnauthorizedException.class})
+  @Transactional(readOnly = true, rollbackFor = { ResourceNotFoundException.class, UnauthorizedException.class })
   public Store getCurrentStore() throws ResourceNotFoundException, UnauthorizedException {
     User currentUser = applicationContext.getBean(AuthService.class).getCurrentUser();
     return storeRepository

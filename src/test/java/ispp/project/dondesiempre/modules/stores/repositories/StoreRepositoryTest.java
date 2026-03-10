@@ -9,13 +9,11 @@ import ispp.project.dondesiempre.modules.auth.models.User;
 import ispp.project.dondesiempre.modules.auth.repositories.UserRepository;
 import ispp.project.dondesiempre.modules.stores.models.Store;
 import ispp.project.dondesiempre.modules.stores.models.Storefront;
+import ispp.project.dondesiempre.utils.cloudinary.CoordinatesService;
+
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.Point;
-import org.locationtech.jts.geom.PrecisionModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
@@ -25,19 +23,18 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 public class StoreRepositoryTest {
 
-  @Autowired private StoreRepository storeRepository;
-  @Autowired private UserRepository userRepository;
+  @Autowired
+  private StoreRepository storeRepository;
+  @Autowired
+  private UserRepository userRepository;
+  @Autowired
+  CoordinatesService coordinatesService;
 
-  private final GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
   private int testUserIndex = 0;
 
   @BeforeEach
   void setUp() {
     testUserIndex = 0;
-  }
-
-  private Point createPoint(double longitude, double latitude) {
-    return geometryFactory.createPoint(new Coordinate(longitude, latitude));
   }
 
   private User createTestUser() {
@@ -55,7 +52,7 @@ public class StoreRepositoryTest {
     store.setOpeningHours("09:00-18:00");
     store.setPhone("123456789");
     store.setAcceptsShipping(true);
-    store.setLocation(createPoint(longitude, latitude));
+    store.setLocation(coordinatesService.createPoint(longitude, latitude));
     store.setUser(createTestUser());
 
     Storefront storefront = new Storefront();
@@ -70,11 +67,10 @@ public class StoreRepositoryTest {
     createTestStore("Tienda Dos Hermanas", -5.932650, 37.290025);
 
     // Cuando: Buscamos en un cuadrado amplio que la contiene
-    List<Store> result =
-        storeRepository.findStoresInBoundingBox(
-            -6.000000, 37.000000, // minLon, minLat (Suroeste)
-            -5.800000, 37.500000, // maxLon, maxLat (Noreste)
-            500);
+    List<Store> result = storeRepository.findStoresInBoundingBox(
+        -6.000000, 37.000000, // minLon, minLat (Suroeste)
+        -5.800000, 37.500000, // maxLon, maxLat (Noreste)
+        500);
 
     // Entonces: Debería encontrarla
     assertEquals(1, result.size());
@@ -109,10 +105,9 @@ public class StoreRepositoryTest {
 
     // Cuando: Buscamos donde uno de los bordes del cuadrado toca exactamente la
     // tienda
-    List<Store> result =
-        storeRepository.findStoresInBoundingBox(
-            -5.90, 37.00, // minLon coincide exactamente con la tienda
-            -5.00, 38.00, 500);
+    List<Store> result = storeRepository.findStoresInBoundingBox(
+        -5.90, 37.00, // minLon coincide exactamente con la tienda
+        -5.00, 38.00, 500);
 
     // Entonces: ST_MakeEnvelope es inclusivo (>= y <=), por lo que debe encontrarla
     assertEquals(1, result.size());
