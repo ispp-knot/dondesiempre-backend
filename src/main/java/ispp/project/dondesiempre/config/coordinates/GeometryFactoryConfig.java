@@ -10,7 +10,6 @@ public class GeometryFactoryConfig {
 
     @Bean
     public GeometryFactory geometryFactory() {
-        // 4326 = WGS84
         return new GeometryFactory(new PrecisionModel(), 4326);
     }
 }

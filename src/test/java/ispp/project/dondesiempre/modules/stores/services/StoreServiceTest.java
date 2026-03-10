@@ -10,10 +10,8 @@ import static org.mockito.Mockito.when;
 
 import ispp.project.dondesiempre.mockEntities.StoreMockEntities;
 import ispp.project.dondesiempre.modules.auth.services.AuthService;
-import ispp.project.dondesiempre.modules.clients.models.Client;
 import ispp.project.dondesiempre.modules.common.exceptions.InvalidBoundingBoxException;
 import ispp.project.dondesiempre.modules.common.exceptions.ResourceNotFoundException;
-import ispp.project.dondesiempre.modules.follows.models.StoreFollower;
 import ispp.project.dondesiempre.modules.stores.dtos.StoreDTO;
 import ispp.project.dondesiempre.modules.stores.models.SocialNetwork;
 import ispp.project.dondesiempre.modules.stores.models.Store;
@@ -35,13 +33,18 @@ import org.springframework.context.ApplicationContext;
 @ExtendWith(MockitoExtension.class)
 public class StoreServiceTest {
 
-  @Mock private StoreRepository storeRepository;
-  @Mock private StoreSocialNetworkRepository socialNetworkRepository;
-  @Mock private AuthService authService;
+  @Mock
+  private StoreRepository storeRepository;
+  @Mock
+  private StoreSocialNetworkRepository socialNetworkRepository;
+  @Mock
+  private AuthService authService;
 
-  @Mock private ApplicationContext applicationContext;
+  @Mock
+  private ApplicationContext applicationContext;
 
-  @InjectMocks private StoreService storeService;
+  @InjectMocks
+  private StoreService storeService;
 
   private Store store;
   private UUID storeId;
@@ -57,11 +60,8 @@ public class StoreServiceTest {
     store.setStorefront(storefront);
   }
 
-  private static final Client TEST_CLIENT = StoreMockEntities.sampleClient();
   private static final UUID TEST_STORE_ID = UUID.randomUUID();
   private static final Store TEST_STORE = StoreMockEntities.sampleStore(TEST_STORE_ID);
-  private static final StoreFollower TEST_FOLLOWER =
-      StoreMockEntities.sampleFollower(TEST_CLIENT, TEST_STORE);
 
   @Test
   void shouldReturnStore_whenFindByIdExists() {

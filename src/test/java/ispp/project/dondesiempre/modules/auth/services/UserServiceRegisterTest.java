@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -20,10 +21,15 @@ import ispp.project.dondesiempre.modules.stores.models.Store;
 import ispp.project.dondesiempre.modules.stores.models.Storefront;
 import ispp.project.dondesiempre.modules.stores.repositories.StoreRepository;
 import ispp.project.dondesiempre.modules.stores.repositories.StorefrontRepository;
+import ispp.project.dondesiempre.utils.cloudinary.CoordinatesService;
+
 import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.PrecisionModel;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -33,14 +39,23 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @ExtendWith(MockitoExtension.class)
 class UserServiceRegisterTest {
 
-  @Mock private UserRepository userRepository;
-  @Mock private ClientRepository clientRepository;
-  @Mock private StoreRepository storeRepository;
-  @Mock private StorefrontRepository storefrontRepository;
-  @Mock private PasswordEncoder passwordEncoder;
-  @Mock private ApplicationContext applicationContext;
+  @Mock
+  private UserRepository userRepository;
+  @Mock
+  private ClientRepository clientRepository;
+  @Mock
+  private StoreRepository storeRepository;
+  @Mock
+  private StorefrontRepository storefrontRepository;
+  @Mock
+  private PasswordEncoder passwordEncoder;
+  @Mock
+  private ApplicationContext applicationContext;
+  @Mock
+  private CoordinatesService coordinatesService;
 
-  @InjectMocks private UserService userService;
+  @InjectMocks
+  private UserService userService;
 
   // --- registerStore ---
 
@@ -50,7 +65,12 @@ class UserServiceRegisterTest {
     when(passwordEncoder.encode("Password1!")).thenReturn("hashed");
     when(userRepository.save(any(User.class))).thenReturn(new User());
     when(storefrontRepository.save(any(Storefront.class))).thenReturn(new Storefront());
-
+    when(coordinatesService.createPoint(anyDouble(), anyDouble()))
+        .thenAnswer(invocation -> {
+          double lon = invocation.getArgument(0);
+          double lat = invocation.getArgument(1);
+          return new GeometryFactory(new PrecisionModel(), 4326).createPoint(new Coordinate(lon, lat));
+        });
     Store savedStore = new Store();
     savedStore.setId(UUID.randomUUID());
     savedStore.setName("Test Store");
@@ -84,9 +104,8 @@ class UserServiceRegisterTest {
     verify(storefrontRepository)
         .save(
             org.mockito.ArgumentMatchers.argThat(
-                sf ->
-                    "#000000".equals(sf.getPrimaryColor())
-                        && "#ffffff".equals(sf.getSecondaryColor())));
+                sf -> "#000000".equals(sf.getPrimaryColor())
+                    && "#ffffff".equals(sf.getSecondaryColor())));
   }
 
   @Test
