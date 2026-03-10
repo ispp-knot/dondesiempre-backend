@@ -38,7 +38,7 @@ public class OutfitProductService {
   @Transactional(readOnly = true)
   public OutfitProduct findProductRelation(UUID outfitId, UUID productId) {
     return outfitProductRepository
-        .findProductRelation(outfitId, productId)
+        .findProductRelationByOutfitIdAndProductId(outfitId, productId)
         .orElseThrow(
             () -> new ResourceNotFoundException("Requested product does not belong to outfit."));
   }

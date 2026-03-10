@@ -10,8 +10,9 @@ import org.springframework.data.jpa.repository.Query;
 public interface OutfitTagRelationRepository extends JpaRepository<OutfitTagRelation, UUID> {
 
   @Query("select ot from OutfitTagRelation ot where ot.outfit.id = :id")
-  public List<OutfitTagRelation> findOutfitTagsById(UUID id);
+  public List<OutfitTagRelation> findOutfitTagsByOutfitId(UUID id);
 
-  @Query("select ot from OutfitTagRelation ot where ot.outfit.id = :id and ot.tag.id = :tagId")
-  public Optional<OutfitTagRelation> findTagRelation(UUID id, UUID tagId);
+  @Query(
+      "select ot from OutfitTagRelation ot where ot.outfit.id = :outfitId and ot.tag.id = :tagId")
+  public Optional<OutfitTagRelation> findTagRelationByOutfitIdAndTagId(UUID outfitId, UUID tagId);
 }

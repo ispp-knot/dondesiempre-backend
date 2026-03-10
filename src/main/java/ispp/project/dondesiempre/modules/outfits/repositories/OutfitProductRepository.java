@@ -15,6 +15,8 @@ public interface OutfitProductRepository extends JpaRepository<OutfitProduct, UU
   @Query("select op from OutfitProduct op where op.outfit.id = :id order by op.index asc")
   public List<OutfitProduct> findOutfitProductsById(UUID id);
 
-  @Query("select op from OutfitProduct op where op.outfit.id = :id and op.product.id = :productId")
-  public Optional<OutfitProduct> findProductRelation(UUID id, UUID productId);
+  @Query(
+      "select op from OutfitProduct op where op.outfit.id = :outfitId and op.product.id = :productId")
+  public Optional<OutfitProduct> findProductRelationByOutfitIdAndProductId(
+      UUID outfitId, UUID productId);
 }

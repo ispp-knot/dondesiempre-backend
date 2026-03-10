@@ -12,5 +12,5 @@ public interface OutfitTagRepository extends JpaRepository<OutfitTag, UUID> {
   public Optional<OutfitTag> findByName(String name);
 
   @Query("select ot.tag.name from OutfitTagRelation ot where ot.outfit.id = :id")
-  public List<String> findOutfitTagsById(UUID id);
+  public List<String> findOutfitTagsByOutfitId(UUID id);
 }

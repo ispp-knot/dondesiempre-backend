@@ -81,7 +81,7 @@ public class ProductService {
 
   @Transactional(readOnly = true)
   public List<Product> getOutfitProductsById(UUID outfitId) {
-    return productRepository.findOutfitProductsById(outfitId);
+    return productRepository.findOutfitProductsByOutfitId(outfitId);
   }
 
   @Transactional(readOnly = true)

@@ -35,6 +35,6 @@ public class OutfitTagService {
 
   @Transactional(readOnly = true)
   public List<String> findOutfitTagsById(UUID outfitId) {
-    return outfitTagRepository.findOutfitTagsById(outfitId);
+    return outfitTagRepository.findOutfitTagsByOutfitId(outfitId);
   }
 }
