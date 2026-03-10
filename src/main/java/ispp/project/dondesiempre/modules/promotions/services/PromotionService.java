@@ -6,15 +6,14 @@ import ispp.project.dondesiempre.modules.common.exceptions.ResourceNotFoundExcep
 import ispp.project.dondesiempre.modules.common.exceptions.UnauthorizedException;
 import ispp.project.dondesiempre.modules.products.dtos.ProductDTO;
 import ispp.project.dondesiempre.modules.products.models.Product;
-import ispp.project.dondesiempre.modules.products.repositories.ProductRepository;
+import ispp.project.dondesiempre.modules.products.services.ProductService;
 import ispp.project.dondesiempre.modules.promotions.dtos.PromotionCreationDTO;
 import ispp.project.dondesiempre.modules.promotions.dtos.PromotionUpdateDTO;
 import ispp.project.dondesiempre.modules.promotions.models.Promotion;
 import ispp.project.dondesiempre.modules.promotions.models.PromotionProduct;
-import ispp.project.dondesiempre.modules.promotions.repositories.PromotionProductRepository;
 import ispp.project.dondesiempre.modules.promotions.repositories.PromotionRepository;
 import ispp.project.dondesiempre.modules.stores.models.Store;
-import ispp.project.dondesiempre.modules.stores.repositories.StoreRepository;
+import ispp.project.dondesiempre.modules.stores.services.StoreService;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -30,10 +29,10 @@ public class PromotionService {
 
   private final ApplicationContext applicationContext;
   private final PromotionRepository promotionRepository;
-  private final ProductRepository productRepository;
-  private final PromotionProductRepository promotionProductRepository;
-  private final StoreRepository storeRepository;
   private final AuthService authService;
+  private final StoreService storeService;
+  private final ProductService productService;
+  private final PromotionProductService promotionProductService;
 
   @Transactional(
       rollbackFor = {
@@ -52,26 +51,14 @@ public class PromotionService {
     promotion.setDiscountPercentage(dto.getDiscountPercentage());
     promotion.setDescription(dto.getDescription());
 
-    Store store =
-        storeRepository
-            .findById(dto.getStoreId())
-            .orElseThrow(
-                () ->
-                    new ResourceNotFoundException("Store not found with id: " + dto.getStoreId()));
+    Store store = storeService.findById(dto.getStoreId());
     promotion.setStore(store);
 
     authService.assertUserOwnsStore(store);
 
     Set<Product> products =
         dto.getProductIds().stream()
-            .map(
-                productId ->
-                    productRepository
-                        .findById(productId)
-                        .orElseThrow(
-                            () ->
-                                new ResourceNotFoundException(
-                                    "Product not found with id: " + productId)))
+            .map(productService::getProductById)
             .collect(java.util.stream.Collectors.toSet());
 
     if (products.stream()
@@ -99,13 +86,7 @@ public class PromotionService {
       throws UnauthorizedException, ResourceNotFoundException, InvalidRequestException {
     Promotion promotion =
         applicationContext.getBean(PromotionService.class).getPromotionById(promotionId);
-    Product product =
-        productRepository
-            .findById(productId)
-            .orElseThrow(
-                () ->
-                    new ResourceNotFoundException(
-                        "Unable to add product. Product not found with id: " + productId));
+    Product product = productService.getProductById(productId);
     PromotionProduct promotionProduct = new PromotionProduct();
     promotionProduct.setPromotion(promotion);
     promotionProduct.setProduct(product);
@@ -113,7 +94,7 @@ public class PromotionService {
     authService.assertUserOwnsStore(promotion.getStore());
 
     try {
-      return promotionProductRepository.save(promotionProduct);
+      return promotionProductService.save(promotionProduct);
     } catch (Exception e) {
       throw new InvalidRequestException(
           "This product is already part of the promotion or there was an error adding it.");
@@ -178,14 +159,7 @@ public class PromotionService {
     if (dto.getProductIds() != null && !dto.getProductIds().isEmpty()) {
       Set<Product> products =
           dto.getProductIds().stream()
-              .map(
-                  productId ->
-                      productRepository
-                          .findById(productId)
-                          .orElseThrow(
-                              () ->
-                                  new ResourceNotFoundException(
-                                      "Product not found with id: " + productId)))
+              .map(productService::getProductById)
               .collect(Collectors.toSet());
 
       if (products.stream()
@@ -195,7 +169,7 @@ public class PromotionService {
       }
 
       // Remove existing associations
-      promotionProductRepository.findByPromotionId(id).forEach(promotionProductRepository::delete);
+      promotionProductService.findByPromotionId(id).forEach(promotionProductService::delete);
 
       // Add new associations
       products.forEach(
@@ -213,7 +187,7 @@ public class PromotionService {
   public void deletePromotion(UUID id) throws UnauthorizedException, ResourceNotFoundException {
     Promotion promotion = applicationContext.getBean(PromotionService.class).getPromotionById(id);
     authService.assertUserOwnsStore(promotion.getStore());
-    promotionProductRepository.findByPromotionId(id).forEach(promotionProductRepository::delete);
+    promotionProductService.findByPromotionId(id).forEach(promotionProductService::delete);
     promotionRepository.delete(promotion);
   }
 
@@ -223,7 +197,7 @@ public class PromotionService {
     applicationContext
         .getBean(PromotionService.class)
         .getPromotionById(promotionId); // Ensure promotion exists
-    List<Product> products = promotionProductRepository.findProductsByPromotionId(promotionId);
+    List<Product> products = productService.findProductsByPromotionId(promotionId);
     return products.stream().map(ProductDTO::new).collect(Collectors.toList());
   }
 
@@ -234,6 +208,6 @@ public class PromotionService {
 
   @Transactional(readOnly = true)
   public List<Promotion> getPromotionsByProductId(UUID productId) {
-    return promotionProductRepository.findPromotionsByProductId(productId);
+    return promotionRepository.findPromotionsByProductId(productId);
   }
 }
