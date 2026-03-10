@@ -14,12 +14,10 @@ public class OutfitProductDTO {
 
   private Integer index;
 
-  @JsonUnwrapped
-  private ProductDTO product;
+  @JsonUnwrapped private ProductDTO product;
 
   public OutfitProductDTO(OutfitProduct product) {
     this.index = product.getIndex();
     this.product = new ProductDTO(product.getProduct());
-
   }
 }
