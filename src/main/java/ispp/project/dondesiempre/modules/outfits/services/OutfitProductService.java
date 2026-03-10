@@ -17,7 +17,7 @@ public class OutfitProductService {
 
   @Transactional(readOnly = true)
   public List<OutfitProduct> findOutfitProductsById(UUID outfitId) {
-    return outfitProductRepository.findOutfitProductsById(outfitId);
+    return outfitProductRepository.findByOutfitIdOrderByIndexAsc(outfitId);
   }
 
   @Transactional(readOnly = true)
@@ -38,7 +38,7 @@ public class OutfitProductService {
   @Transactional(readOnly = true)
   public OutfitProduct findProductRelation(UUID outfitId, UUID productId) {
     return outfitProductRepository
-        .findProductRelationByOutfitIdAndProductId(outfitId, productId)
+        .findByOutfitIdAndProductId(outfitId, productId)
         .orElseThrow(
             () -> new ResourceNotFoundException("Requested product does not belong to outfit."));
   }

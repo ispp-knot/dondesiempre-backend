@@ -103,6 +103,6 @@ public class ProductService {
 
   @Transactional
   public List<Product> findByStorefront(Storefront storefront) {
-    return productRepository.findByStorefrontId(storefront.getId());
+    return productRepository.findByStoreStorefrontId(storefront.getId());
   }
 }
