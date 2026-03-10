@@ -30,9 +30,6 @@ public interface OutfitRepository extends JpaRepository<Outfit, UUID> {
   @Query("select ot from OutfitTagRelation ot where ot.outfit.id = :id")
   public List<OutfitTagRelation> findOutfitOutfitTagsById(UUID id);
 
-  @Query("select o from Outfit o where o.storefront.id = :storefrontId")
-  public List<Outfit> findByStorefrontId(UUID storefrontId);
-
   @Query("select ot from OutfitTagRelation ot where ot.outfit.id = :id and ot.tag.id = :tagId")
   public Optional<OutfitTagRelation> findTagRelation(UUID id, UUID tagId);
 

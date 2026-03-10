@@ -66,11 +66,6 @@ public class OutfitService {
     return outfitRepository.findByStoreId(store.getId());
   }
 
-  @Transactional(readOnly = true)
-  public List<Outfit> findByStorefront(Storefront storefront) {
-    return outfitRepository.findByStorefrontId(storefront.getId());
-  }
-
   @Transactional(
       rollbackFor = {
         UnauthorizedException.class,

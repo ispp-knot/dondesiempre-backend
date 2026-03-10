@@ -51,22 +51,6 @@ public class OutfitController {
     return new ResponseEntity<>(dto, HttpStatus.OK);
   }
 
-  @GetMapping("storefronts/{storefrontId}/outfits")
-  @ResponseStatus(HttpStatus.FOUND)
-  public ResponseEntity<List<OutfitDTO>> getByStorefrontId(
-      @PathVariable("storefrontId") UUID storefrontId) {
-    List<OutfitDTO> dtos =
-        outfitService.findByStorefront(storefrontService.findById(storefrontId)).stream()
-            .map(
-                outfit ->
-                    new OutfitDTO(
-                        outfit,
-                        outfitService.findTagsByOutfitId(outfit.getId()),
-                        outfitService.findOutfitProductsByOutfitId(outfit.getId())))
-            .toList();
-    return new ResponseEntity<>(dtos, HttpStatus.OK);
-  }
-
   @GetMapping("stores/{storeId}/outfits")
   @ResponseStatus(HttpStatus.FOUND)
   public ResponseEntity<List<OutfitDTO>> getByStoreId(@PathVariable("storeId") UUID storeId) {
