@@ -26,10 +26,8 @@ public class RegisterClientDTO {
   @Size(max = 255)
   private String surname;
 
-  // Client fields (required)
-  @NotBlank @Phone private String phone;
+  @Phone private String phone;
 
-  @NotBlank
   @Size(max = 255)
   private String address;
 }
