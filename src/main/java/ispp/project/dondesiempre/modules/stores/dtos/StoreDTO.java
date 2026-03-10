@@ -33,8 +33,8 @@ public class StoreDTO {
     this.email = store.getEmail();
     this.address = store.getAddress();
     this.openingHours = store.getOpeningHours();
-    this.phone = store.getPhone();
-    this.aboutUs = store.getAboutUs();
+    this.phone = store.getPhone().orElse(null);
+    this.aboutUs = store.getAboutUs().orElse(null);
     this.acceptsShipping = store.getAcceptsShipping();
     if (store.getLocation() != null) {
       this.latitude = store.getLocation().getY();

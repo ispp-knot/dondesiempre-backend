@@ -10,6 +10,7 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import java.util.Optional;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
@@ -52,4 +53,12 @@ public class Product extends BaseEntity {
   @ManyToOne(optional = false)
   @OnDelete(action = OnDeleteAction.CASCADE)
   private Store store;
+
+  public Optional<String> getDescription() {
+    return Optional.ofNullable(this.description);
+  }
+
+  public Optional<String> getImage() {
+    return Optional.ofNullable(this.image);
+  }
 }
