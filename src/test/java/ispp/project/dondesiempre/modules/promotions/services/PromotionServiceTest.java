@@ -25,14 +25,10 @@ import ispp.project.dondesiempre.modules.promotions.models.PromotionProduct;
 import ispp.project.dondesiempre.modules.stores.models.Store;
 import ispp.project.dondesiempre.modules.stores.models.Storefront;
 import ispp.project.dondesiempre.modules.stores.repositories.StoreRepository;
+import ispp.project.dondesiempre.utils.cloudinary.CoordinatesService;
 import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.Point;
-import org.locationtech.jts.geom.PrecisionModel;
-import org.locationtech.jts.geom.impl.CoordinateArraySequence;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
@@ -51,6 +47,7 @@ public class PromotionServiceTest {
   @Autowired private ProductService productService;
   @Autowired private UserRepository userRepository;
   @MockitoBean private AuthService authService;
+  @Autowired CoordinatesService coordinatesService;
 
   private Storefront createStorefront() {
     Storefront storefront = new Storefront();
@@ -70,10 +67,7 @@ public class PromotionServiceTest {
     Store store = new Store();
     store.setName(name);
     store.setEmail(email);
-    store.setLocation(
-        new Point(
-            new CoordinateArraySequence(new Coordinate[] {new Coordinate(0.0, 0.0)}),
-            new GeometryFactory(new PrecisionModel(PrecisionModel.FIXED), 0)));
+    store.setLocation(coordinatesService.createPoint(0.0, 0.0));
     store.setAddress("123 Test Street");
     store.setOpeningHours("9am - 5pm");
     store.setAcceptsShipping(true);

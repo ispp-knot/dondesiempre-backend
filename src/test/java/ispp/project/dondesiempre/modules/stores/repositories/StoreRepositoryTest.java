@@ -5,39 +5,35 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import ispp.project.dondesiempre.config.coordinates.GeometryFactoryConfig;
 import ispp.project.dondesiempre.modules.auth.models.User;
 import ispp.project.dondesiempre.modules.auth.repositories.UserRepository;
 import ispp.project.dondesiempre.modules.stores.models.Store;
 import ispp.project.dondesiempre.modules.stores.models.Storefront;
+import ispp.project.dondesiempre.utils.cloudinary.CoordinatesService;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.Point;
-import org.locationtech.jts.geom.PrecisionModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = Replace.NONE)
+@Import({CoordinatesService.class, GeometryFactoryConfig.class})
 public class StoreRepositoryTest {
 
   @Autowired private StoreRepository storeRepository;
   @Autowired private UserRepository userRepository;
+  @Autowired CoordinatesService coordinatesService;
 
-  private final GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
   private int testUserIndex = 0;
 
   @BeforeEach
   void setUp() {
     testUserIndex = 0;
-  }
-
-  private Point createPoint(double longitude, double latitude) {
-    return geometryFactory.createPoint(new Coordinate(longitude, latitude));
   }
 
   private User createTestUser() {
@@ -55,7 +51,7 @@ public class StoreRepositoryTest {
     store.setOpeningHours("09:00-18:00");
     store.setPhone("123456789");
     store.setAcceptsShipping(true);
-    store.setLocation(createPoint(longitude, latitude));
+    store.setLocation(coordinatesService.createPoint(longitude, latitude));
     store.setUser(createTestUser());
 
     Storefront storefront = new Storefront();
