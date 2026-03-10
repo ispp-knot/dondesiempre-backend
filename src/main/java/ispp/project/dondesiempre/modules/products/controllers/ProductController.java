@@ -5,7 +5,8 @@ import ispp.project.dondesiempre.modules.products.dtos.ProductCreationDTO;
 import ispp.project.dondesiempre.modules.products.dtos.ProductDTO;
 import ispp.project.dondesiempre.modules.products.models.Product;
 import ispp.project.dondesiempre.modules.products.services.ProductService;
-import ispp.project.dondesiempre.modules.stores.models.Storefront;
+import ispp.project.dondesiempre.modules.stores.models.Store;
+import ispp.project.dondesiempre.modules.stores.services.StoreService;
 import ispp.project.dondesiempre.modules.stores.services.StorefrontService;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -14,7 +15,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
@@ -22,6 +31,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class ProductController {
 
+  private final StoreService storeService;
   private final ProductService productService;
   private final StorefrontService storefrontService;
 
@@ -64,11 +74,11 @@ public class ProductController {
     return new ResponseEntity<>(updatedProduct, HttpStatus.ACCEPTED);
   }
 
-  @GetMapping("/storefronts/{storefrontId}/products")
-  public ResponseEntity<List<ProductDTO>> getByStorefrontId(@PathVariable UUID storefrontId) {
-    Storefront storefront = storefrontService.findById(storefrontId);
+  @GetMapping("/stores/{storeId}/products")
+  public ResponseEntity<List<ProductDTO>> getByStoreId(@PathVariable UUID storeId) {
+    Store store = storeService.findById(storeId);
     List<ProductDTO> dtos =
-        productService.findByStorefront(storefront).stream().map(ProductDTO::new).toList();
+        productService.findByStore(store).stream().map(ProductDTO::new).toList();
     return new ResponseEntity<>(dtos, HttpStatus.OK);
   }
 }

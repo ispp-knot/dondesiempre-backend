@@ -11,6 +11,5 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
   @Query("SELECT p FROM Product p WHERE p.discountedPriceInCents != p.priceInCents")
   public List<Product> findAllDiscountedProducts();
 
-  @Query("select p from Product p where p.store.storefront.id = :storefrontId")
-  public List<Product> findByStorefrontId(UUID storefrontId);
+  public List<Product> findByStoreId(UUID storeId);
 }
