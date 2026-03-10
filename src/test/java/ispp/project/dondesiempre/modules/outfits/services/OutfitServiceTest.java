@@ -165,7 +165,6 @@ class OutfitServiceTest {
     dto.setName("New Outfit");
     dto.setDescription("Description");
     dto.setIndex(0);
-    dto.setStorefrontId(storefrontId);
     dto.setTags(List.of("casual"));
     dto.setProducts(List.of(productDTO));
     return dto;
@@ -188,7 +187,7 @@ class OutfitServiceTest {
     when(outfitProductService.findOutfitProductIndicesById(outfitId)).thenReturn(new ArrayList<>());
     when(outfitProductService.save(any())).thenReturn(outfitProduct);
 
-    Outfit result = outfitService.create(dto, null);
+    Outfit result = outfitService.create(storefrontId, dto, null);
 
     assertNotNull(result);
     assertEquals(outfitId, result.getId());
@@ -201,13 +200,13 @@ class OutfitServiceTest {
     OutfitCreationDTO dto = new OutfitCreationDTO();
     dto.setName("New Outfit");
     dto.setIndex(0);
-    dto.setStorefrontId(storefrontId);
     dto.setTags(List.of());
     dto.setProducts(null);
 
     when(storefrontService.findById(storefrontId)).thenReturn(storefront);
 
-    assertThrows(InvalidRequestException.class, () -> outfitService.create(dto, null));
+    assertThrows(
+        InvalidRequestException.class, () -> outfitService.create(storefrontId, dto, null));
     verify(outfitRepository, never()).save(any());
   }
 
@@ -216,13 +215,13 @@ class OutfitServiceTest {
     OutfitCreationDTO dto = new OutfitCreationDTO();
     dto.setName("New Outfit");
     dto.setIndex(0);
-    dto.setStorefrontId(storefrontId);
     dto.setTags(List.of());
     dto.setProducts(List.of());
 
     when(storefrontService.findById(storefrontId)).thenReturn(storefront);
 
-    assertThrows(InvalidRequestException.class, () -> outfitService.create(dto, null));
+    assertThrows(
+        InvalidRequestException.class, () -> outfitService.create(storefrontId, dto, null));
     verify(outfitRepository, never()).save(any());
   }
 
