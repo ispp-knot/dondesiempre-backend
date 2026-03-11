@@ -190,28 +190,28 @@ public class DataSeeder implements CommandLineRunner {
     Product p1 = createProduct(
         "Camiseta Lino Mediterráneo",
         2999,
-        2999,
+        20,
         "Camiseta de lino natural de verano.",
         productTypes.get("Camiseta"),
         store);
     Product p2 = createProduct(
         "Pantalón Palazzo Verano",
         4999,
-        3999,
+        30,
         "Pantalón fluido perfecto para el verano.",
         productTypes.get("Pantalón"),
         store);
     Product p3 = createProduct(
         "Vestido Midi Floral",
         6999,
-        6999,
+        40,
         "Vestido midi con estampado floral primaveral.",
         productTypes.get("Vestido"),
         store);
     Product p4 = createProduct(
         "Chaqueta Punto Artesanal",
         8999,
-        7499,
+        50,
         "Chaqueta de punto tejida a mano.",
         productTypes.get("Chaqueta"),
         store);
