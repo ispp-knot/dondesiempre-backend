@@ -4,6 +4,7 @@ import ispp.project.dondesiempre.modules.common.models.BaseEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,7 +14,9 @@ import org.hibernate.annotations.OnDeleteAction;
 @Entity
 @Getter
 @Setter
-@Table(name = "outfit_tag_relation")
+@Table(
+    name = "outfit_tag_relation",
+    uniqueConstraints = @UniqueConstraint(columnNames = {"outfit_id", "tag_id"}))
 public class OutfitTagRelation extends BaseEntity {
   @NotNull
   @ManyToOne(optional = false)

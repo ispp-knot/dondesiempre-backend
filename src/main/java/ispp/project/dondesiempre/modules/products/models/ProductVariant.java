@@ -5,6 +5,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,7 +15,9 @@ import org.hibernate.annotations.OnDeleteAction;
 @Entity
 @Getter
 @Setter
-@Table(name = "product_variants")
+@Table(
+    name = "product_variants",
+    uniqueConstraints = @UniqueConstraint(columnNames = {"product_id", "size_id", "color_id"}))
 public class ProductVariant extends BaseEntity {
 
   @NotNull
