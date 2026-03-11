@@ -3,6 +3,8 @@ package ispp.project.dondesiempre.modules.stores.controllers;
 import ispp.project.dondesiempre.modules.stores.dtos.StorefrontDTO;
 import ispp.project.dondesiempre.modules.stores.models.Storefront;
 import ispp.project.dondesiempre.modules.stores.services.StorefrontService;
+import jakarta.validation.Valid;
+
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -31,7 +33,7 @@ public class StorefrontController {
   // tienda
   @PutMapping("/{id}")
   public ResponseEntity<StorefrontDTO> updateStorefront(
-      @PathVariable UUID id, @RequestBody StorefrontDTO storefrontDTO) {
+      @PathVariable UUID id, @RequestBody @Valid StorefrontDTO storefrontDTO) {
     Storefront storefront = storefrontService.findById(id);
     // userService.assertUserOwnsStore(storefront.getStore());
     StorefrontDTO updated = storefrontService.updateStorefront(id, storefrontDTO);

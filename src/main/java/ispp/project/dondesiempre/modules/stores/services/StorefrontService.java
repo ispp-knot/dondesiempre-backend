@@ -27,16 +27,23 @@ public class StorefrontService {
             () -> new ResourceNotFoundException("Storefront with ID " + id + " not found."));
   }
 
-  @Transactional(rollbackFor = {UnauthorizedException.class, ResourceNotFoundException.class})
+  @Transactional(rollbackFor = { UnauthorizedException.class, ResourceNotFoundException.class })
   public StorefrontDTO updateStorefront(UUID id, StorefrontDTO dto)
       throws UnauthorizedException, ResourceNotFoundException {
     Storefront storefront = applicationContext.getBean(StorefrontService.class).findById(id);
     authService.assertUserOwnsStore(storefront.getStore());
 
-    storefront.setIsFirstCollections(dto.getIsFirstCollections());
-    storefront.setPrimaryColor(dto.getPrimaryColor());
-    storefront.setSecondaryColor(dto.getSecondaryColor());
-    storefront.setBannerImageUrl(dto.getBannerImageUrl());
+    if (dto.getIsFirstCollections() != null)
+      storefront.setIsFirstCollections(dto.getIsFirstCollections());
+
+    if (dto.getPrimaryColor() != null)
+      storefront.setPrimaryColor(dto.getPrimaryColor());
+
+    if (dto.getSecondaryColor() != null)
+      storefront.setSecondaryColor(dto.getSecondaryColor());
+
+    if (dto.getBannerImageUrl() != null)
+      storefront.setBannerImageUrl(dto.getBannerImageUrl());
 
     Storefront updatedStorefront = storefrontRepository.save(storefront);
 
