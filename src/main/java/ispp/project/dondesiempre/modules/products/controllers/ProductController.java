@@ -1,6 +1,6 @@
 package ispp.project.dondesiempre.modules.products.controllers;
 
-import ispp.project.dondesiempre.modules.products.dtos.DiscountModificationDTO;
+import ispp.project.dondesiempre.modules.products.dtos.DiscountUpdateDTO;
 import ispp.project.dondesiempre.modules.products.dtos.ProductCreationDTO;
 import ispp.project.dondesiempre.modules.products.dtos.ProductDTO;
 import ispp.project.dondesiempre.modules.products.models.Product;
@@ -58,7 +58,7 @@ public class ProductController {
 
   @PutMapping("products/{id}/discount")
   public ResponseEntity<Product> updateDiscount(
-      @PathVariable UUID id, @RequestBody DiscountModificationDTO discount) {
+      @PathVariable UUID id, @RequestBody DiscountUpdateDTO discount) {
     Product updatedProduct = productService.updateProductDiscount(id, discount.getDiscountedPriceInCents());
     return new ResponseEntity<>(updatedProduct, HttpStatus.ACCEPTED);
   }

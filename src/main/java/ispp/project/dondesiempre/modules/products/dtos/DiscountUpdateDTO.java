@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class DiscountModificationDTO {
+public class DiscountUpdateDTO {
 
   private Integer discountedPriceInCents;
 }
