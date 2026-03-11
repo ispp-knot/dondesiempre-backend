@@ -1,10 +1,12 @@
 package ispp.project.dondesiempre.modules.stores.dtos;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class StoreUpdateDTO {
   private String name;
   private String email;

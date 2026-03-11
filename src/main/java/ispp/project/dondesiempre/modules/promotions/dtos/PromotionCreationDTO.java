@@ -8,10 +8,12 @@ import jakarta.validation.constraints.Size;
 import java.util.List;
 import java.util.UUID;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class PromotionCreationDTO {
 
   @NotNull
@@ -23,11 +25,14 @@ public class PromotionCreationDTO {
   @Max(100)
   private Integer discountPercentage;
 
-  @NotNull private boolean isActive;
+  @NotNull
+  private boolean isActive;
 
-  @NotEmpty private List<UUID> productIds;
+  @NotEmpty
+  private List<UUID> productIds;
 
-  @NotNull private UUID storeId;
+  @NotNull
+  private UUID storeId;
 
   private String description;
 }
