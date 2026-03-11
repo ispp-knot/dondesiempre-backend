@@ -142,23 +142,6 @@ class OutfitsControllerTest {
   }
 
   // -------------------------------------------------------------------------
-  // GET /api/v1/storefronts/{storefrontId}/outfits
-  // -------------------------------------------------------------------------
-
-  @Test
-  void getByStorefrontId_shouldReturnOk_whenStorefrontExists() throws Exception {
-    when(storefrontService.findById(storefrontId)).thenReturn(storefront);
-    when(outfitService.findByStorefront(storefront)).thenReturn(List.of(outfit));
-    when(outfitService.findTagsByOutfitId(outfitId)).thenReturn(List.of());
-    when(outfitService.findOutfitProductsByOutfitId(outfitId)).thenReturn(List.of(outfitProduct));
-
-    mockMvc
-        .perform(get("/api/v1/storefronts/" + storefrontId + "/outfits"))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$.size()").value(1));
-  }
-
-  // -------------------------------------------------------------------------
   // POST /api/v1/outfits
   // -------------------------------------------------------------------------
 

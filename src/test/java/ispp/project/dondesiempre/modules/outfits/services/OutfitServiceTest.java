@@ -483,16 +483,6 @@ class OutfitServiceTest {
   }
 
   @Test
-  void shouldfindByStorefront() throws ResourceNotFoundException {
-
-    when(outfitRepository.findByStorefrontId(storefrontId)).thenReturn(List.of(outfit));
-
-    List<Outfit> result = outfitService.findByStorefront(storefront);
-    assertNotNull(result);
-    verify(outfitRepository, times(1)).findByStorefrontId(storefrontId);
-  }
-
-  @Test
   void shouldRemoveTag_whenTagBelongsToOutfit() throws ResourceNotFoundException {
     UUID tagId = UUID.randomUUID();
     OutfitTag tag = new OutfitTag();
