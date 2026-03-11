@@ -36,20 +36,13 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class ProductControllerTest {
 
-  @Autowired
-  private ProductController productController;
-  @Autowired
-  private ProductTypeRepository productTypeRepository;
-  @Autowired
-  private StoreRepository storeRepository;
-  @Autowired
-  private UserRepository userRepository;
-  @MockitoBean
-  private AuthService authService;
-  @MockitoBean
-  private CloudinaryService cloudinaryService;
-  @Autowired
-  private CoordinatesService coordinatesService;
+  @Autowired private ProductController productController;
+  @Autowired private ProductTypeRepository productTypeRepository;
+  @Autowired private StoreRepository storeRepository;
+  @Autowired private UserRepository userRepository;
+  @MockitoBean private AuthService authService;
+  @MockitoBean private CloudinaryService cloudinaryService;
+  @Autowired private CoordinatesService coordinatesService;
 
   private User testUser;
 

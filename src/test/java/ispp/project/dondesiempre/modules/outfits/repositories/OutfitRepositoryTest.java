@@ -29,24 +29,16 @@ import org.springframework.context.annotation.Import;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = Replace.NONE)
-@Import({ CoordinatesService.class, GeometryFactoryConfig.class })
+@Import({CoordinatesService.class, GeometryFactoryConfig.class})
 class OutfitRepositoryTest {
-  @Autowired
-  private OutfitRepository outfitRepository;
-  @Autowired
-  private StoreRepository storeRepository;
-  @Autowired
-  private StorefrontRepository storefrontRepository;
-  @Autowired
-  private ProductRepository productRepository;
-  @Autowired
-  private OutfitProductRepository outfitProductRepository;
-  @Autowired
-  private ProductTypeRepository typeRepository;
-  @Autowired
-  private UserRepository userRepository;
-  @Autowired
-  private CoordinatesService coordinatesService;
+  @Autowired private OutfitRepository outfitRepository;
+  @Autowired private StoreRepository storeRepository;
+  @Autowired private StorefrontRepository storefrontRepository;
+  @Autowired private ProductRepository productRepository;
+  @Autowired private OutfitProductRepository outfitProductRepository;
+  @Autowired private ProductTypeRepository typeRepository;
+  @Autowired private UserRepository userRepository;
+  @Autowired private CoordinatesService coordinatesService;
 
   private int testUserIndex = 0;
 
@@ -224,9 +216,10 @@ class OutfitRepositoryTest {
       product.setPriceInCents(i * 1000); // Set price in cents (e.g., 1000 = $10.00)
       product.setDiscountPercentage(i + 1); // Set discounted price in cents
       product.setType(type);
-      Store storeToSet = (i < 3)
-          ? store1
-          : store2; // First 3 products belong to store1, last product belongs to store2
+      Store storeToSet =
+          (i < 3)
+              ? store1
+              : store2; // First 3 products belong to store1, last product belongs to store2
       product.setStore(storeToSet);
       product = productRepository.save(product);
 
