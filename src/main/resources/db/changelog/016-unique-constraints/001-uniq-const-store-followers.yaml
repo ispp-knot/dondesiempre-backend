@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1773231005070-unique-store-followers
+      author: emilio
+      changes:
+        - addUniqueConstraint:
+            tableName: store_followers
+            columnNames: client_id, store_id
+            constraintName: uk_store_followers_client_store
