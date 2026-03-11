@@ -7,3 +7,5 @@ databaseChangeLog:
       file: db/changelog/016-unique-constraints/003-uniq-const-outfit-tag-relation.yaml
   - include:
       file: db/changelog/016-unique-constraints/004-uniq-const-product-variant.yaml
+  - include:
+      file: db/changelog/016-unique-constraints/005-uniq-const-product-variant.yaml
