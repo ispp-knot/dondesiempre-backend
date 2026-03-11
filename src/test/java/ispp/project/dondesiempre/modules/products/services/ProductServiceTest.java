@@ -27,13 +27,20 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class ProductServiceTest {
 
-  @Autowired private ProductService productService;
-  @Autowired private ProductTypeRepository productTypeRepository;
-  @Autowired private StoreRepository storeRepository;
-  @Autowired private UserRepository userRepository;
-  @MockitoBean private AuthService authService;
-  @MockitoBean private CloudinaryService cloudinaryService;
-  @Autowired private CoordinatesService coordinatesService;
+  @Autowired
+  private ProductService productService;
+  @Autowired
+  private ProductTypeRepository productTypeRepository;
+  @Autowired
+  private StoreRepository storeRepository;
+  @Autowired
+  private UserRepository userRepository;
+  @MockitoBean
+  private AuthService authService;
+  @MockitoBean
+  private CloudinaryService cloudinaryService;
+  @Autowired
+  private CoordinatesService coordinatesService;
 
   private User testUser;
 
@@ -111,7 +118,7 @@ public class ProductServiceTest {
 
     Product product = productService.createProduct(dto, null, saved_store.getId());
     Product updatedProduct = productService.updateProductDiscount(product.getId(), 700);
-    assert updatedProduct.getDiscountedPriceInCents().get() == 700;
+    assert updatedProduct.getDiscountPercentage().get() == 700;
     assert updatedProduct.getId().equals(product.getId());
   }
 

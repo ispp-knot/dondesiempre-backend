@@ -43,14 +43,20 @@ import org.springframework.test.web.servlet.MockMvc;
 @WebMvcTest(controllers = OutfitController.class)
 class OutfitsControllerTest {
 
-  @Autowired private MockMvc mockMvc;
-  @Autowired private ObjectMapper objectMapper;
+  @Autowired
+  private MockMvc mockMvc;
+  @Autowired
+  private ObjectMapper objectMapper;
 
   // --- Todas las dependencias del controlador deben estar mockeadas ---
-  @MockitoBean private OutfitService outfitService;
-  @MockitoBean private ProductService productService;
-  @MockitoBean private StoreService storeService;
-  @MockitoBean private StorefrontService storefrontService;
+  @MockitoBean
+  private OutfitService outfitService;
+  @MockitoBean
+  private ProductService productService;
+  @MockitoBean
+  private StoreService storeService;
+  @MockitoBean
+  private StorefrontService storefrontService;
 
   private UUID outfitId;
   private UUID storeId;
@@ -95,7 +101,7 @@ class OutfitsControllerTest {
     product.setId(productId);
     product.setName("Test Product");
     product.setPriceInCents(600);
-    product.setDiscountedPriceInCents(500);
+    product.setDiscountPercentage(500);
     product.setStore(store);
     product.setType(productType);
 

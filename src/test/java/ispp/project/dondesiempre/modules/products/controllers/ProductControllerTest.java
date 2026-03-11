@@ -36,13 +36,20 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class ProductControllerTest {
 
-  @Autowired private ProductController productController;
-  @Autowired private ProductTypeRepository productTypeRepository;
-  @Autowired private StoreRepository storeRepository;
-  @Autowired private UserRepository userRepository;
-  @MockitoBean private AuthService authService;
-  @MockitoBean private CloudinaryService cloudinaryService;
-  @Autowired private CoordinatesService coordinatesService;
+  @Autowired
+  private ProductController productController;
+  @Autowired
+  private ProductTypeRepository productTypeRepository;
+  @Autowired
+  private StoreRepository storeRepository;
+  @Autowired
+  private UserRepository userRepository;
+  @MockitoBean
+  private AuthService authService;
+  @MockitoBean
+  private CloudinaryService cloudinaryService;
+  @Autowired
+  private CoordinatesService coordinatesService;
 
   private User testUser;
 
@@ -133,7 +140,7 @@ public class ProductControllerTest {
     assert response.getStatusCode() == HttpStatus.ACCEPTED;
     Product updatedProduct = response.getBody();
     assert updatedProduct != null;
-    assert updatedProduct.getDiscountedPriceInCents().get() == 700;
+    assert updatedProduct.getDiscountPercentage().get() == 700;
   }
 
   @Test
