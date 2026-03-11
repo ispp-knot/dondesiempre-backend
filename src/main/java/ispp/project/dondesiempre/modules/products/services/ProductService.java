@@ -30,17 +30,19 @@ public class ProductService {
   private final AuthService authService;
   private final CloudinaryService cloudinaryService;
 
-  @Transactional(rollbackFor = {
-      UnauthorizedException.class,
-      ResourceNotFoundException.class,
-      InvalidRequestException.class
-  })
+  @Transactional(
+      rollbackFor = {
+        UnauthorizedException.class,
+        ResourceNotFoundException.class,
+        InvalidRequestException.class
+      })
   public Product createProduct(ProductCreationDTO dto, MultipartFile image, UUID storeId)
       throws UnauthorizedException, ResourceNotFoundException, InvalidRequestException {
-    Store store = storeRepository
-        .findById(storeId)
-        .orElseThrow(
-            () -> new ResourceNotFoundException("Store with ID " + storeId + " not found."));
+    Store store =
+        storeRepository
+            .findById(storeId)
+            .orElseThrow(
+                () -> new ResourceNotFoundException("Store with ID " + storeId + " not found."));
     authService.assertUserOwnsStore(store);
     Product product = new Product();
     product.setName(dto.getName());
@@ -57,9 +59,10 @@ public class ProductService {
 
   @Transactional(readOnly = true, rollbackFor = ResourceNotFoundException.class)
   public Product getProductById(UUID id) throws ResourceNotFoundException {
-    Product product = productRepository
-        .findById(id)
-        .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + id));
+    Product product =
+        productRepository
+            .findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + id));
     return product;
   }
 
