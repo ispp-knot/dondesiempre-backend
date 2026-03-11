@@ -1,3 +1,5 @@
 databaseChangeLog:
   - include:
       file: db/changelog/016-unique-constraints/001-uniq-const-store-followers.yaml
+  - include:
+      file: db/changelog/016-unique-constraints/002-uniq-const-outfit-product.yaml
