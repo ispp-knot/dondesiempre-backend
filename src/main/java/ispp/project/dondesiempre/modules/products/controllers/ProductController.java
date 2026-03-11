@@ -52,23 +52,21 @@ public class ProductController {
       @RequestPart("dto") @Valid ProductCreationDTO dto,
       @RequestPart(value = "image", required = false) MultipartFile image,
       @RequestParam UUID storeId) {
-    Product savedProduct = productService.saveProduct(dto, image, storeId);
+    Product savedProduct = productService.createProduct(dto, image, storeId);
     return new ResponseEntity<>(savedProduct, HttpStatus.CREATED);
   }
 
   @PutMapping("products/{id}/discount")
   public ResponseEntity<Product> updateDiscount(
       @PathVariable UUID id, @RequestBody DiscountModificationDTO discount) {
-    Product updatedProduct =
-        productService.updateProductDiscount(id, discount.getDiscountedPriceInCents());
+    Product updatedProduct = productService.updateProductDiscount(id, discount.getDiscountedPriceInCents());
     return new ResponseEntity<>(updatedProduct, HttpStatus.ACCEPTED);
   }
 
   @GetMapping("/storefronts/{storefrontId}/products")
   public ResponseEntity<List<ProductDTO>> getByStorefrontId(@PathVariable UUID storefrontId) {
     Storefront storefront = storefrontService.findById(storefrontId);
-    List<ProductDTO> dtos =
-        productService.findByStorefront(storefront).stream().map(ProductDTO::new).toList();
+    List<ProductDTO> dtos = productService.findByStorefront(storefront).stream().map(ProductDTO::new).toList();
     return new ResponseEntity<>(dtos, HttpStatus.OK);
   }
 }

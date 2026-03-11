@@ -12,7 +12,6 @@ public class ProductCreationDTO {
 
   private String name;
   private Integer priceInCents;
-  private Integer discountedPriceInCents;
   private String description;
 
   private UUID typeId;

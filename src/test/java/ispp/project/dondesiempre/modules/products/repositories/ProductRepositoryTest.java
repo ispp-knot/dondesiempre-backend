@@ -25,15 +25,21 @@ import org.springframework.context.annotation.Import;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = Replace.NONE)
-@Import({CoordinatesService.class, GeometryFactoryConfig.class})
+@Import({ CoordinatesService.class, GeometryFactoryConfig.class })
 public class ProductRepositoryTest {
 
-  @Autowired private ProductRepository productRepository;
-  @Autowired private ProductTypeRepository productTypeRepository;
-  @Autowired private StoreRepository storeRepository;
-  @Autowired private StorefrontRepository storefrontRepository;
-  @Autowired private UserRepository userRepository;
-  @Autowired private CoordinatesService coordinatesService;
+  @Autowired
+  private ProductRepository productRepository;
+  @Autowired
+  private ProductTypeRepository productTypeRepository;
+  @Autowired
+  private StoreRepository storeRepository;
+  @Autowired
+  private StorefrontRepository storefrontRepository;
+  @Autowired
+  private UserRepository userRepository;
+  @Autowired
+  private CoordinatesService coordinatesService;
 
   @BeforeEach
   void setUp() {
@@ -84,7 +90,7 @@ public class ProductRepositoryTest {
     assertNotNull(discountedProducts);
     assertFalse(discountedProducts.isEmpty());
     for (Product product : discountedProducts) {
-      assertTrue(product.getDiscountedPriceInCents() < product.getPriceInCents());
+      assertTrue(product.getDiscountedPriceInCents().get() < product.getPriceInCents());
     }
   }
 }

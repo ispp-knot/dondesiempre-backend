@@ -36,13 +36,20 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class ProductControllerTest {
 
-  @Autowired private ProductController productController;
-  @Autowired private ProductTypeRepository productTypeRepository;
-  @Autowired private StoreRepository storeRepository;
-  @Autowired private UserRepository userRepository;
-  @MockitoBean private AuthService authService;
-  @MockitoBean private CloudinaryService cloudinaryService;
-  @Autowired private CoordinatesService coordinatesService;
+  @Autowired
+  private ProductController productController;
+  @Autowired
+  private ProductTypeRepository productTypeRepository;
+  @Autowired
+  private StoreRepository storeRepository;
+  @Autowired
+  private UserRepository userRepository;
+  @MockitoBean
+  private AuthService authService;
+  @MockitoBean
+  private CloudinaryService cloudinaryService;
+  @Autowired
+  private CoordinatesService coordinatesService;
 
   private User testUser;
 
@@ -86,7 +93,6 @@ public class ProductControllerTest {
     ProductCreationDTO dto = new ProductCreationDTO();
     dto.setName("Test Product");
     dto.setPriceInCents(1000);
-    dto.setDiscountedPriceInCents(800);
     dto.setDescription("This is a test product");
     dto.setTypeId(savedProductType.getId());
 
@@ -94,45 +100,6 @@ public class ProductControllerTest {
     assert product != null;
     assert product.getId() != null;
     assert product.getName().equals(dto.getName());
-  }
-
-  @Test
-  public void shouldThrowInvalidRequestException_WhenDiscountedPriceIsGreaterThanOriginalPrice() {
-    // Create and save a product type
-
-    Storefront storefront = new Storefront();
-    storefront.setIsFirstCollections(true);
-    storefront.setPrimaryColor("#c65a3a");
-    storefront.setSecondaryColor("#19756a");
-
-    Store store = new Store();
-    store.setName("Test Store");
-    store.setEmail("test@example.com");
-    store.setLocation(coordinatesService.createPoint(0.0, 0.0));
-    store.setAddress("123 Test Street");
-    store.setOpeningHours("9am - 5pm");
-    store.setAcceptsShipping(true);
-    store.setStorefront(storefront);
-    store.setUser(getTestUser());
-
-    Store saved_store = storeRepository.save(store);
-
-    ProductType type = new ProductType();
-    type.setType("Test Product Type");
-    ProductType savedProductType = productTypeRepository.save(type);
-
-    ProductCreationDTO dto = new ProductCreationDTO();
-    dto.setName("Test Product");
-    dto.setPriceInCents(1000);
-    dto.setDiscountedPriceInCents(1200); // Invalid discounted price
-    dto.setDescription("This is a test product");
-    dto.setTypeId(savedProductType.getId());
-
-    assertThrows(
-        InvalidRequestException.class,
-        () -> {
-          productController.createProduct(dto, null, saved_store.getId());
-        });
   }
 
   @Test
@@ -162,7 +129,6 @@ public class ProductControllerTest {
     ProductCreationDTO dto = new ProductCreationDTO();
     dto.setName("Test Product");
     dto.setPriceInCents(1000);
-    dto.setDiscountedPriceInCents(800);
     dto.setDescription("This is a test product");
     dto.setTypeId(savedProductType.getId());
 
@@ -174,7 +140,7 @@ public class ProductControllerTest {
     assert response.getStatusCode() == HttpStatus.ACCEPTED;
     Product updatedProduct = response.getBody();
     assert updatedProduct != null;
-    assert updatedProduct.getDiscountedPriceInCents() == 700;
+    assert updatedProduct.getDiscountedPriceInCents().get() == 700;
   }
 
   @Test
@@ -216,7 +182,6 @@ public class ProductControllerTest {
     ProductCreationDTO dto = new ProductCreationDTO();
     dto.setName("Test Product");
     dto.setPriceInCents(1000);
-    dto.setDiscountedPriceInCents(800);
     dto.setDescription("This is a test product");
     dto.setTypeId(savedProductType.getId());
 
@@ -266,7 +231,6 @@ public class ProductControllerTest {
     ProductCreationDTO dto = new ProductCreationDTO();
     dto.setName("Test Product");
     dto.setPriceInCents(1000);
-    dto.setDiscountedPriceInCents(800);
     dto.setDescription("This is a test product");
     dto.setTypeId(savedProductType.getId());
 
@@ -306,7 +270,6 @@ public class ProductControllerTest {
     ProductCreationDTO dto = new ProductCreationDTO();
     dto.setName("Test Product");
     dto.setPriceInCents(1000);
-    dto.setDiscountedPriceInCents(800);
     dto.setDescription("This is a test product");
     dto.setTypeId(savedProductType.getId());
 
@@ -348,15 +311,16 @@ public class ProductControllerTest {
     ProductCreationDTO dto = new ProductCreationDTO();
     dto.setName("Test Product");
     dto.setPriceInCents(1000);
-    dto.setDiscountedPriceInCents(800);
     dto.setDescription("This is a test product");
     dto.setTypeId(savedProductType.getId());
 
-    productController.createProduct(dto, null, saved_store.getId());
+    var product = productController.createProduct(dto, null, saved_store.getId());
     dto.setName("Test Product 2");
-    dto.setDiscountedPriceInCents(1000);
     productController.createProduct(dto, null, saved_store.getId());
 
+    DiscountModificationDTO discountModificationDTO = new DiscountModificationDTO();
+    discountModificationDTO.setDiscountedPriceInCents(20);
+    productController.updateDiscount(product.getBody().getId(), discountModificationDTO);
     ResponseEntity<List<ProductDTO>> response = productController.getDiscountedProducts();
     assert response.getStatusCode() == HttpStatus.OK;
     List<ProductDTO> products = response.getBody();
