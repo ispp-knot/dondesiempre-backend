@@ -41,10 +41,12 @@ public class OutfitDTO {
     this.storeId = outfit.getStore().getId();
 
     this.tags = tags;
-    this.products = products.stream()
-        .map(OutfitProductDTO::new)
-        .sorted(Comparator.comparing(OutfitProductDTO::getIndex))
-        .toList();
-    this.priceInCents = this.products.stream().mapToInt(p -> p.getProduct().getPriceInCents()).sum();
+    this.products =
+        products.stream()
+            .map(OutfitProductDTO::new)
+            .sorted(Comparator.comparing(OutfitProductDTO::getIndex))
+            .toList();
+    this.priceInCents =
+        this.products.stream().mapToInt(p -> p.getProduct().getPriceInCents()).sum();
   }
 }

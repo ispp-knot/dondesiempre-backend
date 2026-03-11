@@ -45,27 +45,17 @@ import org.springframework.context.ApplicationContext;
 @ExtendWith(MockitoExtension.class)
 class OutfitServiceTest {
 
-  @Mock
-  private OutfitRepository outfitRepository;
-  @Mock
-  private OutfitProductService outfitProductService;
-  @Mock
-  private OutfitTagRelationService outfitTagRelationService;
-  @Mock
-  private OutfitTagService outfitTagService;
-  @Mock
-  private ProductService productService;
-  @Mock
-  private AuthService authService;
-  @Mock
-  private StorefrontService storefrontService;
-  @Mock
-  private StoreService storeService;
-  @Mock
-  private ApplicationContext applicationContext;
+  @Mock private OutfitRepository outfitRepository;
+  @Mock private OutfitProductService outfitProductService;
+  @Mock private OutfitTagRelationService outfitTagRelationService;
+  @Mock private OutfitTagService outfitTagService;
+  @Mock private ProductService productService;
+  @Mock private AuthService authService;
+  @Mock private StorefrontService storefrontService;
+  @Mock private StoreService storeService;
+  @Mock private ApplicationContext applicationContext;
 
-  @InjectMocks
-  private OutfitService outfitService;
+  @InjectMocks private OutfitService outfitService;
 
   private UUID outfitId;
   private UUID productId;
@@ -141,8 +131,7 @@ class OutfitServiceTest {
 
   @Test
   void shouldReturnListOfOutfitDTOs_whenStoreHasOutfits() {
-    when(outfitRepository.findByStoreIdOrderByIndexAsc(storeId))
-        .thenReturn(List.of(outfit));
+    when(outfitRepository.findByStoreIdOrderByIndexAsc(storeId)).thenReturn(List.of(outfit));
 
     List<Outfit> result = outfitService.findByStore(store);
 
@@ -154,8 +143,7 @@ class OutfitServiceTest {
 
   @Test
   void shouldReturnEmptyList_whenStoreHasNoOutfits() {
-    when(outfitRepository.findByStoreIdOrderByIndexAsc(storeId))
-        .thenReturn(new ArrayList<>());
+    when(outfitRepository.findByStoreIdOrderByIndexAsc(storeId)).thenReturn(new ArrayList<>());
 
     List<Outfit> result = outfitService.findByStore(store);
 
@@ -220,8 +208,7 @@ class OutfitServiceTest {
 
     when(storeService.findById(storeId)).thenReturn(store);
 
-    assertThrows(
-        InvalidRequestException.class, () -> outfitService.create(storeId, dto, null));
+    assertThrows(InvalidRequestException.class, () -> outfitService.create(storeId, dto, null));
     verify(outfitRepository, never()).save(any());
   }
 
@@ -235,8 +222,7 @@ class OutfitServiceTest {
 
     when(storeService.findById(storeId)).thenReturn(store);
 
-    assertThrows(
-        InvalidRequestException.class, () -> outfitService.create(storeId, dto, null));
+    assertThrows(InvalidRequestException.class, () -> outfitService.create(storeId, dto, null));
     verify(outfitRepository, never()).save(any());
   }
 

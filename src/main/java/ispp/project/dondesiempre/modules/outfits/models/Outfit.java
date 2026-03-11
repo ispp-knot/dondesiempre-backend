@@ -37,10 +37,7 @@ public class Outfit extends BaseEntity {
   @Size(max = 5000)
   private String description;
 
-  @Column
-  @Nullable
-  @URL
-  private String image;
+  @Column @Nullable @URL private String image;
 
   @Column
   @NotNull
