@@ -69,7 +69,7 @@ public class ProductRepositoryTest {
     Product discounted = new Product();
     discounted.setName("Discounted");
     discounted.setPriceInCents(1000);
-    discounted.setDiscountedPriceInCents(12);
+    discounted.setDiscountPercentage(12);
     discounted.setType(type);
     discounted.setStore(store);
     productRepository.save(discounted);
@@ -77,7 +77,7 @@ public class ProductRepositoryTest {
     Product notDiscounted = new Product();
     notDiscounted.setName("Not Discounted");
     notDiscounted.setPriceInCents(1000);
-    notDiscounted.setDiscountedPriceInCents(32);
+    notDiscounted.setDiscountPercentage(32);
     notDiscounted.setType(type);
     notDiscounted.setStore(store);
     productRepository.save(notDiscounted);
@@ -90,7 +90,7 @@ public class ProductRepositoryTest {
     assertNotNull(discountedProducts);
     assertFalse(discountedProducts.isEmpty());
     for (Product product : discountedProducts) {
-      assertTrue(product.getDiscountedPriceInCents().get() < product.getPriceInCents());
+      assertTrue(product.getDiscountPercentage().get() < product.getPriceInCents());
     }
   }
 }

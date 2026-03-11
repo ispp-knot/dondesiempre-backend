@@ -30,24 +30,22 @@ public class ProductService {
   private final AuthService authService;
   private final CloudinaryService cloudinaryService;
 
-  @Transactional(
-      rollbackFor = {
-        UnauthorizedException.class,
-        ResourceNotFoundException.class,
-        InvalidRequestException.class
-      })
+  @Transactional(rollbackFor = {
+      UnauthorizedException.class,
+      ResourceNotFoundException.class,
+      InvalidRequestException.class
+  })
   public Product createProduct(ProductCreationDTO dto, MultipartFile image, UUID storeId)
       throws UnauthorizedException, ResourceNotFoundException, InvalidRequestException {
-    Store store =
-        storeRepository
-            .findById(storeId)
-            .orElseThrow(
-                () -> new ResourceNotFoundException("Store with ID " + storeId + " not found."));
+    Store store = storeRepository
+        .findById(storeId)
+        .orElseThrow(
+            () -> new ResourceNotFoundException("Store with ID " + storeId + " not found."));
     authService.assertUserOwnsStore(store);
     Product product = new Product();
     product.setName(dto.getName());
     product.setPriceInCents(dto.getPriceInCents());
-    product.setDiscountedPriceInCents(null);
+    product.setDiscountPercentage(null);
     product.setDescription(dto.getDescription());
     if (image != null && !image.isEmpty()) {
       product.setImage(cloudinaryService.upload(image));
@@ -59,10 +57,9 @@ public class ProductService {
 
   @Transactional(readOnly = true, rollbackFor = ResourceNotFoundException.class)
   public Product getProductById(UUID id) throws ResourceNotFoundException {
-    Product product =
-        productRepository
-            .findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + id));
+    Product product = productRepository
+        .findById(id)
+        .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + id));
     return product;
   }
 
@@ -94,7 +91,7 @@ public class ProductService {
     if (discountedPriceInCents > product.getPriceInCents()) {
       throw new InvalidRequestException("Discounted price cannot be greater than original price");
     }
-    product.setDiscountedPriceInCents(discountedPriceInCents);
+    product.setDiscountPercentage(discountedPriceInCents);
     return productRepository.save(product);
   }
 

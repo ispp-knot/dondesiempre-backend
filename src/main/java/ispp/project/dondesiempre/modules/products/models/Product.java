@@ -38,13 +38,16 @@ public class Product extends BaseEntity {
   @Nullable
   @Min(1)
   @Max(100)
-  Integer discountedPriceInCents;
+  Integer discountPercentage;
 
   @Column(columnDefinition = "TEXT")
   @Size(max = 5000)
   String description;
 
-  @Column @Nullable @URL private String image;
+  @Column
+  @Nullable
+  @URL
+  private String image;
 
   @NotNull
   @ManyToOne(optional = false)
@@ -64,7 +67,7 @@ public class Product extends BaseEntity {
     return Optional.ofNullable(this.image);
   }
 
-  public Optional<Integer> getDiscountedPriceInCents() {
-    return Optional.ofNullable(this.discountedPriceInCents);
+  public Optional<Integer> getDiscountPercentage() {
+    return Optional.ofNullable(this.discountPercentage);
   }
 }
