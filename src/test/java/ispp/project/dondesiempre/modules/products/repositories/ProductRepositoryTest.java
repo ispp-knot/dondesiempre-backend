@@ -25,15 +25,21 @@ import org.springframework.context.annotation.Import;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = Replace.NONE)
-@Import({CoordinatesService.class, GeometryFactoryConfig.class})
+@Import({ CoordinatesService.class, GeometryFactoryConfig.class })
 public class ProductRepositoryTest {
 
-  @Autowired private ProductRepository productRepository;
-  @Autowired private ProductTypeRepository productTypeRepository;
-  @Autowired private StoreRepository storeRepository;
-  @Autowired private StorefrontRepository storefrontRepository;
-  @Autowired private UserRepository userRepository;
-  @Autowired private CoordinatesService coordinatesService;
+  @Autowired
+  private ProductRepository productRepository;
+  @Autowired
+  private ProductTypeRepository productTypeRepository;
+  @Autowired
+  private StoreRepository storeRepository;
+  @Autowired
+  private StorefrontRepository storefrontRepository;
+  @Autowired
+  private UserRepository userRepository;
+  @Autowired
+  private CoordinatesService coordinatesService;
 
   @BeforeEach
   void setUp() {
@@ -63,7 +69,7 @@ public class ProductRepositoryTest {
     Product discounted = new Product();
     discounted.setName("Discounted");
     discounted.setPriceInCents(1000);
-    discounted.setDiscountedPriceInCents(800);
+    discounted.setDiscountedPriceInCents(12);
     discounted.setType(type);
     discounted.setStore(store);
     productRepository.save(discounted);
@@ -71,7 +77,7 @@ public class ProductRepositoryTest {
     Product notDiscounted = new Product();
     notDiscounted.setName("Not Discounted");
     notDiscounted.setPriceInCents(1000);
-    notDiscounted.setDiscountedPriceInCents(1000);
+    notDiscounted.setDiscountedPriceInCents(32);
     notDiscounted.setType(type);
     notDiscounted.setStore(store);
     productRepository.save(notDiscounted);
