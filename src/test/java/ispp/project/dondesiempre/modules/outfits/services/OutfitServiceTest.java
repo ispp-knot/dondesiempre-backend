@@ -28,6 +28,7 @@ import ispp.project.dondesiempre.modules.products.models.Product;
 import ispp.project.dondesiempre.modules.products.services.ProductService;
 import ispp.project.dondesiempre.modules.stores.models.Store;
 import ispp.project.dondesiempre.modules.stores.models.Storefront;
+import ispp.project.dondesiempre.modules.stores.services.StoreService;
 import ispp.project.dondesiempre.modules.stores.services.StorefrontService;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,16 +45,27 @@ import org.springframework.context.ApplicationContext;
 @ExtendWith(MockitoExtension.class)
 class OutfitServiceTest {
 
-  @Mock private OutfitRepository outfitRepository;
-  @Mock private OutfitProductService outfitProductService;
-  @Mock private OutfitTagRelationService outfitTagRelationService;
-  @Mock private OutfitTagService outfitTagService;
-  @Mock private ProductService productService;
-  @Mock private AuthService authService;
-  @Mock private StorefrontService storefrontService;
-  @Mock private ApplicationContext applicationContext;
+  @Mock
+  private OutfitRepository outfitRepository;
+  @Mock
+  private OutfitProductService outfitProductService;
+  @Mock
+  private OutfitTagRelationService outfitTagRelationService;
+  @Mock
+  private OutfitTagService outfitTagService;
+  @Mock
+  private ProductService productService;
+  @Mock
+  private AuthService authService;
+  @Mock
+  private StorefrontService storefrontService;
+  @Mock
+  private StoreService storeService;
+  @Mock
+  private ApplicationContext applicationContext;
 
-  @InjectMocks private OutfitService outfitService;
+  @InjectMocks
+  private OutfitService outfitService;
 
   private UUID outfitId;
   private UUID productId;
@@ -91,7 +103,7 @@ class OutfitServiceTest {
     outfit.setDescription("Test Description");
     outfit.setIndex(0);
     outfit.setDiscountedPriceInCents(1000);
-    outfit.setStorefront(storefront);
+    outfit.setStore(store);
 
     product = new Product();
     product.setId(productId);
@@ -129,7 +141,7 @@ class OutfitServiceTest {
 
   @Test
   void shouldReturnListOfOutfitDTOs_whenStoreHasOutfits() {
-    when(outfitRepository.findByStorefrontStoreIdOrderByIndexAsc(storeId))
+    when(outfitRepository.findByStoreIdOrderByIndexAsc(storeId))
         .thenReturn(List.of(outfit));
 
     List<Outfit> result = outfitService.findByStore(store);
@@ -142,7 +154,7 @@ class OutfitServiceTest {
 
   @Test
   void shouldReturnEmptyList_whenStoreHasNoOutfits() {
-    when(outfitRepository.findByStorefrontStoreIdOrderByIndexAsc(storeId))
+    when(outfitRepository.findByStoreIdOrderByIndexAsc(storeId))
         .thenReturn(new ArrayList<>());
 
     List<Outfit> result = outfitService.findByStore(store);
@@ -180,7 +192,7 @@ class OutfitServiceTest {
     tag.setId(UUID.randomUUID());
     tag.setName("casual");
 
-    when(storefrontService.findById(storefrontId)).thenReturn(storefront);
+    when(storeService.findById(storeId)).thenReturn(store);
     when(productService.getProductById(productId)).thenReturn(product);
     when(outfitRepository.save(any())).thenReturn(outfit);
     when(outfitRepository.findById(outfitId)).thenReturn(Optional.of(outfit));
@@ -189,8 +201,9 @@ class OutfitServiceTest {
     when(outfitProductService.findOutfitProductIndicesById(outfitId)).thenReturn(new ArrayList<>());
     when(outfitProductService.save(any())).thenReturn(outfitProduct);
 
-    Outfit result = outfitService.create(storefrontId, dto, null);
+    Outfit result = outfitService.create(storeId, dto, null);
 
+    assertNotNull(result);
     assertNotNull(result);
     assertEquals(outfitId, result.getId());
     verify(outfitRepository, times(1)).save(any());
@@ -205,10 +218,10 @@ class OutfitServiceTest {
     dto.setTags(List.of());
     dto.setProducts(null);
 
-    when(storefrontService.findById(storefrontId)).thenReturn(storefront);
+    when(storeService.findById(storeId)).thenReturn(store);
 
     assertThrows(
-        InvalidRequestException.class, () -> outfitService.create(storefrontId, dto, null));
+        InvalidRequestException.class, () -> outfitService.create(storeId, dto, null));
     verify(outfitRepository, never()).save(any());
   }
 
@@ -220,10 +233,10 @@ class OutfitServiceTest {
     dto.setTags(List.of());
     dto.setProducts(List.of());
 
-    when(storefrontService.findById(storefrontId)).thenReturn(storefront);
+    when(storeService.findById(storeId)).thenReturn(store);
 
     assertThrows(
-        InvalidRequestException.class, () -> outfitService.create(storefrontId, dto, null));
+        InvalidRequestException.class, () -> outfitService.create(storeId, dto, null));
     verify(outfitRepository, never()).save(any());
   }
 
@@ -475,16 +488,6 @@ class OutfitServiceTest {
     List<OutfitProduct> result = outfitService.findOutfitProductsByOutfitId(outfitId);
     assertNotNull(result);
     verify(outfitProductService, times(1)).findOutfitProductsById(outfitId);
-  }
-
-  @Test
-  void shouldfindByStorefront() throws ResourceNotFoundException {
-
-    when(outfitRepository.findByStorefrontId(storefrontId)).thenReturn(List.of(outfit));
-
-    List<Outfit> result = outfitService.findByStorefront(storefront);
-    assertNotNull(result);
-    verify(outfitRepository, times(1)).findByStorefrontId(storefrontId);
   }
 
   @Test

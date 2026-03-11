@@ -103,16 +103,14 @@ public class DataSeeder implements CommandLineRunner {
       }
     }
     if (productTypeRepository.count() == 0) {
-      for (String type :
-          List.of("Camiseta", "Pantalón", "Vestido", "Chaqueta", "Zapatos", "Accesorio")) {
+      for (String type : List.of("Camiseta", "Pantalón", "Vestido", "Chaqueta", "Zapatos", "Accesorio")) {
         ProductType pt = new ProductType();
         pt.setType(type);
         productTypeRepository.save(pt);
       }
     }
     if (productColorRepository.count() == 0) {
-      for (String color :
-          List.of("Negro", "Blanco", "Rojo", "Azul", "Verde", "Rosa", "Gris", "Beige")) {
+      for (String color : List.of("Negro", "Blanco", "Rojo", "Azul", "Verde", "Rosa", "Gris", "Beige")) {
         ProductColor pc = new ProductColor();
         pc.setColor(color);
         productColorRepository.save(pc);
@@ -126,8 +124,7 @@ public class DataSeeder implements CommandLineRunner {
       }
     }
     if (outfitTagRepository.count() == 0) {
-      for (String name :
-          List.of("Verano", "Invierno", "Casual", "Formal", "Deportivo", "Elegante")) {
+      for (String name : List.of("Verano", "Invierno", "Casual", "Formal", "Deportivo", "Elegante")) {
         OutfitTag tag = new OutfitTag();
         tag.setName(name);
         outfitTagRepository.save(tag);
@@ -137,21 +134,16 @@ public class DataSeeder implements CommandLineRunner {
 
   private void loadManualData() {
     // Fetch reference data
-    Map<String, SocialNetwork> socialNetworks =
-        socialNetworkRepository.findAll().stream()
-            .collect(Collectors.toMap(SocialNetwork::getName, sn -> sn));
-    Map<String, ProductType> productTypes =
-        productTypeRepository.findAll().stream()
-            .collect(Collectors.toMap(ProductType::getType, pt -> pt));
-    Map<String, ProductColor> productColors =
-        productColorRepository.findAll().stream()
-            .collect(Collectors.toMap(ProductColor::getColor, pc -> pc));
-    Map<String, ProductSize> productSizes =
-        productSizeRepository.findAll().stream()
-            .collect(Collectors.toMap(ProductSize::getSize, ps -> ps));
-    Map<String, OutfitTag> outfitTags =
-        outfitTagRepository.findAll().stream()
-            .collect(Collectors.toMap(OutfitTag::getName, ot -> ot));
+    Map<String, SocialNetwork> socialNetworks = socialNetworkRepository.findAll().stream()
+        .collect(Collectors.toMap(SocialNetwork::getName, sn -> sn));
+    Map<String, ProductType> productTypes = productTypeRepository.findAll().stream()
+        .collect(Collectors.toMap(ProductType::getType, pt -> pt));
+    Map<String, ProductColor> productColors = productColorRepository.findAll().stream()
+        .collect(Collectors.toMap(ProductColor::getColor, pc -> pc));
+    Map<String, ProductSize> productSizes = productSizeRepository.findAll().stream()
+        .collect(Collectors.toMap(ProductSize::getSize, ps -> ps));
+    Map<String, OutfitTag> outfitTags = outfitTagRepository.findAll().stream()
+        .collect(Collectors.toMap(OutfitTag::getName, ot -> ot));
 
     // Create user that owns the manual store (this is the seed user for
     // getCurrentUser())
@@ -195,38 +187,34 @@ public class DataSeeder implements CommandLineRunner {
     storeSocialNetworkRepository.save(ssn2);
 
     // Products
-    Product p1 =
-        createProduct(
-            "Camiseta Lino Mediterráneo",
-            2999,
-            2999,
-            "Camiseta de lino natural de verano.",
-            productTypes.get("Camiseta"),
-            store);
-    Product p2 =
-        createProduct(
-            "Pantalón Palazzo Verano",
-            4999,
-            3999,
-            "Pantalón fluido perfecto para el verano.",
-            productTypes.get("Pantalón"),
-            store);
-    Product p3 =
-        createProduct(
-            "Vestido Midi Floral",
-            6999,
-            6999,
-            "Vestido midi con estampado floral primaveral.",
-            productTypes.get("Vestido"),
-            store);
-    Product p4 =
-        createProduct(
-            "Chaqueta Punto Artesanal",
-            8999,
-            7499,
-            "Chaqueta de punto tejida a mano.",
-            productTypes.get("Chaqueta"),
-            store);
+    Product p1 = createProduct(
+        "Camiseta Lino Mediterráneo",
+        2999,
+        2999,
+        "Camiseta de lino natural de verano.",
+        productTypes.get("Camiseta"),
+        store);
+    Product p2 = createProduct(
+        "Pantalón Palazzo Verano",
+        4999,
+        3999,
+        "Pantalón fluido perfecto para el verano.",
+        productTypes.get("Pantalón"),
+        store);
+    Product p3 = createProduct(
+        "Vestido Midi Floral",
+        6999,
+        6999,
+        "Vestido midi con estampado floral primaveral.",
+        productTypes.get("Vestido"),
+        store);
+    Product p4 = createProduct(
+        "Chaqueta Punto Artesanal",
+        8999,
+        7499,
+        "Chaqueta de punto tejida a mano.",
+        productTypes.get("Chaqueta"),
+        store);
 
     // Product variants
     createVariant(p1, productSizes.get("S"), productColors.get("Blanco"), true);
@@ -240,12 +228,12 @@ public class DataSeeder implements CommandLineRunner {
     createVariant(p4, productSizes.get("M"), productColors.get("Beige"), true);
 
     // Outfits
-    Outfit outfit1 = createOutfit("Look Verano Andaluz", 0, store.getStorefront());
+    Outfit outfit1 = createOutfit("Look Verano Andaluz", 0, store);
     createOutfitProduct(outfit1, p1, 0);
     createOutfitProduct(outfit1, p2, 1);
     createOutfitTagRelation(outfit1, outfitTags.get("Verano"));
 
-    Outfit outfit2 = createOutfit("Estilo Mediterráneo", 1, store.getStorefront());
+    Outfit outfit2 = createOutfit("Estilo Mediterráneo", 1, store);
     createOutfitProduct(outfit2, p3, 0);
     createOutfitProduct(outfit2, p4, 1);
     createOutfitTagRelation(outfit2, outfitTags.get("Elegante"));
@@ -351,14 +339,13 @@ public class DataSeeder implements CommandLineRunner {
         boolean hasDiscount = rng.nextBoolean();
         int discountedPrice = hasDiscount ? (int) (price * (0.6 + rng.nextDouble() * 0.35)) : price;
 
-        Product product =
-            createProduct(
-                pick(productNames, rng),
-                price,
-                discountedPrice,
-                null,
-                pick(allProductTypes, rng),
-                store);
+        Product product = createProduct(
+            pick(productNames, rng),
+            price,
+            discountedPrice,
+            null,
+            pick(allProductTypes, rng),
+            store);
         storeProducts.add(product);
 
         // 1-3 variants per product
@@ -371,7 +358,7 @@ public class DataSeeder implements CommandLineRunner {
 
       // Outfits
       for (int j = 0; j < props.getOutfitsPerStore(); j++) {
-        Outfit outfit = createOutfit(pick(outfitNames, rng), j, store.getStorefront());
+        Outfit outfit = createOutfit(pick(outfitNames, rng), j, store);
 
         int productsInOutfit = 2 + rng.nextInt(2);
         for (int k = 0; k < productsInOutfit && k < storeProducts.size(); k++) {
@@ -385,23 +372,21 @@ public class DataSeeder implements CommandLineRunner {
     for (int i = 0; i < props.getClientCount(); i++) {
       String name = pick(firstNames, rng);
       String surname = pick(surnames, rng);
-      String normalizedName =
-          name.toLowerCase()
-              .replace("á", "a")
-              .replace("é", "e")
-              .replace("í", "i")
-              .replace("ó", "o")
-              .replace("ú", "u")
-              .replace("ñ", "n");
-      String normalizedSurname =
-          surname
-              .toLowerCase()
-              .replace("á", "a")
-              .replace("é", "e")
-              .replace("í", "i")
-              .replace("ó", "o")
-              .replace("ú", "u")
-              .replace("ñ", "n");
+      String normalizedName = name.toLowerCase()
+          .replace("á", "a")
+          .replace("é", "e")
+          .replace("í", "i")
+          .replace("ó", "o")
+          .replace("ú", "u")
+          .replace("ñ", "n");
+      String normalizedSurname = surname
+          .toLowerCase()
+          .replace("á", "a")
+          .replace("é", "e")
+          .replace("í", "i")
+          .replace("ó", "o")
+          .replace("ú", "u")
+          .replace("ñ", "n");
 
       String clientEmail = normalizedName + "." + normalizedSurname + i + "@ejemplo.es";
 
@@ -448,12 +433,12 @@ public class DataSeeder implements CommandLineRunner {
     productVariantRepository.save(variant);
   }
 
-  private Outfit createOutfit(String name, int index, Storefront storefront) {
+  private Outfit createOutfit(String name, int index, Store store) {
     Outfit outfit = new Outfit();
     outfit.setName(name);
     outfit.setIndex(index);
     outfit.setDiscountedPriceInCents(0);
-    outfit.setStorefront(storefront);
+    outfit.setStore(store);
     return outfitRepository.save(outfit);
   }
 
@@ -481,8 +466,7 @@ public class DataSeeder implements CommandLineRunner {
     if (is == null) {
       throw new IllegalStateException("Seed file not found: " + path);
     }
-    try (BufferedReader reader =
-        new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
+    try (BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
       return reader
           .lines()
           .map(

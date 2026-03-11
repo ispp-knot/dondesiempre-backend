@@ -29,16 +29,24 @@ import org.springframework.context.annotation.Import;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = Replace.NONE)
-@Import({CoordinatesService.class, GeometryFactoryConfig.class})
+@Import({ CoordinatesService.class, GeometryFactoryConfig.class })
 class OutfitRepositoryTest {
-  @Autowired private OutfitRepository outfitRepository;
-  @Autowired private StoreRepository storeRepository;
-  @Autowired private StorefrontRepository storefrontRepository;
-  @Autowired private ProductRepository productRepository;
-  @Autowired private OutfitProductRepository outfitProductRepository;
-  @Autowired private ProductTypeRepository typeRepository;
-  @Autowired private UserRepository userRepository;
-  @Autowired private CoordinatesService coordinatesService;
+  @Autowired
+  private OutfitRepository outfitRepository;
+  @Autowired
+  private StoreRepository storeRepository;
+  @Autowired
+  private StorefrontRepository storefrontRepository;
+  @Autowired
+  private ProductRepository productRepository;
+  @Autowired
+  private OutfitProductRepository outfitProductRepository;
+  @Autowired
+  private ProductTypeRepository typeRepository;
+  @Autowired
+  private UserRepository userRepository;
+  @Autowired
+  private CoordinatesService coordinatesService;
 
   private int testUserIndex = 0;
 
@@ -71,7 +79,7 @@ class OutfitRepositoryTest {
     store.setUser(createTestUser());
     store = storeRepository.save(store);
 
-    result = outfitRepository.findByStorefrontStoreIdOrderByIndexAsc(store.getId());
+    result = outfitRepository.findByStoreIdOrderByIndexAsc(store.getId());
 
     assertTrue(result.isEmpty());
   }
@@ -120,7 +128,7 @@ class OutfitRepositoryTest {
     outfit.setName("Test outfit");
     outfit.setDiscountedPriceInCents(100);
     outfit.setIndex(0);
-    outfit.setStorefront(storefront);
+    outfit.setStore(store);
     outfit = outfitRepository.save(outfit);
 
     outfitProduct = new OutfitProduct();
@@ -129,7 +137,7 @@ class OutfitRepositoryTest {
     outfitProduct.setOutfit(outfit);
     outfitProduct = outfitProductRepository.save(outfitProduct);
 
-    result = outfitRepository.findByStorefrontStoreIdOrderByIndexAsc(store.getId());
+    result = outfitRepository.findByStoreIdOrderByIndexAsc(store.getId());
 
     assertEquals(1, result.size());
     assertTrue(result.contains(outfit));
@@ -188,21 +196,21 @@ class OutfitRepositoryTest {
     outfit1.setName("Test outfit 1");
     outfit1.setDiscountedPriceInCents(100);
     outfit1.setIndex(0);
-    outfit1.setStorefront(storefront1);
+    outfit1.setStore(store1);
     outfit1 = outfitRepository.save(outfit1);
 
     outfit2 = new Outfit();
     outfit2.setName("Test outfit 2");
     outfit2.setDiscountedPriceInCents(100);
     outfit2.setIndex(1);
-    outfit2.setStorefront(storefront1);
+    outfit2.setStore(store1);
     outfit2 = outfitRepository.save(outfit2);
 
     outfit3 = new Outfit();
     outfit3.setName("Test outfit 3");
     outfit3.setDiscountedPriceInCents(100);
     outfit3.setIndex(0);
-    outfit3.setStorefront(storefront2);
+    outfit3.setStore(store2);
     outfit3 = outfitRepository.save(outfit3);
 
     numProducts = 4;
@@ -216,10 +224,9 @@ class OutfitRepositoryTest {
       product.setPriceInCents(i * 1000); // Set price in cents (e.g., 1000 = $10.00)
       product.setDiscountedPriceInCents(i * 1000); // Set discounted price in cents
       product.setType(type);
-      Store storeToSet =
-          (i < 3)
-              ? store1
-              : store2; // First 3 products belong to store1, last product belongs to store2
+      Store storeToSet = (i < 3)
+          ? store1
+          : store2; // First 3 products belong to store1, last product belongs to store2
       product.setStore(storeToSet);
       product = productRepository.save(product);
 
@@ -250,7 +257,7 @@ class OutfitRepositoryTest {
     outfitProduct.setOutfit(outfit3);
     outfitProduct = outfitProductRepository.save(outfitProduct);
 
-    result = outfitRepository.findByStorefrontStoreIdOrderByIndexAsc(store1.getId());
+    result = outfitRepository.findByStoreIdOrderByIndexAsc(store1.getId());
 
     assertEquals(2, result.size());
 
