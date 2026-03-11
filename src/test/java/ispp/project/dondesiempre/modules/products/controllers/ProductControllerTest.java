@@ -7,9 +7,9 @@ import ispp.project.dondesiempre.modules.auth.repositories.UserRepository;
 import ispp.project.dondesiempre.modules.auth.services.AuthService;
 import ispp.project.dondesiempre.modules.common.exceptions.InvalidRequestException;
 import ispp.project.dondesiempre.modules.common.exceptions.ResourceNotFoundException;
-import ispp.project.dondesiempre.modules.products.dtos.ProductDiscountUpdateDTO;
 import ispp.project.dondesiempre.modules.products.dtos.ProductCreationDTO;
 import ispp.project.dondesiempre.modules.products.dtos.ProductDTO;
+import ispp.project.dondesiempre.modules.products.dtos.ProductDiscountUpdateDTO;
 import ispp.project.dondesiempre.modules.products.models.Product;
 import ispp.project.dondesiempre.modules.products.models.ProductType;
 import ispp.project.dondesiempre.modules.products.repositories.ProductTypeRepository;
@@ -36,20 +36,13 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class ProductControllerTest {
 
-  @Autowired
-  private ProductController productController;
-  @Autowired
-  private ProductTypeRepository productTypeRepository;
-  @Autowired
-  private StoreRepository storeRepository;
-  @Autowired
-  private UserRepository userRepository;
-  @MockitoBean
-  private AuthService authService;
-  @MockitoBean
-  private CloudinaryService cloudinaryService;
-  @Autowired
-  private CoordinatesService coordinatesService;
+  @Autowired private ProductController productController;
+  @Autowired private ProductTypeRepository productTypeRepository;
+  @Autowired private StoreRepository storeRepository;
+  @Autowired private UserRepository userRepository;
+  @MockitoBean private AuthService authService;
+  @MockitoBean private CloudinaryService cloudinaryService;
+  @Autowired private CoordinatesService coordinatesService;
 
   private User testUser;
 
