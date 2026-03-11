@@ -7,7 +7,7 @@ import ispp.project.dondesiempre.modules.auth.repositories.UserRepository;
 import ispp.project.dondesiempre.modules.auth.services.AuthService;
 import ispp.project.dondesiempre.modules.common.exceptions.InvalidRequestException;
 import ispp.project.dondesiempre.modules.common.exceptions.ResourceNotFoundException;
-import ispp.project.dondesiempre.modules.products.dtos.DiscountUpdateDTO;
+import ispp.project.dondesiempre.modules.products.dtos.ProductDiscountUpdateDTO;
 import ispp.project.dondesiempre.modules.products.dtos.ProductCreationDTO;
 import ispp.project.dondesiempre.modules.products.dtos.ProductDTO;
 import ispp.project.dondesiempre.modules.products.models.Product;
@@ -36,13 +36,20 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class ProductControllerTest {
 
-  @Autowired private ProductController productController;
-  @Autowired private ProductTypeRepository productTypeRepository;
-  @Autowired private StoreRepository storeRepository;
-  @Autowired private UserRepository userRepository;
-  @MockitoBean private AuthService authService;
-  @MockitoBean private CloudinaryService cloudinaryService;
-  @Autowired private CoordinatesService coordinatesService;
+  @Autowired
+  private ProductController productController;
+  @Autowired
+  private ProductTypeRepository productTypeRepository;
+  @Autowired
+  private StoreRepository storeRepository;
+  @Autowired
+  private UserRepository userRepository;
+  @MockitoBean
+  private AuthService authService;
+  @MockitoBean
+  private CloudinaryService cloudinaryService;
+  @Autowired
+  private CoordinatesService coordinatesService;
 
   private User testUser;
 
@@ -127,8 +134,8 @@ public class ProductControllerTest {
 
     Product product = productController.createProduct(dto, null, saved_store.getId()).getBody();
 
-    DiscountUpdateDTO discount = new DiscountUpdateDTO();
-    discount.setDiscountedPriceInCents(700);
+    ProductDiscountUpdateDTO discount = new ProductDiscountUpdateDTO();
+    discount.setDiscountPercentage(700);
     ResponseEntity<Product> response = productController.updateDiscount(product.getId(), discount);
     assert response.getStatusCode() == HttpStatus.ACCEPTED;
     Product updatedProduct = response.getBody();
@@ -138,8 +145,8 @@ public class ProductControllerTest {
 
   @Test
   public void shouldThrowResourceNotFoundException_WhenUpdatingDiscountForNonExistentProduct() {
-    DiscountUpdateDTO discount = new DiscountUpdateDTO();
-    discount.setDiscountedPriceInCents(500);
+    ProductDiscountUpdateDTO discount = new ProductDiscountUpdateDTO();
+    discount.setDiscountPercentage(500);
 
     UUID nonExistentId = UUID.randomUUID();
 
@@ -179,8 +186,8 @@ public class ProductControllerTest {
     dto.setTypeId(savedProductType.getId());
 
     Product product = productController.createProduct(dto, null, saved_store.getId()).getBody();
-    DiscountUpdateDTO discount = new DiscountUpdateDTO();
-    discount.setDiscountedPriceInCents(1200); // Invalid discounted price
+    ProductDiscountUpdateDTO discount = new ProductDiscountUpdateDTO();
+    discount.setDiscountPercentage(1200); // Invalid discounted price
     assertThrows(
         InvalidRequestException.class,
         () -> {
@@ -311,8 +318,8 @@ public class ProductControllerTest {
     dto.setName("Test Product 2");
     productController.createProduct(dto, null, saved_store.getId());
 
-    DiscountUpdateDTO discountModificationDTO = new DiscountUpdateDTO();
-    discountModificationDTO.setDiscountedPriceInCents(20);
+    ProductDiscountUpdateDTO discountModificationDTO = new ProductDiscountUpdateDTO();
+    discountModificationDTO.setDiscountPercentage(20);
     productController.updateDiscount(product.getBody().getId(), discountModificationDTO);
     ResponseEntity<List<ProductDTO>> response = productController.getDiscountedProducts();
     assert response.getStatusCode() == HttpStatus.OK;

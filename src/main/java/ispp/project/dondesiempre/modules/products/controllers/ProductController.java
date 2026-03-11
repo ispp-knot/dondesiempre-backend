@@ -1,6 +1,6 @@
 package ispp.project.dondesiempre.modules.products.controllers;
 
-import ispp.project.dondesiempre.modules.products.dtos.DiscountUpdateDTO;
+import ispp.project.dondesiempre.modules.products.dtos.ProductDiscountUpdateDTO;
 import ispp.project.dondesiempre.modules.products.dtos.ProductCreationDTO;
 import ispp.project.dondesiempre.modules.products.dtos.ProductDTO;
 import ispp.project.dondesiempre.modules.products.models.Product;
@@ -58,17 +58,15 @@ public class ProductController {
 
   @PutMapping("products/{id}/discount")
   public ResponseEntity<Product> updateDiscount(
-      @PathVariable UUID id, @RequestBody DiscountUpdateDTO discount) {
-    Product updatedProduct =
-        productService.updateProductDiscount(id, discount.getDiscountedPriceInCents());
+      @PathVariable UUID id, @RequestBody ProductDiscountUpdateDTO discount) {
+    Product updatedProduct = productService.updateProductDiscount(id, discount.getDiscountPercentage());
     return new ResponseEntity<>(updatedProduct, HttpStatus.ACCEPTED);
   }
 
   @GetMapping("/storefronts/{storefrontId}/products")
   public ResponseEntity<List<ProductDTO>> getByStorefrontId(@PathVariable UUID storefrontId) {
     Storefront storefront = storefrontService.findById(storefrontId);
-    List<ProductDTO> dtos =
-        productService.findByStorefront(storefront).stream().map(ProductDTO::new).toList();
+    List<ProductDTO> dtos = productService.findByStorefront(storefront).stream().map(ProductDTO::new).toList();
     return new ResponseEntity<>(dtos, HttpStatus.OK);
   }
 }
