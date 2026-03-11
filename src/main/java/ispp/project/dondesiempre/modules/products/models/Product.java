@@ -7,6 +7,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -35,7 +36,8 @@ public class Product extends BaseEntity {
 
   @Column
   @Nullable
-  @Min(0)
+  @Min(1)
+  @Max(100)
   Integer discountedPriceInCents;
 
   @Column(columnDefinition = "TEXT")
