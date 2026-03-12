@@ -25,6 +25,8 @@ public class TagTest {
     TestDTO(String tag) {
       this.tag = tag;
     }
+
+    public void testMethod(@Tag String tag) {}
   }
 
   private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
@@ -72,21 +74,14 @@ public class TagTest {
     String tag = null;
     ExecutableValidator execValid = validator.forExecutables();
     try {
-      Set<ConstraintViolation<TestClass>> violations =
+      Set<ConstraintViolation<TestDTO>> violations =
           execValid.validateParameters(
-              new TestClass(),
-              TestClass.class.getDeclaredMethod("testMethod", String.class),
+              new TestDTO("tag"),
+              TestDTO.class.getDeclaredMethod("testMethod", String.class),
               new Object[] {tag});
       assertFalse(violations.isEmpty());
     } catch (Exception e) {
       fail("Error inintencionado");
-    }
-  }
-
-  public class TestClass {
-
-    public void testMethod(@Tag String tag) {
-      System.err.println("a");
     }
   }
 }
