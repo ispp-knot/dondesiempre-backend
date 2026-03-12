@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20260311-03-unique-product-variant
+      author: emilio
+      changes:
+        - addUniqueConstraint:
+            tableName: product_variants
+            columnNames: product_id, size_id, color_id
+            constraintName: uk_product_variants_product_size_color

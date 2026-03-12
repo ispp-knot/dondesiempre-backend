@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20260311-02-unique-outfit-tag-relation
+      author: emilio
+      changes:
+        - addUniqueConstraint:
+            tableName: outfit_tag_relation
+            columnNames: outfit_id, tag_id
+            constraintName: uk_outfit_tag_relation_outfit_tag

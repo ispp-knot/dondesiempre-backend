@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20260311-01-unique-outfit-products
+      author: emilio
+      changes:
+        - addUniqueConstraint:
+            tableName: outfit_products
+            columnNames: outfit_id, product_id
+            constraintName: uk_outfit_products_outfit_product
