@@ -83,7 +83,7 @@ public class ProductService {
 
   @Transactional(readOnly = true)
   public List<Product> getAllDiscountedProducts() {
-    return productRepository.findAllDiscountedProducts();
+    return productRepository.findByDiscountPercentageIsNotNull();
   }
 
   @Transactional(rollbackFor = ResourceNotFoundException.class)

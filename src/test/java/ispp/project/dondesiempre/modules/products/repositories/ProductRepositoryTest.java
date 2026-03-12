@@ -79,7 +79,7 @@ public class ProductRepositoryTest {
 
   @Test
   public void shouldOnlyReturnDiscountedProducts() {
-    List<Product> discountedProducts = productRepository.findAllDiscountedProducts();
+    List<Product> discountedProducts = productRepository.findByDiscountPercentageIsNotNull();
 
     assertNotNull(discountedProducts);
     assertFalse(discountedProducts.isEmpty());
