@@ -128,18 +128,18 @@ public class ProductControllerTest {
     Product product = productController.createProduct(dto, null, saved_store.getId()).getBody();
 
     ProductDiscountUpdateDTO discount = new ProductDiscountUpdateDTO();
-    discount.setDiscountPercentage(700);
+    discount.setDiscountPercentage(70);
     ResponseEntity<Product> response = productController.updateDiscount(product.getId(), discount);
     assert response.getStatusCode() == HttpStatus.ACCEPTED;
     Product updatedProduct = response.getBody();
     assert updatedProduct != null;
-    assert updatedProduct.getDiscountPercentage().get() == 700;
+    assert updatedProduct.getDiscountPercentage().get() == 70;
   }
 
   @Test
   public void shouldThrowResourceNotFoundException_WhenUpdatingDiscountForNonExistentProduct() {
     ProductDiscountUpdateDTO discount = new ProductDiscountUpdateDTO();
-    discount.setDiscountPercentage(500);
+    discount.setDiscountPercentage(50);
 
     UUID nonExistentId = UUID.randomUUID();
 

@@ -87,14 +87,13 @@ public class ProductService {
   }
 
   @Transactional(rollbackFor = ResourceNotFoundException.class)
-  public Product updateProductDiscount(UUID id, Integer discountedPriceInCents)
+  public Product updateProductDiscount(UUID id, Integer discountPercentage)
       throws ResourceNotFoundException {
+
     Product product = applicationContext.getBean(ProductService.class).getProductById(id);
     authService.assertUserOwnsStore(product.getStore());
-    if (discountedPriceInCents > product.getPriceInCents()) {
-      throw new InvalidRequestException("Discounted price cannot be greater than original price");
-    }
-    product.setDiscountPercentage(discountedPriceInCents);
+
+    product.setDiscountPercentage(discountPercentage);
     return productRepository.save(product);
   }
 

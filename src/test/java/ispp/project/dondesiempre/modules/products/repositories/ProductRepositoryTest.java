@@ -84,7 +84,7 @@ public class ProductRepositoryTest {
     assertNotNull(discountedProducts);
     assertFalse(discountedProducts.isEmpty());
     for (Product product : discountedProducts) {
-      assertTrue(product.getDiscountPercentage().get() < product.getPriceInCents());
+      assertTrue(product.getDiscountPercentage().isPresent());
     }
   }
 }
