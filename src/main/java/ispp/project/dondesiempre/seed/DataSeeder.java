@@ -349,7 +349,7 @@ public class DataSeeder implements CommandLineRunner {
       for (int j = 0; j < props.getProductsPerStore(); j++) {
         int price = (rng.nextInt(200) + 10) * 100;
         boolean hasDiscount = rng.nextBoolean();
-        int discountedPrice = hasDiscount ? (int) rng.nextDouble() * 100 : null;
+        Integer discountedPrice = hasDiscount ? (int) Math.max(rng.nextDouble() * 100, 1) : null;
 
         Product product =
             createProduct(
@@ -424,7 +424,7 @@ public class DataSeeder implements CommandLineRunner {
   private Product createProduct(
       String name,
       int price,
-      int discountedPrice,
+      Integer discountedPrice,
       String description,
       ProductType type,
       Store store) {
