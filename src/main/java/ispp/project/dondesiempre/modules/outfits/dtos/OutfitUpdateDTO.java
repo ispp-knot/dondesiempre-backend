@@ -22,5 +22,4 @@ public class OutfitUpdateDTO {
 
   @Min(0)
   private Integer discountedPriceInCents;
-
 }

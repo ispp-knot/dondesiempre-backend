@@ -6,7 +6,6 @@ import ispp.project.dondesiempre.modules.promotions.dtos.PromotionUpdateDTO;
 import ispp.project.dondesiempre.modules.promotions.models.Promotion;
 import ispp.project.dondesiempre.modules.promotions.services.PromotionService;
 import jakarta.validation.Valid;
-
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +25,8 @@ public class PromotionController {
   private final PromotionService promotionService;
 
   @PostMapping("/api/v1/promotions")
-  public ResponseEntity<PromotionDTO> createPromotion(@RequestBody @Valid PromotionCreationDTO dto) {
+  public ResponseEntity<PromotionDTO> createPromotion(
+      @RequestBody @Valid PromotionCreationDTO dto) {
     Promotion promotion = promotionService.savePromotion(dto);
     PromotionDTO promotionDTO =
         new PromotionDTO(

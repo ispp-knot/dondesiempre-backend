@@ -12,7 +12,6 @@ import ispp.project.dondesiempre.modules.products.services.ProductService;
 import ispp.project.dondesiempre.modules.stores.services.StoreService;
 import ispp.project.dondesiempre.modules.stores.services.StorefrontService;
 import jakarta.validation.Valid;
-
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -35,10 +34,11 @@ public class OutfitController {
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<OutfitDTO> getById(@PathVariable("id") UUID id) {
     Outfit outfit = outfitService.findById(id);
-    OutfitDTO dto = new OutfitDTO(
-        outfit,
-        outfitService.findTagsByOutfitId(id),
-        outfitService.findOutfitProductsByOutfitId(id));
+    OutfitDTO dto =
+        new OutfitDTO(
+            outfit,
+            outfitService.findTagsByOutfitId(id),
+            outfitService.findOutfitProductsByOutfitId(id));
     return new ResponseEntity<>(dto, HttpStatus.OK);
   }
 
@@ -46,26 +46,30 @@ public class OutfitController {
   @ResponseStatus(HttpStatus.FOUND)
   public ResponseEntity<List<OutfitDTO>> getByStorefrontId(
       @PathVariable("storefrontId") UUID storefrontId) {
-    List<OutfitDTO> dtos = outfitService.findByStorefront(storefrontService.findById(storefrontId)).stream()
-        .map(
-            outfit -> new OutfitDTO(
-                outfit,
-                outfitService.findTagsByOutfitId(outfit.getId()),
-                outfitService.findOutfitProductsByOutfitId(outfit.getId())))
-        .toList();
+    List<OutfitDTO> dtos =
+        outfitService.findByStorefront(storefrontService.findById(storefrontId)).stream()
+            .map(
+                outfit ->
+                    new OutfitDTO(
+                        outfit,
+                        outfitService.findTagsByOutfitId(outfit.getId()),
+                        outfitService.findOutfitProductsByOutfitId(outfit.getId())))
+            .toList();
     return new ResponseEntity<>(dtos, HttpStatus.OK);
   }
 
   @GetMapping("stores/{storeId}/outfits")
   @ResponseStatus(HttpStatus.FOUND)
   public ResponseEntity<List<OutfitDTO>> getByStoreId(@PathVariable("storeId") UUID storeId) {
-    List<OutfitDTO> dtos = outfitService.findByStore(storeService.findById(storeId)).stream()
-        .map(
-            outfit -> new OutfitDTO(
-                outfit,
-                outfitService.findTagsByOutfitId(outfit.getId()),
-                outfitService.findOutfitProductsByOutfitId(outfit.getId())))
-        .toList();
+    List<OutfitDTO> dtos =
+        outfitService.findByStore(storeService.findById(storeId)).stream()
+            .map(
+                outfit ->
+                    new OutfitDTO(
+                        outfit,
+                        outfitService.findTagsByOutfitId(outfit.getId()),
+                        outfitService.findOutfitProductsByOutfitId(outfit.getId())))
+            .toList();
     return new ResponseEntity<>(dtos, HttpStatus.OK);
   }
 
@@ -76,10 +80,11 @@ public class OutfitController {
       @RequestPart("dto") @Valid OutfitCreationDTO dto,
       @RequestPart(value = "image", required = false) MultipartFile image) {
     Outfit outfit = outfitService.create(storefrontId, dto, image);
-    OutfitDTO outfitDTO = new OutfitDTO(
-        outfit,
-        outfitService.findTagsByOutfitId(outfit.getId()),
-        outfitService.findOutfitProductsByOutfitId(outfit.getId()));
+    OutfitDTO outfitDTO =
+        new OutfitDTO(
+            outfit,
+            outfitService.findTagsByOutfitId(outfit.getId()),
+            outfitService.findOutfitProductsByOutfitId(outfit.getId()));
     return new ResponseEntity<>(outfitDTO, HttpStatus.CREATED);
   }
 
@@ -90,17 +95,17 @@ public class OutfitController {
       @RequestPart("dto") @Valid OutfitUpdateDTO dto,
       @RequestPart(value = "image", required = false) MultipartFile image) {
     Outfit outfit = outfitService.update(id, dto, image);
-    OutfitDTO outfitDTO = new OutfitDTO(
-        outfit,
-        outfitService.findTagsByOutfitId(id),
-        outfitService.findOutfitProductsByOutfitId(id));
+    OutfitDTO outfitDTO =
+        new OutfitDTO(
+            outfit,
+            outfitService.findTagsByOutfitId(id),
+            outfitService.findOutfitProductsByOutfitId(id));
     return new ResponseEntity<>(outfitDTO, HttpStatus.OK);
   }
 
   @PostMapping("outfits/{id}/tags")
   @ResponseStatus(HttpStatus.CREATED)
-  public ResponseEntity<String> addTag(@PathVariable("id") UUID id,
-      @RequestBody @Tag String tag) {
+  public ResponseEntity<String> addTag(@PathVariable("id") UUID id, @RequestBody @Tag String tag) {
     return new ResponseEntity<>(outfitService.addTag(id, tag), HttpStatus.CREATED);
   }
 
