@@ -6,6 +6,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -16,7 +17,9 @@ import org.hibernate.annotations.OnDeleteAction;
 @Entity
 @Getter
 @Setter
-@Table(name = "outfit_products")
+@Table(
+    name = "outfit_products",
+    uniqueConstraints = @UniqueConstraint(columnNames = {"outfit_id", "product_id"}))
 public class OutfitProduct extends BaseEntity {
   @Column
   @NotNull

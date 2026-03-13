@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20260311-04-unique-promotion-product
+      author: emilio
+      changes:
+        - addUniqueConstraint:
+            tableName: promotion_products
+            columnNames: promotion_id, product_id
+            constraintName: uk_promotion_products_promotion_product

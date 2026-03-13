@@ -10,6 +10,7 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import java.util.Optional;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.URL;
@@ -43,4 +44,12 @@ public class Promotion extends BaseEntity {
   @URL
   @Column(name = "promotion_image_url")
   private String promotionImageUrl;
+
+  public Optional<String> getDescription() {
+    return Optional.ofNullable(this.description);
+  }
+
+  public Optional<String> getPromotionImageUrl() {
+    return Optional.ofNullable(this.promotionImageUrl);
+  }
 }

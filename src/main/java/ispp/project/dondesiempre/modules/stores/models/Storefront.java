@@ -7,6 +7,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
+import java.util.Optional;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.URL;
@@ -39,4 +40,8 @@ public class Storefront extends BaseEntity {
 
   @OneToOne(mappedBy = "storefront")
   private Store store;
+
+  public Optional<String> getBannerImageUrl() {
+    return Optional.ofNullable(this.bannerImageUrl);
+  }
 }

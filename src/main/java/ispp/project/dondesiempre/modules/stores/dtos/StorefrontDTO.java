@@ -24,6 +24,6 @@ public class StorefrontDTO {
     this.isFirstCollections = storefront.getIsFirstCollections();
     this.primaryColor = storefront.getPrimaryColor();
     this.secondaryColor = storefront.getSecondaryColor();
-    this.bannerImageUrl = storefront.getBannerImageUrl();
+    this.bannerImageUrl = storefront.getBannerImageUrl().orElse(null);
   }
 }

@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import ispp.project.dondesiempre.config.coordinates.GeometryFactoryConfig;
 import ispp.project.dondesiempre.modules.auth.models.User;
 import ispp.project.dondesiempre.modules.auth.repositories.UserRepository;
 import ispp.project.dondesiempre.modules.outfits.models.Outfit;
@@ -16,21 +17,19 @@ import ispp.project.dondesiempre.modules.stores.models.Store;
 import ispp.project.dondesiempre.modules.stores.models.Storefront;
 import ispp.project.dondesiempre.modules.stores.repositories.StoreRepository;
 import ispp.project.dondesiempre.modules.stores.repositories.StorefrontRepository;
+import ispp.project.dondesiempre.utils.cloudinary.CoordinatesService;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Test;
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.Point;
-import org.locationtech.jts.geom.PrecisionModel;
-import org.locationtech.jts.geom.impl.CoordinateArraySequence;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = Replace.NONE)
+@Import({CoordinatesService.class, GeometryFactoryConfig.class})
 class OutfitRepositoryTest {
   @Autowired private OutfitRepository outfitRepository;
   @Autowired private StoreRepository storeRepository;
@@ -39,6 +38,7 @@ class OutfitRepositoryTest {
   @Autowired private OutfitProductRepository outfitProductRepository;
   @Autowired private ProductTypeRepository typeRepository;
   @Autowired private UserRepository userRepository;
+  @Autowired private CoordinatesService coordinatesService;
 
   private int testUserIndex = 0;
 
@@ -63,10 +63,7 @@ class OutfitRepositoryTest {
     store.setName("Test store");
     store.setAddress("Test address");
     store.setStorefront(storefront);
-    store.setLocation(
-        new Point(
-            new CoordinateArraySequence(new Coordinate[] {new Coordinate(0.0, 0.0)}),
-            new GeometryFactory(new PrecisionModel(PrecisionModel.FIXED), 0)));
+    store.setLocation(coordinatesService.createPoint(0.0, 0.0));
     store.setAboutUs("Test description");
     store.setOpeningHours("Test opening hours");
     store.setEmail("test@test.com");
@@ -74,7 +71,7 @@ class OutfitRepositoryTest {
     store.setUser(createTestUser());
     store = storeRepository.save(store);
 
-    result = outfitRepository.findByStoreId(store.getId());
+    result = outfitRepository.findByStorefrontStoreIdOrderByIndexAsc(store.getId());
 
     assertTrue(result.isEmpty());
   }
@@ -99,10 +96,7 @@ class OutfitRepositoryTest {
     store.setName("Test store");
     store.setAddress("Test address");
     store.setStorefront(storefront);
-    store.setLocation(
-        new Point(
-            new CoordinateArraySequence(new Coordinate[] {new Coordinate(0.0, 0.0)}),
-            new GeometryFactory(new PrecisionModel(PrecisionModel.FIXED), 0)));
+    store.setLocation(coordinatesService.createPoint(0.0, 0.0));
     store.setAboutUs("Test description");
     store.setOpeningHours("Test opening hours");
     store.setEmail("test@test.com");
@@ -135,7 +129,7 @@ class OutfitRepositoryTest {
     outfitProduct.setOutfit(outfit);
     outfitProduct = outfitProductRepository.save(outfitProduct);
 
-    result = outfitRepository.findByStoreId(store.getId());
+    result = outfitRepository.findByStorefrontStoreIdOrderByIndexAsc(store.getId());
 
     assertEquals(1, result.size());
     assertTrue(result.contains(outfit));
@@ -166,10 +160,7 @@ class OutfitRepositoryTest {
     store1.setName("Test store 1");
     store1.setAddress("Test address");
     store1.setStorefront(storefront1);
-    store1.setLocation(
-        new Point(
-            new CoordinateArraySequence(new Coordinate[] {new Coordinate(0.0, 0.0)}),
-            new GeometryFactory(new PrecisionModel(PrecisionModel.FIXED), 0)));
+    store1.setLocation(coordinatesService.createPoint(0.0, 0.0));
     store1.setAboutUs("Test description");
     store1.setOpeningHours("Test opening hours");
     store1.setEmail("test@test.com");
@@ -181,10 +172,7 @@ class OutfitRepositoryTest {
     store2.setName("Test store 2");
     store2.setAddress("Test address");
     store2.setStorefront(storefront2);
-    store2.setLocation(
-        new Point(
-            new CoordinateArraySequence(new Coordinate[] {new Coordinate(0.0, 0.0)}),
-            new GeometryFactory(new PrecisionModel(PrecisionModel.FIXED), 0)));
+    store2.setLocation(coordinatesService.createPoint(0.0, 0.0));
     store2.setAboutUs("Test description");
     store2.setOpeningHours("Test opening hours");
     store2.setEmail("test@test.com");
@@ -262,7 +250,7 @@ class OutfitRepositoryTest {
     outfitProduct.setOutfit(outfit3);
     outfitProduct = outfitProductRepository.save(outfitProduct);
 
-    result = outfitRepository.findByStoreId(store1.getId());
+    result = outfitRepository.findByStorefrontStoreIdOrderByIndexAsc(store1.getId());
 
     assertEquals(2, result.size());
 

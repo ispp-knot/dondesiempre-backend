@@ -14,6 +14,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import ispp.project.dondesiempre.config.GlobalExceptionHandler;
 import ispp.project.dondesiempre.modules.outfits.dtos.OutfitCreationDTO;
 import ispp.project.dondesiempre.modules.outfits.dtos.OutfitCreationProductDTO;
 import ispp.project.dondesiempre.modules.outfits.dtos.OutfitUpdateDTO;
@@ -33,6 +34,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockPart;
@@ -40,7 +43,12 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-@WebMvcTest(controllers = OutfitController.class)
+@WebMvcTest(
+    controllers = OutfitController.class,
+    excludeFilters =
+        @ComponentScan.Filter(
+            type = FilterType.ASSIGNABLE_TYPE,
+            classes = {GlobalExceptionHandler.class}))
 class OutfitsControllerTest {
 
   @Autowired private MockMvc mockMvc;
@@ -155,11 +163,10 @@ class OutfitsControllerTest {
     OutfitCreationDTO creationDTO = new OutfitCreationDTO();
     creationDTO.setName("New Outfit");
     creationDTO.setIndex(0);
-    creationDTO.setStorefrontId(storefrontId);
     creationDTO.setTags(List.of(TEST_TAG));
     creationDTO.setProducts(List.of(productDTO));
 
-    when(outfitService.create(any(), any())).thenReturn(outfit);
+    when(outfitService.create(any(), any(), any())).thenReturn(outfit);
     when(outfitService.findTagsByOutfitId(outfitId)).thenReturn(List.of(TEST_TAG));
     when(outfitService.findOutfitProductsByOutfitId(outfitId)).thenReturn(List.of(outfitProduct));
 
@@ -167,7 +174,7 @@ class OutfitsControllerTest {
     dtoPart.getHeaders().setContentType(MediaType.APPLICATION_JSON);
 
     mockMvc
-        .perform(multipart("/api/v1/outfits").part(dtoPart))
+        .perform(multipart("/api/v1/outfits?storefrontId=" + storefrontId).part(dtoPart))
         .andExpect(status().isCreated())
         .andExpect(jsonPath("$.id").value(outfitId.toString()))
         .andExpect(jsonPath("$.name").value(outfit.getName()));

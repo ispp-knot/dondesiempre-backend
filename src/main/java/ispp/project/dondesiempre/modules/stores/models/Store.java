@@ -13,6 +13,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import java.util.Optional;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.JdbcTypeCode;
@@ -63,4 +64,12 @@ public class Store extends BaseEntity {
   @OneToOne(optional = false)
   @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
   private User user;
+
+  public Optional<String> getPhone() {
+    return Optional.ofNullable(this.phone);
+  }
+
+  public Optional<String> getAboutUs() {
+    return Optional.ofNullable(this.aboutUs);
+  }
 }

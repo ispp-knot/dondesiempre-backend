@@ -14,14 +14,10 @@ import ispp.project.dondesiempre.modules.stores.models.Store;
 import ispp.project.dondesiempre.modules.stores.models.Storefront;
 import ispp.project.dondesiempre.modules.stores.repositories.StoreRepository;
 import ispp.project.dondesiempre.utils.cloudinary.CloudinaryService;
+import ispp.project.dondesiempre.utils.cloudinary.CoordinatesService;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.Point;
-import org.locationtech.jts.geom.PrecisionModel;
-import org.locationtech.jts.geom.impl.CoordinateArraySequence;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
@@ -40,6 +36,7 @@ public class ProductServiceTest {
   @Autowired private UserRepository userRepository;
   @MockitoBean private AuthService authService;
   @MockitoBean private CloudinaryService cloudinaryService;
+  @Autowired private CoordinatesService coordinatesService;
 
   private User testUser;
 
@@ -62,10 +59,7 @@ public class ProductServiceTest {
     Store store = new Store();
     store.setName("Test Store");
     store.setEmail("test@example.com");
-    store.setLocation(
-        new Point(
-            new CoordinateArraySequence(new Coordinate[] {new Coordinate(0.0, 0.0)}),
-            new GeometryFactory(new PrecisionModel(PrecisionModel.FIXED), 0)));
+    store.setLocation(coordinatesService.createPoint(0.0, 0.0));
     store.setAddress("123 Test Street");
     store.setOpeningHours("9am - 5pm");
     store.setAcceptsShipping(true);
@@ -101,10 +95,7 @@ public class ProductServiceTest {
     Store store = new Store();
     store.setName("Test Store");
     store.setEmail("test@example.com");
-    store.setLocation(
-        new Point(
-            new CoordinateArraySequence(new Coordinate[] {new Coordinate(0.0, 0.0)}),
-            new GeometryFactory(new PrecisionModel(PrecisionModel.FIXED), 0)));
+    store.setLocation(coordinatesService.createPoint(0.0, 0.0));
     store.setAddress("123 Test Street");
     store.setOpeningHours("9am - 5pm");
     store.setAcceptsShipping(true);
@@ -141,10 +132,7 @@ public class ProductServiceTest {
     Store store = new Store();
     store.setName("Test Store");
     store.setEmail("test@example.com");
-    store.setLocation(
-        new Point(
-            new CoordinateArraySequence(new Coordinate[] {new Coordinate(0.0, 0.0)}),
-            new GeometryFactory(new PrecisionModel(PrecisionModel.FIXED), 0)));
+    store.setLocation(coordinatesService.createPoint(0.0, 0.0));
     store.setAddress("123 Test Street");
     store.setOpeningHours("9am - 5pm");
     store.setAcceptsShipping(true);
@@ -181,10 +169,7 @@ public class ProductServiceTest {
     Store store = new Store();
     store.setName("Test Store");
     store.setEmail("test@example.com");
-    store.setLocation(
-        new Point(
-            new CoordinateArraySequence(new Coordinate[] {new Coordinate(0.0, 0.0)}),
-            new GeometryFactory(new PrecisionModel(PrecisionModel.FIXED), 0)));
+    store.setLocation(coordinatesService.createPoint(0.0, 0.0));
     store.setAddress("123 Test Street");
     store.setOpeningHours("9am - 5pm");
     store.setAcceptsShipping(true);
@@ -223,10 +208,7 @@ public class ProductServiceTest {
     Store store = new Store();
     store.setName("Test Store");
     store.setEmail("test@example.com");
-    store.setLocation(
-        new Point(
-            new CoordinateArraySequence(new Coordinate[] {new Coordinate(0.0, 0.0)}),
-            new GeometryFactory(new PrecisionModel(PrecisionModel.FIXED), 0)));
+    store.setLocation(coordinatesService.createPoint(0.0, 0.0));
     store.setAddress("123 Test Street");
     store.setOpeningHours("9am - 5pm");
     store.setAcceptsShipping(true);
@@ -255,11 +237,12 @@ public class ProductServiceTest {
 
   @Test
   public void shouldThrowException_WhenGettingNonExistentProduct() {
+    UUID id = UUID.randomUUID();
     try {
-      productService.getProductById(UUID.randomUUID());
+      productService.getProductById(id);
       assert false;
     } catch (RuntimeException e) {
-      assert e.getMessage().equals("Product not found");
+      assert e.getMessage().equals("Product not found with id: " + id);
     }
   }
 
@@ -273,10 +256,7 @@ public class ProductServiceTest {
     Store store = new Store();
     store.setName("Test Store");
     store.setEmail("test@example.com");
-    store.setLocation(
-        new Point(
-            new CoordinateArraySequence(new Coordinate[] {new Coordinate(0.0, 0.0)}),
-            new GeometryFactory(new PrecisionModel(PrecisionModel.FIXED), 0)));
+    store.setLocation(coordinatesService.createPoint(0.0, 0.0));
     store.setAddress("123 Test Street");
     store.setOpeningHours("9am - 5pm");
     store.setAcceptsShipping(true);
@@ -313,10 +293,7 @@ public class ProductServiceTest {
     Store store = new Store();
     store.setName("Test Store");
     store.setEmail("test@example.com");
-    store.setLocation(
-        new Point(
-            new CoordinateArraySequence(new Coordinate[] {new Coordinate(0.0, 0.0)}),
-            new GeometryFactory(new PrecisionModel(PrecisionModel.FIXED), 0)));
+    store.setLocation(coordinatesService.createPoint(0.0, 0.0));
     store.setAddress("123 Test Street");
     store.setOpeningHours("9am - 5pm");
     store.setAcceptsShipping(true);

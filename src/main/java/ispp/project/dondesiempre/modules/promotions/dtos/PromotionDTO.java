@@ -26,7 +26,7 @@ public class PromotionDTO {
     this.name = promotion.getName();
     this.discountPercentage = promotion.getDiscountPercentage();
     this.isActive = promotion.isActive();
-    this.description = promotion.getDescription();
+    this.description = promotion.getDescription().orElse(null);
     this.storeId = promotion.getStore().getId();
     this.products = products;
   }
