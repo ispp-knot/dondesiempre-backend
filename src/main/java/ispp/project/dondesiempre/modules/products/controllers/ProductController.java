@@ -58,7 +58,7 @@ public class ProductController {
 
   @PutMapping("products/{id}/discount")
   public ResponseEntity<Product> updateDiscount(
-      @PathVariable UUID id, @RequestBody DiscountModificationDTO discount) {
+      @PathVariable UUID id, @RequestBody @Valid DiscountModificationDTO discount) {
     Product updatedProduct =
         productService.updateProductDiscount(id, discount.getDiscountedPriceInCents());
     return new ResponseEntity<>(updatedProduct, HttpStatus.ACCEPTED);
