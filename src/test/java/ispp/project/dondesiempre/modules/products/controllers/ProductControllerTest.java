@@ -1,5 +1,7 @@
 package ispp.project.dondesiempre.modules.products.controllers;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import ispp.project.dondesiempre.modules.auth.models.User;
@@ -280,5 +282,74 @@ public class ProductControllerTest {
     List<ProductDTO> products = response.getBody();
     assert products != null;
     assert products.size() >= 1;
+  }
+
+  @Test
+  public void shouldReturnProductsList_whenStoreHasProducts() {
+    Storefront storefront = new Storefront();
+    storefront.setIsFirstCollections(true);
+    storefront.setPrimaryColor("#c65a3a");
+    storefront.setSecondaryColor("#19756a");
+
+    Store store = new Store();
+    store.setName("Test Store");
+    store.setEmail("test@example.com");
+    store.setLocation(coordinatesService.createPoint(0.0, 0.0));
+    store.setAddress("123 Test Street");
+    store.setOpeningHours("9am - 5pm");
+    store.setAcceptsShipping(true);
+    store.setUser(getTestUser());
+    store.setStorefront(storefront);
+
+    store = storeRepository.save(store);
+
+    ProductType type = new ProductType();
+    type.setType("Test Product Type");
+    type = productTypeRepository.save(type);
+
+    ProductCreationDTO dto = new ProductCreationDTO();
+    dto.setName("Test Product");
+    dto.setPriceInCents(1000);
+    dto.setDescription("This is a test product");
+    dto.setTypeId(type.getId());
+
+    Product product1 = productController.createProduct(dto, null, store.getId()).getBody();
+    Product product2 = productController.createProduct(dto, null, store.getId()).getBody();
+
+    ResponseEntity<List<ProductDTO>> response = productController.getByStoreId(store.getId());
+    assertEquals(response.getStatusCode(), HttpStatus.OK);
+
+    List<ProductDTO> dtos = response.getBody();
+    assertNotNull(dtos);
+    assertEquals(dtos.size(), 2);
+    assertEquals(dtos.get(0).getId(), product1.getId());
+    assertEquals(dtos.get(1).getId(), product2.getId());
+  }
+
+  @Test
+  public void shouldReturnEmptyList_whenStoreHasNoProducts() {
+    Storefront storefront = new Storefront();
+    storefront.setIsFirstCollections(true);
+    storefront.setPrimaryColor("#c65a3a");
+    storefront.setSecondaryColor("#19756a");
+
+    Store store = new Store();
+    store.setName("Test Store");
+    store.setEmail("test@example.com");
+    store.setLocation(coordinatesService.createPoint(0.0, 0.0));
+    store.setAddress("123 Test Street");
+    store.setOpeningHours("9am - 5pm");
+    store.setAcceptsShipping(true);
+    store.setUser(getTestUser());
+    store.setStorefront(storefront);
+
+    store = storeRepository.save(store);
+
+    ResponseEntity<List<ProductDTO>> response = productController.getByStoreId(store.getId());
+    assertEquals(response.getStatusCode(), HttpStatus.OK);
+
+    List<ProductDTO> dtos = response.getBody();
+    assertNotNull(dtos);
+    assertEquals(dtos.size(), 0);
   }
 }
