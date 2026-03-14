@@ -91,10 +91,9 @@ public class PromotionServiceTest {
     ProductCreationDTO dto = new ProductCreationDTO();
     dto.setName(name);
     dto.setPriceInCents(priceInCents);
-    dto.setDiscountedPriceInCents(discountedPriceInCents);
     dto.setDescription("This is a test product");
     dto.setTypeId(typeId);
-    return productService.saveProduct(dto, null, storeId);
+    return productService.createProduct(dto, null, storeId);
   }
 
   private Promotion createPromotion(

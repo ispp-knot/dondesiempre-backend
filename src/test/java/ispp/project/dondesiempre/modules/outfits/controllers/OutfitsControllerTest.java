@@ -93,7 +93,7 @@ class OutfitsControllerTest {
     outfit.setDescription("Test Description");
     outfit.setIndex(0);
     outfit.setDiscountedPriceInCents(1000);
-    outfit.setStorefront(storefront);
+    outfit.setStore(store);
 
     ProductType productType = new ProductType();
     productType.setId(UUID.randomUUID());
@@ -103,7 +103,7 @@ class OutfitsControllerTest {
     product.setId(productId);
     product.setName("Test Product");
     product.setPriceInCents(600);
-    product.setDiscountedPriceInCents(500);
+    product.setDiscountPercentage(50);
     product.setStore(store);
     product.setType(productType);
 
@@ -150,23 +150,6 @@ class OutfitsControllerTest {
   }
 
   // -------------------------------------------------------------------------
-  // GET /api/v1/storefronts/{storefrontId}/outfits
-  // -------------------------------------------------------------------------
-
-  @Test
-  void getByStorefrontId_shouldReturnOk_whenStorefrontExists() throws Exception {
-    when(storefrontService.findById(storefrontId)).thenReturn(storefront);
-    when(outfitService.findByStorefront(storefront)).thenReturn(List.of(outfit));
-    when(outfitService.findTagsByOutfitId(outfitId)).thenReturn(List.of());
-    when(outfitService.findOutfitProductsByOutfitId(outfitId)).thenReturn(List.of(outfitProduct));
-
-    mockMvc
-        .perform(get("/api/v1/storefronts/" + storefrontId + "/outfits"))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$.size()").value(1));
-  }
-
-  // -------------------------------------------------------------------------
   // POST /api/v1/outfits
   // -------------------------------------------------------------------------
 
@@ -191,7 +174,7 @@ class OutfitsControllerTest {
     dtoPart.getHeaders().setContentType(MediaType.APPLICATION_JSON);
 
     mockMvc
-        .perform(multipart("/api/v1/outfits?storefrontId=" + storefrontId).part(dtoPart))
+        .perform(multipart("/api/v1/stores/" + storeId + "/outfits").part(dtoPart))
         .andExpect(status().isCreated())
         .andExpect(jsonPath("$.id").value(outfitId.toString()))
         .andExpect(jsonPath("$.name").value(outfit.getName()));

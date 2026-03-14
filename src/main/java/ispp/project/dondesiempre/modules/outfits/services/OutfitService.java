@@ -15,8 +15,7 @@ import ispp.project.dondesiempre.modules.outfits.repositories.OutfitRepository;
 import ispp.project.dondesiempre.modules.products.models.Product;
 import ispp.project.dondesiempre.modules.products.services.ProductService;
 import ispp.project.dondesiempre.modules.stores.models.Store;
-import ispp.project.dondesiempre.modules.stores.models.Storefront;
-import ispp.project.dondesiempre.modules.stores.services.StorefrontService;
+import ispp.project.dondesiempre.modules.stores.services.StoreService;
 import ispp.project.dondesiempre.utils.cloudinary.CloudinaryService;
 import java.util.List;
 import java.util.UUID;
@@ -35,7 +34,7 @@ public class OutfitService {
   private final OutfitTagService outfitTagService;
 
   private final ProductService productService;
-  private final StorefrontService storefrontService;
+  private final StoreService storeService;
   private final AuthService authService;
 
   private final CloudinaryService cloudinaryService;
@@ -61,12 +60,7 @@ public class OutfitService {
 
   @Transactional(readOnly = true)
   public List<Outfit> findByStore(Store store) {
-    return outfitRepository.findByStorefrontStoreIdOrderByIndexAsc(store.getId());
-  }
-
-  @Transactional(readOnly = true)
-  public List<Outfit> findByStorefront(Storefront storefront) {
-    return outfitRepository.findByStorefrontId(storefront.getId());
+    return outfitRepository.findByStoreIdOrderByIndexAsc(store.getId());
   }
 
   @Transactional(
@@ -75,7 +69,7 @@ public class OutfitService {
         ResourceNotFoundException.class,
         InvalidRequestException.class
       })
-  public Outfit create(UUID storefrontId, OutfitCreationDTO dto, MultipartFile image)
+  public Outfit create(UUID storeId, OutfitCreationDTO dto, MultipartFile image)
       throws UnauthorizedException, ResourceNotFoundException, InvalidRequestException {
     Outfit outfit;
     UUID outfitId;
@@ -88,9 +82,9 @@ public class OutfitService {
     if (image != null && !image.isEmpty()) {
       outfit.setImage(cloudinaryService.upload(image));
     }
-    Storefront storefront = storefrontService.findById(storefrontId);
-    authService.assertUserOwnsStore(storefront.getStore());
-    outfit.setStorefront(storefront);
+    Store store = storeService.findById(storeId);
+    authService.assertUserOwnsStore(store);
+    outfit.setStore(store);
 
     if (dto.getProducts() == null || (dto.getProducts() != null && dto.getProducts().size() <= 0)) {
       throw new InvalidRequestException("An outfit cannot be created without products.");
@@ -117,8 +111,7 @@ public class OutfitService {
   public Integer calculatePriceOnCreation(List<OutfitCreationProductDTO> dtos)
       throws ResourceNotFoundException {
     return dtos.stream()
-        .mapToInt(
-            dto -> productService.getProductById(dto.getProductId()).getDiscountedPriceInCents())
+        .mapToInt(dto -> productService.getProductById(dto.getProductId()).getPriceInCents())
         .sum();
   }
 
@@ -133,7 +126,7 @@ public class OutfitService {
     Outfit outfitToUpdate;
 
     outfitToUpdate = applicationContext.getBean(OutfitService.class).findById(id);
-    authService.assertUserOwnsStore(outfitToUpdate.getStorefront().getStore());
+    authService.assertUserOwnsStore(outfitToUpdate.getStore());
 
     outfitToUpdate.setName(dto.getName());
     outfitToUpdate.setDescription(dto.getDescription());
@@ -154,7 +147,7 @@ public class OutfitService {
     OutfitTagRelation outfitTag;
 
     outfit = applicationContext.getBean(OutfitService.class).findById(outfitId);
-    authService.assertUserOwnsStore(outfit.getStorefront().getStore());
+    authService.assertUserOwnsStore(outfit.getStore());
     tag = outfitTagService.findOrCreate(tagName);
 
     outfitTag = new OutfitTagRelation();
@@ -173,7 +166,7 @@ public class OutfitService {
     OutfitTagRelation relation;
 
     outfit = applicationContext.getBean(OutfitService.class).findById(outfitId);
-    authService.assertUserOwnsStore(outfit.getStorefront().getStore());
+    authService.assertUserOwnsStore(outfit.getStore());
     tag = outfitTagService.findByName(tagName);
 
     relation = outfitTagRelationService.findTagRelation(outfit.getId(), tag.getId());
@@ -195,7 +188,7 @@ public class OutfitService {
     List<Integer> productIndicesOfOutfit;
 
     outfit = applicationContext.getBean(OutfitService.class).findById(outfitId);
-    authService.assertUserOwnsStore(outfit.getStorefront().getStore());
+    authService.assertUserOwnsStore(outfit.getStore());
     product = productService.getProductById(dto.getProductId());
 
     productsOfOutfit = productService.getOutfitProductsById(outfitId);
@@ -226,7 +219,7 @@ public class OutfitService {
     OutfitProduct relation;
 
     outfit = applicationContext.getBean(OutfitService.class).findById(outfitId);
-    authService.assertUserOwnsStore(outfit.getStorefront().getStore());
+    authService.assertUserOwnsStore(outfit.getStore());
     relation = outfitProductService.findProductRelation(outfit.getId(), product.getId());
     outfitProductService.delete(relation);
   }
@@ -238,7 +231,7 @@ public class OutfitService {
     List<OutfitProduct> relations;
 
     outfit = applicationContext.getBean(OutfitService.class).findById(outfitId);
-    authService.assertUserOwnsStore(outfit.getStorefront().getStore());
+    authService.assertUserOwnsStore(outfit.getStore());
     relations = outfitProductService.findOutfitProductsById(outfitId);
 
     for (OutfitProduct relation : relations) {
@@ -260,7 +253,7 @@ public class OutfitService {
   @Transactional(rollbackFor = {UnauthorizedException.class, ResourceNotFoundException.class})
   public void delete(UUID id) throws UnauthorizedException, ResourceNotFoundException {
     Outfit outfit = applicationContext.getBean(OutfitService.class).findById(id);
-    authService.assertUserOwnsStore(outfit.getStorefront().getStore());
+    authService.assertUserOwnsStore(outfit.getStore());
     outfitProductService.findOutfitProductsById(id).stream()
         .forEach(p -> outfitProductService.deleteById(p.getId()));
     outfitTagRelationService.findOutfitTagsById(id).stream()

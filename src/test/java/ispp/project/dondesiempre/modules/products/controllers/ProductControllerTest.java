@@ -5,11 +5,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import ispp.project.dondesiempre.modules.auth.models.User;
 import ispp.project.dondesiempre.modules.auth.repositories.UserRepository;
 import ispp.project.dondesiempre.modules.auth.services.AuthService;
-import ispp.project.dondesiempre.modules.common.exceptions.InvalidRequestException;
 import ispp.project.dondesiempre.modules.common.exceptions.ResourceNotFoundException;
-import ispp.project.dondesiempre.modules.products.dtos.DiscountModificationDTO;
 import ispp.project.dondesiempre.modules.products.dtos.ProductCreationDTO;
 import ispp.project.dondesiempre.modules.products.dtos.ProductDTO;
+import ispp.project.dondesiempre.modules.products.dtos.ProductDiscountUpdateDTO;
 import ispp.project.dondesiempre.modules.products.models.Product;
 import ispp.project.dondesiempre.modules.products.models.ProductType;
 import ispp.project.dondesiempre.modules.products.repositories.ProductTypeRepository;
@@ -86,7 +85,6 @@ public class ProductControllerTest {
     ProductCreationDTO dto = new ProductCreationDTO();
     dto.setName("Test Product");
     dto.setPriceInCents(1000);
-    dto.setDiscountedPriceInCents(800);
     dto.setDescription("This is a test product");
     dto.setTypeId(savedProductType.getId());
 
@@ -94,45 +92,6 @@ public class ProductControllerTest {
     assert product != null;
     assert product.getId() != null;
     assert product.getName().equals(dto.getName());
-  }
-
-  @Test
-  public void shouldThrowInvalidRequestException_WhenDiscountedPriceIsGreaterThanOriginalPrice() {
-    // Create and save a product type
-
-    Storefront storefront = new Storefront();
-    storefront.setIsFirstCollections(true);
-    storefront.setPrimaryColor("#c65a3a");
-    storefront.setSecondaryColor("#19756a");
-
-    Store store = new Store();
-    store.setName("Test Store");
-    store.setEmail("test@example.com");
-    store.setLocation(coordinatesService.createPoint(0.0, 0.0));
-    store.setAddress("123 Test Street");
-    store.setOpeningHours("9am - 5pm");
-    store.setAcceptsShipping(true);
-    store.setStorefront(storefront);
-    store.setUser(getTestUser());
-
-    Store saved_store = storeRepository.save(store);
-
-    ProductType type = new ProductType();
-    type.setType("Test Product Type");
-    ProductType savedProductType = productTypeRepository.save(type);
-
-    ProductCreationDTO dto = new ProductCreationDTO();
-    dto.setName("Test Product");
-    dto.setPriceInCents(1000);
-    dto.setDiscountedPriceInCents(1200); // Invalid discounted price
-    dto.setDescription("This is a test product");
-    dto.setTypeId(savedProductType.getId());
-
-    assertThrows(
-        InvalidRequestException.class,
-        () -> {
-          productController.createProduct(dto, null, saved_store.getId());
-        });
   }
 
   @Test
@@ -162,25 +121,24 @@ public class ProductControllerTest {
     ProductCreationDTO dto = new ProductCreationDTO();
     dto.setName("Test Product");
     dto.setPriceInCents(1000);
-    dto.setDiscountedPriceInCents(800);
     dto.setDescription("This is a test product");
     dto.setTypeId(savedProductType.getId());
 
     Product product = productController.createProduct(dto, null, saved_store.getId()).getBody();
 
-    DiscountModificationDTO discount = new DiscountModificationDTO();
-    discount.setDiscountedPriceInCents(700);
+    ProductDiscountUpdateDTO discount = new ProductDiscountUpdateDTO();
+    discount.setDiscountPercentage(70);
     ResponseEntity<Product> response = productController.updateDiscount(product.getId(), discount);
     assert response.getStatusCode() == HttpStatus.ACCEPTED;
     Product updatedProduct = response.getBody();
     assert updatedProduct != null;
-    assert updatedProduct.getDiscountedPriceInCents() == 700;
+    assert updatedProduct.getDiscountPercentage().get() == 70;
   }
 
   @Test
   public void shouldThrowResourceNotFoundException_WhenUpdatingDiscountForNonExistentProduct() {
-    DiscountModificationDTO discount = new DiscountModificationDTO();
-    discount.setDiscountedPriceInCents(500);
+    ProductDiscountUpdateDTO discount = new ProductDiscountUpdateDTO();
+    discount.setDiscountPercentage(50);
 
     UUID nonExistentId = UUID.randomUUID();
 
@@ -188,45 +146,6 @@ public class ProductControllerTest {
         ResourceNotFoundException.class,
         () -> {
           productController.updateDiscount(nonExistentId, discount);
-        });
-  }
-
-  @Test
-  public void shouldThrowInvalidRequestException_WhenUpdatingDiscountToGreaterThanOriginalPrice() {
-    Storefront storefront = new Storefront();
-    storefront.setIsFirstCollections(true);
-    storefront.setPrimaryColor("#c65a3a");
-    storefront.setSecondaryColor("#19756a");
-
-    Store store = new Store();
-    store.setName("Test Store");
-    store.setEmail("test@example.com");
-    store.setLocation(coordinatesService.createPoint(0.0, 0.0));
-    store.setOpeningHours("9am - 5pm");
-    store.setAcceptsShipping(true);
-    store.setStorefront(storefront);
-    store.setUser(getTestUser());
-
-    Store saved_store = storeRepository.save(store);
-
-    ProductType type = new ProductType();
-    type.setType("Test Product Type");
-    ProductType savedProductType = productTypeRepository.save(type);
-
-    ProductCreationDTO dto = new ProductCreationDTO();
-    dto.setName("Test Product");
-    dto.setPriceInCents(1000);
-    dto.setDiscountedPriceInCents(800);
-    dto.setDescription("This is a test product");
-    dto.setTypeId(savedProductType.getId());
-
-    Product product = productController.createProduct(dto, null, saved_store.getId()).getBody();
-    DiscountModificationDTO discount = new DiscountModificationDTO();
-    discount.setDiscountedPriceInCents(1200); // Invalid discounted price
-    assertThrows(
-        InvalidRequestException.class,
-        () -> {
-          productController.updateDiscount(product.getId(), discount);
         });
   }
 
@@ -266,7 +185,6 @@ public class ProductControllerTest {
     ProductCreationDTO dto = new ProductCreationDTO();
     dto.setName("Test Product");
     dto.setPriceInCents(1000);
-    dto.setDiscountedPriceInCents(800);
     dto.setDescription("This is a test product");
     dto.setTypeId(savedProductType.getId());
 
@@ -306,7 +224,6 @@ public class ProductControllerTest {
     ProductCreationDTO dto = new ProductCreationDTO();
     dto.setName("Test Product");
     dto.setPriceInCents(1000);
-    dto.setDiscountedPriceInCents(800);
     dto.setDescription("This is a test product");
     dto.setTypeId(savedProductType.getId());
 
@@ -348,15 +265,16 @@ public class ProductControllerTest {
     ProductCreationDTO dto = new ProductCreationDTO();
     dto.setName("Test Product");
     dto.setPriceInCents(1000);
-    dto.setDiscountedPriceInCents(800);
     dto.setDescription("This is a test product");
     dto.setTypeId(savedProductType.getId());
 
-    productController.createProduct(dto, null, saved_store.getId());
+    var product = productController.createProduct(dto, null, saved_store.getId());
     dto.setName("Test Product 2");
-    dto.setDiscountedPriceInCents(1000);
     productController.createProduct(dto, null, saved_store.getId());
 
+    ProductDiscountUpdateDTO discountModificationDTO = new ProductDiscountUpdateDTO();
+    discountModificationDTO.setDiscountPercentage(20);
+    productController.updateDiscount(product.getBody().getId(), discountModificationDTO);
     ResponseEntity<List<ProductDTO>> response = productController.getDiscountedProducts();
     assert response.getStatusCode() == HttpStatus.OK;
     List<ProductDTO> products = response.getBody();

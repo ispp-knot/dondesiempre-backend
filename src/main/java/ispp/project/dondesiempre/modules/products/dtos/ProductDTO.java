@@ -25,7 +25,7 @@ public class ProductDTO {
     this.id = product.getId();
     this.name = product.getName();
     this.priceInCents = product.getPriceInCents();
-    this.discountedPriceInCents = product.getDiscountedPriceInCents();
+    this.discountedPriceInCents = product.getDiscountPercentage().orElse(null);
     this.description = product.getDescription().orElse(null);
     this.image = product.getImage().orElse(null);
     this.typeId = product.getType().getId();

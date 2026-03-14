@@ -199,7 +199,7 @@ public class DataSeeder implements CommandLineRunner {
         createProduct(
             "Camiseta Lino Mediterráneo",
             2999,
-            2999,
+            20,
             "Camiseta de lino natural de verano.",
             productTypes.get("Camiseta"),
             store);
@@ -207,7 +207,7 @@ public class DataSeeder implements CommandLineRunner {
         createProduct(
             "Pantalón Palazzo Verano",
             4999,
-            3999,
+            30,
             "Pantalón fluido perfecto para el verano.",
             productTypes.get("Pantalón"),
             store);
@@ -215,7 +215,7 @@ public class DataSeeder implements CommandLineRunner {
         createProduct(
             "Vestido Midi Floral",
             6999,
-            6999,
+            40,
             "Vestido midi con estampado floral primaveral.",
             productTypes.get("Vestido"),
             store);
@@ -223,7 +223,7 @@ public class DataSeeder implements CommandLineRunner {
         createProduct(
             "Chaqueta Punto Artesanal",
             8999,
-            7499,
+            50,
             "Chaqueta de punto tejida a mano.",
             productTypes.get("Chaqueta"),
             store);
@@ -240,12 +240,12 @@ public class DataSeeder implements CommandLineRunner {
     createVariant(p4, productSizes.get("M"), productColors.get("Beige"), true);
 
     // Outfits
-    Outfit outfit1 = createOutfit("Look Verano Andaluz", 0, store.getStorefront());
+    Outfit outfit1 = createOutfit("Look Verano Andaluz", 0, store);
     createOutfitProduct(outfit1, p1, 0);
     createOutfitProduct(outfit1, p2, 1);
     createOutfitTagRelation(outfit1, outfitTags.get("Verano"));
 
-    Outfit outfit2 = createOutfit("Estilo Mediterráneo", 1, store.getStorefront());
+    Outfit outfit2 = createOutfit("Estilo Mediterráneo", 1, store);
     createOutfitProduct(outfit2, p3, 0);
     createOutfitProduct(outfit2, p4, 1);
     createOutfitTagRelation(outfit2, outfitTags.get("Elegante"));
@@ -349,7 +349,7 @@ public class DataSeeder implements CommandLineRunner {
       for (int j = 0; j < props.getProductsPerStore(); j++) {
         int price = (rng.nextInt(200) + 10) * 100;
         boolean hasDiscount = rng.nextBoolean();
-        int discountedPrice = hasDiscount ? (int) (price * (0.6 + rng.nextDouble() * 0.35)) : price;
+        Integer discountedPrice = hasDiscount ? (int) Math.max(rng.nextDouble() * 100, 1) : null;
 
         Product product =
             createProduct(
@@ -371,7 +371,7 @@ public class DataSeeder implements CommandLineRunner {
 
       // Outfits
       for (int j = 0; j < props.getOutfitsPerStore(); j++) {
-        Outfit outfit = createOutfit(pick(outfitNames, rng), j, store.getStorefront());
+        Outfit outfit = createOutfit(pick(outfitNames, rng), j, store);
 
         int productsInOutfit = 2 + rng.nextInt(2);
         for (int k = 0; k < productsInOutfit && k < storeProducts.size(); k++) {
@@ -424,14 +424,14 @@ public class DataSeeder implements CommandLineRunner {
   private Product createProduct(
       String name,
       int price,
-      int discountedPrice,
+      Integer discountedPrice,
       String description,
       ProductType type,
       Store store) {
     Product product = new Product();
     product.setName(name);
     product.setPriceInCents(price);
-    product.setDiscountedPriceInCents(discountedPrice);
+    product.setDiscountPercentage(discountedPrice);
     product.setDescription(description);
     product.setType(type);
     product.setStore(store);
@@ -448,12 +448,12 @@ public class DataSeeder implements CommandLineRunner {
     productVariantRepository.save(variant);
   }
 
-  private Outfit createOutfit(String name, int index, Storefront storefront) {
+  private Outfit createOutfit(String name, int index, Store store) {
     Outfit outfit = new Outfit();
     outfit.setName(name);
     outfit.setIndex(index);
     outfit.setDiscountedPriceInCents(0);
-    outfit.setStorefront(storefront);
+    outfit.setStore(store);
     return outfitRepository.save(outfit);
   }
 
