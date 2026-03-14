@@ -1,10 +1,12 @@
 package ispp.project.dondesiempre.modules.stores.dtos;
 
 import ispp.project.dondesiempre.modules.stores.models.Storefront;
+import ispp.project.dondesiempre.modules.stores.validators.HexColor;
 import java.util.UUID;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.validator.constraints.URL;
 
 @Getter
 @Setter
@@ -12,10 +14,14 @@ import lombok.Setter;
 public class StorefrontDTO {
 
   private UUID id;
+
   private Boolean isFirstCollections;
-  private String primaryColor;
-  private String secondaryColor;
-  private String bannerImageUrl;
+
+  @HexColor private String primaryColor;
+
+  @HexColor private String secondaryColor;
+
+  @URL private String bannerImageUrl;
 
   public StorefrontDTO(Storefront storefront) {
     if (storefront == null) return;

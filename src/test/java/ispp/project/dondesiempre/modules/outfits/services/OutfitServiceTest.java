@@ -28,6 +28,7 @@ import ispp.project.dondesiempre.modules.products.models.Product;
 import ispp.project.dondesiempre.modules.products.services.ProductService;
 import ispp.project.dondesiempre.modules.stores.models.Store;
 import ispp.project.dondesiempre.modules.stores.models.Storefront;
+import ispp.project.dondesiempre.modules.stores.services.StoreService;
 import ispp.project.dondesiempre.modules.stores.services.StorefrontService;
 import java.util.ArrayList;
 import java.util.List;
@@ -51,6 +52,7 @@ class OutfitServiceTest {
   @Mock private ProductService productService;
   @Mock private AuthService authService;
   @Mock private StorefrontService storefrontService;
+  @Mock private StoreService storeService;
   @Mock private ApplicationContext applicationContext;
 
   @InjectMocks private OutfitService outfitService;
@@ -91,12 +93,12 @@ class OutfitServiceTest {
     outfit.setDescription("Test Description");
     outfit.setIndex(0);
     outfit.setDiscountedPriceInCents(1000);
-    outfit.setStorefront(storefront);
+    outfit.setStore(store);
 
     product = new Product();
     product.setId(productId);
     product.setName("Test Product");
-    product.setDiscountedPriceInCents(1000);
+    product.setPriceInCents(1000);
     product.setStore(store);
 
     outfitProduct = new OutfitProduct();
@@ -129,8 +131,7 @@ class OutfitServiceTest {
 
   @Test
   void shouldReturnListOfOutfitDTOs_whenStoreHasOutfits() {
-    when(outfitRepository.findByStorefrontStoreIdOrderByIndexAsc(storeId))
-        .thenReturn(List.of(outfit));
+    when(outfitRepository.findByStoreIdOrderByIndexAsc(storeId)).thenReturn(List.of(outfit));
 
     List<Outfit> result = outfitService.findByStore(store);
 
@@ -142,8 +143,7 @@ class OutfitServiceTest {
 
   @Test
   void shouldReturnEmptyList_whenStoreHasNoOutfits() {
-    when(outfitRepository.findByStorefrontStoreIdOrderByIndexAsc(storeId))
-        .thenReturn(new ArrayList<>());
+    when(outfitRepository.findByStoreIdOrderByIndexAsc(storeId)).thenReturn(new ArrayList<>());
 
     List<Outfit> result = outfitService.findByStore(store);
 
@@ -180,7 +180,7 @@ class OutfitServiceTest {
     tag.setId(UUID.randomUUID());
     tag.setName("casual");
 
-    when(storefrontService.findById(storefrontId)).thenReturn(storefront);
+    when(storeService.findById(storeId)).thenReturn(store);
     when(productService.getProductById(productId)).thenReturn(product);
     when(outfitRepository.save(any())).thenReturn(outfit);
     when(outfitRepository.findById(outfitId)).thenReturn(Optional.of(outfit));
@@ -189,7 +189,7 @@ class OutfitServiceTest {
     when(outfitProductService.findOutfitProductIndicesById(outfitId)).thenReturn(new ArrayList<>());
     when(outfitProductService.save(any())).thenReturn(outfitProduct);
 
-    Outfit result = outfitService.create(storefrontId, dto, null);
+    Outfit result = outfitService.create(storeId, dto, null);
 
     assertNotNull(result);
     assertEquals(outfitId, result.getId());
@@ -205,10 +205,9 @@ class OutfitServiceTest {
     dto.setTags(List.of());
     dto.setProducts(null);
 
-    when(storefrontService.findById(storefrontId)).thenReturn(storefront);
+    when(storeService.findById(storeId)).thenReturn(store);
 
-    assertThrows(
-        InvalidRequestException.class, () -> outfitService.create(storefrontId, dto, null));
+    assertThrows(InvalidRequestException.class, () -> outfitService.create(storeId, dto, null));
     verify(outfitRepository, never()).save(any());
   }
 
@@ -220,10 +219,9 @@ class OutfitServiceTest {
     dto.setTags(List.of());
     dto.setProducts(List.of());
 
-    when(storefrontService.findById(storefrontId)).thenReturn(storefront);
+    when(storeService.findById(storeId)).thenReturn(store);
 
-    assertThrows(
-        InvalidRequestException.class, () -> outfitService.create(storefrontId, dto, null));
+    assertThrows(InvalidRequestException.class, () -> outfitService.create(storeId, dto, null));
     verify(outfitRepository, never()).save(any());
   }
 

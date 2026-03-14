@@ -1,0 +1,40 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20260311-outfits-storefront-to-store
+      author: you
+
+      changes:
+        - addColumn:
+            tableName: outfits
+            columns:
+              - column:
+                  name: store_id
+                  type: UUID
+
+        - sql:
+            sql: |
+              UPDATE outfits o
+              SET store_id = s.id
+              FROM stores s
+              WHERE s.storefront_id = o.storefront_id;
+
+        - addNotNullConstraint:
+            tableName: outfits
+            columnName: store_id
+            columnDataType: UUID
+
+        - addForeignKeyConstraint:
+            baseTableName: outfits
+            baseColumnNames: store_id
+            referencedTableName: stores
+            referencedColumnNames: id
+            constraintName: fk_outfits_store
+            onDelete: CASCADE
+
+        - dropForeignKeyConstraint:
+            baseTableName: outfits
+            constraintName: FKqldxhoqjqwj4pnc9gk61em9un
+
+        - dropColumn:
+            tableName: outfits
+            columnName: storefront_id

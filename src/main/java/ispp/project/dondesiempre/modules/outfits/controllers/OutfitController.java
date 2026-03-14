@@ -7,9 +7,9 @@ import ispp.project.dondesiempre.modules.outfits.dtos.OutfitProductDTO;
 import ispp.project.dondesiempre.modules.outfits.dtos.OutfitUpdateDTO;
 import ispp.project.dondesiempre.modules.outfits.models.Outfit;
 import ispp.project.dondesiempre.modules.outfits.services.OutfitService;
+import ispp.project.dondesiempre.modules.outfits.validators.Tag;
 import ispp.project.dondesiempre.modules.products.services.ProductService;
 import ispp.project.dondesiempre.modules.stores.services.StoreService;
-import ispp.project.dondesiempre.modules.stores.services.StorefrontService;
 import jakarta.validation.Valid;
 import java.util.List;
 import java.util.UUID;
@@ -27,7 +27,6 @@ public class OutfitController {
   private final OutfitService outfitService;
   private final ProductService productService;
   private final StoreService storeService;
-  private final StorefrontService storefrontService;
 
   @GetMapping("outfits/{id}")
   @ResponseStatus(HttpStatus.OK)
@@ -56,13 +55,13 @@ public class OutfitController {
     return new ResponseEntity<>(dtos, HttpStatus.OK);
   }
 
-  @PostMapping(value = "outfits", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  @PostMapping(value = "stores/{storeId}/outfits", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   @ResponseStatus(HttpStatus.CREATED)
   public ResponseEntity<OutfitDTO> create(
-      @RequestParam UUID storefrontId,
+      @PathVariable("storeId") UUID storeId,
       @RequestPart("dto") @Valid OutfitCreationDTO dto,
       @RequestPart(value = "image", required = false) MultipartFile image) {
-    Outfit outfit = outfitService.create(storefrontId, dto, image);
+    Outfit outfit = outfitService.create(storeId, dto, image);
     OutfitDTO outfitDTO =
         new OutfitDTO(
             outfit,
@@ -88,7 +87,7 @@ public class OutfitController {
 
   @PostMapping("outfits/{id}/tags")
   @ResponseStatus(HttpStatus.CREATED)
-  public ResponseEntity<String> addTag(@PathVariable("id") UUID id, @RequestBody String tag) {
+  public ResponseEntity<String> addTag(@PathVariable("id") UUID id, @RequestBody @Tag String tag) {
     return new ResponseEntity<>(outfitService.addTag(id, tag), HttpStatus.CREATED);
   }
 
@@ -102,7 +101,7 @@ public class OutfitController {
   @PostMapping("outfits/{id}/products")
   @ResponseStatus(HttpStatus.CREATED)
   public ResponseEntity<OutfitProductDTO> addProduct(
-      @PathVariable("id") UUID id, @RequestBody OutfitCreationProductDTO dto) {
+      @PathVariable("id") UUID id, @RequestBody @Valid OutfitCreationProductDTO dto) {
     return new ResponseEntity<>(
         new OutfitProductDTO(outfitService.addProduct(id, dto)), HttpStatus.CREATED);
   }
@@ -118,7 +117,7 @@ public class OutfitController {
   @PatchMapping("outfits/{id}/products/sort")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<String> sortProducts(
-      @PathVariable("id") UUID id, @RequestBody List<OutfitCreationProductDTO> products) {
+      @PathVariable("id") UUID id, @RequestBody @Valid List<OutfitCreationProductDTO> products) {
     outfitService.sortProducts(id, products);
     return new ResponseEntity<>("Products successfully sorted.", HttpStatus.OK);
   }

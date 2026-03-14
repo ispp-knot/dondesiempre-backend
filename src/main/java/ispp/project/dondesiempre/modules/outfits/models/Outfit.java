@@ -1,7 +1,7 @@
 package ispp.project.dondesiempre.modules.outfits.models;
 
 import ispp.project.dondesiempre.modules.common.models.BaseEntity;
-import ispp.project.dondesiempre.modules.stores.models.Storefront;
+import ispp.project.dondesiempre.modules.stores.models.Store;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -47,7 +47,7 @@ public class Outfit extends BaseEntity {
   @NotNull
   @ManyToOne(optional = false)
   @OnDelete(action = OnDeleteAction.CASCADE)
-  private Storefront storefront;
+  private Store store;
 
   public Optional<String> getDescription() {
     return Optional.ofNullable(this.description);

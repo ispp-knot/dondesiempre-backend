@@ -8,8 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface ProductRepository extends JpaRepository<Product, UUID> {
 
-  @Query("SELECT p FROM Product p WHERE p.discountedPriceInCents != p.priceInCents")
-  public List<Product> findAllDiscountedProducts();
+  public List<Product> findByDiscountPercentageIsNotNull();
 
   List<Product> findByStoreId(UUID storeId);
 

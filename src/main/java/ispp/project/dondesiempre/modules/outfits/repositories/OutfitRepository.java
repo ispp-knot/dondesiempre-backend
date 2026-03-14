@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface OutfitRepository extends JpaRepository<Outfit, UUID> {
 
-  List<Outfit> findByStorefrontStoreIdOrderByIndexAsc(UUID storeId);
+  List<Outfit> findByStoreIdOrderByIndexAsc(UUID storeId);
 }

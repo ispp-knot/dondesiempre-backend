@@ -7,6 +7,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -34,9 +35,10 @@ public class Product extends BaseEntity {
   Integer priceInCents;
 
   @Column
-  @NotNull
-  @Min(0)
-  Integer discountedPriceInCents;
+  @Nullable
+  @Min(1)
+  @Max(100)
+  Integer discountPercentage;
 
   @Column(columnDefinition = "TEXT")
   @Size(max = 5000)
@@ -60,5 +62,9 @@ public class Product extends BaseEntity {
 
   public Optional<String> getImage() {
     return Optional.ofNullable(this.image);
+  }
+
+  public Optional<Integer> getDiscountPercentage() {
+    return Optional.ofNullable(this.discountPercentage);
   }
 }

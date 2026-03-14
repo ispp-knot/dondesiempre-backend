@@ -1,8 +1,8 @@
 package ispp.project.dondesiempre.modules.products.controllers;
 
-import ispp.project.dondesiempre.modules.products.dtos.DiscountModificationDTO;
 import ispp.project.dondesiempre.modules.products.dtos.ProductCreationDTO;
 import ispp.project.dondesiempre.modules.products.dtos.ProductDTO;
+import ispp.project.dondesiempre.modules.products.dtos.ProductDiscountUpdateDTO;
 import ispp.project.dondesiempre.modules.products.models.Product;
 import ispp.project.dondesiempre.modules.products.services.ProductService;
 import ispp.project.dondesiempre.modules.stores.models.Store;
@@ -62,15 +62,15 @@ public class ProductController {
       @RequestPart("dto") @Valid ProductCreationDTO dto,
       @RequestPart(value = "image", required = false) MultipartFile image,
       @RequestParam UUID storeId) {
-    Product savedProduct = productService.saveProduct(dto, image, storeId);
+    Product savedProduct = productService.createProduct(dto, image, storeId);
     return new ResponseEntity<>(savedProduct, HttpStatus.CREATED);
   }
 
   @PutMapping("products/{id}/discount")
   public ResponseEntity<Product> updateDiscount(
-      @PathVariable UUID id, @RequestBody DiscountModificationDTO discount) {
+      @PathVariable UUID id, @RequestBody @Valid ProductDiscountUpdateDTO discount) {
     Product updatedProduct =
-        productService.updateProductDiscount(id, discount.getDiscountedPriceInCents());
+        productService.updateProductDiscount(id, discount.getDiscountPercentage());
     return new ResponseEntity<>(updatedProduct, HttpStatus.ACCEPTED);
   }
 

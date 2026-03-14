@@ -3,6 +3,7 @@ package ispp.project.dondesiempre.modules.stores.controllers;
 import ispp.project.dondesiempre.modules.stores.dtos.StoreDTO;
 import ispp.project.dondesiempre.modules.stores.dtos.StoreUpdateDTO;
 import ispp.project.dondesiempre.modules.stores.services.StoreService;
+import jakarta.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -46,7 +47,7 @@ public class StoreController {
   @PutMapping("/stores/{id}")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<StoreDTO> updateStore(
-      @PathVariable("id") UUID id, @RequestBody StoreUpdateDTO dto) {
+      @PathVariable("id") UUID id, @RequestBody @Valid StoreUpdateDTO dto) {
     return new ResponseEntity<>(storeService.updateStore(id, dto), HttpStatus.OK);
   }
 }

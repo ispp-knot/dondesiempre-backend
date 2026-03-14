@@ -63,7 +63,7 @@ public class ProductRepositoryTest {
     Product discounted = new Product();
     discounted.setName("Discounted");
     discounted.setPriceInCents(1000);
-    discounted.setDiscountedPriceInCents(800);
+    discounted.setDiscountPercentage(12);
     discounted.setType(type);
     discounted.setStore(store);
     productRepository.save(discounted);
@@ -71,7 +71,7 @@ public class ProductRepositoryTest {
     Product notDiscounted = new Product();
     notDiscounted.setName("Not Discounted");
     notDiscounted.setPriceInCents(1000);
-    notDiscounted.setDiscountedPriceInCents(1000);
+    notDiscounted.setDiscountPercentage(32);
     notDiscounted.setType(type);
     notDiscounted.setStore(store);
     productRepository.save(notDiscounted);
@@ -79,12 +79,12 @@ public class ProductRepositoryTest {
 
   @Test
   public void shouldOnlyReturnDiscountedProducts() {
-    List<Product> discountedProducts = productRepository.findAllDiscountedProducts();
+    List<Product> discountedProducts = productRepository.findByDiscountPercentageIsNotNull();
 
     assertNotNull(discountedProducts);
     assertFalse(discountedProducts.isEmpty());
     for (Product product : discountedProducts) {
-      assertTrue(product.getDiscountedPriceInCents() < product.getPriceInCents());
+      assertTrue(product.getDiscountPercentage().isPresent());
     }
   }
 }

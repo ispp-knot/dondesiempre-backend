@@ -71,7 +71,7 @@ class OutfitRepositoryTest {
     store.setUser(createTestUser());
     store = storeRepository.save(store);
 
-    result = outfitRepository.findByStorefrontStoreIdOrderByIndexAsc(store.getId());
+    result = outfitRepository.findByStoreIdOrderByIndexAsc(store.getId());
 
     assertTrue(result.isEmpty());
   }
@@ -111,7 +111,7 @@ class OutfitRepositoryTest {
     product = new Product();
     product.setName("Test product");
     product.setPriceInCents(1000);
-    product.setDiscountedPriceInCents(1000);
+    product.setDiscountPercentage(25);
     product.setType(type);
     product.setStore(store);
     product = productRepository.save(product);
@@ -120,7 +120,7 @@ class OutfitRepositoryTest {
     outfit.setName("Test outfit");
     outfit.setDiscountedPriceInCents(100);
     outfit.setIndex(0);
-    outfit.setStorefront(storefront);
+    outfit.setStore(store);
     outfit = outfitRepository.save(outfit);
 
     outfitProduct = new OutfitProduct();
@@ -129,7 +129,7 @@ class OutfitRepositoryTest {
     outfitProduct.setOutfit(outfit);
     outfitProduct = outfitProductRepository.save(outfitProduct);
 
-    result = outfitRepository.findByStorefrontStoreIdOrderByIndexAsc(store.getId());
+    result = outfitRepository.findByStoreIdOrderByIndexAsc(store.getId());
 
     assertEquals(1, result.size());
     assertTrue(result.contains(outfit));
@@ -188,21 +188,21 @@ class OutfitRepositoryTest {
     outfit1.setName("Test outfit 1");
     outfit1.setDiscountedPriceInCents(100);
     outfit1.setIndex(0);
-    outfit1.setStorefront(storefront1);
+    outfit1.setStore(store1);
     outfit1 = outfitRepository.save(outfit1);
 
     outfit2 = new Outfit();
     outfit2.setName("Test outfit 2");
-    outfit2.setDiscountedPriceInCents(100);
+    outfit2.setDiscountedPriceInCents(20);
     outfit2.setIndex(1);
-    outfit2.setStorefront(storefront1);
+    outfit2.setStore(store1);
     outfit2 = outfitRepository.save(outfit2);
 
     outfit3 = new Outfit();
     outfit3.setName("Test outfit 3");
-    outfit3.setDiscountedPriceInCents(100);
+    outfit3.setDiscountedPriceInCents(1);
     outfit3.setIndex(0);
-    outfit3.setStorefront(storefront2);
+    outfit3.setStore(store2);
     outfit3 = outfitRepository.save(outfit3);
 
     numProducts = 4;
@@ -214,7 +214,7 @@ class OutfitRepositoryTest {
       product = new Product();
       product.setName("Test product" + i);
       product.setPriceInCents(i * 1000); // Set price in cents (e.g., 1000 = $10.00)
-      product.setDiscountedPriceInCents(i * 1000); // Set discounted price in cents
+      product.setDiscountPercentage(i + 1); // Set discounted price in cents
       product.setType(type);
       Store storeToSet =
           (i < 3)
@@ -250,7 +250,7 @@ class OutfitRepositoryTest {
     outfitProduct.setOutfit(outfit3);
     outfitProduct = outfitProductRepository.save(outfitProduct);
 
-    result = outfitRepository.findByStorefrontStoreIdOrderByIndexAsc(store1.getId());
+    result = outfitRepository.findByStoreIdOrderByIndexAsc(store1.getId());
 
     assertEquals(2, result.size());
 

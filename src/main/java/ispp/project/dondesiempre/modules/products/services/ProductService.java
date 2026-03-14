@@ -35,11 +35,8 @@ public class ProductService {
         ResourceNotFoundException.class,
         InvalidRequestException.class
       })
-  public Product saveProduct(ProductCreationDTO dto, MultipartFile image, UUID storeId)
+  public Product createProduct(ProductCreationDTO dto, MultipartFile image, UUID storeId)
       throws UnauthorizedException, ResourceNotFoundException, InvalidRequestException {
-    if (dto.getDiscountedPriceInCents() > dto.getPriceInCents()) {
-      throw new InvalidRequestException("Discounted price cannot be greater than original price");
-    }
     Store store =
         storeRepository
             .findById(storeId)
@@ -49,7 +46,7 @@ public class ProductService {
     Product product = new Product();
     product.setName(dto.getName());
     product.setPriceInCents(dto.getPriceInCents());
-    product.setDiscountedPriceInCents(dto.getDiscountedPriceInCents());
+    product.setDiscountPercentage(null);
     product.setDescription(dto.getDescription());
     if (image != null && !image.isEmpty()) {
       product.setImage(cloudinaryService.upload(image));
@@ -85,18 +82,17 @@ public class ProductService {
 
   @Transactional(readOnly = true)
   public List<Product> getAllDiscountedProducts() {
-    return productRepository.findAllDiscountedProducts();
+    return productRepository.findByDiscountPercentageIsNotNull();
   }
 
   @Transactional(rollbackFor = ResourceNotFoundException.class)
-  public Product updateProductDiscount(UUID id, Integer discountedPriceInCents)
+  public Product updateProductDiscount(UUID id, Integer discountPercentage)
       throws ResourceNotFoundException {
+
     Product product = applicationContext.getBean(ProductService.class).getProductById(id);
     authService.assertUserOwnsStore(product.getStore());
-    if (discountedPriceInCents > product.getPriceInCents()) {
-      throw new InvalidRequestException("Discounted price cannot be greater than original price");
-    }
-    product.setDiscountedPriceInCents(discountedPriceInCents);
+
+    product.setDiscountPercentage(discountPercentage);
     return productRepository.save(product);
   }
 
