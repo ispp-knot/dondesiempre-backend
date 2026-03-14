@@ -23,7 +23,7 @@ public class OutfitDTO {
   private Integer discountedPriceInCents;
 
   private Integer index;
-  private UUID storefrontId;
+  private UUID storeId;
 
   private List<String> tags;
   private List<OutfitProductDTO> products;
@@ -38,7 +38,7 @@ public class OutfitDTO {
     this.discountedPriceInCents = outfit.getDiscountedPriceInCents();
 
     this.index = outfit.getIndex();
-    this.storefrontId = outfit.getStorefront().getId();
+    this.storeId = outfit.getStore().getId();
 
     this.tags = tags;
     this.products =

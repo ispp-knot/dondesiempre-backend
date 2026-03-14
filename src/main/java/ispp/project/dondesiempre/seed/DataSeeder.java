@@ -240,12 +240,12 @@ public class DataSeeder implements CommandLineRunner {
     createVariant(p4, productSizes.get("M"), productColors.get("Beige"), true);
 
     // Outfits
-    Outfit outfit1 = createOutfit("Look Verano Andaluz", 0, store.getStorefront());
+    Outfit outfit1 = createOutfit("Look Verano Andaluz", 0, store);
     createOutfitProduct(outfit1, p1, 0);
     createOutfitProduct(outfit1, p2, 1);
     createOutfitTagRelation(outfit1, outfitTags.get("Verano"));
 
-    Outfit outfit2 = createOutfit("Estilo Mediterráneo", 1, store.getStorefront());
+    Outfit outfit2 = createOutfit("Estilo Mediterráneo", 1, store);
     createOutfitProduct(outfit2, p3, 0);
     createOutfitProduct(outfit2, p4, 1);
     createOutfitTagRelation(outfit2, outfitTags.get("Elegante"));
@@ -371,7 +371,7 @@ public class DataSeeder implements CommandLineRunner {
 
       // Outfits
       for (int j = 0; j < props.getOutfitsPerStore(); j++) {
-        Outfit outfit = createOutfit(pick(outfitNames, rng), j, store.getStorefront());
+        Outfit outfit = createOutfit(pick(outfitNames, rng), j, store);
 
         int productsInOutfit = 2 + rng.nextInt(2);
         for (int k = 0; k < productsInOutfit && k < storeProducts.size(); k++) {
@@ -448,12 +448,12 @@ public class DataSeeder implements CommandLineRunner {
     productVariantRepository.save(variant);
   }
 
-  private Outfit createOutfit(String name, int index, Storefront storefront) {
+  private Outfit createOutfit(String name, int index, Store store) {
     Outfit outfit = new Outfit();
     outfit.setName(name);
     outfit.setIndex(index);
     outfit.setDiscountedPriceInCents(0);
-    outfit.setStorefront(storefront);
+    outfit.setStore(store);
     return outfitRepository.save(outfit);
   }
 
