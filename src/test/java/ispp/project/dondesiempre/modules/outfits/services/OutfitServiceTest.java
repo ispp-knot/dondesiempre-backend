@@ -192,7 +192,6 @@ class OutfitServiceTest {
     Outfit result = outfitService.create(storeId, dto, null);
 
     assertNotNull(result);
-    assertNotNull(result);
     assertEquals(outfitId, result.getId());
     verify(outfitRepository, times(1)).save(any());
     assertEquals(1000, result.getDiscountedPriceInCents());
