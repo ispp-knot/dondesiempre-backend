@@ -103,7 +103,7 @@ class OutfitsControllerTest {
     product.setId(productId);
     product.setName("Test Product");
     product.setPriceInCents(600);
-    product.setDiscountedPriceInCents(500);
+    product.setDiscountPercentage(50);
     product.setStore(store);
     product.setType(productType);
 

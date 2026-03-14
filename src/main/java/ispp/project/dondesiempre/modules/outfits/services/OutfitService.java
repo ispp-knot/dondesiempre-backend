@@ -117,8 +117,7 @@ public class OutfitService {
   public Integer calculatePriceOnCreation(List<OutfitCreationProductDTO> dtos)
       throws ResourceNotFoundException {
     return dtos.stream()
-        .mapToInt(
-            dto -> productService.getProductById(dto.getProductId()).getDiscountedPriceInCents())
+        .mapToInt(dto -> productService.getProductById(dto.getProductId()).getPriceInCents())
         .sum();
   }
 

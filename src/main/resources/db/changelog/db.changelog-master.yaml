@@ -27,3 +27,6 @@ databaseChangeLog:
       file: db/changelog/015-kill-store-id/kill-store-id.changelog.yaml
   - include:
       file: db/changelog/016-unique-constraints/unique-constraints.changelog.yaml
+  - include:
+      file: db/changelog/018-refactor-discounts/refactor-discounts.changelog.yaml
+
