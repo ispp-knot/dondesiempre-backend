@@ -20,8 +20,8 @@ public class ProductCreationDTO {
   @NotNull
   @Min(0)
   private Integer priceInCents;
+
   private String description;
 
-  @NotNull
-  private UUID typeId;
+  @NotNull private UUID typeId;
 }
