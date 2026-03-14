@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20260311-allow-null-discounted-price
+      author: pepe
+      changes:
+        - dropNotNullConstraint:
+            tableName: products
+            columnName: discounted_price_in_cents
+            columnDataType: INT

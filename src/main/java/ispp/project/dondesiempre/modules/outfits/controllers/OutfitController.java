@@ -7,6 +7,7 @@ import ispp.project.dondesiempre.modules.outfits.dtos.OutfitProductDTO;
 import ispp.project.dondesiempre.modules.outfits.dtos.OutfitUpdateDTO;
 import ispp.project.dondesiempre.modules.outfits.models.Outfit;
 import ispp.project.dondesiempre.modules.outfits.services.OutfitService;
+import ispp.project.dondesiempre.modules.outfits.validators.Tag;
 import ispp.project.dondesiempre.modules.products.services.ProductService;
 import ispp.project.dondesiempre.modules.stores.services.StoreService;
 import jakarta.validation.Valid;
@@ -86,7 +87,7 @@ public class OutfitController {
 
   @PostMapping("outfits/{id}/tags")
   @ResponseStatus(HttpStatus.CREATED)
-  public ResponseEntity<String> addTag(@PathVariable("id") UUID id, @RequestBody String tag) {
+  public ResponseEntity<String> addTag(@PathVariable("id") UUID id, @RequestBody @Tag String tag) {
     return new ResponseEntity<>(outfitService.addTag(id, tag), HttpStatus.CREATED);
   }
 
@@ -100,7 +101,7 @@ public class OutfitController {
   @PostMapping("outfits/{id}/products")
   @ResponseStatus(HttpStatus.CREATED)
   public ResponseEntity<OutfitProductDTO> addProduct(
-      @PathVariable("id") UUID id, @RequestBody OutfitCreationProductDTO dto) {
+      @PathVariable("id") UUID id, @RequestBody @Valid OutfitCreationProductDTO dto) {
     return new ResponseEntity<>(
         new OutfitProductDTO(outfitService.addProduct(id, dto)), HttpStatus.CREATED);
   }
@@ -116,7 +117,7 @@ public class OutfitController {
   @PatchMapping("outfits/{id}/products/sort")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<String> sortProducts(
-      @PathVariable("id") UUID id, @RequestBody List<OutfitCreationProductDTO> products) {
+      @PathVariable("id") UUID id, @RequestBody @Valid List<OutfitCreationProductDTO> products) {
     outfitService.sortProducts(id, products);
     return new ResponseEntity<>("Products successfully sorted.", HttpStatus.OK);
   }

@@ -1,0 +1,41 @@
+databaseChangeLog:
+  - changeSet:
+      id: add-discount-percentage-to-products
+      author: pepe
+      changes:
+        - addColumn:
+            tableName: products
+            columns:
+              - column:
+                  name: discount_percentage
+                  type: INT
+                  constraints:
+                    nullable: true
+
+  - changeSet:
+      id: migrate-discount-values
+      author: pepe
+      changes:
+        - sql:
+            sql: |
+              UPDATE products
+              SET discount_percentage =
+                CASE
+                  WHEN discounted_price_in_cents IS NULL
+                       OR discounted_price_in_cents = price_in_cents
+                    THEN NULL
+                  ELSE GREATEST(
+                    ROUND(
+                      100.0 * (price_in_cents - discounted_price_in_cents) / price_in_cents
+                    ),
+                    1
+                  )
+                END;
+
+  - changeSet:
+      id: drop-discounted-price-column
+      author: pepe
+      changes:
+        - dropColumn:
+            tableName: products
+            columnName: discounted_price_in_cents

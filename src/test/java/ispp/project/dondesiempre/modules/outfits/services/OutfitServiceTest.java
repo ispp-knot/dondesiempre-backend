@@ -98,7 +98,7 @@ class OutfitServiceTest {
     product = new Product();
     product.setId(productId);
     product.setName("Test Product");
-    product.setDiscountedPriceInCents(1000);
+    product.setPriceInCents(1000);
     product.setStore(store);
 
     outfitProduct = new OutfitProduct();

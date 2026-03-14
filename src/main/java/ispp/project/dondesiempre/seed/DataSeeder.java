@@ -199,7 +199,7 @@ public class DataSeeder implements CommandLineRunner {
         createProduct(
             "Camiseta Lino Mediterráneo",
             2999,
-            2999,
+            20,
             "Camiseta de lino natural de verano.",
             productTypes.get("Camiseta"),
             store);
@@ -207,7 +207,7 @@ public class DataSeeder implements CommandLineRunner {
         createProduct(
             "Pantalón Palazzo Verano",
             4999,
-            3999,
+            30,
             "Pantalón fluido perfecto para el verano.",
             productTypes.get("Pantalón"),
             store);
@@ -215,7 +215,7 @@ public class DataSeeder implements CommandLineRunner {
         createProduct(
             "Vestido Midi Floral",
             6999,
-            6999,
+            40,
             "Vestido midi con estampado floral primaveral.",
             productTypes.get("Vestido"),
             store);
@@ -223,7 +223,7 @@ public class DataSeeder implements CommandLineRunner {
         createProduct(
             "Chaqueta Punto Artesanal",
             8999,
-            7499,
+            50,
             "Chaqueta de punto tejida a mano.",
             productTypes.get("Chaqueta"),
             store);
@@ -349,7 +349,7 @@ public class DataSeeder implements CommandLineRunner {
       for (int j = 0; j < props.getProductsPerStore(); j++) {
         int price = (rng.nextInt(200) + 10) * 100;
         boolean hasDiscount = rng.nextBoolean();
-        int discountedPrice = hasDiscount ? (int) (price * (0.6 + rng.nextDouble() * 0.35)) : price;
+        Integer discountedPrice = hasDiscount ? (int) Math.max(rng.nextDouble() * 100, 1) : null;
 
         Product product =
             createProduct(
@@ -424,14 +424,14 @@ public class DataSeeder implements CommandLineRunner {
   private Product createProduct(
       String name,
       int price,
-      int discountedPrice,
+      Integer discountedPrice,
       String description,
       ProductType type,
       Store store) {
     Product product = new Product();
     product.setName(name);
     product.setPriceInCents(price);
-    product.setDiscountedPriceInCents(discountedPrice);
+    product.setDiscountPercentage(discountedPrice);
     product.setDescription(description);
     product.setType(type);
     product.setStore(store);
