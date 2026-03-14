@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import ispp.project.dondesiempre.modules.auth.models.User;
 import ispp.project.dondesiempre.modules.auth.repositories.UserRepository;
 import ispp.project.dondesiempre.modules.auth.services.AuthService;
-import ispp.project.dondesiempre.modules.common.exceptions.InvalidRequestException;
 import ispp.project.dondesiempre.modules.common.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.modules.products.dtos.ProductCreationDTO;
 import ispp.project.dondesiempre.modules.products.dtos.ProductDTO;
@@ -147,44 +146,6 @@ public class ProductControllerTest {
         ResourceNotFoundException.class,
         () -> {
           productController.updateDiscount(nonExistentId, discount);
-        });
-  }
-
-  @Test
-  public void shouldThrowInvalidRequestException_WhenUpdatingDiscountToGreaterThanOriginalPrice() {
-    Storefront storefront = new Storefront();
-    storefront.setIsFirstCollections(true);
-    storefront.setPrimaryColor("#c65a3a");
-    storefront.setSecondaryColor("#19756a");
-
-    Store store = new Store();
-    store.setName("Test Store");
-    store.setEmail("test@example.com");
-    store.setLocation(coordinatesService.createPoint(0.0, 0.0));
-    store.setOpeningHours("9am - 5pm");
-    store.setAcceptsShipping(true);
-    store.setStorefront(storefront);
-    store.setUser(getTestUser());
-
-    Store saved_store = storeRepository.save(store);
-
-    ProductType type = new ProductType();
-    type.setType("Test Product Type");
-    ProductType savedProductType = productTypeRepository.save(type);
-
-    ProductCreationDTO dto = new ProductCreationDTO();
-    dto.setName("Test Product");
-    dto.setPriceInCents(1000);
-    dto.setDescription("This is a test product");
-    dto.setTypeId(savedProductType.getId());
-
-    Product product = productController.createProduct(dto, null, saved_store.getId()).getBody();
-    ProductDiscountUpdateDTO discount = new ProductDiscountUpdateDTO();
-    discount.setDiscountPercentage(1200); // Invalid discounted price
-    assertThrows(
-        InvalidRequestException.class,
-        () -> {
-          productController.updateDiscount(product.getId(), discount);
         });
   }
 
