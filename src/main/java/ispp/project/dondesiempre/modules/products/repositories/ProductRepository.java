@@ -10,7 +10,7 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
 
   public List<Product> findByDiscountPercentageIsNotNull();
 
-  List<Product> findByStoreStorefrontId(UUID storefrontId);
+  List<Product> findByStoreId(UUID storeId);
 
   @Query("select op.product from OutfitProduct op where op.outfit.id = :id order by op.index asc")
   public List<Product> findOutfitProductsByOutfitId(UUID id);
