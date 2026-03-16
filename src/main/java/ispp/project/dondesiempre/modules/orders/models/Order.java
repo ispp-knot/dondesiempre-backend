@@ -40,6 +40,10 @@ public class Order extends BaseEntity{
     @Enumerated(EnumType.STRING)
     OrderStatus orderStatus;
 
+    @Column
+    @NotNull
+    Integer totalPrice;
+
     @NotNull
     @ManyToOne(optional = false)
     @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
