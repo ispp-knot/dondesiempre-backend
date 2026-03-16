@@ -16,17 +16,17 @@ import lombok.Setter;
 @Table(name = "order_items")
 public class OrderItem extends BaseEntity {
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "order_id", referencedColumnName = "id", nullable = false)
-    private Order order;
+  @ManyToOne(optional = false)
+  @JoinColumn(name = "order_id", referencedColumnName = "id", nullable = false)
+  private Order order;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "product_id", referencedColumnName = "id", nullable = false)
-    private Product product;
+  @ManyToOne(optional = false)
+  @JoinColumn(name = "product_id", referencedColumnName = "id", nullable = false)
+  private Product product;
 
-    @Column(nullable = false)
-    private Integer quantity;
+  @Column(nullable = false)
+  private Integer quantity;
 
-    @Column(nullable = false)
-    private Integer priceAtPurchase;
+  @Column(nullable = false)
+  private Integer priceAtPurchase;
 }
