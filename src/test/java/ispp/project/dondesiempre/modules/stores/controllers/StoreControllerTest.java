@@ -83,7 +83,6 @@ public class StoreControllerTest {
         .andExpect(jsonPath("$[0].name").value("Tienda Centro"));
   }
 
-
   /*
    * @Test
    * void shouldReturnOkAndStoreDTO_whenGetStoreByIdExists() throws Exception {

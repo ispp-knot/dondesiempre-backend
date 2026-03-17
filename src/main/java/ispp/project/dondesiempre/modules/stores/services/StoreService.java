@@ -154,6 +154,8 @@ public class StoreService {
     if (dto.getPhone() != null) storeToUpdate.setPhone(dto.getPhone());
     if (dto.getAboutUs() != null) storeToUpdate.setAboutUs(dto.getAboutUs());
 
-    return applicationContext.getBean(StoreService.class).toDTO(storeRepository.save(storeToUpdate));
+    return applicationContext
+        .getBean(StoreService.class)
+        .toDTO(storeRepository.save(storeToUpdate));
   }
 }
