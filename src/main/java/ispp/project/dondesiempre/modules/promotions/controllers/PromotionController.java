@@ -15,8 +15,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
@@ -26,8 +27,10 @@ public class PromotionController {
 
   @PostMapping("/api/v1/promotions")
   public ResponseEntity<PromotionDTO> createPromotion(
-      @RequestBody @Valid PromotionCreationDTO dto) {
-    Promotion promotion = promotionService.savePromotion(dto);
+      @RequestPart("dto") @Valid PromotionCreationDTO dto,
+      @RequestPart(value = "image", required = false) MultipartFile image) {
+
+    Promotion promotion = promotionService.createPromotion(dto, image);
     PromotionDTO promotionDTO =
         new PromotionDTO(
             promotion, promotionService.getAllProductsDTOByPromotionId(promotion.getId()));
@@ -57,9 +60,11 @@ public class PromotionController {
 
   @PutMapping("/api/v1/promotions/{id}")
   public ResponseEntity<PromotionDTO> updatePromotion(
-      @PathVariable UUID id, @RequestBody @Valid PromotionUpdateDTO updateDTO) {
+      @PathVariable UUID id,
+      @RequestPart("dto") @Valid PromotionUpdateDTO dto,
+      @RequestPart(value = "image", required = false) MultipartFile image) {
 
-    Promotion promotion = promotionService.updatePromotion(id, updateDTO);
+    Promotion promotion = promotionService.updatePromotion(id, dto, image);
     return ResponseEntity.ok(
         new PromotionDTO(
             promotion, promotionService.getAllProductsDTOByPromotionId(promotion.getId())));

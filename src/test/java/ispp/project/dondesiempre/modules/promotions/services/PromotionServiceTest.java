@@ -25,10 +25,12 @@ import ispp.project.dondesiempre.modules.promotions.models.PromotionProduct;
 import ispp.project.dondesiempre.modules.stores.models.Store;
 import ispp.project.dondesiempre.modules.stores.models.Storefront;
 import ispp.project.dondesiempre.modules.stores.repositories.StoreRepository;
+import ispp.project.dondesiempre.utils.cloudinary.CloudinaryService;
 import ispp.project.dondesiempre.utils.cloudinary.CoordinatesService;
 import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
@@ -48,6 +50,8 @@ public class PromotionServiceTest {
   @Autowired private UserRepository userRepository;
   @MockitoBean private AuthService authService;
   @Autowired CoordinatesService coordinatesService;
+
+  @Mock private CloudinaryService cloudinaryService;
 
   private Storefront createStorefront() {
     Storefront storefront = new Storefront();
@@ -104,7 +108,7 @@ public class PromotionServiceTest {
     promotionCreationDTO.setActive(active);
     promotionCreationDTO.setProductIds(productIds);
     promotionCreationDTO.setStoreId(storeId);
-    return promotionService.savePromotion(promotionCreationDTO);
+    return promotionService.createPromotion(promotionCreationDTO, null);
   }
 
   @Test
@@ -135,7 +139,8 @@ public class PromotionServiceTest {
             UUID.randomUUID())); // Should not reach this check because of invalid discount
 
     assertThrows(
-        InvalidRequestException.class, () -> promotionService.savePromotion(promotionCreationDTO));
+        InvalidRequestException.class,
+        () -> promotionService.createPromotion(promotionCreationDTO, null));
   }
 
   @Test
@@ -152,7 +157,7 @@ public class PromotionServiceTest {
 
     assertThrows(
         ResourceNotFoundException.class,
-        () -> promotionService.savePromotion(promotionCreationDTO));
+        () -> promotionService.createPromotion(promotionCreationDTO, null));
   }
 
   @Test
@@ -173,7 +178,8 @@ public class PromotionServiceTest {
     promotionCreationDTO.setProductIds(List.of(product.getId(), anotherProduct.getId()));
 
     assertThrows(
-        InvalidRequestException.class, () -> promotionService.savePromotion(promotionCreationDTO));
+        InvalidRequestException.class,
+        () -> promotionService.createPromotion(promotionCreationDTO, null));
   }
 
   @Test
@@ -243,7 +249,7 @@ public class PromotionServiceTest {
     PromotionUpdateDTO updateDTO = new PromotionUpdateDTO();
     Integer newDiscount = 30;
     updateDTO.setDiscountPercentage(newDiscount);
-    Promotion updatedPromotion = promotionService.updatePromotion(promotionId, updateDTO);
+    Promotion updatedPromotion = promotionService.updatePromotion(promotionId, updateDTO, null);
     assertNotNull(updatedPromotion);
     assertEquals(newDiscount, updatedPromotion.getDiscountPercentage());
     assertEquals(promotionId, updatedPromotion.getId());
@@ -263,7 +269,7 @@ public class PromotionServiceTest {
     updateDTO.setDiscountPercentage(invalidDiscount);
     assertThrows(
         InvalidRequestException.class,
-        () -> promotionService.updatePromotion(promotionId, updateDTO));
+        () -> promotionService.updatePromotion(promotionId, updateDTO, null));
   }
 
   @Test
@@ -327,7 +333,8 @@ public class PromotionServiceTest {
     promotionCreationDTO.setStoreId(store.getId());
 
     assertThrows(
-        UnauthorizedException.class, () -> promotionService.savePromotion(promotionCreationDTO));
+        UnauthorizedException.class,
+        () -> promotionService.createPromotion(promotionCreationDTO, null));
   }
 
   @Test
@@ -347,7 +354,7 @@ public class PromotionServiceTest {
 
     assertThrows(
         UnauthorizedException.class,
-        () -> promotionService.updatePromotion(promotion.getId(), updateDTO));
+        () -> promotionService.updatePromotion(promotion.getId(), updateDTO, null));
   }
 
   @Test
