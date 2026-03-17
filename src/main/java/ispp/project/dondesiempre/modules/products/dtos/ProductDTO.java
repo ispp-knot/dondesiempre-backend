@@ -14,7 +14,7 @@ public class ProductDTO {
   private UUID id;
   private String name;
   private Integer priceInCents;
-  private Integer discountedPriceInCents;
+  private Integer discountPercentage;
   private String description;
   private String image;
 
@@ -25,7 +25,7 @@ public class ProductDTO {
     this.id = product.getId();
     this.name = product.getName();
     this.priceInCents = product.getPriceInCents();
-    this.discountedPriceInCents = product.getDiscountPercentage().orElse(null);
+    this.discountPercentage = product.getDiscountPercentage().orElse(null);
     this.description = product.getDescription().orElse(null);
     this.image = product.getImage().orElse(null);
     this.typeId = product.getType().getId();
