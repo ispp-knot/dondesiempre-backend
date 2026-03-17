@@ -4,6 +4,10 @@ import ispp.project.dondesiempre.modules.auth.models.User;
 import ispp.project.dondesiempre.modules.auth.repositories.UserRepository;
 import ispp.project.dondesiempre.modules.clients.models.Client;
 import ispp.project.dondesiempre.modules.clients.repositories.ClientRepository;
+import ispp.project.dondesiempre.modules.orders.models.Order;
+import ispp.project.dondesiempre.modules.orders.models.OrderItem;
+import ispp.project.dondesiempre.modules.orders.models.OrderStatus;
+import ispp.project.dondesiempre.modules.orders.repositories.OrderRepository;
 import ispp.project.dondesiempre.modules.outfits.models.Outfit;
 import ispp.project.dondesiempre.modules.outfits.models.OutfitProduct;
 import ispp.project.dondesiempre.modules.outfits.models.OutfitTag;
@@ -34,10 +38,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.locationtech.jts.geom.Coordinate;
@@ -74,6 +80,7 @@ public class DataSeeder implements CommandLineRunner {
   private final OutfitTagRepository outfitTagRepository;
   private final OutfitTagRelationRepository outfitTagRelationRepository;
   private final ClientRepository clientRepository;
+  private final OrderRepository orderRepository;
 
   private static final GeometryFactory GF = new GeometryFactory(new PrecisionModel(), 4326);
 
@@ -275,6 +282,28 @@ public class DataSeeder implements CommandLineRunner {
     clientWithStoreUser.setAddress("Calle San Fernando, nº 12, Sevilla");
     clientWithStoreUser.setUser(storeOwner);
     clientRepository.save(clientWithStoreUser);
+
+    // CreateOrder
+    Order order = new Order();
+    order.setUser(clientUser);
+    order.setOrderDate(LocalDateTime.now());
+    order.setOrderStatus(OrderStatus.PENDING);
+    order.setOrderCode("ORD-MANUAL-001");
+
+    int total = 0;
+
+    for (Product p : List.of(p1, p2)) {
+      OrderItem item = new OrderItem();
+      item.setOrder(order);
+      item.setProduct(p);
+      item.setQuantity(1);
+      item.setPriceAtPurchase(p.getPriceInCents());
+      order.getItems().add(item);
+      total += p.getPriceInCents();
+    }
+
+    order.setTotalPrice(total);
+    orderRepository.save(order);
   }
 
   private void loadRandomData() {
@@ -418,6 +447,34 @@ public class DataSeeder implements CommandLineRunner {
       client.setAddress(pick(addresses, rng));
       client.setUser(clientUser);
       clientRepository.save(client);
+
+      List<Product> allProducts = productRepository.findAll();
+
+      if (rng.nextDouble() < 0.5 && !allProducts.isEmpty()) {
+        Order randomOrder = new Order();
+        randomOrder.setUser(clientUser);
+        randomOrder.setOrderDate(LocalDateTime.now().minusDays(rng.nextInt(10)));
+        randomOrder.setOrderStatus(OrderStatus.PENDING);
+        randomOrder.setOrderCode(
+            "ORD-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase());
+
+        int itemsToCreate = 1 + rng.nextInt(3);
+        int total = 0;
+
+        for (int k = 0; k < itemsToCreate; k++) {
+          Product p = pick(allProducts, rng);
+          OrderItem item = new OrderItem();
+          item.setOrder(randomOrder);
+          item.setProduct(p);
+          item.setQuantity(1 + rng.nextInt(2));
+          item.setPriceAtPurchase(p.getPriceInCents());
+          randomOrder.getItems().add(item);
+          total += item.getPriceAtPurchase() * item.getQuantity();
+        }
+
+        randomOrder.setTotalPrice(total);
+        orderRepository.save(randomOrder);
+      }
     }
   }
 
