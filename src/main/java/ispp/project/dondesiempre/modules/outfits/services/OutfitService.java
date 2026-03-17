@@ -6,19 +6,24 @@ import ispp.project.dondesiempre.modules.common.exceptions.ResourceNotFoundExcep
 import ispp.project.dondesiempre.modules.common.exceptions.UnauthorizedException;
 import ispp.project.dondesiempre.modules.outfits.dtos.OutfitCreationDTO;
 import ispp.project.dondesiempre.modules.outfits.dtos.OutfitCreationProductDTO;
+import ispp.project.dondesiempre.modules.outfits.dtos.OutfitDTO;
 import ispp.project.dondesiempre.modules.outfits.dtos.OutfitUpdateDTO;
 import ispp.project.dondesiempre.modules.outfits.models.Outfit;
 import ispp.project.dondesiempre.modules.outfits.models.OutfitProduct;
 import ispp.project.dondesiempre.modules.outfits.models.OutfitTag;
 import ispp.project.dondesiempre.modules.outfits.models.OutfitTagRelation;
+import ispp.project.dondesiempre.modules.outfits.repositories.OutfitProductRepository;
 import ispp.project.dondesiempre.modules.outfits.repositories.OutfitRepository;
+import ispp.project.dondesiempre.modules.outfits.repositories.OutfitTagRepository;
 import ispp.project.dondesiempre.modules.products.models.Product;
 import ispp.project.dondesiempre.modules.products.services.ProductService;
 import ispp.project.dondesiempre.modules.stores.models.Store;
 import ispp.project.dondesiempre.modules.stores.services.StoreService;
 import ispp.project.dondesiempre.utils.cloudinary.CloudinaryService;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -29,6 +34,8 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class OutfitService {
   private final OutfitRepository outfitRepository;
+  private final OutfitProductRepository outfitProductRepository;
+  private final OutfitTagRepository outfitTagRepository;
   private final OutfitProductService outfitProductService;
   private final OutfitTagRelationService outfitTagRelationService;
   private final OutfitTagService outfitTagService;
@@ -61,6 +68,43 @@ public class OutfitService {
   @Transactional(readOnly = true)
   public List<Outfit> findByStore(Store store) {
     return outfitRepository.findByStoreIdOrderByIndexAsc(store.getId());
+  }
+
+  @Transactional(readOnly = true)
+  public OutfitDTO findByIdAsDTO(UUID id) {
+    Outfit outfit = applicationContext.getBean(OutfitService.class).findById(id);
+    List<String> tags = outfitTagService.findOutfitTagsById(id);
+    List<OutfitProduct> products = outfitProductRepository.findByOutfitIdWithDetails(id);
+    return new OutfitDTO(outfit, tags, products);
+  }
+
+  @Transactional(readOnly = true)
+  public List<OutfitDTO> findByStoreIdAsDTO(UUID storeId) {
+    List<Outfit> outfits = outfitRepository.findByStoreIdOrderByIndexAsc(storeId);
+    if (outfits.isEmpty()) return List.of();
+
+    List<UUID> ids = outfits.stream().map(Outfit::getId).toList();
+
+    Map<UUID, List<String>> tagsByOutfit =
+        outfitTagRepository.findTagEntriesByOutfitIds(ids).stream()
+            .collect(
+                Collectors.groupingBy(
+                    OutfitTagRepository.OutfitTagEntry::getOutfitId,
+                    Collectors.mapping(
+                        OutfitTagRepository.OutfitTagEntry::getTagName, Collectors.toList())));
+
+    Map<UUID, List<OutfitProduct>> productsByOutfit =
+        outfitProductRepository.findByOutfitIdsWithDetails(ids).stream()
+            .collect(Collectors.groupingBy(op -> op.getOutfit().getId()));
+
+    return outfits.stream()
+        .map(
+            o ->
+                new OutfitDTO(
+                    o,
+                    tagsByOutfit.getOrDefault(o.getId(), List.of()),
+                    productsByOutfit.getOrDefault(o.getId(), List.of())))
+        .toList();
   }
 
   @Transactional(
