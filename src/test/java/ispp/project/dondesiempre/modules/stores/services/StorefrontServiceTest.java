@@ -13,6 +13,7 @@ import ispp.project.dondesiempre.modules.common.exceptions.ResourceNotFoundExcep
 import ispp.project.dondesiempre.modules.stores.dtos.StorefrontDTO;
 import ispp.project.dondesiempre.modules.stores.models.Storefront;
 import ispp.project.dondesiempre.modules.stores.repositories.StorefrontRepository;
+import ispp.project.dondesiempre.utils.cloudinary.CloudinaryService;
 import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,6 +30,7 @@ public class StorefrontServiceTest {
   @Mock private StorefrontRepository storefrontRepository;
   @Mock private ApplicationContext applicationContext;
   @Mock private AuthService authService;
+  @Mock private CloudinaryService cloudinaryService;
 
   @InjectMocks private StorefrontService storefrontService;
 
@@ -78,7 +80,7 @@ public class StorefrontServiceTest {
     when(storefrontRepository.findById(storefrontId)).thenReturn(Optional.of(storefront));
     when(storefrontRepository.save(any(Storefront.class))).thenAnswer(i -> i.getArgument(0));
 
-    StorefrontDTO result = storefrontService.updateStorefront(storefrontId, dto);
+    StorefrontDTO result = storefrontService.updateStorefront(storefrontId, dto, null);
 
     assertEquals("#000000", result.getPrimaryColor());
     assertEquals(false, result.getIsFirstCollections());

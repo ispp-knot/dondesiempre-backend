@@ -14,6 +14,7 @@ import ispp.project.dondesiempre.modules.promotions.models.PromotionProduct;
 import ispp.project.dondesiempre.modules.promotions.repositories.PromotionRepository;
 import ispp.project.dondesiempre.modules.stores.models.Store;
 import ispp.project.dondesiempre.modules.stores.services.StoreService;
+import ispp.project.dondesiempre.utils.cloudinary.CloudinaryService;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -22,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -33,6 +35,7 @@ public class PromotionService {
   private final StoreService storeService;
   private final ProductService productService;
   private final PromotionProductService promotionProductService;
+  private final CloudinaryService cloudinaryService;
 
   @Transactional(
       rollbackFor = {
@@ -40,7 +43,7 @@ public class PromotionService {
         ResourceNotFoundException.class,
         InvalidRequestException.class
       })
-  public Promotion savePromotion(PromotionCreationDTO dto)
+  public Promotion createPromotion(PromotionCreationDTO dto, MultipartFile image)
       throws UnauthorizedException, ResourceNotFoundException, InvalidRequestException {
     Promotion promotion = new Promotion();
     promotion.setName(dto.getName());
@@ -50,6 +53,10 @@ public class PromotionService {
     promotion.setActive(dto.isActive());
     promotion.setDiscountPercentage(dto.getDiscountPercentage());
     promotion.setDescription(dto.getDescription());
+
+    if (image != null) {
+      promotion.setPromotionImageUrl(cloudinaryService.upload(image));
+    }
 
     Store store = storeService.findById(dto.getStoreId());
     promotion.setStore(store);
@@ -134,7 +141,7 @@ public class PromotionService {
         ResourceNotFoundException.class,
         InvalidRequestException.class
       })
-  public Promotion updatePromotion(UUID id, PromotionUpdateDTO dto)
+  public Promotion updatePromotion(UUID id, PromotionUpdateDTO dto, MultipartFile image)
       throws UnauthorizedException, ResourceNotFoundException, InvalidRequestException {
 
     Promotion promotion = applicationContext.getBean(PromotionService.class).getPromotionById(id);
@@ -154,6 +161,10 @@ public class PromotionService {
         throw new InvalidRequestException("Discount must be between 1 and 100");
       }
       promotion.setDiscountPercentage(dto.getDiscountPercentage());
+    }
+
+    if (image != null) {
+      promotion.setPromotionImageUrl(cloudinaryService.upload(image));
     }
 
     if (dto.getProductIds() != null && !dto.getProductIds().isEmpty()) {
