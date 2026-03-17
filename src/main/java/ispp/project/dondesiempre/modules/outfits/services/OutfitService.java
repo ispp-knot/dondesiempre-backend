@@ -72,7 +72,7 @@ public class OutfitService {
 
   @Transactional(readOnly = true)
   public OutfitDTO findByIdAsDTO(UUID id) {
-    Outfit outfit = findById(id);
+    Outfit outfit = applicationContext.getBean(OutfitService.class).findById(id);
     List<String> tags = outfitTagService.findOutfitTagsById(id);
     List<OutfitProduct> products = outfitProductRepository.findByOutfitIdWithDetails(id);
     return new OutfitDTO(outfit, tags, products);

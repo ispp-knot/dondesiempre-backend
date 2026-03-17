@@ -5,8 +5,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -26,7 +25,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockPart;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -78,14 +79,12 @@ public class PromotionControllerTest {
 
     doThrow(new UnauthorizedException("Not authorized"))
         .when(promotionService)
-        .savePromotion(any());
+        .createPromotion(any(), any());
 
-    mockMvc
-        .perform(
-            post("/api/v1/promotions")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(createDTO)))
-        .andExpect(status().is(403));
+    MockPart dtoPart = new MockPart("dto", objectMapper.writeValueAsBytes(createDTO));
+    dtoPart.getHeaders().setContentType(MediaType.APPLICATION_JSON);
+
+    mockMvc.perform(multipart("/api/v1/promotions").part(dtoPart)).andExpect(status().is(403));
   }
 
   @Test
@@ -98,15 +97,13 @@ public class PromotionControllerTest {
     createDTO.setProductIds(List.of(TEST_PRODUCT_ID));
     createDTO.setStoreId(TEST_STORE_ID);
 
-    when(promotionService.savePromotion(any())).thenReturn(samplePromotion());
+    when(promotionService.createPromotion(any(), any())).thenReturn(samplePromotion());
     when(promotionService.getAllProductsDTOByPromotionId(TEST_PROMOTION_ID)).thenReturn(List.of());
 
-    mockMvc
-        .perform(
-            post("/api/v1/promotions")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(createDTO)))
-        .andExpect(status().isOk());
+    MockPart dtoPart = new MockPart("dto", objectMapper.writeValueAsBytes(createDTO));
+    dtoPart.getHeaders().setContentType(MediaType.APPLICATION_JSON);
+
+    mockMvc.perform(multipart("/api/v1/promotions").part(dtoPart)).andExpect(status().isOk());
   }
 
   @Test
@@ -141,13 +138,14 @@ public class PromotionControllerTest {
 
     doThrow(new UnauthorizedException("Not authorized"))
         .when(promotionService)
-        .updatePromotion(any(UUID.class), any(PromotionUpdateDTO.class));
+        .updatePromotion(any(UUID.class), any(PromotionUpdateDTO.class), any());
+
+    MockPart dtoPart = new MockPart("dto", objectMapper.writeValueAsBytes(updateDTO));
+    dtoPart.getHeaders().setContentType(MediaType.APPLICATION_JSON);
 
     mockMvc
         .perform(
-            put("/api/v1/promotions/{id}", TEST_PROMOTION_ID)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(updateDTO)))
+            multipart(HttpMethod.PUT, "/api/v1/promotions/{id}", TEST_PROMOTION_ID).part(dtoPart))
         .andExpect(status().is(403));
   }
 
@@ -160,15 +158,16 @@ public class PromotionControllerTest {
     Promotion updatedPromotion = samplePromotion();
     updatedPromotion.setDiscountPercentage(30);
 
-    when(promotionService.updatePromotion(any(UUID.class), any(PromotionUpdateDTO.class)))
+    when(promotionService.updatePromotion(any(UUID.class), any(PromotionUpdateDTO.class), any()))
         .thenReturn(updatedPromotion);
     when(promotionService.getAllProductsDTOByPromotionId(TEST_PROMOTION_ID)).thenReturn(List.of());
 
+    MockPart dtoPart = new MockPart("dto", objectMapper.writeValueAsBytes(updateDTO));
+    dtoPart.getHeaders().setContentType(MediaType.APPLICATION_JSON);
+
     mockMvc
         .perform(
-            put("/api/v1/promotions/{id}", TEST_PROMOTION_ID)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(updateDTO)))
+            multipart(HttpMethod.PUT, "/api/v1/promotions/{id}", TEST_PROMOTION_ID).part(dtoPart))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.discountPercentage").value(30));
   }
@@ -182,15 +181,16 @@ public class PromotionControllerTest {
     Promotion updatedPromotion = samplePromotion();
     updatedPromotion.setName("Updated Promotion Name");
 
-    when(promotionService.updatePromotion(any(UUID.class), any(PromotionUpdateDTO.class)))
+    when(promotionService.updatePromotion(any(UUID.class), any(PromotionUpdateDTO.class), any()))
         .thenReturn(updatedPromotion);
     when(promotionService.getAllProductsDTOByPromotionId(TEST_PROMOTION_ID)).thenReturn(List.of());
 
+    MockPart dtoPart = new MockPart("dto", objectMapper.writeValueAsBytes(updateDTO));
+    dtoPart.getHeaders().setContentType(MediaType.APPLICATION_JSON);
+
     mockMvc
         .perform(
-            put("/api/v1/promotions/{id}", TEST_PROMOTION_ID)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(updateDTO)))
+            multipart(HttpMethod.PUT, "/api/v1/promotions/{id}", TEST_PROMOTION_ID).part(dtoPart))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.name").value("Updated Promotion Name"));
   }
@@ -204,15 +204,16 @@ public class PromotionControllerTest {
     Promotion updatedPromotion = samplePromotion();
     updatedPromotion.setActive(false);
 
-    when(promotionService.updatePromotion(any(UUID.class), any(PromotionUpdateDTO.class)))
+    when(promotionService.updatePromotion(any(UUID.class), any(PromotionUpdateDTO.class), any()))
         .thenReturn(updatedPromotion);
     when(promotionService.getAllProductsDTOByPromotionId(TEST_PROMOTION_ID)).thenReturn(List.of());
 
+    MockPart dtoPart = new MockPart("dto", objectMapper.writeValueAsBytes(updateDTO));
+    dtoPart.getHeaders().setContentType(MediaType.APPLICATION_JSON);
+
     mockMvc
         .perform(
-            put("/api/v1/promotions/{id}", TEST_PROMOTION_ID)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(updateDTO)))
+            multipart(HttpMethod.PUT, "/api/v1/promotions/{id}", TEST_PROMOTION_ID).part(dtoPart))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.active").value(false));
   }
@@ -230,15 +231,16 @@ public class PromotionControllerTest {
     updatedPromotion.setDiscountPercentage(50);
     updatedPromotion.setActive(false);
 
-    when(promotionService.updatePromotion(any(UUID.class), any(PromotionUpdateDTO.class)))
+    when(promotionService.updatePromotion(any(UUID.class), any(PromotionUpdateDTO.class), any()))
         .thenReturn(updatedPromotion);
     when(promotionService.getAllProductsDTOByPromotionId(TEST_PROMOTION_ID)).thenReturn(List.of());
 
+    MockPart dtoPart = new MockPart("dto", objectMapper.writeValueAsBytes(updateDTO));
+    dtoPart.getHeaders().setContentType(MediaType.APPLICATION_JSON);
+
     mockMvc
         .perform(
-            put("/api/v1/promotions/{id}", TEST_PROMOTION_ID)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(updateDTO)))
+            multipart(HttpMethod.PUT, "/api/v1/promotions/{id}", TEST_PROMOTION_ID).part(dtoPart))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.name").value("Super Sale"))
         .andExpect(jsonPath("$.discountPercentage").value(50))
