@@ -12,7 +12,9 @@ import ispp.project.dondesiempre.modules.stores.models.Store;
 import ispp.project.dondesiempre.modules.stores.repositories.StoreRepository;
 import ispp.project.dondesiempre.modules.stores.repositories.StoreSocialNetworkRepository;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -36,13 +38,39 @@ public class StoreService {
 
   @Transactional(readOnly = true)
   public StoreDTO toDTO(Store store) {
+    return toDTO(store, null, null);
+  }
+
+  @Transactional(readOnly = true)
+  public StoreDTO toDTO(Store store, Double userLat, Double userLon) {
     StoreDTO dto = new StoreDTO(store);
     dto.setSocialNetworks(
         storeSocialNetworkRepository.findByStoreId(store.getId()).stream()
             .map(StoreSocialNetworkDTO::new)
             .toList());
     dto.setHasActivePromotions(promotionRepository.existsByStoreIdAndIsActiveTrue(store.getId()));
+
+    if (userLat != null && userLon != null && store.getLocation() != null) {
+      double storeLat = store.getLocation().getY();
+      double storeLon = store.getLocation().getX();
+      dto.setDistance(calculateDistance(userLat, userLon, storeLat, storeLon));
+    }
+
     return dto;
+  }
+
+  private double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
+    final int R = 6371; // Radius of the earth in km
+    double latDistance = Math.toRadians(lat2 - lat1);
+    double lonDistance = Math.toRadians(lon2 - lon1);
+    double a =
+        Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
+            + Math.cos(Math.toRadians(lat1))
+                * Math.cos(Math.toRadians(lat2))
+                * Math.sin(lonDistance / 2)
+                * Math.sin(lonDistance / 2);
+    double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
   }
 
   @Transactional(readOnly = true)
@@ -75,6 +103,37 @@ public class StoreService {
     return storeRepository.findStoresInBoundingBox(minLon, minLat, maxLon, maxLat, 500);
   }
 
+  @Transactional(readOnly = true, rollbackFor = InvalidBoundingBoxException.class)
+  public List<StoreDTO> findStoresInBoundingBoxAsDTO(
+      double minLon, double minLat, double maxLon, double maxLat)
+      throws InvalidBoundingBoxException {
+    if (minLon > maxLon || minLat > maxLat)
+      throw new InvalidBoundingBoxException(
+          "Invalid bounding box parameters: minimum coordinates cannot be greater than maximum coordinates.");
+    List<Store> stores =
+        storeRepository.findStoresInBoundingBox(minLon, minLat, maxLon, maxLat, 500);
+    if (stores.isEmpty()) return List.of();
+
+    List<UUID> ids = stores.stream().map(Store::getId).toList();
+    Map<UUID, List<StoreSocialNetworkDTO>> socialNetworksByStore =
+        storeSocialNetworkRepository.findByStoreIdsWithSocialNetwork(ids).stream()
+            .collect(
+                Collectors.groupingBy(
+                    s -> s.getStore().getId(),
+                    Collectors.mapping(StoreSocialNetworkDTO::new, Collectors.toList())));
+
+    return stores.stream()
+        .map(
+            store -> {
+              StoreDTO dto = new StoreDTO(store);
+              dto.setSocialNetworks(socialNetworksByStore.getOrDefault(store.getId(), List.of()));
+              dto.setHasActivePromotions(
+                  promotionRepository.existsByStoreIdAndIsActiveTrue(store.getId()));
+              return dto;
+            })
+        .toList();
+  }
+
   public List<StoreDTO> findAll() {
     List<Store> stores = storeRepository.findAll();
     return stores.stream().map(StoreDTO::new).toList();
@@ -95,6 +154,6 @@ public class StoreService {
     if (dto.getPhone() != null) storeToUpdate.setPhone(dto.getPhone());
     if (dto.getAboutUs() != null) storeToUpdate.setAboutUs(dto.getAboutUs());
 
-    return toDTO(storeRepository.save(storeToUpdate));
+    return applicationContext.getBean(StoreService.class).toDTO(storeRepository.save(storeToUpdate));
   }
 }

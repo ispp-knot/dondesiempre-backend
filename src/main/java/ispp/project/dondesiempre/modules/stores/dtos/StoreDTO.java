@@ -22,6 +22,7 @@ public class StoreDTO {
   private Boolean hasActivePromotions;
   private Double latitude;
   private Double longitude;
+  private Double distance;
   private String aboutUs;
   private StorefrontDTO storefront;
   private List<StoreSocialNetworkDTO> socialNetworks;
