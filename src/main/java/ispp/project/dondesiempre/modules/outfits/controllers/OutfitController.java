@@ -31,28 +31,14 @@ public class OutfitController {
   @GetMapping("outfits/{id}")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<OutfitDTO> getById(@PathVariable("id") UUID id) {
-    Outfit outfit = outfitService.findById(id);
-    OutfitDTO dto =
-        new OutfitDTO(
-            outfit,
-            outfitService.findTagsByOutfitId(id),
-            outfitService.findOutfitProductsByOutfitId(id));
-    return new ResponseEntity<>(dto, HttpStatus.OK);
+    return new ResponseEntity<>(outfitService.findByIdAsDTO(id), HttpStatus.OK);
   }
 
   @GetMapping("stores/{storeId}/outfits")
   @ResponseStatus(HttpStatus.FOUND)
   public ResponseEntity<List<OutfitDTO>> getByStoreId(@PathVariable("storeId") UUID storeId) {
-    List<OutfitDTO> dtos =
-        outfitService.findByStore(storeService.findById(storeId)).stream()
-            .map(
-                outfit ->
-                    new OutfitDTO(
-                        outfit,
-                        outfitService.findTagsByOutfitId(outfit.getId()),
-                        outfitService.findOutfitProductsByOutfitId(outfit.getId())))
-            .toList();
-    return new ResponseEntity<>(dtos, HttpStatus.OK);
+    storeService.findById(storeId);
+    return new ResponseEntity<>(outfitService.findByStoreIdAsDTO(storeId), HttpStatus.OK);
   }
 
   @PostMapping(value = "stores/{storeId}/outfits", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
