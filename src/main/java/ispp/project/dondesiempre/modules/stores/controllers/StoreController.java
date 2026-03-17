@@ -32,10 +32,7 @@ public class StoreController {
       @RequestParam double maxLon,
       @RequestParam double maxLat) {
     return new ResponseEntity<>(
-        storeService.findStoresInBoundingBox(minLon, minLat, maxLon, maxLat).stream()
-            .map(s -> storeService.toDTO(s))
-            .toList(),
-        HttpStatus.OK);
+        storeService.findStoresInBoundingBoxAsDTO(minLon, minLat, maxLon, maxLat), HttpStatus.OK);
   }
 
   @GetMapping("/stores/{id}")

@@ -6,12 +6,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import ispp.project.dondesiempre.config.GlobalExceptionHandler;
-import ispp.project.dondesiempre.mockEntities.StoreMockEntities;
 import ispp.project.dondesiempre.modules.stores.dtos.StoreDTO;
-import ispp.project.dondesiempre.modules.stores.models.Store;
 import ispp.project.dondesiempre.modules.stores.services.StoreService;
 import java.util.List;
-import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -32,9 +29,6 @@ public class StoreControllerTest {
 
   @MockitoBean private StoreService storeService;
 
-  private static final UUID TEST_STORE_ID = UUID.randomUUID();
-  private static final Store TEST_STORE = StoreMockEntities.sampleStore(TEST_STORE_ID);
-
   @Test
   void shouldReturnOkAndListOfStores_whenValidParamsProvided() throws Exception {
     // Dado
@@ -45,9 +39,8 @@ public class StoreControllerTest {
     storeDTO.setLatitude(37.5);
     storeDTO.setLongitude(-5.5);
 
-    when(storeService.findStoresInBoundingBox(minLon, minLat, maxLon, maxLat))
-        .thenReturn(List.of(TEST_STORE));
-    when(storeService.toDTO(TEST_STORE)).thenReturn(storeDTO);
+    when(storeService.findStoresInBoundingBoxAsDTO(minLon, minLat, maxLon, maxLat))
+        .thenReturn(List.of(storeDTO));
 
     mockMvc
         .perform(

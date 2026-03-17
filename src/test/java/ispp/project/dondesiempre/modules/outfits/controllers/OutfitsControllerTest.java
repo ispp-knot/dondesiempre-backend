@@ -120,9 +120,10 @@ class OutfitsControllerTest {
 
   @Test
   void getById_shouldReturnOk_whenOutfitExists() throws Exception {
-    when(outfitService.findById(outfitId)).thenReturn(outfit);
-    when(outfitService.findTagsByOutfitId(outfitId)).thenReturn(List.of(TEST_TAG));
-    when(outfitService.findOutfitProductsByOutfitId(outfitId)).thenReturn(List.of(outfitProduct));
+    ispp.project.dondesiempre.modules.outfits.dtos.OutfitDTO outfitDTO =
+        new ispp.project.dondesiempre.modules.outfits.dtos.OutfitDTO(
+            outfit, List.of(TEST_TAG), List.of(outfitProduct));
+    when(outfitService.findByIdAsDTO(outfitId)).thenReturn(outfitDTO);
 
     mockMvc
         .perform(get("/api/v1/outfits/" + outfitId))
@@ -137,10 +138,11 @@ class OutfitsControllerTest {
 
   @Test
   void getByStoreId_shouldReturnOk_whenStoreExists() throws Exception {
+    ispp.project.dondesiempre.modules.outfits.dtos.OutfitDTO outfitDTO =
+        new ispp.project.dondesiempre.modules.outfits.dtos.OutfitDTO(
+            outfit, List.of(), List.of(outfitProduct));
     when(storeService.findById(storeId)).thenReturn(store);
-    when(outfitService.findByStore(store)).thenReturn(List.of(outfit));
-    when(outfitService.findTagsByOutfitId(outfitId)).thenReturn(List.of());
-    when(outfitService.findOutfitProductsByOutfitId(outfitId)).thenReturn(List.of(outfitProduct));
+    when(outfitService.findByStoreIdAsDTO(storeId)).thenReturn(List.of(outfitDTO));
 
     mockMvc
         .perform(get("/api/v1/stores/" + storeId + "/outfits"))

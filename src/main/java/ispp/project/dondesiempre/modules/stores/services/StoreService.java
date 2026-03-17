@@ -11,7 +11,9 @@ import ispp.project.dondesiempre.modules.stores.models.Store;
 import ispp.project.dondesiempre.modules.stores.repositories.StoreRepository;
 import ispp.project.dondesiempre.modules.stores.repositories.StoreSocialNetworkRepository;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -50,6 +52,35 @@ public class StoreService {
       throw new InvalidBoundingBoxException(
           "Invalid bounding box parameters: minimum coordinates cannot be greater than maximum coordinates.");
     return storeRepository.findStoresInBoundingBox(minLon, minLat, maxLon, maxLat, 500);
+  }
+
+  @Transactional(readOnly = true, rollbackFor = InvalidBoundingBoxException.class)
+  public List<StoreDTO> findStoresInBoundingBoxAsDTO(
+      double minLon, double minLat, double maxLon, double maxLat)
+      throws InvalidBoundingBoxException {
+    if (minLon > maxLon || minLat > maxLat)
+      throw new InvalidBoundingBoxException(
+          "Invalid bounding box parameters: minimum coordinates cannot be greater than maximum coordinates.");
+    List<Store> stores =
+        storeRepository.findStoresInBoundingBox(minLon, minLat, maxLon, maxLat, 500);
+    if (stores.isEmpty()) return List.of();
+
+    List<UUID> ids = stores.stream().map(Store::getId).toList();
+    Map<UUID, List<StoreSocialNetworkDTO>> socialNetworksByStore =
+        storeSocialNetworkRepository.findByStoreIdsWithSocialNetwork(ids).stream()
+            .collect(
+                Collectors.groupingBy(
+                    s -> s.getStore().getId(),
+                    Collectors.mapping(StoreSocialNetworkDTO::new, Collectors.toList())));
+
+    return stores.stream()
+        .map(
+            store -> {
+              StoreDTO dto = new StoreDTO(store);
+              dto.setSocialNetworks(socialNetworksByStore.getOrDefault(store.getId(), List.of()));
+              return dto;
+            })
+        .toList();
   }
 
   public List<StoreDTO> findAll() {
