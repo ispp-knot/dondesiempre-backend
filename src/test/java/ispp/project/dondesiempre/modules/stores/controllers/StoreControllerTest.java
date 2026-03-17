@@ -45,7 +45,7 @@ public class StoreControllerTest {
     storeDTO.setLatitude(37.5);
     storeDTO.setLongitude(-5.5);
 
-    when(storeService.findStoresInBoundingBox(minLon, minLat, maxLon, maxLat))
+    when(storeService.getStores(minLon, minLat, maxLon, maxLat, null, null, null))
         .thenReturn(List.of(TEST_STORE));
     when(storeService.toDTO(TEST_STORE)).thenReturn(storeDTO);
 
@@ -63,12 +63,6 @@ public class StoreControllerTest {
         .andExpect(jsonPath("$[0].longitude").value(-5.5));
   }
 
-  @Test
-  void shouldReturnBadRequest_whenRequiredParamsAreMissing() throws Exception {
-    mockMvc
-        .perform(get("/api/v1/stores").param("minLon", "-6.0"))
-        .andExpect(status().isBadRequest());
-  }
 
   /*
    * @Test

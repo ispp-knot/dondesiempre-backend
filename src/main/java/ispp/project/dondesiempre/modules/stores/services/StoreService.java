@@ -4,6 +4,7 @@ import ispp.project.dondesiempre.modules.auth.services.AuthService;
 import ispp.project.dondesiempre.modules.common.exceptions.InvalidBoundingBoxException;
 import ispp.project.dondesiempre.modules.common.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.modules.common.exceptions.UnauthorizedException;
+import ispp.project.dondesiempre.modules.promotions.repositories.PromotionRepository;
 import ispp.project.dondesiempre.modules.stores.dtos.StoreDTO;
 import ispp.project.dondesiempre.modules.stores.dtos.StoreSocialNetworkDTO;
 import ispp.project.dondesiempre.modules.stores.dtos.StoreUpdateDTO;
@@ -22,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class StoreService {
   private final StoreRepository storeRepository;
   private final StoreSocialNetworkRepository storeSocialNetworkRepository;
+  private final PromotionRepository promotionRepository;
   private final ApplicationContext applicationContext;
   private final AuthService authService;
 
@@ -39,12 +41,33 @@ public class StoreService {
         storeSocialNetworkRepository.findByStoreId(store.getId()).stream()
             .map(StoreSocialNetworkDTO::new)
             .toList());
+    dto.setHasActivePromotions(promotionRepository.existsByStoreIdAndIsActiveTrue(store.getId()));
     return dto;
+  }
+
+  @Transactional(readOnly = true)
+  public List<Store> getStores(
+      Double minLon,
+      Double minLat,
+      Double maxLon,
+      Double maxLat,
+      String name,
+      Double lat,
+      Double lon) {
+    if (minLon != null && minLat != null && maxLon != null && maxLat != null) {
+      return findStoresInBoundingBox(minLon, minLat, maxLon, maxLat);
+    }
+    return searchStores(name, lat, lon);
+  }
+
+  @Transactional(readOnly = true)
+  public List<Store> searchStores(String name, Double lat, Double lon) {
+    return storeRepository.searchStores(name, lat, lon, 100);
   }
 
   @Transactional(readOnly = true, rollbackFor = InvalidBoundingBoxException.class)
   public List<Store> findStoresInBoundingBox(
-      double minLon, double minLat, double maxLon, double maxLat)
+      Double minLon, Double minLat, Double maxLon, Double maxLat)
       throws InvalidBoundingBoxException {
     if (minLon > maxLon || minLat > maxLat)
       throw new InvalidBoundingBoxException(
@@ -72,6 +95,6 @@ public class StoreService {
     if (dto.getPhone() != null) storeToUpdate.setPhone(dto.getPhone());
     if (dto.getAboutUs() != null) storeToUpdate.setAboutUs(dto.getAboutUs());
 
-    return new StoreDTO(storeRepository.save(storeToUpdate));
+    return toDTO(storeRepository.save(storeToUpdate));
   }
 }

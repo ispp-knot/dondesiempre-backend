@@ -17,6 +17,7 @@ import ispp.project.dondesiempre.modules.stores.models.SocialNetwork;
 import ispp.project.dondesiempre.modules.stores.models.Store;
 import ispp.project.dondesiempre.modules.stores.models.StoreSocialNetwork;
 import ispp.project.dondesiempre.modules.stores.models.Storefront;
+import ispp.project.dondesiempre.modules.promotions.repositories.PromotionRepository;
 import ispp.project.dondesiempre.modules.stores.repositories.StoreRepository;
 import ispp.project.dondesiempre.modules.stores.repositories.StoreSocialNetworkRepository;
 import java.util.List;
@@ -35,6 +36,7 @@ public class StoreServiceTest {
 
   @Mock private StoreRepository storeRepository;
   @Mock private StoreSocialNetworkRepository socialNetworkRepository;
+  @Mock private PromotionRepository promotionRepository;
   @Mock private AuthService authService;
 
   @Mock private ApplicationContext applicationContext;
@@ -119,6 +121,7 @@ public class StoreServiceTest {
     ssn.setSocialNetwork(sn);
 
     when(socialNetworkRepository.findByStoreId(TEST_STORE_ID)).thenReturn(List.of(ssn));
+    when(promotionRepository.existsByStoreIdAndIsActiveTrue(TEST_STORE_ID)).thenReturn(true);
 
     StoreDTO result = storeService.toDTO(TEST_STORE);
 
