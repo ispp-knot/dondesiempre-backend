@@ -42,15 +42,11 @@ public class CryptoConverterTest {
   }
 
   @Test
-  void shouldThrowExceptionWhenEncryptingWithInvalidKey() {
-    cryptoConverter.setAesSecretKey("clave-rota");
-
-    String originalCode = "ABCD-1234-EFGH";
-
+  void shouldThrowExceptionWhenSettingInvalidKey() {
     assertThrows(
-        RuntimeException.class,
+        IllegalStateException.class,
         () -> {
-          cryptoConverter.convertToDatabaseColumn(originalCode);
+          cryptoConverter.setAesSecretKey("clave-rota");
         });
   }
 

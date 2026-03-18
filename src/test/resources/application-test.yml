@@ -5,5 +5,7 @@ spring:
     password: testpass
     driver-class-name: org.postgresql.Driver
 
+AES_SECRET_KEY: VICV&EZWVr"G8e2s+Xmg}bOy^&VK6gV+
+
 frontend:
   url: http://localhost:3000
