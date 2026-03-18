@@ -290,7 +290,7 @@ public class DataSeeder implements CommandLineRunner {
     order.setOrderStatus(OrderStatus.PENDING);
     order.setOrderCode("ORD-MANUAL-001");
     addItemsToOrder(order, List.of(p3));
-    order.setItems(new ArrayList<>()); 
+    order.setItems(new ArrayList<>());
 
     Order orderConfirmed = new Order();
     orderConfirmed.setUser(clientUser);
@@ -318,7 +318,6 @@ public class DataSeeder implements CommandLineRunner {
     orderPicked.setItems(new ArrayList<>());
     addItemsToOrder(orderPicked, List.of(p1, p4));
     orderRepository.save(orderPicked);
-
   }
 
   private void loadRandomData() {
@@ -469,7 +468,8 @@ public class DataSeeder implements CommandLineRunner {
         randomOrder.setUser(clientUser);
         randomOrder.setOrderDate(LocalDateTime.now().minusDays(rng.nextInt(10)));
         randomOrder.setOrderStatus(OrderStatus.PENDING);
-        randomOrder.setOrderCode("ORD-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase());
+        randomOrder.setOrderCode(
+            "ORD-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase());
         randomOrder.setItems(new ArrayList<>());
 
         int itemsToCreate = 1 + rng.nextInt(3);

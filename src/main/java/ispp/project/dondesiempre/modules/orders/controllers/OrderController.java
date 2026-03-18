@@ -1,10 +1,16 @@
 package ispp.project.dondesiempre.modules.orders.controllers;
 
+import ispp.project.dondesiempre.modules.common.exceptions.ResourceNotFoundException;
+import ispp.project.dondesiempre.modules.common.exceptions.UnauthorizedException;
+import ispp.project.dondesiempre.modules.orders.dtos.OrderDTO;
+import ispp.project.dondesiempre.modules.orders.services.OrderService;
+import ispp.project.dondesiempre.modules.products.models.Product;
+import ispp.project.dondesiempre.modules.products.services.ProductService;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,14 +20,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import ispp.project.dondesiempre.modules.common.exceptions.ResourceNotFoundException;
-import ispp.project.dondesiempre.modules.common.exceptions.UnauthorizedException;
-import ispp.project.dondesiempre.modules.orders.dtos.OrderDTO;
-import ispp.project.dondesiempre.modules.orders.services.OrderService;
-import ispp.project.dondesiempre.modules.products.models.Product;
-import ispp.project.dondesiempre.modules.products.services.ProductService;
-import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/v1/orders")
@@ -38,10 +36,10 @@ public class OrderController {
   }
 
   @GetMapping("/pick/{orderCode}")
-  public ResponseEntity<OrderDTO> findOrder(@PathVariable String orderCode) 
-          throws UnauthorizedException, ResourceNotFoundException {
-      OrderDTO order = orderService.findOrder(orderCode);
-      return new ResponseEntity<>(order, HttpStatus.OK);
+  public ResponseEntity<OrderDTO> findOrder(@PathVariable String orderCode)
+      throws UnauthorizedException, ResourceNotFoundException {
+    OrderDTO order = orderService.findOrder(orderCode);
+    return new ResponseEntity<>(order, HttpStatus.OK);
   }
 
   @PostMapping
