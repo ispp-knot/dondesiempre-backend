@@ -1,33 +1,38 @@
 package ispp.project.dondesiempre.modules.orders.services;
 
+import java.security.SecureRandom;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.Optional;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import ispp.project.dondesiempre.modules.auth.models.User;
 import ispp.project.dondesiempre.modules.auth.repositories.UserRepository;
+import ispp.project.dondesiempre.modules.auth.services.AuthService;
 import ispp.project.dondesiempre.modules.common.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.modules.common.exceptions.UnauthorizedException;
 import ispp.project.dondesiempre.modules.orders.dtos.OrderDTO;
 import ispp.project.dondesiempre.modules.orders.models.Order;
 import ispp.project.dondesiempre.modules.orders.models.OrderItem;
 import ispp.project.dondesiempre.modules.orders.models.OrderStatus;
-import ispp.project.dondesiempre.modules.orders.repositories.OrderItemRepository;
 import ispp.project.dondesiempre.modules.orders.repositories.OrderRepository;
-import ispp.project.dondesiempre.modules.products.models.Product;
 import ispp.project.dondesiempre.modules.stores.repositories.StoreRepository;
-import java.security.SecureRandom;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import ispp.project.dondesiempre.modules.stores.models.Store;
+import ispp.project.dondesiempre.modules.products.models.Product;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 public class OrderService {
+
   private final OrderRepository orderRepository;
-  private final OrderItemRepository orderItemRepository;
   private final UserRepository userRepository;
   private final StoreRepository storeRepository;
+  private final AuthService authService;
 
   private final SecureRandom secureRandom = new SecureRandom();
   private static final String CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -35,6 +40,30 @@ public class OrderService {
   @Transactional(readOnly = true)
   public List<Order> findAllOrders() {
     return orderRepository.findAll();
+  }
+
+  @Transactional(readOnly = true)
+  public List<OrderDTO> findOrdersOfCurrenUser() {
+    User currentUser = authService.getCurrentUser();
+    if (currentUser == null) { 
+      throw new UnauthorizedException("Debes iniciar sesión para ver tus pedidos."); 
+    }
+
+    Optional<Store> userStore = storeRepository.findByUserId(currentUser.getId());
+
+    List<Order> orders;
+    if (userStore.isPresent()) {
+      orders = orderRepository.findByStoreId(userStore.get().getId());
+    } else {
+      orders = orderRepository.findByUserId(currentUser.getId());
+    }
+
+    return orders.stream().map(this::mapToOrderDTO).toList();
+  }
+
+  @Transactional(readOnly = true)
+  public List<OrderDTO> findOrdersByUserId(UUID userId) {
+    return orderRepository.findByUserId(userId).stream().map(this::mapToOrderDTO).toList();
   }
 
   @Transactional(readOnly = true, rollbackFor = ResourceNotFoundException.class)
@@ -90,12 +119,8 @@ public class OrderService {
   }
 
   @Transactional(rollbackFor = ResourceNotFoundException.class)
-  public OrderDTO createOrder(UUID userId, Map<Product, Integer> productsToBuy) {
-    User user =
-        userRepository
-            .findById(userId)
-            .orElseThrow(
-                () -> new ResourceNotFoundException("User with ID" + userId + "not found."));
+  public OrderDTO createOrder(Map<Product, Integer> productsToBuy) {
+    User user = authService.getCurrentUser();
 
     Order order = new Order();
     order.setUser(user);
@@ -127,7 +152,7 @@ public class OrderService {
             .orElseThrow(
                 () -> new ResourceNotFoundException("Order with ID" + orderId + "not found"));
     if (order.getOrderStatus().equals(OrderStatus.PENDING)) {
-      order.setOrderStatus(OrderStatus.ACCEPTED);
+      order.setOrderStatus(OrderStatus.CONFIRMED);
     } else {
       throw new UnauthorizedException(
           "This order is not in the pending state, it cannot be confirmed.");
@@ -156,11 +181,11 @@ public class OrderService {
             .findById(orderId)
             .orElseThrow(
                 () -> new ResourceNotFoundException("Order with ID" + orderId + "not found"));
-    if (order.getOrderStatus().equals(OrderStatus.ACCEPTED)) {
+    if (order.getOrderStatus().equals(OrderStatus.CONFIRMED)) {
       order.setOrderStatus(OrderStatus.PICKED);
     } else {
       throw new UnauthorizedException(
-          "This order is not in the accepted state, it cannot be in the picked state.");
+          "This order is not in the CONFIRMED state, it cannot be in the picked state.");
     }
   }
 
@@ -168,7 +193,7 @@ public class OrderService {
   /**
    * TODO: Podría añadirse que un pedido sea cancelado por un cliente o una tienda, si y solo si: -
    * Cliente: puede cancelar un pedido si está PENDING (se ha equivocado, se ha dado cuenta que no
-   * quería X item, etc.) - Tienda: puede cancelar un pedido si está ACCEPTED (se han dado cuenta
+   * quería X item, etc.) - Tienda: puede cancelar un pedido si está CONFIRMED (se han dado cuenta
    * que no queda stock, el pedido es imposible de preparar, etc.) Ahora mismo no está teniendo en
    * cuenta estos roles.
    */

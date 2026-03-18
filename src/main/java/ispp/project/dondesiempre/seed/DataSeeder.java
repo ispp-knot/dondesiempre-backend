@@ -283,27 +283,42 @@ public class DataSeeder implements CommandLineRunner {
     clientWithStoreUser.setUser(storeOwner);
     clientRepository.save(clientWithStoreUser);
 
-    // CreateOrder
+    // Order
     Order order = new Order();
     order.setUser(clientUser);
     order.setOrderDate(LocalDateTime.now());
     order.setOrderStatus(OrderStatus.PENDING);
     order.setOrderCode("ORD-MANUAL-001");
+    addItemsToOrder(order, List.of(p3));
+    order.setItems(new ArrayList<>()); 
 
-    int total = 0;
+    Order orderConfirmed = new Order();
+    orderConfirmed.setUser(clientUser);
+    orderConfirmed.setOrderDate(LocalDateTime.now().minusDays(2));
+    orderConfirmed.setOrderStatus(OrderStatus.CONFIRMED);
+    orderConfirmed.setOrderCode("ORD-CONFIRM-002");
+    orderConfirmed.setItems(new ArrayList<>());
+    addItemsToOrder(orderConfirmed, List.of(p3));
+    orderRepository.save(orderConfirmed);
 
-    for (Product p : List.of(p1, p2)) {
-      OrderItem item = new OrderItem();
-      item.setOrder(order);
-      item.setProduct(p);
-      item.setQuantity(1);
-      item.setPriceAtPurchase(p.getPriceInCents());
-      order.getItems().add(item);
-      total += p.getPriceInCents();
-    }
+    Order orderRejected = new Order();
+    orderRejected.setUser(clientUser);
+    orderRejected.setOrderDate(LocalDateTime.now().minusDays(5));
+    orderRejected.setOrderStatus(OrderStatus.REJECTED);
+    orderRejected.setOrderCode("ORD-REJECT-003");
+    orderRejected.setItems(new ArrayList<>());
+    addItemsToOrder(orderRejected, List.of(p4));
+    orderRepository.save(orderRejected);
 
-    order.setTotalPrice(total);
-    orderRepository.save(order);
+    Order orderPicked = new Order();
+    orderPicked.setUser(clientUser);
+    orderPicked.setOrderDate(LocalDateTime.now().minusDays(1));
+    orderPicked.setOrderStatus(OrderStatus.PICKED);
+    orderPicked.setOrderCode("ORD-PICKED-004");
+    orderPicked.setItems(new ArrayList<>());
+    addItemsToOrder(orderPicked, List.of(p1, p4));
+    orderRepository.save(orderPicked);
+
   }
 
   private void loadRandomData() {
@@ -449,17 +464,16 @@ public class DataSeeder implements CommandLineRunner {
       clientRepository.save(client);
 
       List<Product> allProducts = productRepository.findAll();
-
       if (rng.nextDouble() < 0.5 && !allProducts.isEmpty()) {
         Order randomOrder = new Order();
         randomOrder.setUser(clientUser);
         randomOrder.setOrderDate(LocalDateTime.now().minusDays(rng.nextInt(10)));
         randomOrder.setOrderStatus(OrderStatus.PENDING);
-        randomOrder.setOrderCode(
-            "ORD-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase());
+        randomOrder.setOrderCode("ORD-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase());
+        randomOrder.setItems(new ArrayList<>());
 
         int itemsToCreate = 1 + rng.nextInt(3);
-        int total = 0;
+        int randomTotal = 0;
 
         for (int k = 0; k < itemsToCreate; k++) {
           Product p = pick(allProducts, rng);
@@ -469,10 +483,9 @@ public class DataSeeder implements CommandLineRunner {
           item.setQuantity(1 + rng.nextInt(2));
           item.setPriceAtPurchase(p.getPriceInCents());
           randomOrder.getItems().add(item);
-          total += item.getPriceAtPurchase() * item.getQuantity();
+          randomTotal += item.getPriceAtPurchase() * item.getQuantity();
         }
-
-        randomOrder.setTotalPrice(total);
+        randomOrder.setTotalPrice(randomTotal);
         orderRepository.save(randomOrder);
       }
     }
@@ -531,6 +544,20 @@ public class DataSeeder implements CommandLineRunner {
 
   private <T> T pick(List<T> list, Random rng) {
     return list.get(rng.nextInt(list.size()));
+  }
+
+  private void addItemsToOrder(Order order, List<Product> products) {
+    int total = 0;
+    for (Product p : products) {
+      OrderItem item = new OrderItem();
+      item.setOrder(order);
+      item.setProduct(p);
+      item.setQuantity(1);
+      item.setPriceAtPurchase(p.getPriceInCents());
+      order.getItems().add(item);
+      total += p.getPriceInCents();
+    }
+    order.setTotalPrice(total);
   }
 
   private List<String> loadTextFile(String path) {
