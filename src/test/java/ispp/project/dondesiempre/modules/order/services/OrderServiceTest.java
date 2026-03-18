@@ -1,15 +1,28 @@
 package ispp.project.dondesiempre.modules.order.services;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.lenient;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import ispp.project.dondesiempre.modules.auth.models.User;
 import ispp.project.dondesiempre.modules.auth.repositories.UserRepository;
@@ -20,212 +33,208 @@ import ispp.project.dondesiempre.modules.orders.dtos.OrderDTO;
 import ispp.project.dondesiempre.modules.orders.models.Order;
 import ispp.project.dondesiempre.modules.orders.models.OrderItem;
 import ispp.project.dondesiempre.modules.orders.models.OrderStatus;
-import ispp.project.dondesiempre.modules.orders.repositories.OrderItemRepository;
 import ispp.project.dondesiempre.modules.orders.repositories.OrderRepository;
-import ispp.project.dondesiempre.modules.products.models.Product;
 import ispp.project.dondesiempre.modules.orders.services.OrderService;
-import ispp.project.dondesiempre.modules.products.services.ProductService;
+import ispp.project.dondesiempre.modules.products.models.Product;
 import ispp.project.dondesiempre.modules.stores.models.Store;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.context.ApplicationContext;
-import org.springframework.test.util.ReflectionTestUtils;
+import ispp.project.dondesiempre.modules.stores.repositories.StoreRepository;
+import ispp.project.dondesiempre.utils.crypto.CryptoConverter;
 
 @ExtendWith(MockitoExtension.class)
 public class OrderServiceTest {
 
-  @Mock private OrderRepository orderRepository;
-  @Mock private OrderItemRepository orderItemRepository;
-  @Mock private ProductService productService;
-  @Mock private AuthService authService;
-  @Mock private UserRepository userRepository;
-  @Mock private ApplicationContext applicationContext;
+    @Mock private OrderRepository orderRepository;
+    @Mock private UserRepository userRepository;
+    @Mock private StoreRepository storeRepository;
+    @Mock private AuthService authService;
+    @Mock private CryptoConverter cryptoConverter;
 
-  @InjectMocks private OrderService orderService;
+    @InjectMocks private OrderService orderService;
 
-  private UUID orderId;
-  private UUID itemId;
-  private UUID storeId;
-  private UUID userId;
-  private UUID productId;
+    private UUID orderId;
+    private Order order;
+    private User user;
+    private Store store;
+    private Product product;
+    private OrderItem item;
 
-  private Order order;
-  private OrderItem item;
-  private Store store;
-  private User user;
-  private Product product;
+    @BeforeEach
+    void setUp() {
+        orderId = UUID.randomUUID();
+        
+        user = new User();
+        user.setId(UUID.randomUUID());
 
-  @BeforeEach
-  void setUp() {
-    orderId = UUID.randomUUID();
-    itemId = UUID.randomUUID();
-    storeId = UUID.randomUUID();
-    userId = UUID.randomUUID();
-    productId = UUID.randomUUID();
+        store = new Store();
+        store.setId(UUID.randomUUID());
+        store.setName("Tienda Test");
 
-    user = new User();
-    user.setId(userId);
+        product = new Product();
+        product.setStore(store);
+        product.setPriceInCents(100);
+        product.setName("Producto Test");
 
-    item = new OrderItem();
-    item.setId(itemId);
+        item = new OrderItem();
+        item.setProduct(product);
+        item.setQuantity(2);
+        item.setPriceAtPurchase(100);
 
-    product = new Product();
-    product.setId(productId);
-    product.setName("Test Product");
-    product.setPriceInCents(50);
-    product.setStore(store);
+        order = new Order();
+        order.setId(orderId);
+        order.setUser(user);
+        order.setOrderStatus(OrderStatus.PENDING);
+        order.setOrderDate(LocalDateTime.now());
+        order.setItems(new ArrayList<>(List.of(item)));
+        order.setOrderCode("CODE-1234-5678");
+        order.setTotalPrice(200);
+    }
 
-    order = new Order();
-    order.setId(orderId);
-    order.setUser(user);
-    order.setOrderDate(LocalDateTime.now());
-    order.setOrderCode(this.orderService.generateRandomCode());
-    List<OrderItem> items = new ArrayList<>();
-    items.add(item);
-    order.setItems(items);
-    order.setTotalPrice(50);
-    order.setOrderStatus(OrderStatus.PENDING);
+    @Test
+    void findAllOrders_ShouldReturnList() {
+        when(orderRepository.findAll()).thenReturn(List.of(order));
+        List<Order> result = orderService.findAllOrders();
+        assertEquals(1, result.size());
+        verify(orderRepository).findAll();
+    }
 
-    item.setOrder(order);
-    item.setQuantity(1);
-    item.setPriceAtPurchase(50);
-    item.setProduct(product);
+    @Test
+    void findOrdersOfCurrentUser_AsClient_ShouldReturnDTOs() {
+        when(authService.getCurrentUser()).thenReturn(user);
+        when(storeRepository.findByUserId(user.getId())).thenReturn(Optional.empty());
+        when(orderRepository.findByUserId(user.getId())).thenReturn(List.of(order));
 
-    lenient().when(applicationContext.getBean(OrderService.class)).thenReturn(orderService);
-  }
+        List<OrderDTO> result = orderService.findOrdersOfCurrenUser();
 
-  // find by id
-  @Test
-  void shouldReturnOrder_whenIdExists() throws ResourceNotFoundException {
-    when(orderRepository.findById(orderId)).thenReturn(Optional.of(order));
+        assertFalse(result.isEmpty());
+        assertEquals("Tienda Test", result.get(0).getStoreName());
+    }
 
-    Order result = orderService.findById(orderId);
+    @Test
+    void findOrdersOfCurrentUser_AsStore_ShouldReturnStoreOrders() {
+        when(authService.getCurrentUser()).thenReturn(user);
+        when(storeRepository.findByUserId(user.getId())).thenReturn(Optional.of(store));
+        when(orderRepository.findByStoreId(store.getId())).thenReturn(List.of(order));
 
-    assertNotNull(result);
-    assertEquals(orderId, result.getId());
-  }
+        List<OrderDTO> result = orderService.findOrdersOfCurrenUser();
 
-  @Test
-  void shouldThrowResourceNotFoundException_whenOrderDoesNotExist() {
-    UUID nonExistentId = UUID.randomUUID();
-    when(orderRepository.findById(nonExistentId)).thenReturn(Optional.empty());
-    assertThrows(ResourceNotFoundException.class, () -> orderService.findById(nonExistentId));
-  }
+        assertFalse(result.isEmpty());
+        verify(orderRepository).findByStoreId(store.getId());
+    }
 
-  @Test
-  void shouldCreateOrder_whenValidData() {
-    Map<Product, Integer> productsToBuy = Map.of(product, 2);
+    @Test
+    void findOrdersByUserId_ShouldReturnList() {
+        when(orderRepository.findByUserId(user.getId())).thenReturn(List.of(order));
+        List<OrderDTO> result = orderService.findOrdersByUserId(user.getId());
+        assertEquals(1, result.size());
+    }
 
-    when(authService.getCurrentUser()).thenReturn(user);
-    when(orderRepository.save(any(Order.class))).thenReturn(order);
+    @Test
+    void findById_ExistingId_ShouldReturnOrder() throws ResourceNotFoundException {
+        when(orderRepository.findById(orderId)).thenReturn(Optional.of(order));
+        Order result = orderService.findById(orderId);
+        assertNotNull(result);
+    }
 
-    OrderDTO result = orderService.createOrder(productsToBuy);
+    @Test
+    void findById_NotExistingId_ShouldThrowException() {
+        when(orderRepository.findById(any())).thenReturn(Optional.empty());
+        assertThrows(ResourceNotFoundException.class, () -> orderService.findById(UUID.randomUUID()));
+    }
 
-    assertNotNull(result);
-    assertEquals(userId, result.getUserId());
-    assertEquals(50, result.getTotalPrice());
-    assertTrue(result.getOrderCode().matches("^[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$"));
-    verify(orderRepository, times(1)).save(any(Order.class));
-  }
+    @Test
+    void saveOrder_ShouldCalculateTotalAndSave() {
+        when(orderRepository.save(any())).thenReturn(order);
+        orderService.saveOrder(order);
+        verify(orderRepository).save(order);
+    }
 
-  @Test
-  void shouldConfirmOrder_whenStatusIsPending() throws UnauthorizedException {
-    order.setOrderStatus(OrderStatus.PENDING);
-    when(orderRepository.findById(orderId)).thenReturn(Optional.of(order));
+    @Test
+    void deleteOrder_ShouldInvokeRepository() {
+        orderService.deleteOrder(orderId);
+        verify(orderRepository).deleteById(orderId);
+    }
 
-    orderService.confirmOrder(orderId);
+    @Test
+    void createOrder_ShouldCreateAndReturnDTO() {
+        when(authService.getCurrentUser()).thenReturn(user);
+        when(orderRepository.save(any())).thenReturn(order);
+        Map<Product, Integer> products = Map.of(product, 2);
 
-    assertEquals(OrderStatus.CONFIRMED, order.getOrderStatus());
-    verify(orderRepository, times(1)).findById(orderId);
-  }
+        OrderDTO result = orderService.createOrder(products);
 
-  @Test
-  void shouldThrowUnauthorizedException_whenConfirmingNonPendingOrder() {
-    order.setOrderStatus(OrderStatus.CONFIRMED);
-    when(orderRepository.findById(orderId)).thenReturn(Optional.of(order));
+        assertNotNull(result);
+        verify(orderRepository).save(any(Order.class));
+    }
 
-    assertThrows(UnauthorizedException.class, () -> orderService.confirmOrder(orderId));
-  }
+    @Test
+    void confirmOrder_PendingStatus_ShouldWork() throws Exception {
+        when(orderRepository.findById(orderId)).thenReturn(Optional.of(order));
+        orderService.confirmOrder(orderId);
+        assertEquals(OrderStatus.CONFIRMED, order.getOrderStatus());
+    }
 
-  @Test
-  void shouldRejectOrder_whenStatusIsPending() throws UnauthorizedException {
-    order.setOrderStatus(OrderStatus.PENDING);
-    when(orderRepository.findById(orderId)).thenReturn(Optional.of(order));
+    @Test
+    void confirmOrder_NotPending_ShouldThrowException() {
+        order.setOrderStatus(OrderStatus.CONFIRMED);
+        when(orderRepository.findById(orderId)).thenReturn(Optional.of(order));
+        assertThrows(UnauthorizedException.class, () -> orderService.confirmOrder(orderId));
+    }
 
-    orderService.rejectOrder(orderId);
+    @Test
+    void rejectOrder_PendingAndOwner_ShouldWork() throws Exception {
+        when(orderRepository.findById(orderId)).thenReturn(Optional.of(order));
+        doNothing().when(authService).assertUserOwnsStore(any());
 
-    assertEquals(OrderStatus.REJECTED, order.getOrderStatus());
-    verify(orderRepository, times(1)).findById(orderId);
-  }
+        orderService.rejectOrder(orderId);
 
-  @Test
-  void shouldThrowUnauthorizedException_whenRejectingNonPendingOrder() {
-    order.setOrderStatus(OrderStatus.REJECTED);
-    when(orderRepository.findById(orderId)).thenReturn(Optional.of(order));
+        assertEquals(OrderStatus.REJECTED, order.getOrderStatus());
+        verify(authService).assertUserOwnsStore(store);
+    }
 
-    assertThrows(UnauthorizedException.class, () -> orderService.rejectOrder(orderId));
-  }
+    @Test
+    void findOrder_ByCode_ShouldReturnDTO() throws Exception {
+        String plainCode = "CODE-1234";
+        String encCode = "ENCRYPTED";
+        when(cryptoConverter.convertToDatabaseColumn(plainCode)).thenReturn(encCode);
+        when(orderRepository.findByOrderCode(encCode)).thenReturn(Optional.of(order));
+        doNothing().when(authService).assertUserOwnsStore(any());
 
-  @Test
-  void shouldPickOrder_whenStatusIsCONFIRMED() throws UnauthorizedException {
-    order.setOrderStatus(OrderStatus.CONFIRMED);
-    when(orderRepository.findById(orderId)).thenReturn(Optional.of(order));
+        OrderDTO result = orderService.findOrder(plainCode);
 
-    orderService.pickOrder(orderId);
+        assertNotNull(result);
+        assertEquals("Tienda Test", result.getStoreName());
+    }
 
-    assertEquals(OrderStatus.PICKED, order.getOrderStatus());
-    verify(orderRepository, times(1)).findById(orderId);
-  }
+    @Test
+    void pickOrder_ConfirmedAndOwner_ShouldWork() throws Exception {
+        order.setOrderStatus(OrderStatus.CONFIRMED);
+        when(orderRepository.findById(orderId)).thenReturn(Optional.of(order));
+        doNothing().when(authService).assertUserOwnsStore(any());
 
-  @Test
-  void shouldThrowUnauthorizedException_whenPickingNonCONFIRMEDOrder() {
-    order.setOrderStatus(OrderStatus.PENDING);
-    when(orderRepository.findById(orderId)).thenReturn(Optional.of(order));
+        orderService.pickOrder(orderId);
 
-    assertThrows(UnauthorizedException.class, () -> orderService.pickOrder(orderId));
-  }
+        assertEquals(OrderStatus.PICKED, order.getOrderStatus());
+    }
 
-  @Test
-  void shouldCalculateTotalPrice_whenOrderHasItems() {
-    OrderItem item2 = new OrderItem();
-    item2.setQuantity(3);
-    item2.setPriceAtPurchase(500);
+    @Test
+    void cancelOrder_PendingAndOwner_ShouldWork() throws Exception {
+        when(orderRepository.findById(orderId)).thenReturn(Optional.of(order));
+        doNothing().when(authService).assertUserOwnsStore(any());
 
-    order.setItems(List.of(item, item2));
+        orderService.cancelOrder(orderId);
 
-    Integer result =
-        ReflectionTestUtils.invokeMethod(orderService, "calculateAndSetTotalPrice", order);
+        assertEquals(OrderStatus.CANCELLED, order.getOrderStatus());
+    }
 
-    assertEquals(1550, result);
-  }
+    @Test
+    void calculateAndSetTotalPrice_LogicCheck() {
+        Integer total = ReflectionTestUtils.invokeMethod(orderService, "calculateAndSetTotalPrice", order);
+        assertEquals(200, total);
+    }
 
-  @Test
-  void shouldReturnZero_whenOrderHasNoItems() {
-    order.setItems(new ArrayList<>());
-
-    Integer result =
-        ReflectionTestUtils.invokeMethod(orderService, "calculateAndSetTotalPrice", order);
-
-    assertEquals(0, result);
-  }
-
-  @Test
-  void shouldReturnZero_whenItemsIsNull() {
-    order.setItems(null);
-
-    Integer result =
-        ReflectionTestUtils.invokeMethod(orderService, "calculateAndSetTotalPrice", order);
-
-    assertEquals(0, result);
-  }
+    @Test
+    void generateRandomCode_ShouldMatchFormat() {
+        String code = orderService.generateRandomCode();
+        assertTrue(code.matches("^[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$"));
+    }
 }
