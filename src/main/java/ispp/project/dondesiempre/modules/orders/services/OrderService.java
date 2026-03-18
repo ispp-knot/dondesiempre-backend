@@ -4,8 +4,8 @@ import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,9 +20,10 @@ import ispp.project.dondesiempre.modules.orders.models.Order;
 import ispp.project.dondesiempre.modules.orders.models.OrderItem;
 import ispp.project.dondesiempre.modules.orders.models.OrderStatus;
 import ispp.project.dondesiempre.modules.orders.repositories.OrderRepository;
-import ispp.project.dondesiempre.modules.stores.repositories.StoreRepository;
-import ispp.project.dondesiempre.modules.stores.models.Store;
 import ispp.project.dondesiempre.modules.products.models.Product;
+import ispp.project.dondesiempre.modules.stores.models.Store;
+import ispp.project.dondesiempre.modules.stores.repositories.StoreRepository;
+import ispp.project.dondesiempre.utils.crypto.CryptoConverter;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -33,6 +34,7 @@ public class OrderService {
   private final UserRepository userRepository;
   private final StoreRepository storeRepository;
   private final AuthService authService;
+  private final CryptoConverter cryptoConverter;
 
   private final SecureRandom secureRandom = new SecureRandom();
   private static final String CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -97,6 +99,11 @@ public class OrderService {
   }
 
   private OrderDTO mapToOrderDTO(Order order) {
+    String storeName = null;
+    if (order.getItems() != null && !order.getItems().isEmpty()) {
+      storeName = order.getItems().get(0).getProduct().getStore().getName();
+    }
+
     return OrderDTO.builder()
         .id(order.getId())
         .orderCode(order.getOrderCode())
@@ -104,6 +111,7 @@ public class OrderService {
         .orderStatus(order.getOrderStatus())
         .totalPrice(order.getTotalPrice())
         .userId(order.getUser().getId())
+        .storeName(storeName)
         .items(order.getItems().stream().map(this::mapItemToDTO).toList())
         .build();
   }
@@ -166,6 +174,7 @@ public class OrderService {
             .findById(orderId)
             .orElseThrow(
                 () -> new ResourceNotFoundException("Order with ID" + orderId + "not found"));
+    authService.assertUserOwnsStore(order.getItems().getFirst().getProduct().getStore());
     if (order.getOrderStatus().equals(OrderStatus.PENDING)) {
       order.setOrderStatus(OrderStatus.REJECTED);
     } else {
@@ -174,6 +183,19 @@ public class OrderService {
     }
   }
 
+  @Transactional(readOnly = true)
+  public OrderDTO findOrder(String orderCode) throws UnauthorizedException, ResourceNotFoundException {
+    String encryptedCode = cryptoConverter.convertToDatabaseColumn(orderCode);
+    Order order =
+        orderRepository
+            .findByOrderCode(encryptedCode)
+            .orElseThrow(
+                () -> new ResourceNotFoundException("Order with Code" + orderCode + "not found"));
+    authService.assertUserOwnsStore(order.getItems().getFirst().getProduct().getStore());
+    return mapToOrderDTO(order);
+  }
+
+
   @Transactional
   public void pickOrder(UUID orderId) throws UnauthorizedException, ResourceNotFoundException {
     Order order =
@@ -181,6 +203,7 @@ public class OrderService {
             .findById(orderId)
             .orElseThrow(
                 () -> new ResourceNotFoundException("Order with ID" + orderId + "not found"));
+    authService.assertUserOwnsStore(order.getItems().getFirst().getProduct().getStore());
     if (order.getOrderStatus().equals(OrderStatus.CONFIRMED)) {
       order.setOrderStatus(OrderStatus.PICKED);
     } else {
@@ -188,7 +211,6 @@ public class OrderService {
           "This order is not in the CONFIRMED state, it cannot be in the picked state.");
     }
   }
-
   // Este método se puede usar para cancelar un pedido que aún no ha sido confirmado.
   /**
    * TODO: Podría añadirse que un pedido sea cancelado por un cliente o una tienda, si y solo si: -
@@ -204,6 +226,7 @@ public class OrderService {
             .findById(orderId)
             .orElseThrow(
                 () -> new ResourceNotFoundException("Order with ID" + orderId + "not found"));
+    authService.assertUserOwnsStore(order.getItems().getFirst().getProduct().getStore());
     if (order.getOrderStatus().equals(OrderStatus.PENDING)) {
       order.setOrderStatus(OrderStatus.CANCELLED);
     } else {
