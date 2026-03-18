@@ -6,12 +6,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import ispp.project.dondesiempre.config.GlobalExceptionHandler;
-import ispp.project.dondesiempre.mockEntities.StoreMockEntities;
 import ispp.project.dondesiempre.modules.stores.dtos.StoreDTO;
-import ispp.project.dondesiempre.modules.stores.models.Store;
 import ispp.project.dondesiempre.modules.stores.services.StoreService;
 import java.util.List;
-import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -31,8 +28,8 @@ public class StoreControllerTest {
   @Autowired private MockMvc mockMvc;
 
   @MockitoBean private StoreService storeService;
-  private static final UUID TEST_STORE_ID = UUID.randomUUID();
-  private static final Store TEST_STORE = StoreMockEntities.sampleStore(TEST_STORE_ID);
+  private static final java.util.UUID TEST_STORE_ID = java.util.UUID.randomUUID();
+  private static final ispp.project.dondesiempre.modules.stores.models.Store TEST_STORE = ispp.project.dondesiempre.modules.stores.models.StoreMockEntities.sampleStore(TEST_STORE_ID);
 
   @Test
   void shouldReturnOkAndListOfStores_whenSearchingByName() throws Exception {

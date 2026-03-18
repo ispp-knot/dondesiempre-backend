@@ -31,10 +31,14 @@ public class StoreController {
       @RequestParam(required = false) Double lat,
       @RequestParam(required = false) Double lon) {
     return new ResponseEntity<>(
+<<<<<<< HEAD
         storeService.searchStores(name, lat, lon).stream()
             .map(store -> storeService.toDTO(store, lat, lon))
             .toList(),
         HttpStatus.OK);
+=======
+        storeService.findStoresInBoundingBoxAsDTO(minLon, minLat, maxLon, maxLat), HttpStatus.OK);
+>>>>>>> origin/main
   }
 
   @GetMapping("/stores/map")
