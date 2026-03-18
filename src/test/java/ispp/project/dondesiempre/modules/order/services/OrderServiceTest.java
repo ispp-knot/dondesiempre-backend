@@ -22,8 +22,8 @@ import ispp.project.dondesiempre.modules.orders.models.OrderItem;
 import ispp.project.dondesiempre.modules.orders.models.OrderStatus;
 import ispp.project.dondesiempre.modules.orders.repositories.OrderItemRepository;
 import ispp.project.dondesiempre.modules.orders.repositories.OrderRepository;
-import ispp.project.dondesiempre.modules.orders.services.OrderService;
 import ispp.project.dondesiempre.modules.products.models.Product;
+import ispp.project.dondesiempre.modules.orders.services.OrderService;
 import ispp.project.dondesiempre.modules.products.services.ProductService;
 import ispp.project.dondesiempre.modules.stores.models.Store;
 import java.time.LocalDateTime;
@@ -122,15 +122,14 @@ public class OrderServiceTest {
     assertThrows(ResourceNotFoundException.class, () -> orderService.findById(nonExistentId));
   }
 
-  // create
   @Test
   void shouldCreateOrder_whenValidData() {
     Map<Product, Integer> productsToBuy = Map.of(product, 2);
 
-    when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+    when(authService.getCurrentUser()).thenReturn(user);
     when(orderRepository.save(any(Order.class))).thenReturn(order);
 
-    OrderDTO result = orderService.createOrder(userId, productsToBuy);
+    OrderDTO result = orderService.createOrder(productsToBuy);
 
     assertNotNull(result);
     assertEquals(userId, result.getUserId());
@@ -140,32 +139,19 @@ public class OrderServiceTest {
   }
 
   @Test
-  void shouldResourceNotFoundException_whenUserNotFound() {
-    Map<Product, Integer> productsToBuy = Map.of(product, 1);
-
-    when(userRepository.findById(userId)).thenReturn(Optional.empty());
-
-    assertThrows(
-        ResourceNotFoundException.class, () -> orderService.createOrder(userId, productsToBuy));
-    verify(orderRepository, never()).save(any());
-  }
-
-  // order status
-
-  @Test
   void shouldConfirmOrder_whenStatusIsPending() throws UnauthorizedException {
     order.setOrderStatus(OrderStatus.PENDING);
     when(orderRepository.findById(orderId)).thenReturn(Optional.of(order));
 
     orderService.confirmOrder(orderId);
 
-    assertEquals(OrderStatus.ACCEPTED, order.getOrderStatus());
+    assertEquals(OrderStatus.CONFIRMED, order.getOrderStatus());
     verify(orderRepository, times(1)).findById(orderId);
   }
 
   @Test
   void shouldThrowUnauthorizedException_whenConfirmingNonPendingOrder() {
-    order.setOrderStatus(OrderStatus.ACCEPTED);
+    order.setOrderStatus(OrderStatus.CONFIRMED);
     when(orderRepository.findById(orderId)).thenReturn(Optional.of(order));
 
     assertThrows(UnauthorizedException.class, () -> orderService.confirmOrder(orderId));
@@ -191,8 +177,8 @@ public class OrderServiceTest {
   }
 
   @Test
-  void shouldPickOrder_whenStatusIsAccepted() throws UnauthorizedException {
-    order.setOrderStatus(OrderStatus.ACCEPTED);
+  void shouldPickOrder_whenStatusIsCONFIRMED() throws UnauthorizedException {
+    order.setOrderStatus(OrderStatus.CONFIRMED);
     when(orderRepository.findById(orderId)).thenReturn(Optional.of(order));
 
     orderService.pickOrder(orderId);
@@ -202,14 +188,13 @@ public class OrderServiceTest {
   }
 
   @Test
-  void shouldThrowUnauthorizedException_whenPickingNonAcceptedOrder() {
+  void shouldThrowUnauthorizedException_whenPickingNonCONFIRMEDOrder() {
     order.setOrderStatus(OrderStatus.PENDING);
     when(orderRepository.findById(orderId)).thenReturn(Optional.of(order));
 
     assertThrows(UnauthorizedException.class, () -> orderService.pickOrder(orderId));
   }
 
-  // calculate total price
   @Test
   void shouldCalculateTotalPrice_whenOrderHasItems() {
     OrderItem item2 = new OrderItem();
