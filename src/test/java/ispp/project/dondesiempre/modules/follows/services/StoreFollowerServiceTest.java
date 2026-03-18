@@ -98,7 +98,7 @@ public class StoreFollowerServiceTest {
   @Test
   void getMyFollowedStores_shouldGetZeroStores_whenNotFollowingAnyStore() {
     when(userService.getCurrentClient()).thenReturn(TEST_CLIENT);
-    when(storeFollowerRepository.findByClientId(TEST_CLIENT.getId())).thenReturn(List.of());
+    when(storeFollowerRepository.findStoresByClientId(TEST_CLIENT.getId())).thenReturn(List.of());
 
     List<Store> stores = storeFollowerService.getMyFollowedStores();
 
@@ -108,8 +108,8 @@ public class StoreFollowerServiceTest {
   @Test
   void getMyFollowedStores_shouldGetOneStore_whenFollowingOneStore() {
     when(userService.getCurrentClient()).thenReturn(TEST_CLIENT);
-    when(storeFollowerRepository.findByClientId(TEST_CLIENT.getId()))
-        .thenReturn(List.of(TEST_FOLLOWER));
+    when(storeFollowerRepository.findStoresByClientId(TEST_CLIENT.getId()))
+        .thenReturn(List.of(TEST_FOLLOWER.getStore()));
 
     List<Store> stores = storeFollowerService.getMyFollowedStores();
 
@@ -120,8 +120,9 @@ public class StoreFollowerServiceTest {
   @Test
   void getMyFollowedStores_shouldGetMultipleStores_whenFollowingMultipleStores() {
     when(userService.getCurrentClient()).thenReturn(TEST_CLIENT);
-    when(storeFollowerRepository.findByClientId(TEST_CLIENT.getId()))
-        .thenReturn(List.of(TEST_FOLLOWER, TEST_FOLLOWER, TEST_FOLLOWER));
+    when(storeFollowerRepository.findStoresByClientId(TEST_CLIENT.getId()))
+        .thenReturn(
+            List.of(TEST_FOLLOWER.getStore(), TEST_FOLLOWER.getStore(), TEST_FOLLOWER.getStore()));
 
     List<Store> stores = storeFollowerService.getMyFollowedStores();
 

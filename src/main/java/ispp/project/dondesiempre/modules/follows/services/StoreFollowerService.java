@@ -45,9 +45,7 @@ public class StoreFollowerService {
       rollbackFor = {UnauthorizedException.class, ResourceNotFoundException.class})
   public List<Store> getMyFollowedStores() throws UnauthorizedException, ResourceNotFoundException {
     Client currentClient = userService.getCurrentClient();
-    return followersRepository.findByClientId(currentClient.getId()).stream()
-        .map(follower -> follower.getStore())
-        .toList();
+    return followersRepository.findStoresByClientId(currentClient.getId());
   }
 
   @Transactional(rollbackFor = {UnauthorizedException.class, ResourceNotFoundException.class})
