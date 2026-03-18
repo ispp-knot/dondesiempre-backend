@@ -18,6 +18,27 @@ public interface StoreRepository extends JpaRepository<Store, UUID> {
       SELECT
           *
       FROM stores s
+      WHERE (:name IS NULL OR s.name ILIKE %:name%)
+      ORDER BY
+          CASE WHEN :lat IS NOT NULL AND :lon IS NOT NULL
+          THEN ST_Distance(s.location, ST_SetSRID(ST_MakePoint(:lon, :lat), 4326))
+          ELSE 0 END ASC,
+          s.name ASC
+      LIMIT :numResults
+      """,
+      nativeQuery = true)
+  List<Store> searchStores(
+      @Param("name") String name,
+      @Param("lat") Double lat,
+      @Param("lon") Double lon,
+      @Param("numResults") int numResults);
+
+  @Query(
+      value =
+          """
+      SELECT
+          *
+      FROM stores s
       WHERE s.location && ST_MakeEnvelope(:minLon, :minLat, :maxLon, :maxLat, 4326)
       LIMIT :numResults
       """,

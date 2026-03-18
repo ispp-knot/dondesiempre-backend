@@ -1,5 +1,8 @@
 package ispp.project.dondesiempre.modules.products.services;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import ispp.project.dondesiempre.modules.auth.models.User;
 import ispp.project.dondesiempre.modules.auth.repositories.UserRepository;
 import ispp.project.dondesiempre.modules.auth.services.AuthService;
@@ -12,6 +15,7 @@ import ispp.project.dondesiempre.modules.stores.models.Storefront;
 import ispp.project.dondesiempre.modules.stores.repositories.StoreRepository;
 import ispp.project.dondesiempre.utils.cloudinary.CloudinaryService;
 import ispp.project.dondesiempre.utils.cloudinary.CoordinatesService;
+import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -233,5 +237,106 @@ public class ProductServiceTest {
     productService.createProduct(dto, null, saved_store.getId());
 
     assert productService.getAllDiscountedProducts().size() >= 1;
+  }
+
+  @Test
+  public void shouldReturnEmptyList_whenStoreHasNoProducts() {
+    Storefront storefront = new Storefront();
+    storefront.setIsFirstCollections(true);
+    storefront.setPrimaryColor("#c65a3a");
+    storefront.setSecondaryColor("#19756a");
+
+    Store store = new Store();
+    store.setName("Test Store");
+    store.setEmail("test@example.com");
+    store.setLocation(coordinatesService.createPoint(0.0, 0.0));
+    store.setAddress("123 Test Street");
+    store.setOpeningHours("9am - 5pm");
+    store.setAcceptsShipping(true);
+    store.setStorefront(storefront);
+    store.setUser(testUser);
+    store = storeRepository.save(store);
+
+    List<Product> result = productService.findByStore(store);
+
+    assertNotNull(result);
+    assertEquals(result.size(), 0);
+  }
+
+  @Test
+  public void shouldReturnOneProduct_whenStoreHasOneProduct() {
+    Storefront storefront = new Storefront();
+    storefront.setIsFirstCollections(true);
+    storefront.setPrimaryColor("#c65a3a");
+    storefront.setSecondaryColor("#19756a");
+
+    Store store = new Store();
+    store.setName("Test Store");
+    store.setEmail("test@example.com");
+    store.setLocation(coordinatesService.createPoint(0.0, 0.0));
+    store.setAddress("123 Test Street");
+    store.setOpeningHours("9am - 5pm");
+    store.setAcceptsShipping(true);
+    store.setStorefront(storefront);
+    store.setUser(testUser);
+    store = storeRepository.save(store);
+
+    ProductType type = new ProductType();
+    type.setType("Test Product Type");
+    type = productTypeRepository.save(type);
+
+    ProductCreationDTO dto = new ProductCreationDTO();
+    dto.setName("Test Product");
+    dto.setPriceInCents(1000);
+    dto.setDescription("This is a test product");
+    dto.setTypeId(type.getId());
+
+    Product product = productService.createProduct(dto, null, store.getId());
+    List<Product> result = productService.findByStore(store);
+
+    assertNotNull(result);
+    assertEquals(result.size(), 1);
+    assertEquals(result.get(0).getId(), product.getId());
+  }
+
+  @Test
+  public void shouldReturnProductList_whenStoreHasMultipleProducts() {
+    Storefront storefront = new Storefront();
+    storefront.setIsFirstCollections(true);
+    storefront.setPrimaryColor("#c65a3a");
+    storefront.setSecondaryColor("#19756a");
+
+    Store store = new Store();
+    store.setName("Test Store");
+    store.setEmail("test@example.com");
+    store.setLocation(coordinatesService.createPoint(0.0, 0.0));
+    store.setAddress("123 Test Street");
+    store.setOpeningHours("9am - 5pm");
+    store.setAcceptsShipping(true);
+    store.setStorefront(storefront);
+    store.setUser(testUser);
+    store = storeRepository.save(store);
+
+    ProductType type = new ProductType();
+    type.setType("Test Product Type");
+    type = productTypeRepository.save(type);
+
+    ProductCreationDTO dto = new ProductCreationDTO();
+    dto.setName("Test Product");
+    dto.setPriceInCents(1000);
+    dto.setDescription("This is a test product");
+    dto.setTypeId(type.getId());
+
+    Product product1 = productService.createProduct(dto, null, store.getId());
+    Product product2 = productService.createProduct(dto, null, store.getId());
+    Product product3 = productService.createProduct(dto, null, store.getId());
+
+    List<Product> result = productService.findByStore(store);
+
+    assertNotNull(result);
+    assertEquals(result.size(), 3);
+    assertEquals(result.get(0).getId(), product1.getId());
+    assertEquals(result.get(1).getId(), product2.getId());
+    assertEquals(result.get(2).getId(), product3.getId());
   }
 }

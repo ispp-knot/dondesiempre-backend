@@ -6,11 +6,13 @@ import ispp.project.dondesiempre.modules.common.exceptions.UnauthorizedException
 import ispp.project.dondesiempre.modules.stores.dtos.StorefrontDTO;
 import ispp.project.dondesiempre.modules.stores.models.Storefront;
 import ispp.project.dondesiempre.modules.stores.repositories.StorefrontRepository;
+import ispp.project.dondesiempre.utils.cloudinary.CloudinaryService;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -18,6 +20,7 @@ public class StorefrontService {
   private final StorefrontRepository storefrontRepository;
   private final ApplicationContext applicationContext;
   private final AuthService authService;
+  private final CloudinaryService cloudinaryService;
 
   @Transactional(readOnly = true, rollbackFor = ResourceNotFoundException.class)
   public Storefront findById(UUID id) throws ResourceNotFoundException {
@@ -28,7 +31,7 @@ public class StorefrontService {
   }
 
   @Transactional(rollbackFor = {UnauthorizedException.class, ResourceNotFoundException.class})
-  public StorefrontDTO updateStorefront(UUID id, StorefrontDTO dto)
+  public StorefrontDTO updateStorefront(UUID id, StorefrontDTO dto, MultipartFile image)
       throws UnauthorizedException, ResourceNotFoundException {
     Storefront storefront = applicationContext.getBean(StorefrontService.class).findById(id);
     authService.assertUserOwnsStore(storefront.getStore());
@@ -40,7 +43,7 @@ public class StorefrontService {
 
     if (dto.getSecondaryColor() != null) storefront.setSecondaryColor(dto.getSecondaryColor());
 
-    if (dto.getBannerImageUrl() != null) storefront.setBannerImageUrl(dto.getBannerImageUrl());
+    if (image != null) storefront.setBannerImageUrl(cloudinaryService.upload(image));
 
     Storefront updatedStorefront = storefrontRepository.save(storefront);
 

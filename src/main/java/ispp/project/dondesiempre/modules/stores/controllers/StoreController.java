@@ -26,16 +26,26 @@ public class StoreController {
 
   @GetMapping("/stores")
   @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<List<StoreDTO>> searchStoresInBoundingBox(
-      @RequestParam double minLon,
-      @RequestParam double minLat,
-      @RequestParam double maxLon,
-      @RequestParam double maxLat) {
+  public ResponseEntity<List<StoreDTO>> searchStores(
+      @RequestParam(required = false) String name,
+      @RequestParam(required = false) Double lat,
+      @RequestParam(required = false) Double lon) {
     return new ResponseEntity<>(
-        storeService.findStoresInBoundingBox(minLon, minLat, maxLon, maxLat).stream()
-            .map(s -> storeService.toDTO(s))
+        storeService.searchStores(name, lat, lon).stream()
+            .map(store -> storeService.toDTO(store, lat, lon))
             .toList(),
         HttpStatus.OK);
+  }
+
+  @GetMapping("/stores/map")
+  @ResponseStatus(HttpStatus.OK)
+  public ResponseEntity<List<StoreDTO>> getStoresInMap(
+      @RequestParam Double minLon,
+      @RequestParam Double minLat,
+      @RequestParam Double maxLon,
+      @RequestParam Double maxLat) {
+    return new ResponseEntity<>(
+        storeService.findStoresInBoundingBoxAsDTO(minLon, minLat, maxLon, maxLat), HttpStatus.OK);
   }
 
   @GetMapping("/stores/{id}")

@@ -10,7 +10,6 @@ import ispp.project.dondesiempre.modules.outfits.services.OutfitService;
 import ispp.project.dondesiempre.modules.outfits.validators.Tag;
 import ispp.project.dondesiempre.modules.products.services.ProductService;
 import ispp.project.dondesiempre.modules.stores.services.StoreService;
-import ispp.project.dondesiempre.modules.stores.services.StorefrontService;
 import jakarta.validation.Valid;
 import java.util.List;
 import java.util.UUID;
@@ -28,58 +27,27 @@ public class OutfitController {
   private final OutfitService outfitService;
   private final ProductService productService;
   private final StoreService storeService;
-  private final StorefrontService storefrontService;
 
   @GetMapping("outfits/{id}")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<OutfitDTO> getById(@PathVariable("id") UUID id) {
-    Outfit outfit = outfitService.findById(id);
-    OutfitDTO dto =
-        new OutfitDTO(
-            outfit,
-            outfitService.findTagsByOutfitId(id),
-            outfitService.findOutfitProductsByOutfitId(id));
-    return new ResponseEntity<>(dto, HttpStatus.OK);
-  }
-
-  @GetMapping("storefronts/{storefrontId}/outfits")
-  @ResponseStatus(HttpStatus.FOUND)
-  public ResponseEntity<List<OutfitDTO>> getByStorefrontId(
-      @PathVariable("storefrontId") UUID storefrontId) {
-    List<OutfitDTO> dtos =
-        outfitService.findByStorefront(storefrontService.findById(storefrontId)).stream()
-            .map(
-                outfit ->
-                    new OutfitDTO(
-                        outfit,
-                        outfitService.findTagsByOutfitId(outfit.getId()),
-                        outfitService.findOutfitProductsByOutfitId(outfit.getId())))
-            .toList();
-    return new ResponseEntity<>(dtos, HttpStatus.OK);
+    return new ResponseEntity<>(outfitService.findByIdAsDTO(id), HttpStatus.OK);
   }
 
   @GetMapping("stores/{storeId}/outfits")
   @ResponseStatus(HttpStatus.FOUND)
   public ResponseEntity<List<OutfitDTO>> getByStoreId(@PathVariable("storeId") UUID storeId) {
-    List<OutfitDTO> dtos =
-        outfitService.findByStore(storeService.findById(storeId)).stream()
-            .map(
-                outfit ->
-                    new OutfitDTO(
-                        outfit,
-                        outfitService.findTagsByOutfitId(outfit.getId()),
-                        outfitService.findOutfitProductsByOutfitId(outfit.getId())))
-            .toList();
-    return new ResponseEntity<>(dtos, HttpStatus.OK);
+    storeService.findById(storeId);
+    return new ResponseEntity<>(outfitService.findByStoreIdAsDTO(storeId), HttpStatus.OK);
   }
 
-  @PostMapping(value = "outfits", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  @PostMapping(value = "stores/{storeId}/outfits", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   @ResponseStatus(HttpStatus.CREATED)
   public ResponseEntity<OutfitDTO> create(
-      @RequestParam UUID storefrontId,
+      @PathVariable("storeId") UUID storeId,
       @RequestPart("dto") @Valid OutfitCreationDTO dto,
       @RequestPart(value = "image", required = false) MultipartFile image) {
-    Outfit outfit = outfitService.create(storefrontId, dto, image);
+    Outfit outfit = outfitService.create(storeId, dto, image);
     OutfitDTO outfitDTO =
         new OutfitDTO(
             outfit,

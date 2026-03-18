@@ -8,7 +8,6 @@ import ispp.project.dondesiempre.modules.products.dtos.ProductCreationDTO;
 import ispp.project.dondesiempre.modules.products.models.Product;
 import ispp.project.dondesiempre.modules.products.repositories.ProductRepository;
 import ispp.project.dondesiempre.modules.stores.models.Store;
-import ispp.project.dondesiempre.modules.stores.models.Storefront;
 import ispp.project.dondesiempre.modules.stores.repositories.StoreRepository;
 import ispp.project.dondesiempre.utils.cloudinary.CloudinaryService;
 import java.util.List;
@@ -98,7 +97,7 @@ public class ProductService {
   }
 
   @Transactional
-  public List<Product> findByStorefront(Storefront storefront) {
-    return productRepository.findByStoreStorefrontId(storefront.getId());
+  public List<Product> findByStore(Store store) {
+    return productRepository.findByStoreId(store.getId());
   }
 }

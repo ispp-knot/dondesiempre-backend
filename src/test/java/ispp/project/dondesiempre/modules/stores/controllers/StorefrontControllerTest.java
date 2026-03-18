@@ -5,7 +5,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -22,7 +22,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockPart;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -71,14 +73,14 @@ public class StorefrontControllerTest {
     updatedDto.setPrimaryColor("#000000");
 
     when(storefrontService.findById(id)).thenReturn(storefront);
-    when(storefrontService.updateStorefront(eq(id), any(StorefrontDTO.class)))
+    when(storefrontService.updateStorefront(eq(id), any(StorefrontDTO.class), any()))
         .thenReturn(updatedDto);
 
+    MockPart dtoPart = new MockPart("dto", objectMapper.writeValueAsBytes(inputDto));
+    dtoPart.getHeaders().setContentType(MediaType.APPLICATION_JSON);
+
     mockMvc
-        .perform(
-            put("/api/v1/storefronts/{id}", id)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(inputDto)))
+        .perform(multipart(HttpMethod.PUT, "/api/v1/storefronts/{id}", id).part(dtoPart))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.primaryColor").value("#000000"));
   }
@@ -94,13 +96,13 @@ public class StorefrontControllerTest {
 
     doThrow(new UnauthorizedException("You do not own this store."))
         .when(storefrontService)
-        .updateStorefront(any(), any());
+        .updateStorefront(any(), any(), any());
+
+    MockPart dtoPart = new MockPart("dto", objectMapper.writeValueAsBytes(inputDto));
+    dtoPart.getHeaders().setContentType(MediaType.APPLICATION_JSON);
 
     mockMvc
-        .perform(
-            put("/api/v1/storefronts/{id}", id)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(inputDto)))
+        .perform(multipart(HttpMethod.PUT, "/api/v1/storefronts/{id}", id).part(dtoPart))
         .andExpect(status().isForbidden());
   }
 
