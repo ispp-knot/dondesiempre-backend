@@ -29,7 +29,8 @@ public class StoreControllerTest {
 
   @MockitoBean private StoreService storeService;
   private static final java.util.UUID TEST_STORE_ID = java.util.UUID.randomUUID();
-  private static final ispp.project.dondesiempre.modules.stores.models.Store TEST_STORE = ispp.project.dondesiempre.modules.stores.models.StoreMockEntities.sampleStore(TEST_STORE_ID);
+  private static final ispp.project.dondesiempre.modules.stores.models.Store TEST_STORE =
+      ispp.project.dondesiempre.mockEntities.StoreMockEntities.sampleStore(TEST_STORE_ID);
 
   @Test
   void shouldReturnOkAndListOfStores_whenSearchingByName() throws Exception {
