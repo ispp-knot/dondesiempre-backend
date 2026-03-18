@@ -4,6 +4,7 @@ import ispp.project.dondesiempre.modules.auth.services.AuthService;
 import ispp.project.dondesiempre.modules.common.exceptions.InvalidBoundingBoxException;
 import ispp.project.dondesiempre.modules.common.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.modules.common.exceptions.UnauthorizedException;
+import ispp.project.dondesiempre.modules.promotions.repositories.PromotionRepository;
 import ispp.project.dondesiempre.modules.stores.dtos.StoreDTO;
 import ispp.project.dondesiempre.modules.stores.dtos.StoreSocialNetworkDTO;
 import ispp.project.dondesiempre.modules.stores.dtos.StoreUpdateDTO;
@@ -24,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class StoreService {
   private final StoreRepository storeRepository;
   private final StoreSocialNetworkRepository storeSocialNetworkRepository;
+  private final PromotionRepository promotionRepository;
   private final ApplicationContext applicationContext;
   private final AuthService authService;
 
@@ -36,17 +38,64 @@ public class StoreService {
 
   @Transactional(readOnly = true)
   public StoreDTO toDTO(Store store) {
+    return toDTO(store, null, null);
+  }
+
+  @Transactional(readOnly = true)
+  public StoreDTO toDTO(Store store, Double userLat, Double userLon) {
     StoreDTO dto = new StoreDTO(store);
     dto.setSocialNetworks(
         storeSocialNetworkRepository.findByStoreId(store.getId()).stream()
             .map(StoreSocialNetworkDTO::new)
             .toList());
+    dto.setHasActivePromotions(promotionRepository.existsByStoreIdAndIsActiveTrue(store.getId()));
+
+    if (userLat != null && userLon != null && store.getLocation() != null) {
+      double storeLat = store.getLocation().getY();
+      double storeLon = store.getLocation().getX();
+      dto.setDistance(calculateDistance(userLat, userLon, storeLat, storeLon));
+    }
+
     return dto;
+  }
+
+  private double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
+    final int R = 6371; // Radius of the earth in km
+    double latDistance = Math.toRadians(lat2 - lat1);
+    double lonDistance = Math.toRadians(lon2 - lon1);
+    double a =
+        Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
+            + Math.cos(Math.toRadians(lat1))
+                * Math.cos(Math.toRadians(lat2))
+                * Math.sin(lonDistance / 2)
+                * Math.sin(lonDistance / 2);
+    double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+  }
+
+  @Transactional(readOnly = true)
+  public List<Store> getStores(
+      Double minLon,
+      Double minLat,
+      Double maxLon,
+      Double maxLat,
+      String name,
+      Double lat,
+      Double lon) {
+    if (minLon != null && minLat != null && maxLon != null && maxLat != null) {
+      return findStoresInBoundingBox(minLon, minLat, maxLon, maxLat);
+    }
+    return searchStores(name, lat, lon);
+  }
+
+  @Transactional(readOnly = true)
+  public List<Store> searchStores(String name, Double lat, Double lon) {
+    return storeRepository.searchStores(name, lat, lon, 100);
   }
 
   @Transactional(readOnly = true, rollbackFor = InvalidBoundingBoxException.class)
   public List<Store> findStoresInBoundingBox(
-      double minLon, double minLat, double maxLon, double maxLat)
+      Double minLon, Double minLat, Double maxLon, Double maxLat)
       throws InvalidBoundingBoxException {
     if (minLon > maxLon || minLat > maxLat)
       throw new InvalidBoundingBoxException(
@@ -78,6 +127,8 @@ public class StoreService {
             store -> {
               StoreDTO dto = new StoreDTO(store);
               dto.setSocialNetworks(socialNetworksByStore.getOrDefault(store.getId(), List.of()));
+              dto.setHasActivePromotions(
+                  promotionRepository.existsByStoreIdAndIsActiveTrue(store.getId()));
               return dto;
             })
         .toList();
@@ -103,6 +154,8 @@ public class StoreService {
     if (dto.getPhone() != null) storeToUpdate.setPhone(dto.getPhone());
     if (dto.getAboutUs() != null) storeToUpdate.setAboutUs(dto.getAboutUs());
 
-    return new StoreDTO(storeRepository.save(storeToUpdate));
+    return applicationContext
+        .getBean(StoreService.class)
+        .toDTO(storeRepository.save(storeToUpdate));
   }
 }

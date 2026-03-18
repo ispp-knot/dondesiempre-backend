@@ -28,39 +28,57 @@ public class StoreControllerTest {
   @Autowired private MockMvc mockMvc;
 
   @MockitoBean private StoreService storeService;
+  private static final java.util.UUID TEST_STORE_ID = java.util.UUID.randomUUID();
+  private static final ispp.project.dondesiempre.modules.stores.models.Store TEST_STORE =
+      ispp.project.dondesiempre.mockEntities.StoreMockEntities.sampleStore(TEST_STORE_ID);
 
   @Test
-  void shouldReturnOkAndListOfStores_whenValidParamsProvided() throws Exception {
+  void shouldReturnOkAndListOfStores_whenSearchingByName() throws Exception {
+    // Dado
+    String name = "Tienda";
+    Double lat = 37.5;
+    Double lon = -5.5;
+
+    StoreDTO storeDTO = new StoreDTO();
+    storeDTO.setName("Tienda Centro");
+    storeDTO.setDistance(1.2);
+
+    when(storeService.searchStores(name, lat, lon)).thenReturn(List.of(TEST_STORE));
+    when(storeService.toDTO(TEST_STORE, lat, lon)).thenReturn(storeDTO);
+
+    mockMvc
+        .perform(
+            get("/api/v1/stores")
+                .param("name", name)
+                .param("lat", String.valueOf(lat))
+                .param("lon", String.valueOf(lon)))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.size()").value(1))
+        .andExpect(jsonPath("$[0].name").value("Tienda Centro"))
+        .andExpect(jsonPath("$[0].distance").value(1.2));
+  }
+
+  @Test
+  void shouldReturnOkAndListOfStores_whenQueryingMap() throws Exception {
     // Dado
     double minLon = -6.0, minLat = 37.0, maxLon = -5.0, maxLat = 38.0;
 
     StoreDTO storeDTO = new StoreDTO();
     storeDTO.setName("Tienda Centro");
-    storeDTO.setLatitude(37.5);
-    storeDTO.setLongitude(-5.5);
 
     when(storeService.findStoresInBoundingBoxAsDTO(minLon, minLat, maxLon, maxLat))
         .thenReturn(List.of(storeDTO));
 
     mockMvc
         .perform(
-            get("/api/v1/stores")
+            get("/api/v1/stores/map")
                 .param("minLon", String.valueOf(minLon))
                 .param("minLat", String.valueOf(minLat))
                 .param("maxLon", String.valueOf(maxLon))
                 .param("maxLat", String.valueOf(maxLat)))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.size()").value(1))
-        .andExpect(jsonPath("$[0].name").value("Tienda Centro"))
-        .andExpect(jsonPath("$[0].latitude").value(37.5))
-        .andExpect(jsonPath("$[0].longitude").value(-5.5));
-  }
-
-  @Test
-  void shouldReturnBadRequest_whenRequiredParamsAreMissing() throws Exception {
-    mockMvc
-        .perform(get("/api/v1/stores").param("minLon", "-6.0"))
-        .andExpect(status().isBadRequest());
+        .andExpect(jsonPath("$[0].name").value("Tienda Centro"));
   }
 
   /*
