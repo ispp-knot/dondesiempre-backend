@@ -41,7 +41,6 @@ public class StoreControllerTest {
 
     StoreDTO storeDTO = new StoreDTO();
     storeDTO.setName("Tienda Centro");
-    storeDTO.setDistance(1.2);
 
     when(storeService.searchStores(name, lat, lon)).thenReturn(List.of(TEST_STORE));
     when(storeService.toDTO(TEST_STORE, lat, lon)).thenReturn(storeDTO);
@@ -54,8 +53,7 @@ public class StoreControllerTest {
                 .param("lon", String.valueOf(lon)))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.size()").value(1))
-        .andExpect(jsonPath("$[0].name").value("Tienda Centro"))
-        .andExpect(jsonPath("$[0].distance").value(1.2));
+        .andExpect(jsonPath("$[0].name").value("Tienda Centro"));
   }
 
   @Test
