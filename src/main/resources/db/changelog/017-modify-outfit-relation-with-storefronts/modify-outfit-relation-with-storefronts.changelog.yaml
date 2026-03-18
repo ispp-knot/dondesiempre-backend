@@ -1,0 +1,3 @@
+databaseChangeLog:
+  - include:
+      file: db/changelog/017-modify-outfit-relation-with-storefronts/001-modify-outfit-relation-with-storefronts.yaml

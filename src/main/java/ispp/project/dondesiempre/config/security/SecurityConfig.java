@@ -83,9 +83,10 @@ public class SecurityConfig implements WebMvcConfigurer {
                     .requestMatchers("/error")
                     .permitAll()
                     // Swagger UI (dev profile only)
-                    .requestMatchers("/api/v1/swagger-ui/**", "/api/v1/api-docs/**")
+                    .requestMatchers(
+                        "/api/v1/swagger-ui/**", "/api/v1/api-docs/**", "/api/v1/docs/**")
                     .permitAll()
-                    .requestMatchers("/swagger-ui/**", "/v3/api-docs/**")
+                    .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/v3/docs/**")
                     .permitAll()
                     // Everything else requires authentication
                     .anyRequest()

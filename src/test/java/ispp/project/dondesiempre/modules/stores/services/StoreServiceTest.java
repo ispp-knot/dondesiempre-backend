@@ -12,6 +12,7 @@ import ispp.project.dondesiempre.mockEntities.StoreMockEntities;
 import ispp.project.dondesiempre.modules.auth.services.AuthService;
 import ispp.project.dondesiempre.modules.common.exceptions.InvalidBoundingBoxException;
 import ispp.project.dondesiempre.modules.common.exceptions.ResourceNotFoundException;
+import ispp.project.dondesiempre.modules.promotions.repositories.PromotionRepository;
 import ispp.project.dondesiempre.modules.stores.dtos.StoreDTO;
 import ispp.project.dondesiempre.modules.stores.models.SocialNetwork;
 import ispp.project.dondesiempre.modules.stores.models.Store;
@@ -35,6 +36,7 @@ public class StoreServiceTest {
 
   @Mock private StoreRepository storeRepository;
   @Mock private StoreSocialNetworkRepository socialNetworkRepository;
+  @Mock private PromotionRepository promotionRepository;
   @Mock private AuthService authService;
 
   @Mock private ApplicationContext applicationContext;
@@ -119,6 +121,7 @@ public class StoreServiceTest {
     ssn.setSocialNetwork(sn);
 
     when(socialNetworkRepository.findByStoreId(TEST_STORE_ID)).thenReturn(List.of(ssn));
+    when(promotionRepository.existsByStoreIdAndIsActiveTrue(TEST_STORE_ID)).thenReturn(true);
 
     StoreDTO result = storeService.toDTO(TEST_STORE);
 

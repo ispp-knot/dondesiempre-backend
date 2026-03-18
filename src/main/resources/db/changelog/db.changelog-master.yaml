@@ -28,7 +28,10 @@ databaseChangeLog:
   - include:
       file: db/changelog/016-unique-constraints/unique-constraints.changelog.yaml
   - include:
+      file: db/changelog/017-modify-outfit-relation-with-storefronts/modify-outfit-relation-with-storefronts.changelog.yaml
+  - include:
       file: db/changelog/018-refactor-discounts/refactor-discounts.changelog.yaml
   - include:
       file: db/changelog/019-create-orders/create-orders.changelog.yaml
+
 

@@ -6,20 +6,24 @@ import ispp.project.dondesiempre.modules.common.exceptions.ResourceNotFoundExcep
 import ispp.project.dondesiempre.modules.common.exceptions.UnauthorizedException;
 import ispp.project.dondesiempre.modules.outfits.dtos.OutfitCreationDTO;
 import ispp.project.dondesiempre.modules.outfits.dtos.OutfitCreationProductDTO;
+import ispp.project.dondesiempre.modules.outfits.dtos.OutfitDTO;
 import ispp.project.dondesiempre.modules.outfits.dtos.OutfitUpdateDTO;
 import ispp.project.dondesiempre.modules.outfits.models.Outfit;
 import ispp.project.dondesiempre.modules.outfits.models.OutfitProduct;
 import ispp.project.dondesiempre.modules.outfits.models.OutfitTag;
 import ispp.project.dondesiempre.modules.outfits.models.OutfitTagRelation;
+import ispp.project.dondesiempre.modules.outfits.repositories.OutfitProductRepository;
 import ispp.project.dondesiempre.modules.outfits.repositories.OutfitRepository;
+import ispp.project.dondesiempre.modules.outfits.repositories.OutfitTagRepository;
 import ispp.project.dondesiempre.modules.products.models.Product;
 import ispp.project.dondesiempre.modules.products.services.ProductService;
 import ispp.project.dondesiempre.modules.stores.models.Store;
-import ispp.project.dondesiempre.modules.stores.models.Storefront;
-import ispp.project.dondesiempre.modules.stores.services.StorefrontService;
+import ispp.project.dondesiempre.modules.stores.services.StoreService;
 import ispp.project.dondesiempre.utils.cloudinary.CloudinaryService;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -30,12 +34,14 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class OutfitService {
   private final OutfitRepository outfitRepository;
+  private final OutfitProductRepository outfitProductRepository;
+  private final OutfitTagRepository outfitTagRepository;
   private final OutfitProductService outfitProductService;
   private final OutfitTagRelationService outfitTagRelationService;
   private final OutfitTagService outfitTagService;
 
   private final ProductService productService;
-  private final StorefrontService storefrontService;
+  private final StoreService storeService;
   private final AuthService authService;
 
   private final CloudinaryService cloudinaryService;
@@ -61,12 +67,44 @@ public class OutfitService {
 
   @Transactional(readOnly = true)
   public List<Outfit> findByStore(Store store) {
-    return outfitRepository.findByStorefrontStoreIdOrderByIndexAsc(store.getId());
+    return outfitRepository.findByStoreIdOrderByIndexAsc(store.getId());
   }
 
   @Transactional(readOnly = true)
-  public List<Outfit> findByStorefront(Storefront storefront) {
-    return outfitRepository.findByStorefrontId(storefront.getId());
+  public OutfitDTO findByIdAsDTO(UUID id) {
+    Outfit outfit = applicationContext.getBean(OutfitService.class).findById(id);
+    List<String> tags = outfitTagService.findOutfitTagsById(id);
+    List<OutfitProduct> products = outfitProductRepository.findByOutfitIdWithDetails(id);
+    return new OutfitDTO(outfit, tags, products);
+  }
+
+  @Transactional(readOnly = true)
+  public List<OutfitDTO> findByStoreIdAsDTO(UUID storeId) {
+    List<Outfit> outfits = outfitRepository.findByStoreIdOrderByIndexAsc(storeId);
+    if (outfits.isEmpty()) return List.of();
+
+    List<UUID> ids = outfits.stream().map(Outfit::getId).toList();
+
+    Map<UUID, List<String>> tagsByOutfit =
+        outfitTagRepository.findTagEntriesByOutfitIds(ids).stream()
+            .collect(
+                Collectors.groupingBy(
+                    OutfitTagRepository.OutfitTagEntry::getOutfitId,
+                    Collectors.mapping(
+                        OutfitTagRepository.OutfitTagEntry::getTagName, Collectors.toList())));
+
+    Map<UUID, List<OutfitProduct>> productsByOutfit =
+        outfitProductRepository.findByOutfitIdsWithDetails(ids).stream()
+            .collect(Collectors.groupingBy(op -> op.getOutfit().getId()));
+
+    return outfits.stream()
+        .map(
+            o ->
+                new OutfitDTO(
+                    o,
+                    tagsByOutfit.getOrDefault(o.getId(), List.of()),
+                    productsByOutfit.getOrDefault(o.getId(), List.of())))
+        .toList();
   }
 
   @Transactional(
@@ -75,7 +113,7 @@ public class OutfitService {
         ResourceNotFoundException.class,
         InvalidRequestException.class
       })
-  public Outfit create(UUID storefrontId, OutfitCreationDTO dto, MultipartFile image)
+  public Outfit create(UUID storeId, OutfitCreationDTO dto, MultipartFile image)
       throws UnauthorizedException, ResourceNotFoundException, InvalidRequestException {
     Outfit outfit;
     UUID outfitId;
@@ -88,9 +126,9 @@ public class OutfitService {
     if (image != null && !image.isEmpty()) {
       outfit.setImage(cloudinaryService.upload(image));
     }
-    Storefront storefront = storefrontService.findById(storefrontId);
-    authService.assertUserOwnsStore(storefront.getStore());
-    outfit.setStorefront(storefront);
+    Store store = storeService.findById(storeId);
+    authService.assertUserOwnsStore(store);
+    outfit.setStore(store);
 
     if (dto.getProducts() == null || (dto.getProducts() != null && dto.getProducts().size() <= 0)) {
       throw new InvalidRequestException("An outfit cannot be created without products.");
@@ -132,7 +170,7 @@ public class OutfitService {
     Outfit outfitToUpdate;
 
     outfitToUpdate = applicationContext.getBean(OutfitService.class).findById(id);
-    authService.assertUserOwnsStore(outfitToUpdate.getStorefront().getStore());
+    authService.assertUserOwnsStore(outfitToUpdate.getStore());
 
     outfitToUpdate.setName(dto.getName());
     outfitToUpdate.setDescription(dto.getDescription());
@@ -153,7 +191,7 @@ public class OutfitService {
     OutfitTagRelation outfitTag;
 
     outfit = applicationContext.getBean(OutfitService.class).findById(outfitId);
-    authService.assertUserOwnsStore(outfit.getStorefront().getStore());
+    authService.assertUserOwnsStore(outfit.getStore());
     tag = outfitTagService.findOrCreate(tagName);
 
     outfitTag = new OutfitTagRelation();
@@ -172,7 +210,7 @@ public class OutfitService {
     OutfitTagRelation relation;
 
     outfit = applicationContext.getBean(OutfitService.class).findById(outfitId);
-    authService.assertUserOwnsStore(outfit.getStorefront().getStore());
+    authService.assertUserOwnsStore(outfit.getStore());
     tag = outfitTagService.findByName(tagName);
 
     relation = outfitTagRelationService.findTagRelation(outfit.getId(), tag.getId());
@@ -194,7 +232,7 @@ public class OutfitService {
     List<Integer> productIndicesOfOutfit;
 
     outfit = applicationContext.getBean(OutfitService.class).findById(outfitId);
-    authService.assertUserOwnsStore(outfit.getStorefront().getStore());
+    authService.assertUserOwnsStore(outfit.getStore());
     product = productService.getProductById(dto.getProductId());
 
     productsOfOutfit = productService.getOutfitProductsById(outfitId);
@@ -225,7 +263,7 @@ public class OutfitService {
     OutfitProduct relation;
 
     outfit = applicationContext.getBean(OutfitService.class).findById(outfitId);
-    authService.assertUserOwnsStore(outfit.getStorefront().getStore());
+    authService.assertUserOwnsStore(outfit.getStore());
     relation = outfitProductService.findProductRelation(outfit.getId(), product.getId());
     outfitProductService.delete(relation);
   }
@@ -237,7 +275,7 @@ public class OutfitService {
     List<OutfitProduct> relations;
 
     outfit = applicationContext.getBean(OutfitService.class).findById(outfitId);
-    authService.assertUserOwnsStore(outfit.getStorefront().getStore());
+    authService.assertUserOwnsStore(outfit.getStore());
     relations = outfitProductService.findOutfitProductsById(outfitId);
 
     for (OutfitProduct relation : relations) {
@@ -259,7 +297,7 @@ public class OutfitService {
   @Transactional(rollbackFor = {UnauthorizedException.class, ResourceNotFoundException.class})
   public void delete(UUID id) throws UnauthorizedException, ResourceNotFoundException {
     Outfit outfit = applicationContext.getBean(OutfitService.class).findById(id);
-    authService.assertUserOwnsStore(outfit.getStorefront().getStore());
+    authService.assertUserOwnsStore(outfit.getStore());
     outfitProductService.findOutfitProductsById(id).stream()
         .forEach(p -> outfitProductService.deleteById(p.getId()));
     outfitTagRelationService.findOutfitTagsById(id).stream()

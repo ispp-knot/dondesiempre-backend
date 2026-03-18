@@ -19,8 +19,10 @@ public class StoreDTO {
   private String openingHours;
   private String phone;
   private Boolean acceptsShipping;
+  private Boolean hasActivePromotions;
   private Double latitude;
   private Double longitude;
+  private Double distance;
   private String aboutUs;
   private StorefrontDTO storefront;
   private List<StoreSocialNetworkDTO> socialNetworks;
