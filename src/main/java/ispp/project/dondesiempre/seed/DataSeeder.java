@@ -100,7 +100,7 @@ public class DataSeeder implements CommandLineRunner {
 
   private void seedReferenceData() {
     if (socialNetworkRepository.count() == 0) {
-      for (String name : List.of("Instagram", "Facebook", "TikTok", "X", "WhatsApp", "Website")) {
+      for (String name : List.of("Instagram", "Facebook", "TikTok", "X", "WhatsApp", "Web", "Teléfono")) {
         SocialNetwork sn = new SocialNetwork();
         sn.setName(name);
         socialNetworkRepository.save(sn);
@@ -168,11 +168,12 @@ public class DataSeeder implements CommandLineRunner {
             "#000000",
             "#a1005c",
             "escaparate_greta_closet.png");
-    addSocialNetwork(greta, socialNetworks, "Website", "https://gretacloset.com/");
     addSocialNetwork(greta, socialNetworks, "Instagram", "https://www.instagram.com/gretacloset/");
     addSocialNetwork(
         greta, socialNetworks, "TikTok", "https://www.tiktok.com/@gretaclosetcomplementos");
     addSocialNetwork(greta, socialNetworks, "WhatsApp", "https://wa.me/34694466991");
+    addSocialNetwork(greta, socialNetworks, "Web", "https://gretacloset.com/");
+    addSocialNetwork(greta, socialNetworks, "Teléfono", "tel:+34694466991");
 
     Product greta_vestidoBlanco =
         createProduct(
@@ -260,12 +261,13 @@ public class DataSeeder implements CommandLineRunner {
             "#4f8d82",
             "#4f8d66",
             "escaparate_romantika.png");
-    addSocialNetwork(romantika, socialNetworks, "Website", "http://www.romantikavintage.es/");
     addSocialNetwork(romantika, socialNetworks, "WhatsApp", "https://wa.me/34645142782");
     addSocialNetwork(
         romantika, socialNetworks, "Instagram", "https://www.instagram.com/romantikavintage/");
     addSocialNetwork(
         romantika, socialNetworks, "Facebook", "https://www.facebook.com/RomantikaVintage/");
+    addSocialNetwork(romantika, socialNetworks, "Web", "http://www.romantikavintage.es/");
+    addSocialNetwork(romantika, socialNetworks, "Teléfono", "tel:+34955668820");
 
     Product rom_vestidoRojo =
         createProduct(
@@ -332,13 +334,15 @@ public class DataSeeder implements CommandLineRunner {
             "#ab327d",
             "escaparate_san_sebastian.png");
     addSocialNetwork(
-        sanSebastian, socialNetworks, "Website", "https://www.confeccionesyhogarsansebastian.com/");
-    addSocialNetwork(
         sanSebastian,
         socialNetworks,
         "Instagram",
         "https://www.instagram.com/tejidossansebastian/");
     addSocialNetwork(sanSebastian, socialNetworks, "WhatsApp", "https://wa.me/34691537089");
+    addSocialNetwork(
+        sanSebastian, socialNetworks, "Web", "https://www.confeccionesyhogarsansebastian.com/");
+    addSocialNetwork(
+        sanSebastian, socialNetworks, "Teléfono", "tel:+34691537089");
 
     Product ss_albornoz =
         createProduct(
@@ -379,9 +383,11 @@ public class DataSeeder implements CommandLineRunner {
             "#ad0000",
             "#f89406",
             "escaparate_roire.png");
-    addSocialNetwork(roire, socialNetworks, "Website", "https://tiendaroire.es/");
     addSocialNetwork(roire, socialNetworks, "WhatsApp", "https://wa.me/34641231378");
     addSocialNetwork(roire, socialNetworks, "Instagram", "https://www.instagram.com/roire.es");
+    addSocialNetwork(roire, socialNetworks, "Web", "https://tiendaroire.es/");
+    addSocialNetwork(
+        roire, socialNetworks, "Teléfono", "tel:+34641231378");
 
     Product roire_faldaCebra =
         createProduct(
@@ -421,7 +427,6 @@ public class DataSeeder implements CommandLineRunner {
             "#e0b182",
             "#555555",
             "escaparate_pineapple.png");
-    addSocialNetwork(pineapple, socialNetworks, "Website", "https://pineapplemoda.com/");
     addSocialNetwork(pineapple, socialNetworks, "WhatsApp", "https://wa.me/34644807498");
     addSocialNetwork(
         pineapple,
@@ -432,6 +437,9 @@ public class DataSeeder implements CommandLineRunner {
         pineapple, socialNetworks, "Instagram", "https://www.instagram.com/pineapple.sevilla/");
     addSocialNetwork(
         pineapple, socialNetworks, "TikTok", "https://www.tiktok.com/@pineapplesevilla");
+    addSocialNetwork(pineapple, socialNetworks, "Web", "https://pineapplemoda.com/");
+    addSocialNetwork(
+        pineapple, socialNetworks, "Teléfono", "tel:+34644807498");
 
     Product pine_camisaBlanca =
         createProduct(
@@ -559,6 +567,8 @@ public class DataSeeder implements CommandLineRunner {
             "#255d56",
             "#247054",
             "escaparate_bazar_romera.png");
+    addSocialNetwork(
+        bazarRomera, socialNetworks, "Teléfono", "tel:+34631122308");
 
     createProduct(
         "Camisa Azul",
@@ -595,6 +605,8 @@ public class DataSeeder implements CommandLineRunner {
         marGovantes, socialNetworks, "Instagram", "https://www.instagram.com/margovantesmodas");
     addSocialNetwork(
         marGovantes, socialNetworks, "TikTok", "https://www.tiktok.com/@margovantesmodas");
+    addSocialNetwork(
+        marGovantes, socialNetworks, "Teléfono", "tel:+34670080639");
 
     Product mg_americanaMarina =
         createProduct(
