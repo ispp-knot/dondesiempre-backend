@@ -78,7 +78,7 @@ public class ProductController {
     return new ResponseEntity<>(dtos, HttpStatus.OK);
   }
 
-  @PutMapping("/products/{productId}")
+  @PutMapping(value = "/products/{productId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public Product updateProduct(
       @PathVariable UUID productId,
       @Valid @RequestPart(value = "product", required = false) ProductUpdateDTO product,
