@@ -3,11 +3,9 @@ package ispp.project.dondesiempre.modules.products.controllers;
 import ispp.project.dondesiempre.modules.products.dtos.ProductCreationDTO;
 import ispp.project.dondesiempre.modules.products.dtos.ProductDTO;
 import ispp.project.dondesiempre.modules.products.dtos.ProductDiscountUpdateDTO;
+import ispp.project.dondesiempre.modules.products.dtos.ProductUpdateDTO;
 import ispp.project.dondesiempre.modules.products.models.Product;
 import ispp.project.dondesiempre.modules.products.services.ProductService;
-import ispp.project.dondesiempre.modules.stores.models.Store;
-import ispp.project.dondesiempre.modules.stores.services.StoreService;
-import ispp.project.dondesiempre.modules.stores.services.StorefrontService;
 import jakarta.validation.Valid;
 import java.util.List;
 import java.util.UUID;
@@ -15,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,13 +30,11 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class ProductController {
 
-  private final StoreService storeService;
   private final ProductService productService;
-  private final StorefrontService storefrontService;
 
   @GetMapping("products")
   public ResponseEntity<List<ProductDTO>> getAllProducts() {
-    List<Product> products = productService.getAllProducts();
+    List<Product> products = productService.findAll();
     List<ProductDTO> dtos = products.stream().map(ProductDTO::new).toList();
     return new ResponseEntity<>(dtos, HttpStatus.OK);
   }
@@ -76,9 +73,21 @@ public class ProductController {
 
   @GetMapping("/stores/{storeId}/products")
   public ResponseEntity<List<ProductDTO>> getByStoreId(@PathVariable UUID storeId) {
-    Store store = storeService.findById(storeId);
     List<ProductDTO> dtos =
-        productService.findByStore(store).stream().map(ProductDTO::new).toList();
+        productService.findByStoreId(storeId).stream().map(ProductDTO::new).toList();
     return new ResponseEntity<>(dtos, HttpStatus.OK);
+  }
+
+  @PutMapping("/products/{productId}")
+  public Product updateProduct(
+      @PathVariable UUID productId,
+      @Valid @RequestPart(value = "product", required = false) ProductUpdateDTO product,
+      @RequestPart(value = "image", required = false) MultipartFile image) {
+    return productService.updateProduct(productId, product, image);
+  }
+
+  @DeleteMapping("/products/{productId}")
+  public void deleteProduct(@PathVariable UUID productId) {
+    productService.deleteProduct(productId);
   }
 }
