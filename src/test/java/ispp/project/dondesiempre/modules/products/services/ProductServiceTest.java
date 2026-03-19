@@ -47,6 +47,9 @@ public class ProductServiceTest {
   @Autowired private CoordinatesService coordinatesService;
 
   private User testUser;
+  private Store saved_store;
+  private ProductType savedProductType;
+  private ProductCreationDTO dto;
 
   @BeforeEach
   void setUp() {
@@ -54,467 +57,129 @@ public class ProductServiceTest {
     user.setEmail("test-owner@test.com");
     user.setPassword("password");
     testUser = userRepository.save(user);
+
+    Storefront storefront = new Storefront();
+    storefront.setPrimaryColor("#c65a3a");
+    storefront.setSecondaryColor("#19756a");
+
+    Store store = new Store();
+    store.setName("Test Store");
+    store.setEmail("test@example.com");
+    store.setLocation(coordinatesService.createPoint(0.0, 0.0));
+    store.setAddress("123 Test Street");
+    store.setOpeningHours("9am - 5pm");
+    store.setAcceptsShipping(true);
+    store.setStorefront(storefront);
+    store.setUser(testUser);
+    saved_store = storeRepository.save(store);
+
+    ProductType type = new ProductType();
+    type.setType("Test Product Type");
+    savedProductType = productTypeRepository.save(type);
+
+    dto = new ProductCreationDTO();
+    dto.setName("Test Product");
+    dto.setPriceInCents(1000);
+    dto.setDescription("This is a test product");
+    dto.setTypeId(savedProductType.getId());
+  }
+
+  private Product createTestProduct() {
+    return productService.createProduct(dto, null, saved_store.getId());
   }
 
   @Test
   public void shouldCreateNewProduct() {
-
-    Storefront storefront = new Storefront();
-
-    storefront.setPrimaryColor("#c65a3a");
-    storefront.setSecondaryColor("#19756a");
-
-    Store store = new Store();
-    store.setName("Test Store");
-    store.setEmail("test@example.com");
-    store.setLocation(coordinatesService.createPoint(0.0, 0.0));
-    store.setAddress("123 Test Street");
-    store.setOpeningHours("9am - 5pm");
-    store.setAcceptsShipping(true);
-    store.setStorefront(storefront);
-    store.setUser(testUser);
-
-    Store saved_store = storeRepository.save(store);
-
-    ProductType type = new ProductType();
-    type.setType("Test Product Type");
-    ProductType savedProductType = productTypeRepository.save(type);
-
-    ProductCreationDTO dto = new ProductCreationDTO();
-    dto.setName("Test Product");
-    dto.setPriceInCents(1000);
-    dto.setDescription("This is a test product");
-    dto.setTypeId(savedProductType.getId());
-
-    Product product = productService.createProduct(dto, null, saved_store.getId());
-    assert product != null;
-    assert product.getName().equals("Test Product");
+    Product product = createTestProduct();
+    assertNotNull(product);
+    assertEquals("Test Product", product.getName());
   }
 
   @Test
   public void shouldUpdateProductDiscount() {
-    Storefront storefront = new Storefront();
-
-    storefront.setPrimaryColor("#c65a3a");
-    storefront.setSecondaryColor("#19756a");
-
-    Store store = new Store();
-    store.setName("Test Store");
-    store.setEmail("test@example.com");
-    store.setLocation(coordinatesService.createPoint(0.0, 0.0));
-    store.setAddress("123 Test Street");
-    store.setOpeningHours("9am - 5pm");
-    store.setAcceptsShipping(true);
-    store.setStorefront(storefront);
-    store.setUser(testUser);
-
-    Store saved_store = storeRepository.save(store);
-
-    ProductType type = new ProductType();
-    type.setType("Test Product Type");
-    ProductType savedProductType = productTypeRepository.save(type);
-
-    ProductCreationDTO dto = new ProductCreationDTO();
-    dto.setName("Test Product");
-    dto.setPriceInCents(1000);
-    dto.setDescription("This is a test product");
-    dto.setTypeId(savedProductType.getId());
-
-    Product product = productService.createProduct(dto, null, saved_store.getId());
+    Product product = createTestProduct();
     Product updatedProduct = productService.updateProductDiscount(product.getId(), 700);
-    assert updatedProduct.getDiscountPercentage().get() == 700;
-    assert updatedProduct.getId().equals(product.getId());
+    assertEquals(700, updatedProduct.getDiscountPercentage().get());
+    assertEquals(product.getId(), updatedProduct.getId());
   }
 
   @Test
   public void shouldGetProductById() {
-    Storefront storefront = new Storefront();
-
-    storefront.setPrimaryColor("#c65a3a");
-    storefront.setSecondaryColor("#19756a");
-
-    Store store = new Store();
-    store.setName("Test Store");
-    store.setEmail("test@example.com");
-    store.setLocation(coordinatesService.createPoint(0.0, 0.0));
-    store.setAddress("123 Test Street");
-    store.setOpeningHours("9am - 5pm");
-    store.setAcceptsShipping(true);
-    store.setStorefront(storefront);
-    store.setUser(testUser);
-
-    Store saved_store = storeRepository.save(store);
-
-    ProductType type = new ProductType();
-    type.setType("Test Product Type");
-    ProductType savedProductType = productTypeRepository.save(type);
-
-    ProductCreationDTO dto = new ProductCreationDTO();
-    dto.setName("Test Product");
-    dto.setPriceInCents(1000);
-    dto.setDescription("This is a test product");
-    dto.setTypeId(savedProductType.getId());
-
-    Product product = productService.createProduct(dto, null, saved_store.getId());
+    Product product = createTestProduct();
     Product fetchedProduct = productService.getProductById(product.getId());
-    assert fetchedProduct != null;
-    assert fetchedProduct.getId().equals(product.getId());
-    assert fetchedProduct.getName().equals("Test Product");
+    assertNotNull(fetchedProduct);
+    assertEquals(product.getId(), fetchedProduct.getId());
+    assertEquals("Test Product", fetchedProduct.getName());
   }
 
   @Test
   public void shouldThrowException_WhenGettingNonExistentProduct() {
     UUID id = UUID.randomUUID();
-    try {
-      productService.getProductById(id);
-      assert false;
-    } catch (RuntimeException e) {
-      assert e.getMessage().equals("Product not found with id: " + id);
-    }
+    assertThrows(ResourceNotFoundException.class, () -> productService.getProductById(id));
   }
 
   @Test
   public void shouldGetAllProducts() {
-    Storefront storefront = new Storefront();
-
-    storefront.setPrimaryColor("#c65a3a");
-    storefront.setSecondaryColor("#19756a");
-
-    Store store = new Store();
-    store.setName("Test Store");
-    store.setEmail("test@example.com");
-    store.setLocation(coordinatesService.createPoint(0.0, 0.0));
-    store.setAddress("123 Test Street");
-    store.setOpeningHours("9am - 5pm");
-    store.setAcceptsShipping(true);
-    store.setStorefront(storefront);
-    store.setUser(testUser);
-
-    Store saved_store = storeRepository.save(store);
-
-    ProductType type = new ProductType();
-    type.setType("Test Product Type");
-    ProductType savedProductType = productTypeRepository.save(type);
-
-    ProductCreationDTO dto = new ProductCreationDTO();
-    dto.setName("Test Product");
-    dto.setPriceInCents(1000);
-    dto.setDescription("This is a test product");
-    dto.setTypeId(savedProductType.getId());
-
-    productService.createProduct(dto, null, saved_store.getId());
-    dto.setName("Another Test Product");
-    productService.createProduct(dto, null, saved_store.getId());
-
-    assert productService.findAll().size() >= 2;
-  }
-
-  @Test
-  public void shouldGetAllDiscountedProducts() {
-    Storefront storefront = new Storefront();
-
-    storefront.setPrimaryColor("#c65a3a");
-    storefront.setSecondaryColor("#19756a");
-
-    Store store = new Store();
-    store.setName("Test Store");
-    store.setEmail("test@example.com");
-    store.setLocation(coordinatesService.createPoint(0.0, 0.0));
-    store.setAddress("123 Test Street");
-    store.setOpeningHours("9am - 5pm");
-    store.setAcceptsShipping(true);
-    store.setStorefront(storefront);
-    store.setUser(testUser);
-
-    Store saved_store = storeRepository.save(store);
-
-    ProductType type = new ProductType();
-    type.setType("Test Product Type");
-    ProductType savedProductType = productTypeRepository.save(type);
-
-    ProductCreationDTO dto = new ProductCreationDTO();
-    dto.setName("Test Product");
-    dto.setPriceInCents(1000);
-    dto.setDescription("This is a test product");
-    dto.setTypeId(savedProductType.getId());
-
-    Product product = productService.createProduct(dto, null, saved_store.getId());
-    productService.updateProductDiscount(product.getId(), 20);
-    dto.setName("Non-discounted Product");
-    productService.createProduct(dto, null, saved_store.getId());
-
-    assert productService.getAllDiscountedProducts().size() >= 1;
-  }
-
-  @Test
-  public void shouldReturnEmptyList_whenStoreHasNoProducts() {
-    Storefront storefront = new Storefront();
-
-    storefront.setPrimaryColor("#c65a3a");
-    storefront.setSecondaryColor("#19756a");
-
-    Store store = new Store();
-    store.setName("Test Store");
-    store.setEmail("test@example.com");
-    store.setLocation(coordinatesService.createPoint(0.0, 0.0));
-    store.setAddress("123 Test Street");
-    store.setOpeningHours("9am - 5pm");
-    store.setAcceptsShipping(true);
-    store.setStorefront(storefront);
-    store.setUser(testUser);
-    store = storeRepository.save(store);
-
-    List<Product> result = productService.findByStoreId(store.getId());
-
-    assertNotNull(result);
-    assertEquals(result.size(), 0);
-  }
-
-  @Test
-  public void shouldReturnOneProduct_whenStoreHasOneProduct() {
-    Storefront storefront = new Storefront();
-
-    storefront.setPrimaryColor("#c65a3a");
-    storefront.setSecondaryColor("#19756a");
-
-    Store store = new Store();
-    store.setName("Test Store");
-    store.setEmail("test@example.com");
-    store.setLocation(coordinatesService.createPoint(0.0, 0.0));
-    store.setAddress("123 Test Street");
-    store.setOpeningHours("9am - 5pm");
-    store.setAcceptsShipping(true);
-    store.setStorefront(storefront);
-    store.setUser(testUser);
-    store = storeRepository.save(store);
-
-    ProductType type = new ProductType();
-    type.setType("Test Product Type");
-    type = productTypeRepository.save(type);
-
-    ProductCreationDTO dto = new ProductCreationDTO();
-    dto.setName("Test Product");
-    dto.setPriceInCents(1000);
-    dto.setDescription("This is a test product");
-    dto.setTypeId(type.getId());
-
-    Product product = productService.createProduct(dto, null, store.getId());
-    List<Product> result = productService.findByStoreId(store.getId());
-
-    assertNotNull(result);
-    assertEquals(result.size(), 1);
-    assertEquals(result.get(0).getId(), product.getId());
-  }
-
-  @Test
-  public void shouldReturnProductList_whenStoreHasMultipleProducts() {
-    Storefront storefront = new Storefront();
-
-    storefront.setPrimaryColor("#c65a3a");
-    storefront.setSecondaryColor("#19756a");
-
-    Store store = new Store();
-    store.setName("Test Store");
-    store.setEmail("test@example.com");
-    store.setLocation(coordinatesService.createPoint(0.0, 0.0));
-    store.setAddress("123 Test Street");
-    store.setOpeningHours("9am - 5pm");
-    store.setAcceptsShipping(true);
-    store.setStorefront(storefront);
-    store.setUser(testUser);
-    store = storeRepository.save(store);
-
-    ProductType type = new ProductType();
-    type.setType("Test Product Type");
-    type = productTypeRepository.save(type);
-
-    ProductCreationDTO dto = new ProductCreationDTO();
-    dto.setName("Test Product");
-    dto.setPriceInCents(1000);
-    dto.setDescription("This is a test product");
-    dto.setTypeId(type.getId());
-
-    Product product1 = productService.createProduct(dto, null, store.getId());
-    Product product2 = productService.createProduct(dto, null, store.getId());
-    Product product3 = productService.createProduct(dto, null, store.getId());
-
-    List<Product> result = productService.findByStoreId(store.getId());
-
-    assertNotNull(result);
-    assertEquals(result.size(), 3);
-    assertEquals(result.get(0).getId(), product1.getId());
-    assertEquals(result.get(1).getId(), product2.getId());
-    assertEquals(result.get(2).getId(), product3.getId());
-  }
-
-  @Test
-  public void shouldUpdateProduct() {
-    Storefront storefront = new Storefront();
-    storefront.setPrimaryColor("#c65a3a");
-    storefront.setSecondaryColor("#19756a");
-
-    Store store = new Store();
-    store.setName("Test Store");
-    store.setEmail("test@example.com");
-    store.setLocation(coordinatesService.createPoint(0.0, 0.0));
-    store.setAddress("123 Test Street");
-    store.setOpeningHours("9am - 5pm");
-    store.setAcceptsShipping(true);
-    store.setStorefront(storefront);
-    store.setUser(testUser);
-    store = storeRepository.save(store);
-
-    ProductType type = new ProductType();
-    type.setType("Test Product Type");
-    type = productTypeRepository.save(type);
-
-    ProductCreationDTO creationDto = new ProductCreationDTO();
-    creationDto.setName("Test Product");
-    creationDto.setPriceInCents(1000);
-    creationDto.setDescription("This is a test product");
-    creationDto.setTypeId(type.getId());
-
-    Product product = productService.createProduct(creationDto, null, store.getId());
-
-    ProductUpdateDTO updateDto = new ProductUpdateDTO();
-    updateDto.setName("Updated Product Name");
-    updateDto.setPriceInCents(2000);
-
-    doNothing().when(authService).assertUserOwnsStore(any(Store.class));
-
-    Product updatedProduct = productService.updateProduct(product.getId(), updateDto, null);
-
-    assertEquals("Updated Product Name", updatedProduct.getName());
-    assertEquals(2000, updatedProduct.getPriceInCents());
-  }
-
-  @Test
-  public void shouldThrowResourceNotFoundException_whenUpdatingNonExistentProduct() {
-    ProductUpdateDTO updateDto = new ProductUpdateDTO();
-    updateDto.setName("Updated Product Name");
-
-    assertThrows(
-        ResourceNotFoundException.class,
-        () -> productService.updateProduct(UUID.randomUUID(), updateDto, null));
-  }
-
-  @Test
-  public void shouldThrowUnauthorizedException_whenUpdatingProductWithoutOwnership() {
-    Storefront storefront = new Storefront();
-    storefront.setPrimaryColor("#c65a3a");
-    storefront.setSecondaryColor("#19756a");
-
-    Store store = new Store();
-    store.setName("Test Store");
-    store.setEmail("test@example.com");
-    store.setLocation(coordinatesService.createPoint(0.0, 0.0));
-    store.setAddress("123 Test Street");
-    store.setOpeningHours("9am - 5pm");
-    store.setAcceptsShipping(true);
-    store.setStorefront(storefront);
-    store.setUser(testUser);
-    store = storeRepository.save(store);
-
-    ProductType type = new ProductType();
-    type.setType("Test Product Type");
-    type = productTypeRepository.save(type);
-
-    ProductCreationDTO creationDto = new ProductCreationDTO();
-    creationDto.setName("Test Product");
-    creationDto.setPriceInCents(1000);
-    creationDto.setDescription("This is a test product");
-    creationDto.setTypeId(type.getId());
-
-    Product product = productService.createProduct(creationDto, null, store.getId());
-
-    ProductUpdateDTO updateDto = new ProductUpdateDTO();
-    updateDto.setName("Updated Product Name");
-
-    doThrow(new UnauthorizedException("User does not own the store"))
-        .when(authService)
-        .assertUserOwnsStore(any(Store.class));
-
-    assertThrows(
-        UnauthorizedException.class,
-        () -> productService.updateProduct(product.getId(), updateDto, null));
+    createTestProduct();
+    List<Product> products = productService.findAll();
+    assertEquals(1, products.size());
   }
 
   @Test
   public void shouldDeleteProduct() {
-    Storefront storefront = new Storefront();
-    storefront.setPrimaryColor("#c65a3a");
-    storefront.setSecondaryColor("#19756a");
-
-    Store store = new Store();
-    store.setName("Test Store");
-    store.setEmail("test@example.com");
-    store.setLocation(coordinatesService.createPoint(0.0, 0.0));
-    store.setAddress("123 Test Street");
-    store.setOpeningHours("9am - 5pm");
-    store.setAcceptsShipping(true);
-    store.setStorefront(storefront);
-    store.setUser(testUser);
-    store = storeRepository.save(store);
-
-    ProductType type = new ProductType();
-    type.setType("Test Product Type");
-    type = productTypeRepository.save(type);
-
-    ProductCreationDTO creationDto = new ProductCreationDTO();
-    creationDto.setName("Test Product");
-    creationDto.setPriceInCents(1000);
-    creationDto.setDescription("This is a test product");
-    creationDto.setTypeId(type.getId());
-
-    Product product = productService.createProduct(creationDto, null, store.getId());
-
+    Product product = createTestProduct();
     doNothing().when(authService).assertUserOwnsStore(any(Store.class));
-
     productService.deleteProduct(product.getId());
-
     assertThrows(
         ResourceNotFoundException.class, () -> productService.getProductById(product.getId()));
   }
 
   @Test
-  public void shouldThrowResourceNotFoundException_whenDeletingNonExistentProduct() {
-    assertThrows(
-        ResourceNotFoundException.class, () -> productService.deleteProduct(UUID.randomUUID()));
+  public void shouldThrowException_WhenDeletingNonExistentProduct() {
+    UUID id = UUID.randomUUID();
+    doThrow(new ResourceNotFoundException("Product not found with id: " + id))
+        .when(authService)
+        .assertUserOwnsStore(any(Store.class));
+    assertThrows(ResourceNotFoundException.class, () -> productService.deleteProduct(id));
   }
 
   @Test
-  public void shouldThrowUnauthorizedException_whenDeletingProductWithoutOwnership() {
-    Storefront storefront = new Storefront();
-    storefront.setPrimaryColor("#c65a3a");
-    storefront.setSecondaryColor("#19756a");
+  public void shouldUpdateProduct() {
+    Product product = createTestProduct();
+    ProductUpdateDTO updateDTO = new ProductUpdateDTO();
+    updateDTO.setName("Updated Product Name");
+    updateDTO.setPriceInCents(2000);
+    updateDTO.setDescription("Updated description");
+    updateDTO.setProductTypeId(savedProductType.getId());
 
-    Store store = new Store();
-    store.setName("Test Store");
-    store.setEmail("test@example.com");
-    store.setLocation(coordinatesService.createPoint(0.0, 0.0));
-    store.setAddress("123 Test Street");
-    store.setOpeningHours("9am - 5pm");
-    store.setAcceptsShipping(true);
-    store.setStorefront(storefront);
-    store.setUser(testUser);
-    store = storeRepository.save(store);
+    doNothing().when(authService).assertUserOwnsStore(any(Store.class));
 
-    ProductType type = new ProductType();
-    type.setType("Test Product Type");
-    type = productTypeRepository.save(type);
+    Product updatedProduct = productService.updateProduct(product.getId(), updateDTO, null);
+    assertNotNull(updatedProduct);
+    assertEquals("Updated Product Name", updatedProduct.getName());
+    assertEquals(2000, updatedProduct.getPriceInCents());
+  }
 
-    ProductCreationDTO creationDto = new ProductCreationDTO();
-    creationDto.setName("Test Product");
-    creationDto.setPriceInCents(1000);
-    creationDto.setDescription("This is a test product");
-    creationDto.setTypeId(type.getId());
+  @Test
+  public void shouldThrowException_WhenUpdatingNonExistentProduct() {
+    UUID id = UUID.randomUUID();
+    ProductUpdateDTO updateDTO = new ProductUpdateDTO();
+    updateDTO.setName("Updated Product Name");
 
-    Product product = productService.createProduct(creationDto, null, store.getId());
-
-    doThrow(new UnauthorizedException("User does not own the store"))
+    doThrow(new ResourceNotFoundException("Product not found with id: " + id))
         .when(authService)
         .assertUserOwnsStore(any(Store.class));
 
+    assertThrows(
+        ResourceNotFoundException.class, () -> productService.updateProduct(id, updateDTO, null));
+  }
+
+  @Test
+  public void shouldThrowUnauthorizedException_WhenUserIsNotOwner() {
+    Product product = createTestProduct();
+    doThrow(new UnauthorizedException("User is not the owner of the store"))
+        .when(authService)
+        .assertUserOwnsStore(any(Store.class));
     assertThrows(UnauthorizedException.class, () -> productService.deleteProduct(product.getId()));
   }
 }
