@@ -14,4 +14,5 @@ import org.springframework.stereotype.Component;
 public class SeedProperties {
   private long randomSeed = 42;
   private int clientCount = 10;
+  private boolean uploadImages = true;
 }

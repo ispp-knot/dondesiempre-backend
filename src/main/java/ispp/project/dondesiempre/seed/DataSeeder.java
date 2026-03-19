@@ -31,6 +31,8 @@ import ispp.project.dondesiempre.modules.stores.models.Storefront;
 import ispp.project.dondesiempre.modules.stores.repositories.SocialNetworkRepository;
 import ispp.project.dondesiempre.modules.stores.repositories.StoreRepository;
 import ispp.project.dondesiempre.modules.stores.repositories.StoreSocialNetworkRepository;
+import com.cloudinary.Cloudinary;
+import ispp.project.dondesiempre.config.CloudinaryProperties;
 import ispp.project.dondesiempre.utils.cloudinary.CloudinaryService;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -79,6 +81,8 @@ public class DataSeeder implements CommandLineRunner {
   private final ClientRepository clientRepository;
   private final StoreFollowerRepository storeFollowerRepository;
   private final CloudinaryService cloudinaryService;
+  private final Cloudinary cloudinary;
+  private final CloudinaryProperties cloudinaryProperties;
 
   private static final GeometryFactory GF = new GeometryFactory(new PrecisionModel(), 4326);
 
@@ -100,7 +104,8 @@ public class DataSeeder implements CommandLineRunner {
 
   private void seedReferenceData() {
     if (socialNetworkRepository.count() == 0) {
-      for (String name : List.of("Instagram", "Facebook", "TikTok", "X", "WhatsApp", "Web", "Teléfono")) {
+      for (String name :
+          List.of("Instagram", "Facebook", "TikTok", "X", "WhatsApp", "Web", "Teléfono")) {
         SocialNetwork sn = new SocialNetwork();
         sn.setName(name);
         socialNetworkRepository.save(sn);
@@ -258,8 +263,8 @@ public class DataSeeder implements CommandLineRunner {
             -5.920509768052806,
             "C. San Sebastián, 17, 41701 Dos Hermanas, Sevilla",
             "Lun-Vie 10:30-13:30, 17:30-20:30. Sab 10:30-13:30",
-            "#4f8d82",
-            "#4f8d66",
+            "#315750",
+            "#2b4f39",
             "escaparate_romantika.png");
     addSocialNetwork(romantika, socialNetworks, "WhatsApp", "https://wa.me/34645142782");
     addSocialNetwork(
@@ -341,8 +346,7 @@ public class DataSeeder implements CommandLineRunner {
     addSocialNetwork(sanSebastian, socialNetworks, "WhatsApp", "https://wa.me/34691537089");
     addSocialNetwork(
         sanSebastian, socialNetworks, "Web", "https://www.confeccionesyhogarsansebastian.com/");
-    addSocialNetwork(
-        sanSebastian, socialNetworks, "Teléfono", "tel:+34691537089");
+    addSocialNetwork(sanSebastian, socialNetworks, "Teléfono", "tel:+34691537089");
 
     Product ss_albornoz =
         createProduct(
@@ -381,13 +385,12 @@ public class DataSeeder implements CommandLineRunner {
             "C. San Sebastián, 15, 41701 Dos Hermanas, Sevilla",
             "Lun-Vie 10:00-13:45, 17:30-21:00, Sábado 10:00-14:00",
             "#ad0000",
-            "#f89406",
+            "#633a00",
             "escaparate_roire.png");
     addSocialNetwork(roire, socialNetworks, "WhatsApp", "https://wa.me/34641231378");
     addSocialNetwork(roire, socialNetworks, "Instagram", "https://www.instagram.com/roire.es");
     addSocialNetwork(roire, socialNetworks, "Web", "https://tiendaroire.es/");
-    addSocialNetwork(
-        roire, socialNetworks, "Teléfono", "tel:+34641231378");
+    addSocialNetwork(roire, socialNetworks, "Teléfono", "tel:+34641231378");
 
     Product roire_faldaCebra =
         createProduct(
@@ -424,8 +427,8 @@ public class DataSeeder implements CommandLineRunner {
             -5.921767187403529,
             "C. Canónigo, 73, 41701 Dos Hermanas, Sevilla",
             "Lun-Vie 10:30-13:30, 17:30-20:30, Sab 10:30-13:30",
-            "#e0b182",
-            "#555555",
+            "#75502b",
+            "#333333",
             "escaparate_pineapple.png");
     addSocialNetwork(pineapple, socialNetworks, "WhatsApp", "https://wa.me/34644807498");
     addSocialNetwork(
@@ -438,8 +441,7 @@ public class DataSeeder implements CommandLineRunner {
     addSocialNetwork(
         pineapple, socialNetworks, "TikTok", "https://www.tiktok.com/@pineapplesevilla");
     addSocialNetwork(pineapple, socialNetworks, "Web", "https://pineapplemoda.com/");
-    addSocialNetwork(
-        pineapple, socialNetworks, "Teléfono", "tel:+34644807498");
+    addSocialNetwork(pineapple, socialNetworks, "Teléfono", "tel:+34644807498");
 
     Product pine_camisaBlanca =
         createProduct(
@@ -567,8 +569,7 @@ public class DataSeeder implements CommandLineRunner {
             "#255d56",
             "#247054",
             "escaparate_bazar_romera.png");
-    addSocialNetwork(
-        bazarRomera, socialNetworks, "Teléfono", "tel:+34631122308");
+    addSocialNetwork(bazarRomera, socialNetworks, "Teléfono", "tel:+34631122308");
 
     createProduct(
         "Camisa Azul",
@@ -596,8 +597,8 @@ public class DataSeeder implements CommandLineRunner {
             -5.924663169087747,
             "41701 Dos Hermanas, Sevilla",
             "Lun,Mar,Jue,Vie: 9:30-14:00. Mie: 9:30-14:00, 5:30-8:30. Sab 10:00-13:30",
+            "#000045",
             "#844652",
-            "#000000",
             "escaparate_mar_govantes.jpg");
     addSocialNetwork(
         marGovantes, socialNetworks, "Facebook", "https://www.facebook.com/margovantesmodas/");
@@ -605,8 +606,7 @@ public class DataSeeder implements CommandLineRunner {
         marGovantes, socialNetworks, "Instagram", "https://www.instagram.com/margovantesmodas");
     addSocialNetwork(
         marGovantes, socialNetworks, "TikTok", "https://www.tiktok.com/@margovantesmodas");
-    addSocialNetwork(
-        marGovantes, socialNetworks, "Teléfono", "tel:+34670080639");
+    addSocialNetwork(marGovantes, socialNetworks, "Teléfono", "tel:+34670080639");
 
     Product mg_americanaMarina =
         createProduct(
@@ -863,6 +863,14 @@ public class DataSeeder implements CommandLineRunner {
   private String uploadImage(String filename) {
     if (filename == null) return null;
     String publicId = filename.replaceAll("\\.[^.]+$", "").replace(" ", "_");
+    if (!props.isUploadImages()) {
+      return "https://res.cloudinary.com/"
+          + cloudinary.config.cloudName
+          + "/image/upload/"
+          + cloudinaryProperties.getFolderPrefix()
+          + "/seed/"
+          + publicId;
+    }
     try {
       return cloudinaryService.uploadSeedResource("seed/images/" + filename, publicId);
     } catch (Exception e) {
