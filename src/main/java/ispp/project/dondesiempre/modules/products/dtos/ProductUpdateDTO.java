@@ -15,6 +15,7 @@ public class ProductUpdateDTO {
   @Size(max = 255)
   private String name;
 
+  @Size(max = 5000)
   private String description;
 
   @Min(0)
