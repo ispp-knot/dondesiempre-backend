@@ -55,12 +55,12 @@ public class ProductController {
   }
 
   @PostMapping(value = "products", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-  public ResponseEntity<Product> createProduct(
+  public ResponseEntity<ProductDTO> createProduct(
       @RequestPart("dto") @Valid ProductCreationDTO dto,
       @RequestPart(value = "image", required = false) MultipartFile image,
       @RequestParam UUID storeId) {
     Product savedProduct = productService.createProduct(dto, image, storeId);
-    return new ResponseEntity<>(savedProduct, HttpStatus.CREATED);
+    return new ResponseEntity<>(new ProductDTO(savedProduct), HttpStatus.CREATED);
   }
 
   @PutMapping("products/{id}/discount")
