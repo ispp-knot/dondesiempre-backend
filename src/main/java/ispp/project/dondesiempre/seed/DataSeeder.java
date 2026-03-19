@@ -186,7 +186,7 @@ public class DataSeeder implements CommandLineRunner {
             "Vestido Blanco",
             4999,
             null,
-            null,
+            "Vestido blanco, perfecto para los días de calor.",
             productTypes.get("Vestido"),
             greta,
             "outfit1_vestido_blanco_49.99.jpg");
@@ -195,8 +195,8 @@ public class DataSeeder implements CommandLineRunner {
         createProduct(
             "Botas Negras",
             6999,
-            null,
-            null,
+            15,
+            "Botas negras, ideales para los meses de frío.",
             productTypes.get("Zapatos"),
             greta,
             "outfit1_botas_negras_69.99.jpg");
@@ -206,7 +206,7 @@ public class DataSeeder implements CommandLineRunner {
             "Bolso Marrón",
             3499,
             null,
-            null,
+            "Bolso marrón de estilo moderno, perfecto para el día a día.",
             productTypes.get("Accesorio"),
             greta,
             "outfit1_bolso_marron_34.99.jpg");
@@ -215,8 +215,8 @@ public class DataSeeder implements CommandLineRunner {
         createProduct(
             "Vestido Azul",
             6999,
-            null,
-            null,
+            20,
+            "Vestido azul, perfecto para una tarde de verano.",
             productTypes.get("Vestido"),
             greta,
             "outfit2_vestido_azul_69.99.jpg");
@@ -226,7 +226,7 @@ public class DataSeeder implements CommandLineRunner {
             "Bolso Beige",
             4999,
             null,
-            null,
+            "Bolso beige de estilo moderno, ideal para el día a día.",
             productTypes.get("Accesorio"),
             greta,
             "outfit2_bolso_beige_49.99.jpg");
@@ -235,21 +235,22 @@ public class DataSeeder implements CommandLineRunner {
         createProduct(
             "Pendientes Mariposa Oro",
             1999,
-            null,
-            null,
+            10,
+            "Pendientes mariposa dorados, un toque elegante para cualquier look.",
             productTypes.get("Accesorio"),
             greta,
             "outfit2_pendientes_mariposa_oro_19.99.jpg");
     createVariant(greta_pendientes, productSizes.get("S"), productColors.get("Beige"), true);
 
-    Outfit greta_outfit1 = createOutfit("Conjunto Mihai", 0, greta, "outfit1_conjunto_mihai.jpg");
+    Outfit greta_outfit1 =
+        createOutfit("Conjunto Mihai", 0, 12398, greta, "outfit1_conjunto_mihai.jpg");
     createOutfitTagRelation(greta_outfit1, outfitTags.get("Elegante"));
     createOutfitProduct(greta_outfit1, greta_vestidoBlanco, 0);
     createOutfitProduct(greta_outfit1, greta_botasNegras1, 1);
     createOutfitProduct(greta_outfit1, greta_bolsoMarron, 2);
 
     Outfit greta_outfit2 =
-        createOutfit("Conjunto Galilea", 1, greta, "outfit2_conjunto_galilea.jpg");
+        createOutfit("Conjunto Galilea", 1, 11198, greta, "outfit2_conjunto_galilea.jpg");
     createOutfitTagRelation(greta_outfit2, outfitTags.get("Casual"));
     createOutfitProduct(greta_outfit2, greta_vestidoAzul, 0);
     createOutfitProduct(greta_outfit2, greta_bolsoBeige, 1);
@@ -280,7 +281,7 @@ public class DataSeeder implements CommandLineRunner {
             "Vestido Rojo",
             6499,
             null,
-            null,
+            "Vestido rojo, ideal para una ocasión especial en verano.",
             productTypes.get("Vestido"),
             romantika,
             "outfit3_vestido_rojo_64.99.jpg");
@@ -289,8 +290,8 @@ public class DataSeeder implements CommandLineRunner {
         createProduct(
             "Sandalias Rojas con Tacón",
             4699,
-            null,
-            null,
+            25,
+            "Sandalias rojas con tacón, perfectas para el buen tiempo.",
             productTypes.get("Zapatos"),
             romantika,
             "outfit3_sandalias_rojas_con_tacón_46.99.jpg");
@@ -300,7 +301,7 @@ public class DataSeeder implements CommandLineRunner {
             "Vestido Verde",
             4999,
             null,
-            null,
+            "Vestido verde, una opción fresca para la primavera.",
             productTypes.get("Vestido"),
             romantika,
             "outfit4_vestido_verde_49.99.jpg");
@@ -309,20 +310,20 @@ public class DataSeeder implements CommandLineRunner {
         createProduct(
             "Tacones Beige",
             4499,
-            null,
-            null,
+            10,
+            "Tacones beige, versátiles para cualquier ocasión.",
             productTypes.get("Zapatos"),
             romantika,
             "outfit4_tacones_beige_44.99.jpg");
     createVariant(rom_taconesBeige, productSizes.get("M"), productColors.get("Beige"), true);
 
-    Outfit rom_outfit1 = createOutfit("Verano Rojo", 0, romantika, "outfit3_verano_rojo.jpg");
+    Outfit rom_outfit1 = createOutfit("Verano Rojo", 0, 8958, romantika, "outfit3_verano_rojo.jpg");
     createOutfitTagRelation(rom_outfit1, outfitTags.get("Verano"));
     createOutfitProduct(rom_outfit1, rom_vestidoRojo, 0);
     createOutfitProduct(rom_outfit1, rom_sandaliasRojas, 1);
 
     Outfit rom_outfit2 =
-        createOutfit("Primavera Verde", 1, romantika, "outfit4_primavera_verde.jpg");
+        createOutfit("Primavera Verde", 1, 7598, romantika, "outfit4_primavera_verde.jpg");
     createOutfitTagRelation(rom_outfit2, outfitTags.get("Verano"));
     createOutfitProduct(rom_outfit2, rom_vestidoVerde, 0);
     createOutfitProduct(rom_outfit2, rom_taconesBeige, 1);
@@ -354,7 +355,7 @@ public class DataSeeder implements CommandLineRunner {
             "Albornoz Blanco",
             1999,
             null,
-            null,
+            "Albornoz blanco, perfecto para después del baño o la playa.",
             productTypes.get("Accesorio"),
             sanSebastian,
             "outfit5_albornoz_blanco_19.99.jpg");
@@ -363,15 +364,16 @@ public class DataSeeder implements CommandLineRunner {
         createProduct(
             "Crocs Negras",
             1599,
-            null,
-            null,
+            15,
+            "Crocs negras, cómodas para el uso diario en casa o en la calle.",
             productTypes.get("Zapatos"),
             sanSebastian,
             "outfit5_crocs_negras_15.99.jpg");
     createVariant(ss_crocs, productSizes.get("M"), productColors.get("Negro"), true);
 
     Outfit ss_outfit1 =
-        createOutfit("Tranquilidad Casera", 0, sanSebastian, "outfit5_tranquilidad_casera.jpg");
+        createOutfit(
+            "Tranquilidad Casera", 0, 2878, sanSebastian, "outfit5_tranquilidad_casera.jpg");
     createOutfitTagRelation(ss_outfit1, outfitTags.get("Casual"));
     createOutfitProduct(ss_outfit1, ss_albornoz, 0);
     createOutfitProduct(ss_outfit1, ss_crocs, 1);
@@ -397,8 +399,8 @@ public class DataSeeder implements CommandLineRunner {
         createProduct(
             "Falda Cebra",
             2999,
-            null,
-            null,
+            20,
+            "Falda cebra con estilo, ideal para un look casual llamativo.",
             productTypes.get("Pantalón"),
             roire,
             "outfit6_falda_cebra_29.99.jpg");
@@ -408,13 +410,14 @@ public class DataSeeder implements CommandLineRunner {
             "Suéter Marrón",
             4999,
             null,
-            null,
+            "Suéter marrón, muy abrigado para los días de frío.",
             productTypes.get("Chaqueta"),
             roire,
             "outfit6_suéter_marrón_49.99.jpg");
     createVariant(roire_sueterMarron, productSizes.get("M"), productColors.get("Beige"), true);
 
-    Outfit roire_outfit1 = createOutfit("Savana Otoñal", 0, roire, "outfit6_savana_otoñal.jpg");
+    Outfit roire_outfit1 =
+        createOutfit("Savana Otoñal", 0, 6398, roire, "outfit6_savana_otoñal.jpg");
     createOutfitTagRelation(roire_outfit1, outfitTags.get("Casual"));
     createOutfitProduct(roire_outfit1, roire_faldaCebra, 0);
     createOutfitProduct(roire_outfit1, roire_sueterMarron, 1);
@@ -449,7 +452,7 @@ public class DataSeeder implements CommandLineRunner {
             "Camisa Blanca",
             1599,
             null,
-            null,
+            "Camisa blanca, un básico de armario para cualquier época del año.",
             productTypes.get("Camiseta"),
             pineapple,
             "outfit7_camisa_blanca_15.99.jpg");
@@ -458,15 +461,15 @@ public class DataSeeder implements CommandLineRunner {
         createProduct(
             "Falda Roja",
             4599,
-            null,
-            null,
+            10,
+            "Falda roja, perfecta para darle color al otoño.",
             productTypes.get("Pantalón"),
             pineapple,
             "outfit7_falda_roja_45.99.jpg");
     createVariant(pine_faldaRoja, productSizes.get("M"), productColors.get("Rojo"), true);
 
     Outfit pine_outfit1 =
-        createOutfit("Pasión de Otoño", 0, pineapple, "outfit7_pasión_de_otoño.jpg");
+        createOutfit("Pasión de Otoño", 0, 4958, pineapple, "outfit7_pasión_de_otoño.jpg");
     createOutfitTagRelation(pine_outfit1, outfitTags.get("Casual"));
     createOutfitProduct(pine_outfit1, pine_camisaBlanca, 0);
     createOutfitProduct(pine_outfit1, pine_faldaRoja, 1);
@@ -493,7 +496,7 @@ public class DataSeeder implements CommandLineRunner {
         "Bolso Crema",
         1599,
         null,
-        null,
+        "Bolso crema de estilo moderno, ideal para cualquier ocasión.",
         productTypes.get("Accesorio"),
         lucemes,
         "producto_bolso_crema_15.99.jpg");
@@ -501,7 +504,7 @@ public class DataSeeder implements CommandLineRunner {
         "Bolso Crema Oro",
         1899,
         null,
-        null,
+        "Bolso crema con detalles dorados, un complemento elegante y atemporal.",
         productTypes.get("Accesorio"),
         lucemes,
         "producto_bolso_crema_oro_18.99.jpg");
@@ -525,8 +528,8 @@ public class DataSeeder implements CommandLineRunner {
         createProduct(
             "Parka Blanca",
             7999,
-            null,
-            null,
+            30,
+            "Parka blanca, ideal para afrontar el invierno con estilo.",
             productTypes.get("Chaqueta"),
             alfonsi,
             "outfit8_parka_blanca_79.99.jpg");
@@ -536,7 +539,7 @@ public class DataSeeder implements CommandLineRunner {
             "Pantalones Negros",
             4699,
             null,
-            null,
+            "Pantalones negros, un básico imprescindible para cualquier temporada.",
             productTypes.get("Pantalón"),
             alfonsi,
             "outfit8_pantalones_negros_46.99.jpg");
@@ -546,13 +549,14 @@ public class DataSeeder implements CommandLineRunner {
             "Botas Negras",
             8999,
             null,
-            null,
+            "Botas negras, perfectas para los días fríos de invierno.",
             productTypes.get("Zapatos"),
             alfonsi,
             "outfit8_botas_negras_89.99.jpg");
     createVariant(alf_botasNegras, productSizes.get("M"), productColors.get("Negro"), true);
 
-    Outfit alf_outfit1 = createOutfit("Cómodo Invierno", 0, alfonsi, "outfit8_cómodo_invierno.jpg");
+    Outfit alf_outfit1 =
+        createOutfit("Cómodo Invierno", 0, 17358, alfonsi, "outfit8_cómodo_invierno.jpg");
     createOutfitTagRelation(alf_outfit1, outfitTags.get("Invierno"));
     createOutfitProduct(alf_outfit1, alf_parkaBlanca, 0);
     createOutfitProduct(alf_outfit1, alf_pantalonesNegros, 1);
@@ -576,15 +580,15 @@ public class DataSeeder implements CommandLineRunner {
         "Camisa Azul",
         3499,
         null,
-        null,
+        "Camisa azul, un básico cómodo para el día a día.",
         productTypes.get("Camiseta"),
         bazarRomera,
         "producto_camisa_azul_34.99.jpg");
     createProduct(
         "Chandal Negro",
         2999,
-        null,
-        null,
+        20,
+        "Chándal negro, cómodo y apropiado para el día a día.",
         productTypes.get("Pantalón"),
         bazarRomera,
         "producto_chandal_negro_29.99.jpg");
@@ -614,7 +618,7 @@ public class DataSeeder implements CommandLineRunner {
             "Americana Marina",
             4599,
             null,
-            null,
+            "Americana marina, perfecta para looks formales o de oficina.",
             productTypes.get("Chaqueta"),
             marGovantes,
             "outfit_9_americana_marina_45.99.jpg");
@@ -623,8 +627,8 @@ public class DataSeeder implements CommandLineRunner {
         createProduct(
             "Pantalones Marinos",
             3999,
-            null,
-            null,
+            15,
+            "Pantalones marinos, elegantes y apropiados para un look formal.",
             productTypes.get("Pantalón"),
             marGovantes,
             "outfit_9_pantalones_marinos_39.99.jpg");
@@ -634,7 +638,7 @@ public class DataSeeder implements CommandLineRunner {
             "Camisa Floral",
             2399,
             null,
-            null,
+            "Camisa floral, una opción fresca y alegre para el buen tiempo.",
             productTypes.get("Camiseta"),
             marGovantes,
             "outfit_10_camisa_floral_23.99.jpg");
@@ -644,7 +648,7 @@ public class DataSeeder implements CommandLineRunner {
             "Pantalones Verdes",
             3499,
             null,
-            null,
+            "Pantalones verdes, ideales para un look casual de primavera.",
             productTypes.get("Pantalón"),
             marGovantes,
             "outfit_10_pantalones_verdes_34.99.jpg");
@@ -653,20 +657,21 @@ public class DataSeeder implements CommandLineRunner {
         createProduct(
             "Suéter Verde",
             4599,
-            null,
-            null,
+            20,
+            "Suéter verde, apropiado para el entretiempo y los días frescos.",
             productTypes.get("Chaqueta"),
             marGovantes,
             "outfit_10_suéter_verde_45_99.jpg");
     createVariant(mg_sueterVerde, productSizes.get("M"), productColors.get("Verde"), true);
 
     Outfit mg_outfit1 =
-        createOutfit("Negocio Oceánico", 0, marGovantes, "outfit_9_negocio_oceánico.jpg");
+        createOutfit("Negocio Oceánico", 0, 6878, marGovantes, "outfit_9_negocio_oceánico.jpg");
     createOutfitTagRelation(mg_outfit1, outfitTags.get("Formal"));
     createOutfitProduct(mg_outfit1, mg_americanaMarina, 0);
     createOutfitProduct(mg_outfit1, mg_pantalonesMari, 1);
 
-    Outfit mg_outfit2 = createOutfit("Río Interior", 1, marGovantes, "outfit_10_río_interior.jpg");
+    Outfit mg_outfit2 =
+        createOutfit("Río Interior", 1, 8398, marGovantes, "outfit_10_río_interior.jpg");
     createOutfitTagRelation(mg_outfit2, outfitTags.get("Casual"));
     createOutfitProduct(mg_outfit2, mg_camisaFloral, 0);
     createOutfitProduct(mg_outfit2, mg_pantalonesVerdes, 1);
@@ -839,12 +844,13 @@ public class DataSeeder implements CommandLineRunner {
     productVariantRepository.save(variant);
   }
 
-  private Outfit createOutfit(String name, int index, Store store, String imageFilename) {
+  private Outfit createOutfit(
+      String name, int index, int discountedPriceInCents, Store store, String imageFilename) {
     Outfit outfit = new Outfit();
     outfit.setId(seedUuid("outfit:" + store.getId() + ":" + name));
     outfit.setName(name);
     outfit.setIndex(index);
-    outfit.setDiscountedPriceInCents(0);
+    outfit.setDiscountedPriceInCents(discountedPriceInCents);
     outfit.setStore(store);
 
     String imageUrl = uploadImage(imageFilename);
