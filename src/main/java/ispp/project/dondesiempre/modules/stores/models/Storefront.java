@@ -18,12 +18,6 @@ import org.hibernate.validator.constraints.URL;
 @Table(name = "storefronts")
 public class Storefront extends BaseEntity {
 
-  @NotNull
-  @Column(name = "is_first_collections")
-  // Boolean que indica si en el frontend se mostrarán primero las colecciones y
-  // segundo los outfits.
-  private Boolean isFirstCollections = Boolean.TRUE;
-
   @HexColor
   @NotNull
   @Column(name = "primary_color")
