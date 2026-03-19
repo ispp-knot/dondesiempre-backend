@@ -42,7 +42,7 @@ public class StorefrontServiceTest {
     storefrontId = UUID.randomUUID();
     storefront = new Storefront();
     storefront.setId(storefrontId);
-    storefront.setIsFirstCollections(true);
+
     storefront.setPrimaryColor("#c65a3a");
     storefront.setSecondaryColor("#19756a");
     storefront.setBannerImageUrl("http://example.com/banner.png");
@@ -73,7 +73,6 @@ public class StorefrontServiceTest {
   void updateStorefront_shouldUpdateStorefront_whenStorefrontExists() {
     StorefrontDTO dto = new StorefrontDTO();
     dto.setPrimaryColor("#000000");
-    dto.setIsFirstCollections(false);
 
     when(applicationContext.getBean(StorefrontService.class)).thenReturn(storefrontService);
 
@@ -83,7 +82,6 @@ public class StorefrontServiceTest {
     StorefrontDTO result = storefrontService.updateStorefront(storefrontId, dto, null);
 
     assertEquals("#000000", result.getPrimaryColor());
-    assertEquals(false, result.getIsFirstCollections());
 
     verify(storefrontRepository, times(1)).findById(storefrontId);
     verify(storefrontRepository, times(1)).save(any(Storefront.class));

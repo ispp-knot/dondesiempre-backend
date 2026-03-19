@@ -53,7 +53,7 @@ public class ProductServiceTest {
   public void shouldCreateNewProduct() {
 
     Storefront storefront = new Storefront();
-    storefront.setIsFirstCollections(true);
+
     storefront.setPrimaryColor("#c65a3a");
     storefront.setSecondaryColor("#19756a");
 
@@ -87,7 +87,7 @@ public class ProductServiceTest {
   @Test
   public void shouldUpdateProductDiscount() {
     Storefront storefront = new Storefront();
-    storefront.setIsFirstCollections(true);
+
     storefront.setPrimaryColor("#c65a3a");
     storefront.setSecondaryColor("#19756a");
 
@@ -122,7 +122,7 @@ public class ProductServiceTest {
   @Test
   public void shouldGetProductById() {
     Storefront storefront = new Storefront();
-    storefront.setIsFirstCollections(true);
+
     storefront.setPrimaryColor("#c65a3a");
     storefront.setSecondaryColor("#19756a");
 
@@ -169,7 +169,7 @@ public class ProductServiceTest {
   @Test
   public void shouldGetAllProducts() {
     Storefront storefront = new Storefront();
-    storefront.setIsFirstCollections(true);
+
     storefront.setPrimaryColor("#c65a3a");
     storefront.setSecondaryColor("#19756a");
 
@@ -205,7 +205,7 @@ public class ProductServiceTest {
   @Test
   public void shouldGetAllDiscountedProducts() {
     Storefront storefront = new Storefront();
-    storefront.setIsFirstCollections(true);
+
     storefront.setPrimaryColor("#c65a3a");
     storefront.setSecondaryColor("#19756a");
 
@@ -242,7 +242,7 @@ public class ProductServiceTest {
   @Test
   public void shouldReturnEmptyList_whenStoreHasNoProducts() {
     Storefront storefront = new Storefront();
-    storefront.setIsFirstCollections(true);
+
     storefront.setPrimaryColor("#c65a3a");
     storefront.setSecondaryColor("#19756a");
 
@@ -266,7 +266,7 @@ public class ProductServiceTest {
   @Test
   public void shouldReturnOneProduct_whenStoreHasOneProduct() {
     Storefront storefront = new Storefront();
-    storefront.setIsFirstCollections(true);
+
     storefront.setPrimaryColor("#c65a3a");
     storefront.setSecondaryColor("#19756a");
 
@@ -302,7 +302,7 @@ public class ProductServiceTest {
   @Test
   public void shouldReturnProductList_whenStoreHasMultipleProducts() {
     Storefront storefront = new Storefront();
-    storefront.setIsFirstCollections(true);
+
     storefront.setPrimaryColor("#c65a3a");
     storefront.setSecondaryColor("#19756a");
 

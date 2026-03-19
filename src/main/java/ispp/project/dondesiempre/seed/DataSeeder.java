@@ -776,7 +776,6 @@ public class DataSeeder implements CommandLineRunner {
     Storefront storefront = new Storefront();
     storefront.setPrimaryColor(primaryColor);
     storefront.setSecondaryColor(secondaryColor);
-    storefront.setIsFirstCollections(true);
 
     String bannerUrl = uploadImage(bannerImageFilename);
     if (bannerUrl != null) {

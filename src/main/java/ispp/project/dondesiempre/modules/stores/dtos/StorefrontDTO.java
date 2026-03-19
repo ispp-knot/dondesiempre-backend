@@ -15,8 +15,6 @@ public class StorefrontDTO {
 
   private UUID id;
 
-  private Boolean isFirstCollections;
-
   @HexColor private String primaryColor;
 
   @HexColor private String secondaryColor;
@@ -27,7 +25,6 @@ public class StorefrontDTO {
     if (storefront == null) return;
 
     this.id = storefront.getId();
-    this.isFirstCollections = storefront.getIsFirstCollections();
     this.primaryColor = storefront.getPrimaryColor();
     this.secondaryColor = storefront.getSecondaryColor();
     this.bannerImageUrl = storefront.getBannerImageUrl().orElse(null);

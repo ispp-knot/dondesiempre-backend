@@ -48,7 +48,6 @@ public class StoreFollowerServiceTest {
     store.setId(storeId);
     store.setName("Tienda de Prueba");
     Storefront storefront = new Storefront();
-    storefront.setIsFirstCollections(true);
     store.setStorefront(storefront);
   }
 
