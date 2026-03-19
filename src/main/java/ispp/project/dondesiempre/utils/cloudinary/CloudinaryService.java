@@ -10,4 +10,10 @@ public interface CloudinaryService {
    * the uploaded image.
    */
   String upload(MultipartFile file) throws InvalidRequestException;
+
+  /**
+   * Uploads a classpath resource to Cloudinary using a fixed publicId, returning the secure URL. If
+   * the asset already exists under that publicId, returns the existing URL without re-uploading.
+   */
+  String uploadSeedResource(String classpathPath, String publicId);
 }

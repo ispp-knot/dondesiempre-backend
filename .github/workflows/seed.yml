@@ -54,6 +54,8 @@ jobs:
         run: ./mvnw liquibase:validate
 
       - name: Run seeder
+        env:
+          SEED_UPLOAD_IMAGES: false
         run: ./mvnw spring-boot:run -Dspring-boot.run.profiles=dev-migration,seed
 
       - name: Verify seeded data
