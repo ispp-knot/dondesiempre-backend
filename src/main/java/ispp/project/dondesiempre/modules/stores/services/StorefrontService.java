@@ -36,9 +36,6 @@ public class StorefrontService {
     Storefront storefront = applicationContext.getBean(StorefrontService.class).findById(id);
     authService.assertUserOwnsStore(storefront.getStore());
 
-    if (dto.getIsFirstCollections() != null)
-      storefront.setIsFirstCollections(dto.getIsFirstCollections());
-
     if (dto.getPrimaryColor() != null) storefront.setPrimaryColor(dto.getPrimaryColor());
 
     if (dto.getSecondaryColor() != null) storefront.setSecondaryColor(dto.getSecondaryColor());

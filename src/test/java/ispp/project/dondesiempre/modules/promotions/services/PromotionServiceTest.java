@@ -55,7 +55,7 @@ public class PromotionServiceTest {
 
   private Storefront createStorefront() {
     Storefront storefront = new Storefront();
-    storefront.setIsFirstCollections(true);
+
     storefront.setPrimaryColor("#c65a3a");
     storefront.setSecondaryColor("#19756a");
     return storefront;

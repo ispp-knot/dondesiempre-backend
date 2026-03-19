@@ -64,7 +64,7 @@ public class ProductControllerTest {
     // Create and save a product type
 
     Storefront storefront = new Storefront();
-    storefront.setIsFirstCollections(true);
+
     storefront.setPrimaryColor("#c65a3a");
     storefront.setSecondaryColor("#19756a");
 
@@ -100,7 +100,7 @@ public class ProductControllerTest {
   public void shouldUpdateProductDiscount() {
 
     Storefront storefront = new Storefront();
-    storefront.setIsFirstCollections(true);
+
     storefront.setPrimaryColor("#c65a3a");
     storefront.setSecondaryColor("#19756a");
 
@@ -164,7 +164,7 @@ public class ProductControllerTest {
   @Test
   public void shouldGetProductById() {
     Storefront storefront = new Storefront();
-    storefront.setIsFirstCollections(true);
+
     storefront.setPrimaryColor("#c65a3a");
     storefront.setSecondaryColor("#19756a");
 
@@ -203,7 +203,7 @@ public class ProductControllerTest {
   public void shouldGetAllProducts() {
 
     Storefront storefront = new Storefront();
-    storefront.setIsFirstCollections(true);
+
     storefront.setPrimaryColor("#c65a3a");
     storefront.setSecondaryColor("#19756a");
 
@@ -244,7 +244,7 @@ public class ProductControllerTest {
   public void shouldGetAllDiscountedProducts() {
 
     Storefront storefront = new Storefront();
-    storefront.setIsFirstCollections(true);
+
     storefront.setPrimaryColor("#c65a3a");
     storefront.setSecondaryColor("#19756a");
 
@@ -287,7 +287,7 @@ public class ProductControllerTest {
   @Test
   public void shouldReturnProductsList_whenStoreHasProducts() {
     Storefront storefront = new Storefront();
-    storefront.setIsFirstCollections(true);
+
     storefront.setPrimaryColor("#c65a3a");
     storefront.setSecondaryColor("#19756a");
 
@@ -329,7 +329,7 @@ public class ProductControllerTest {
   @Test
   public void shouldReturnEmptyList_whenStoreHasNoProducts() {
     Storefront storefront = new Storefront();
-    storefront.setIsFirstCollections(true);
+
     storefront.setPrimaryColor("#c65a3a");
     storefront.setSecondaryColor("#19756a");
 
