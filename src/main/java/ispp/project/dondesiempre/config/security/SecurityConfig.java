@@ -66,6 +66,9 @@ public class SecurityConfig implements WebMvcConfigurer {
                     .permitAll()
                     .requestMatchers(HttpMethod.GET, "/api/v1/products/*")
                     .permitAll()
+                    .requestMatchers(
+                        HttpMethod.GET, "/api/v1/product-types", "/api/v1/product-types/*")
+                    .permitAll()
                     // Storefront reads are public
                     .requestMatchers(HttpMethod.GET, "/api/v1/storefronts/*/products")
                     .permitAll()
