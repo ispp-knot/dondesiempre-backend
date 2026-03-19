@@ -1,5 +1,7 @@
 package ispp.project.dondesiempre.seed;
 
+import com.cloudinary.Cloudinary;
+import ispp.project.dondesiempre.config.CloudinaryProperties;
 import ispp.project.dondesiempre.modules.auth.models.User;
 import ispp.project.dondesiempre.modules.auth.repositories.UserRepository;
 import ispp.project.dondesiempre.modules.clients.models.Client;
@@ -31,8 +33,6 @@ import ispp.project.dondesiempre.modules.stores.models.Storefront;
 import ispp.project.dondesiempre.modules.stores.repositories.SocialNetworkRepository;
 import ispp.project.dondesiempre.modules.stores.repositories.StoreRepository;
 import ispp.project.dondesiempre.modules.stores.repositories.StoreSocialNetworkRepository;
-import com.cloudinary.Cloudinary;
-import ispp.project.dondesiempre.config.CloudinaryProperties;
 import ispp.project.dondesiempre.utils.cloudinary.CloudinaryService;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -43,6 +43,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.locationtech.jts.geom.Coordinate;
@@ -684,11 +685,13 @@ public class DataSeeder implements CommandLineRunner {
 
     // Manual client (for testing)
     User clientUser = new User();
+    clientUser.setId(seedUuid("user:client@client.com"));
     clientUser.setEmail("client@client.com");
     clientUser.setPassword(passwordEncoder.encode("Password123!"));
     userRepository.save(clientUser);
 
     Client manualClient = new Client();
+    manualClient.setId(seedUuid("client:client@client.com"));
     manualClient.setName("Ana");
     manualClient.setSurname("García");
     manualClient.setEmail("client@client.com");
@@ -700,6 +703,7 @@ public class DataSeeder implements CommandLineRunner {
     // Manual client for delete-client test (reuses first store user)
     User storeOwner = userRepository.findByEmail("demo@gretacloset.com").orElseThrow();
     Client clientWithStoreUser = new Client();
+    clientWithStoreUser.setId(seedUuid("client:storeclient@ejemplo.es"));
     clientWithStoreUser.setName("Ana");
     clientWithStoreUser.setSurname("García");
     clientWithStoreUser.setEmail("storeclient@ejemplo.es");
@@ -715,11 +719,13 @@ public class DataSeeder implements CommandLineRunner {
       String clientEmail = "client" + i + "@client.com";
 
       User user = new User();
+      user.setId(seedUuid("user:" + clientEmail));
       user.setEmail(clientEmail);
       user.setPassword(passwordEncoder.encode("Password123!"));
       userRepository.save(user);
 
       Client client = new Client();
+      client.setId(seedUuid("client:" + clientEmail));
       client.setName(name);
       client.setSurname(surname);
       client.setEmail(clientEmail);
@@ -757,6 +763,7 @@ public class DataSeeder implements CommandLineRunner {
       String bannerImageFilename) {
 
     User user = new User();
+    user.setId(seedUuid("user:" + email));
     user.setEmail(email);
     user.setPassword(passwordEncoder.encode("Password123!"));
     userRepository.save(user);
@@ -774,6 +781,7 @@ public class DataSeeder implements CommandLineRunner {
     Point location = GF.createPoint(new Coordinate(lon, lat));
 
     Store store = new Store();
+    store.setId(seedUuid("store:" + email));
     store.setName(name);
     store.setEmail(email);
     store.setLocation(location);
@@ -805,6 +813,7 @@ public class DataSeeder implements CommandLineRunner {
       Store store,
       String imageFilename) {
     Product product = new Product();
+    product.setId(seedUuid("product:" + store.getId() + ":" + name));
     product.setName(name);
     product.setPriceInCents(price);
     product.setDiscountPercentage(discountedPrice);
@@ -832,6 +841,7 @@ public class DataSeeder implements CommandLineRunner {
 
   private Outfit createOutfit(String name, int index, Store store, String imageFilename) {
     Outfit outfit = new Outfit();
+    outfit.setId(seedUuid("outfit:" + store.getId() + ":" + name));
     outfit.setName(name);
     outfit.setIndex(index);
     outfit.setDiscountedPriceInCents(0);
@@ -904,5 +914,10 @@ public class DataSeeder implements CommandLineRunner {
     } catch (IOException e) {
       throw new IllegalStateException("Failed to read seed file: " + path, e);
     }
+  }
+
+  private UUID seedUuid(String name) {
+    return UUID.nameUUIDFromBytes(
+        ("seed:" + props.getRandomSeed() + ":" + name).getBytes(StandardCharsets.UTF_8));
   }
 }
