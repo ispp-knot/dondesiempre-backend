@@ -35,7 +35,7 @@ public class OutfitDTO {
     this.description = outfit.getDescription().orElse(null);
     this.image = outfit.getImage().orElse(null);
 
-    this.discountPercentage = outfit.getDiscountPercentage();
+    this.discountPercentage = outfit.getDiscountPercentage().orElse(null);
 
     this.index = outfit.getIndex();
     this.storeId = outfit.getStore().getId();

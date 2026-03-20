@@ -194,7 +194,7 @@ class OutfitServiceTest {
     assertNotNull(result);
     assertEquals(outfitId, result.getId());
     verify(outfitRepository, times(1)).save(any());
-    assertEquals(10, result.getDiscountPercentage());
+    assertEquals(10, result.getDiscountPercentage().orElse(null));
   }
 
   @Test

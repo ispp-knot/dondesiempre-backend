@@ -58,4 +58,8 @@ public class Outfit extends BaseEntity {
   public Optional<String> getImage() {
     return Optional.ofNullable(this.image);
   }
+
+  public Optional<Integer> getDiscountPercentage() {
+    return Optional.ofNullable(this.discountPercentage);
+  }
 }

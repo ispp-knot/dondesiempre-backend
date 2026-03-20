@@ -133,7 +133,7 @@ public class OutfitService {
     if (dto.getProducts() == null || (dto.getProducts() != null && dto.getProducts().size() <= 0)) {
       throw new InvalidRequestException("An outfit cannot be created without products.");
     }
-    outfit.setDiscountPercentage(0);
+    outfit.setDiscountPercentage(null);
 
     outfit = outfitRepository.save(outfit);
     outfitId = outfit.getId();

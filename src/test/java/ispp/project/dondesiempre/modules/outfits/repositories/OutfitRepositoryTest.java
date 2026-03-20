@@ -200,7 +200,7 @@ class OutfitRepositoryTest {
 
     outfit3 = new Outfit();
     outfit3.setName("Test outfit 3");
-    outfit3.setDiscountPercentage(0);
+    outfit3.setDiscountPercentage(null);
     outfit3.setIndex(0);
     outfit3.setStore(store2);
     outfit3 = outfitRepository.save(outfit3);
