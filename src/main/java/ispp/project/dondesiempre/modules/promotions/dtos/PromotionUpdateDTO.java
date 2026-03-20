@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Size;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 import lombok.Getter;
@@ -28,4 +29,8 @@ public class PromotionUpdateDTO {
   private List<UUID> productIds;
 
   private String description;
+
+  private LocalDate startDate;
+
+  private LocalDate endDate;
 }

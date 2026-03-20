@@ -10,6 +10,7 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import java.time.LocalDate;
 import java.util.Optional;
 import lombok.Getter;
 import lombok.Setter;
@@ -37,6 +38,12 @@ public class Promotion extends BaseEntity {
   @ManyToOne(optional = false)
   @NotNull
   private Store store;
+
+  @Column(name = "start_date")
+  private LocalDate startDate;
+
+  @Column(name = "end_date")
+  private LocalDate endDate;
 
   @Column(columnDefinition = "TEXT")
   private String description;
