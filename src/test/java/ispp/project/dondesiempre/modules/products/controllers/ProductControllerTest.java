@@ -6,7 +6,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -109,7 +109,7 @@ public class ProductControllerTest {
 
     mockMvc
         .perform(
-            put("/api/v1/products/" + productId + "/discount")
+            patch("/api/v1/products/" + productId + "/discount")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(discount)))
         .andExpect(status().isAccepted())
@@ -183,7 +183,7 @@ public class ProductControllerTest {
                       request.setMethod("PUT");
                       return request;
                     }))
-        .andExpect(status().isOk())
+        .andExpect(status().isAccepted())
         .andExpect(jsonPath("$.name").value("Updated Product"));
   }
 
