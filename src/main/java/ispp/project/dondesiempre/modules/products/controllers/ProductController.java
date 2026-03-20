@@ -64,11 +64,11 @@ public class ProductController {
   }
 
   @PutMapping("products/{id}/discount")
-  public ResponseEntity<Product> updateDiscount(
+  public ResponseEntity<ProductDTO> updateDiscount(
       @PathVariable UUID id, @RequestBody @Valid ProductDiscountUpdateDTO discount) {
     Product updatedProduct =
         productService.updateProductDiscount(id, discount.getDiscountPercentage());
-    return new ResponseEntity<>(updatedProduct, HttpStatus.ACCEPTED);
+    return new ResponseEntity<>(new ProductDTO(updatedProduct), HttpStatus.ACCEPTED);
   }
 
   @GetMapping("/stores/{storeId}/products")
@@ -79,11 +79,12 @@ public class ProductController {
   }
 
   @PutMapping(value = "/products/{productId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-  public Product updateProduct(
+  public ResponseEntity<ProductDTO> updateProduct(
       @PathVariable UUID productId,
       @Valid @RequestPart(value = "product", required = false) ProductUpdateDTO product,
       @RequestPart(value = "image", required = false) MultipartFile image) {
-    return productService.updateProduct(productId, product, image);
+    Product updatedProduct = productService.updateProduct(productId, product, image);
+    return new ResponseEntity<>(new ProductDTO(updatedProduct), HttpStatus.ACCEPTED);
   }
 
   @DeleteMapping("/products/{productId}")
