@@ -1,355 +1,197 @@
 package ispp.project.dondesiempre.modules.products.controllers;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import ispp.project.dondesiempre.modules.auth.models.User;
-import ispp.project.dondesiempre.modules.auth.repositories.UserRepository;
-import ispp.project.dondesiempre.modules.auth.services.AuthService;
-import ispp.project.dondesiempre.modules.common.exceptions.ResourceNotFoundException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import ispp.project.dondesiempre.config.GlobalExceptionHandler;
 import ispp.project.dondesiempre.modules.products.dtos.ProductCreationDTO;
-import ispp.project.dondesiempre.modules.products.dtos.ProductDTO;
 import ispp.project.dondesiempre.modules.products.dtos.ProductDiscountUpdateDTO;
+import ispp.project.dondesiempre.modules.products.dtos.ProductUpdateDTO;
 import ispp.project.dondesiempre.modules.products.models.Product;
 import ispp.project.dondesiempre.modules.products.models.ProductType;
-import ispp.project.dondesiempre.modules.products.repositories.ProductTypeRepository;
+import ispp.project.dondesiempre.modules.products.services.ProductService;
 import ispp.project.dondesiempre.modules.stores.models.Store;
-import ispp.project.dondesiempre.modules.stores.models.Storefront;
-import ispp.project.dondesiempre.modules.stores.repositories.StoreRepository;
-import ispp.project.dondesiempre.utils.cloudinary.CloudinaryService;
-import ispp.project.dondesiempre.utils.cloudinary.CoordinatesService;
 import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockPart;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.test.web.servlet.MockMvc;
 
-@SpringBootTest
-@AutoConfigureTestDatabase(replace = Replace.NONE)
-@Transactional
+@WebMvcTest(
+    controllers = ProductController.class,
+    excludeFilters =
+        @ComponentScan.Filter(
+            type = FilterType.ASSIGNABLE_TYPE,
+            classes = {GlobalExceptionHandler.class}))
 public class ProductControllerTest {
 
-  @Autowired private ProductController productController;
-  @Autowired private ProductTypeRepository productTypeRepository;
-  @Autowired private StoreRepository storeRepository;
-  @Autowired private UserRepository userRepository;
-  @MockitoBean private AuthService authService;
-  @MockitoBean private CloudinaryService cloudinaryService;
-  @Autowired private CoordinatesService coordinatesService;
+  @Autowired private MockMvc mockMvc;
+  @Autowired private ObjectMapper objectMapper;
 
-  private User testUser;
+  @MockitoBean private ProductService productService;
+
+  private UUID productId;
+  private UUID storeId;
+  private UUID productTypeId;
+
+  private Store store;
+  private Product product;
+  private ProductType productType;
 
   @BeforeEach
   void setUp() {
-    User user = new User();
-    user.setEmail("test-owner@test.com");
-    user.setPassword("password");
-    testUser = userRepository.save(user);
-  }
+    productId = UUID.randomUUID();
+    storeId = UUID.randomUUID();
+    productTypeId = UUID.randomUUID();
 
-  private User getTestUser() {
-    return testUser;
+    store = new Store();
+    store.setId(storeId);
+
+    productType = new ProductType();
+    productType.setId(productTypeId);
+    productType.setType("Test Type");
+
+    product = new Product();
+    product.setId(productId);
+    product.setName("Test Product");
+    product.setPriceInCents(1000);
+    product.setDescription("This is a test product");
+    product.setType(productType);
+    product.setStore(store);
   }
 
   @Test
-  public void shouldCreateNewProduct() {
-    // Create and save a product type
-
-    Storefront storefront = new Storefront();
-    storefront.setIsFirstCollections(true);
-    storefront.setPrimaryColor("#c65a3a");
-    storefront.setSecondaryColor("#19756a");
-
-    Store store = new Store();
-    store.setName("Test Store");
-    store.setEmail("test@example.com");
-    store.setLocation(coordinatesService.createPoint(0.0, 0.0));
-    store.setAddress("123 Test Street");
-    store.setOpeningHours("9am - 5pm");
-    store.setAcceptsShipping(true);
-    store.setStorefront(storefront);
-    store.setUser(getTestUser());
-
-    Store saved_store = storeRepository.save(store);
-
-    ProductType type = new ProductType();
-    type.setType("Test Product Type");
-    ProductType savedProductType = productTypeRepository.save(type);
-
+  @WithMockUser
+  public void shouldCreateNewProduct() throws Exception {
     ProductCreationDTO dto = new ProductCreationDTO();
     dto.setName("Test Product");
     dto.setPriceInCents(1000);
     dto.setDescription("This is a test product");
-    dto.setTypeId(savedProductType.getId());
+    dto.setTypeId(productTypeId);
 
-    Product product = productController.createProduct(dto, null, saved_store.getId()).getBody();
-    assert product != null;
-    assert product.getId() != null;
-    assert product.getName().equals(dto.getName());
+    when(productService.createProduct(any(), any(), any())).thenReturn(product);
+
+    MockPart dtoPart = new MockPart("dto", objectMapper.writeValueAsBytes(dto));
+    dtoPart.getHeaders().setContentType(MediaType.APPLICATION_JSON);
+
+    mockMvc
+        .perform(multipart("/api/v1/products").part(dtoPart).param("storeId", storeId.toString()))
+        .andExpect(status().isCreated())
+        .andExpect(jsonPath("$.id").value(productId.toString()))
+        .andExpect(jsonPath("$.name").value(product.getName()));
   }
 
   @Test
-  public void shouldUpdateProductDiscount() {
-
-    Storefront storefront = new Storefront();
-    storefront.setIsFirstCollections(true);
-    storefront.setPrimaryColor("#c65a3a");
-    storefront.setSecondaryColor("#19756a");
-
-    Store store = new Store();
-    store.setName("Test Store");
-    store.setEmail("test@example.com");
-    store.setLocation(coordinatesService.createPoint(0.0, 0.0));
-    store.setAddress("123 Test Street");
-    store.setOpeningHours("9am - 5pm");
-    store.setAcceptsShipping(true);
-    store.setStorefront(storefront);
-    store.setUser(getTestUser());
-
-    Store saved_store = storeRepository.save(store);
-
-    ProductType type = new ProductType();
-    type.setType("Test Product Type");
-    ProductType savedProductType = productTypeRepository.save(type);
-
-    ProductCreationDTO dto = new ProductCreationDTO();
-    dto.setName("Test Product");
-    dto.setPriceInCents(1000);
-    dto.setDescription("This is a test product");
-    dto.setTypeId(savedProductType.getId());
-
-    Product product = productController.createProduct(dto, null, saved_store.getId()).getBody();
-
+  @WithMockUser
+  public void shouldUpdateProductDiscount() throws Exception {
     ProductDiscountUpdateDTO discount = new ProductDiscountUpdateDTO();
     discount.setDiscountPercentage(70);
-    ResponseEntity<Product> response = productController.updateDiscount(product.getId(), discount);
-    assert response.getStatusCode() == HttpStatus.ACCEPTED;
-    Product updatedProduct = response.getBody();
-    assert updatedProduct != null;
-    assert updatedProduct.getDiscountPercentage().get() == 70;
+
+    product.setDiscountPercentage(70);
+
+    when(productService.updateProductDiscount(any(), any())).thenReturn(product);
+
+    mockMvc
+        .perform(
+            put("/api/v1/products/" + productId + "/discount")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(discount)))
+        .andExpect(status().isAccepted())
+        .andExpect(jsonPath("$.discountPercentage").value(70));
   }
 
   @Test
-  public void shouldThrowResourceNotFoundException_WhenUpdatingDiscountForNonExistentProduct() {
-    ProductDiscountUpdateDTO discount = new ProductDiscountUpdateDTO();
-    discount.setDiscountPercentage(50);
+  public void shouldGetProductById() throws Exception {
+    when(productService.getProductById(productId)).thenReturn(product);
 
-    UUID nonExistentId = UUID.randomUUID();
-
-    assertThrows(
-        ResourceNotFoundException.class,
-        () -> {
-          productController.updateDiscount(nonExistentId, discount);
-        });
+    mockMvc
+        .perform(get("/api/v1/products/" + productId))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.id").value(productId.toString()))
+        .andExpect(jsonPath("$.name").value(product.getName()));
   }
 
   @Test
-  public void shouldThrowResourceNotFoundException_WhenGettingNonExistentProduct() {
-    UUID nonExistentId = UUID.randomUUID();
-    assertThrows(
-        ResourceNotFoundException.class,
-        () -> {
-          productController.getProductById(nonExistentId);
-        });
+  public void shouldGetAllProducts() throws Exception {
+    when(productService.findAll()).thenReturn(List.of(product));
+
+    mockMvc
+        .perform(get("/api/v1/products"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.size()").value(1))
+        .andExpect(jsonPath("$[0].name").value(product.getName()));
   }
 
   @Test
-  public void shouldGetProductById() {
-    Storefront storefront = new Storefront();
-    storefront.setIsFirstCollections(true);
-    storefront.setPrimaryColor("#c65a3a");
-    storefront.setSecondaryColor("#19756a");
+  public void shouldGetAllDiscountedProducts() throws Exception {
+    product.setDiscountPercentage(10);
+    when(productService.getAllDiscountedProducts()).thenReturn(List.of(product));
 
-    Store store = new Store();
-    store.setName("Test Store");
-    store.setEmail("test@example.com");
-    store.setLocation(coordinatesService.createPoint(0.0, 0.0));
-    store.setAddress("123 Test Street");
-    store.setOpeningHours("9am - 5pm");
-    store.setAcceptsShipping(true);
-    store.setStorefront(storefront);
-    store.setUser(getTestUser());
-
-    Store saved_store = storeRepository.save(store);
-
-    ProductType type = new ProductType();
-    type.setType("Test Product Type");
-    ProductType savedProductType = productTypeRepository.save(type);
-
-    ProductCreationDTO dto = new ProductCreationDTO();
-    dto.setName("Test Product");
-    dto.setPriceInCents(1000);
-    dto.setDescription("This is a test product");
-    dto.setTypeId(savedProductType.getId());
-
-    Product product = productController.createProduct(dto, null, saved_store.getId()).getBody();
-
-    ResponseEntity<ProductDTO> response = productController.getProductById(product.getId());
-    assert response.getStatusCode() == HttpStatus.OK;
-    ProductDTO productDTO = response.getBody();
-    assert productDTO != null;
-    assert productDTO.getName().equals(dto.getName());
+    mockMvc
+        .perform(get("/api/v1/products/discounted"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.size()").value(1))
+        .andExpect(jsonPath("$[0].name").value(product.getName()));
   }
 
   @Test
-  public void shouldGetAllProducts() {
+  public void shouldReturnProductsList_whenStoreHasProducts() throws Exception {
+    when(productService.findByStoreId(storeId)).thenReturn(List.of(product));
 
-    Storefront storefront = new Storefront();
-    storefront.setIsFirstCollections(true);
-    storefront.setPrimaryColor("#c65a3a");
-    storefront.setSecondaryColor("#19756a");
-
-    Store store = new Store();
-    store.setName("Test Store");
-    store.setEmail("test@example.com");
-    store.setLocation(coordinatesService.createPoint(0.0, 0.0));
-    store.setAddress("123 Test Street");
-    store.setOpeningHours("9am - 5pm");
-    store.setAcceptsShipping(true);
-    store.setStorefront(storefront);
-    store.setUser(getTestUser());
-
-    Store saved_store = storeRepository.save(store);
-
-    ProductType type = new ProductType();
-    type.setType("Test Product Type");
-    ProductType savedProductType = productTypeRepository.save(type);
-
-    ProductCreationDTO dto = new ProductCreationDTO();
-    dto.setName("Test Product");
-    dto.setPriceInCents(1000);
-    dto.setDescription("This is a test product");
-    dto.setTypeId(savedProductType.getId());
-
-    productController.createProduct(dto, null, saved_store.getId());
-    dto.setName("Test Product 2");
-    productController.createProduct(dto, null, saved_store.getId());
-
-    ResponseEntity<List<ProductDTO>> response = productController.getAllProducts();
-    assert response.getStatusCode() == HttpStatus.OK;
-    List<ProductDTO> products = response.getBody();
-    assert products != null;
-    assert products.size() >= 2;
+    mockMvc
+        .perform(get("/api/v1/stores/" + storeId + "/products"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.size()").value(1))
+        .andExpect(jsonPath("$[0].name").value(product.getName()));
   }
 
   @Test
-  public void shouldGetAllDiscountedProducts() {
+  @WithMockUser
+  public void shouldUpdateProduct() throws Exception {
+    ProductUpdateDTO dto = new ProductUpdateDTO();
+    dto.setName("Updated Product");
 
-    Storefront storefront = new Storefront();
-    storefront.setIsFirstCollections(true);
-    storefront.setPrimaryColor("#c65a3a");
-    storefront.setSecondaryColor("#19756a");
+    product.setName("Updated Product");
 
-    Store store = new Store();
-    store.setName("Test Store");
-    store.setEmail("test@example.com");
-    store.setLocation(coordinatesService.createPoint(0.0, 0.0));
-    store.setAddress("123 Test Street");
-    store.setOpeningHours("9am - 5pm");
-    store.setAcceptsShipping(true);
-    store.setStorefront(storefront);
-    store.setUser(getTestUser());
+    when(productService.updateProduct(any(), any(), any())).thenReturn(product);
 
-    Store saved_store = storeRepository.save(store);
+    MockPart dtoPart = new MockPart("product", objectMapper.writeValueAsBytes(dto));
+    dtoPart.getHeaders().setContentType(MediaType.APPLICATION_JSON);
 
-    ProductType type = new ProductType();
-    type.setType("Test Product Type");
-    ProductType savedProductType = productTypeRepository.save(type);
-
-    ProductCreationDTO dto = new ProductCreationDTO();
-    dto.setName("Test Product");
-    dto.setPriceInCents(1000);
-    dto.setDescription("This is a test product");
-    dto.setTypeId(savedProductType.getId());
-
-    var product = productController.createProduct(dto, null, saved_store.getId());
-    dto.setName("Test Product 2");
-    productController.createProduct(dto, null, saved_store.getId());
-
-    ProductDiscountUpdateDTO discountModificationDTO = new ProductDiscountUpdateDTO();
-    discountModificationDTO.setDiscountPercentage(20);
-    productController.updateDiscount(product.getBody().getId(), discountModificationDTO);
-    ResponseEntity<List<ProductDTO>> response = productController.getDiscountedProducts();
-    assert response.getStatusCode() == HttpStatus.OK;
-    List<ProductDTO> products = response.getBody();
-    assert products != null;
-    assert products.size() >= 1;
+    mockMvc
+        .perform(
+            multipart("/api/v1/products/" + productId)
+                .part(dtoPart)
+                .with(
+                    request -> {
+                      request.setMethod("PUT");
+                      return request;
+                    }))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.name").value("Updated Product"));
   }
 
   @Test
-  public void shouldReturnProductsList_whenStoreHasProducts() {
-    Storefront storefront = new Storefront();
-    storefront.setIsFirstCollections(true);
-    storefront.setPrimaryColor("#c65a3a");
-    storefront.setSecondaryColor("#19756a");
+  @WithMockUser
+  public void shouldDeleteProduct() throws Exception {
+    doNothing().when(productService).deleteProduct(productId);
 
-    Store store = new Store();
-    store.setName("Test Store");
-    store.setEmail("test@example.com");
-    store.setLocation(coordinatesService.createPoint(0.0, 0.0));
-    store.setAddress("123 Test Street");
-    store.setOpeningHours("9am - 5pm");
-    store.setAcceptsShipping(true);
-    store.setUser(getTestUser());
-    store.setStorefront(storefront);
-
-    store = storeRepository.save(store);
-
-    ProductType type = new ProductType();
-    type.setType("Test Product Type");
-    type = productTypeRepository.save(type);
-
-    ProductCreationDTO dto = new ProductCreationDTO();
-    dto.setName("Test Product");
-    dto.setPriceInCents(1000);
-    dto.setDescription("This is a test product");
-    dto.setTypeId(type.getId());
-
-    Product product1 = productController.createProduct(dto, null, store.getId()).getBody();
-    Product product2 = productController.createProduct(dto, null, store.getId()).getBody();
-
-    ResponseEntity<List<ProductDTO>> response = productController.getByStoreId(store.getId());
-    assertEquals(response.getStatusCode(), HttpStatus.OK);
-
-    List<ProductDTO> dtos = response.getBody();
-    assertNotNull(dtos);
-    assertEquals(dtos.size(), 2);
-    assertEquals(dtos.get(0).getId(), product1.getId());
-    assertEquals(dtos.get(1).getId(), product2.getId());
-  }
-
-  @Test
-  public void shouldReturnEmptyList_whenStoreHasNoProducts() {
-    Storefront storefront = new Storefront();
-    storefront.setIsFirstCollections(true);
-    storefront.setPrimaryColor("#c65a3a");
-    storefront.setSecondaryColor("#19756a");
-
-    Store store = new Store();
-    store.setName("Test Store");
-    store.setEmail("test@example.com");
-    store.setLocation(coordinatesService.createPoint(0.0, 0.0));
-    store.setAddress("123 Test Street");
-    store.setOpeningHours("9am - 5pm");
-    store.setAcceptsShipping(true);
-    store.setUser(getTestUser());
-    store.setStorefront(storefront);
-
-    store = storeRepository.save(store);
-
-    ResponseEntity<List<ProductDTO>> response = productController.getByStoreId(store.getId());
-    assertEquals(response.getStatusCode(), HttpStatus.OK);
-
-    List<ProductDTO> dtos = response.getBody();
-    assertNotNull(dtos);
-    assertEquals(dtos.size(), 0);
+    mockMvc.perform(delete("/api/v1/products/" + productId)).andExpect(status().isOk());
   }
 }

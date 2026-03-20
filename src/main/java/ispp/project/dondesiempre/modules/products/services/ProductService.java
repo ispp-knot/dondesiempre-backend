@@ -5,6 +5,7 @@ import ispp.project.dondesiempre.modules.common.exceptions.InvalidRequestExcepti
 import ispp.project.dondesiempre.modules.common.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.modules.common.exceptions.UnauthorizedException;
 import ispp.project.dondesiempre.modules.products.dtos.ProductCreationDTO;
+import ispp.project.dondesiempre.modules.products.dtos.ProductUpdateDTO;
 import ispp.project.dondesiempre.modules.products.models.Product;
 import ispp.project.dondesiempre.modules.products.repositories.ProductRepository;
 import ispp.project.dondesiempre.modules.stores.models.Store;
@@ -71,11 +72,6 @@ public class ProductService {
   }
 
   @Transactional(readOnly = true)
-  public List<Product> getAllProducts() {
-    return productRepository.findAll();
-  }
-
-  @Transactional(readOnly = true)
   public List<Product> getOutfitProductsById(UUID outfitId) {
     return productRepository.findOutfitProductsByOutfitId(outfitId);
   }
@@ -97,7 +93,62 @@ public class ProductService {
   }
 
   @Transactional
-  public List<Product> findByStore(Store store) {
-    return productRepository.findByStoreId(store.getId());
+  public List<Product> findByStoreId(UUID storeId) {
+    return productRepository.findByStoreId(storeId);
+  }
+
+  @Transactional(
+      rollbackFor = {
+        UnauthorizedException.class,
+        ResourceNotFoundException.class,
+        InvalidRequestException.class
+      })
+  public Product updateProduct(UUID productId, ProductUpdateDTO dto, MultipartFile image)
+      throws UnauthorizedException, ResourceNotFoundException, InvalidRequestException {
+    Product product =
+        productRepository
+            .findById(productId)
+            .orElseThrow(
+                () ->
+                    new ResourceNotFoundException("Product with ID " + productId + " not found."));
+    authService.assertUserOwnsStore(product.getStore());
+
+    if (dto != null) {
+      if (dto.getName() != null) {
+        product.setName(dto.getName());
+      }
+      if (dto.getPriceInCents() != null) {
+        product.setPriceInCents(dto.getPriceInCents());
+      }
+      if (dto.getDescription() != null) {
+        product.setDescription(dto.getDescription());
+      }
+      if (dto.getProductTypeId() != null) {
+        product.setType(productTypeService.getProductTypeById(dto.getProductTypeId()));
+      }
+    }
+
+    if (image != null) {
+      product.setImage(cloudinaryService.upload(image));
+    }
+
+    return productRepository.save(product);
+  }
+
+  @Transactional(rollbackFor = {UnauthorizedException.class, ResourceNotFoundException.class})
+  public void deleteProduct(UUID productId)
+      throws UnauthorizedException, ResourceNotFoundException {
+    Product product =
+        productRepository
+            .findById(productId)
+            .orElseThrow(
+                () ->
+                    new ResourceNotFoundException("Product with ID " + productId + " not found."));
+    authService.assertUserOwnsStore(product.getStore());
+    productRepository.delete(product);
+  }
+
+  public List<Product> findAll() {
+    return productRepository.findAll();
   }
 }
