@@ -1,5 +1,6 @@
 package ispp.project.dondesiempre.modules.promotions.dtos;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Size;
@@ -21,6 +22,7 @@ public class PromotionUpdateDTO {
   @Max(100)
   private Integer discountPercentage;
 
+  @JsonProperty("isActive")
   private boolean isActive;
 
   private List<UUID> productIds;
