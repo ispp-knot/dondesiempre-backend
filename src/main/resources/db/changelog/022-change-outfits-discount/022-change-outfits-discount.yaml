@@ -18,29 +18,21 @@ databaseChangeLog:
       changes:
         - sql:
             sql: |
+              WITH prices_in_cents AS (
+                SELECT op.outfit_id AS outfit_id, SUM(p.price_in_cents) AS price_in_cents
+                  FROM outfit_products AS op INNER JOIN products AS p ON op.product_id = p.id
+                  GROUP BY op.outfit_id
+              )
               UPDATE outfits AS o
               SET discount_percentage =
                 CASE
                   WHEN o.discounted_price_in_cents IS NULL
-                    OR o.discounted_price_in_cents = (
-                        SELECT SUM(p.price_in_cents)
-                          FROM outfit_products AS op INNER JOIN products AS p ON op.product_id = p.id
-                          WHERE op.outfit_id = o.id
-                        )
+                    OR o.discounted_price_in_cents = (SELECT p.price_in_cents FROM prices_in_cents AS p WHERE p.outfit_id = o.id)
                     THEN NULL
                   ELSE GREATEST(
                     ROUND(
-                      100.0 * (
-                        (
-                          SELECT SUM(p.price_in_cents)
-                            FROM outfit_products AS op INNER JOIN products AS p ON op.product_id = p.id
-                            WHERE op.outfit_id = o.id
-                        ) - o.discounted_price_in_cents
-                      ) / (
-                        SELECT SUM(p.price_in_cents)
-                          FROM outfit_products AS op INNER JOIN products AS p ON op.product_id = p.id
-                          WHERE op.outfit_id = o.id
-                      )
+                      100.0 * ((SELECT p.price_in_cents FROM prices_in_cents AS p WHERE p.outfit_id = o.id) - o.discounted_price_in_cents)
+                      / (SELECT p.price_in_cents FROM prices_in_cents AS p WHERE p.outfit_id = o.id)
                     ),
                     1
                   )
