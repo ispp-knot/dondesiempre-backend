@@ -243,14 +243,14 @@ public class DataSeeder implements CommandLineRunner {
     createVariant(greta_pendientes, productSizes.get("S"), productColors.get("Beige"), true);
 
     Outfit greta_outfit1 =
-        createOutfit("Conjunto Mihai", 0, 12398, greta, "outfit1_conjunto_mihai.jpg");
+        createOutfit("Conjunto Mihai", 0, 0, greta, "outfit1_conjunto_mihai.jpg");
     createOutfitTagRelation(greta_outfit1, outfitTags.get("Elegante"));
     createOutfitProduct(greta_outfit1, greta_vestidoBlanco, 0);
     createOutfitProduct(greta_outfit1, greta_botasNegras1, 1);
     createOutfitProduct(greta_outfit1, greta_bolsoMarron, 2);
 
     Outfit greta_outfit2 =
-        createOutfit("Conjunto Galilea", 1, 11198, greta, "outfit2_conjunto_galilea.jpg");
+        createOutfit("Conjunto Galilea", 1, 25, greta, "outfit2_conjunto_galilea.jpg");
     createOutfitTagRelation(greta_outfit2, outfitTags.get("Casual"));
     createOutfitProduct(greta_outfit2, greta_vestidoAzul, 0);
     createOutfitProduct(greta_outfit2, greta_bolsoBeige, 1);
@@ -317,13 +317,13 @@ public class DataSeeder implements CommandLineRunner {
             "outfit4_tacones_beige_44.99.jpg");
     createVariant(rom_taconesBeige, productSizes.get("M"), productColors.get("Beige"), true);
 
-    Outfit rom_outfit1 = createOutfit("Verano Rojo", 0, 8958, romantika, "outfit3_verano_rojo.jpg");
+    Outfit rom_outfit1 = createOutfit("Verano Rojo", 0, 10, romantika, "outfit3_verano_rojo.jpg");
     createOutfitTagRelation(rom_outfit1, outfitTags.get("Verano"));
     createOutfitProduct(rom_outfit1, rom_vestidoRojo, 0);
     createOutfitProduct(rom_outfit1, rom_sandaliasRojas, 1);
 
     Outfit rom_outfit2 =
-        createOutfit("Primavera Verde", 1, 7598, romantika, "outfit4_primavera_verde.jpg");
+        createOutfit("Primavera Verde", 1, 15, romantika, "outfit4_primavera_verde.jpg");
     createOutfitTagRelation(rom_outfit2, outfitTags.get("Verano"));
     createOutfitProduct(rom_outfit2, rom_vestidoVerde, 0);
     createOutfitProduct(rom_outfit2, rom_taconesBeige, 1);
@@ -372,8 +372,7 @@ public class DataSeeder implements CommandLineRunner {
     createVariant(ss_crocs, productSizes.get("M"), productColors.get("Negro"), true);
 
     Outfit ss_outfit1 =
-        createOutfit(
-            "Tranquilidad Casera", 0, 2878, sanSebastian, "outfit5_tranquilidad_casera.jpg");
+        createOutfit("Tranquilidad Casera", 0, 0, sanSebastian, "outfit5_tranquilidad_casera.jpg");
     createOutfitTagRelation(ss_outfit1, outfitTags.get("Casual"));
     createOutfitProduct(ss_outfit1, ss_albornoz, 0);
     createOutfitProduct(ss_outfit1, ss_crocs, 1);
@@ -416,8 +415,7 @@ public class DataSeeder implements CommandLineRunner {
             "outfit6_suéter_marrón_49.99.jpg");
     createVariant(roire_sueterMarron, productSizes.get("M"), productColors.get("Beige"), true);
 
-    Outfit roire_outfit1 =
-        createOutfit("Savana Otoñal", 0, 6398, roire, "outfit6_savana_otoñal.jpg");
+    Outfit roire_outfit1 = createOutfit("Savana Otoñal", 0, 20, roire, "outfit6_savana_otoñal.jpg");
     createOutfitTagRelation(roire_outfit1, outfitTags.get("Casual"));
     createOutfitProduct(roire_outfit1, roire_faldaCebra, 0);
     createOutfitProduct(roire_outfit1, roire_sueterMarron, 1);
@@ -469,7 +467,7 @@ public class DataSeeder implements CommandLineRunner {
     createVariant(pine_faldaRoja, productSizes.get("M"), productColors.get("Rojo"), true);
 
     Outfit pine_outfit1 =
-        createOutfit("Pasión de Otoño", 0, 4958, pineapple, "outfit7_pasión_de_otoño.jpg");
+        createOutfit("Pasión de Otoño", 0, 30, pineapple, "outfit7_pasión_de_otoño.jpg");
     createOutfitTagRelation(pine_outfit1, outfitTags.get("Casual"));
     createOutfitProduct(pine_outfit1, pine_camisaBlanca, 0);
     createOutfitProduct(pine_outfit1, pine_faldaRoja, 1);
@@ -556,7 +554,7 @@ public class DataSeeder implements CommandLineRunner {
     createVariant(alf_botasNegras, productSizes.get("M"), productColors.get("Negro"), true);
 
     Outfit alf_outfit1 =
-        createOutfit("Cómodo Invierno", 0, 17358, alfonsi, "outfit8_cómodo_invierno.jpg");
+        createOutfit("Cómodo Invierno", 0, 0, alfonsi, "outfit8_cómodo_invierno.jpg");
     createOutfitTagRelation(alf_outfit1, outfitTags.get("Invierno"));
     createOutfitProduct(alf_outfit1, alf_parkaBlanca, 0);
     createOutfitProduct(alf_outfit1, alf_pantalonesNegros, 1);
@@ -665,13 +663,13 @@ public class DataSeeder implements CommandLineRunner {
     createVariant(mg_sueterVerde, productSizes.get("M"), productColors.get("Verde"), true);
 
     Outfit mg_outfit1 =
-        createOutfit("Negocio Oceánico", 0, 6878, marGovantes, "outfit_9_negocio_oceánico.jpg");
+        createOutfit("Negocio Oceánico", 0, 0, marGovantes, "outfit_9_negocio_oceánico.jpg");
     createOutfitTagRelation(mg_outfit1, outfitTags.get("Formal"));
     createOutfitProduct(mg_outfit1, mg_americanaMarina, 0);
     createOutfitProduct(mg_outfit1, mg_pantalonesMari, 1);
 
     Outfit mg_outfit2 =
-        createOutfit("Río Interior", 1, 8398, marGovantes, "outfit_10_río_interior.jpg");
+        createOutfit("Río Interior", 1, 0, marGovantes, "outfit_10_río_interior.jpg");
     createOutfitTagRelation(mg_outfit2, outfitTags.get("Casual"));
     createOutfitProduct(mg_outfit2, mg_camisaFloral, 0);
     createOutfitProduct(mg_outfit2, mg_pantalonesVerdes, 1);
@@ -844,12 +842,12 @@ public class DataSeeder implements CommandLineRunner {
   }
 
   private Outfit createOutfit(
-      String name, int index, int discountedPriceInCents, Store store, String imageFilename) {
+      String name, int index, int discountPercentage, Store store, String imageFilename) {
     Outfit outfit = new Outfit();
     outfit.setId(seedUuid("outfit:" + store.getId() + ":" + name));
     outfit.setName(name);
     outfit.setIndex(index);
-    outfit.setDiscountedPriceInCents(discountedPriceInCents);
+    outfit.setDiscountPercentage(discountPercentage);
     outfit.setStore(store);
 
     String imageUrl = uploadImage(imageFilename);

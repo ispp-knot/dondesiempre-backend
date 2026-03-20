@@ -92,7 +92,7 @@ class OutfitsControllerTest {
     outfit.setName("Test Outfit");
     outfit.setDescription("Test Description");
     outfit.setIndex(0);
-    outfit.setDiscountedPriceInCents(1000);
+    outfit.setDiscountPercentage(10);
     outfit.setStore(store);
 
     ProductType productType = new ProductType();
@@ -191,7 +191,7 @@ class OutfitsControllerTest {
   void update_shouldReturnOk_whenOutfitExists() throws Exception {
     OutfitUpdateDTO updateDTO = new OutfitUpdateDTO();
     updateDTO.setName("Updated Outfit");
-    updateDTO.setDiscountedPriceInCents(2000);
+    updateDTO.setDiscountPercentage(20);
     updateDTO.setIndex(1);
 
     when(outfitService.update(eq(outfitId), any(), any())).thenReturn(outfit);

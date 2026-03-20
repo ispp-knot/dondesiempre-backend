@@ -92,7 +92,7 @@ class OutfitServiceTest {
     outfit.setName("Test Outfit");
     outfit.setDescription("Test Description");
     outfit.setIndex(0);
-    outfit.setDiscountedPriceInCents(1000);
+    outfit.setDiscountPercentage(10);
     outfit.setStore(store);
 
     product = new Product();
@@ -194,7 +194,7 @@ class OutfitServiceTest {
     assertNotNull(result);
     assertEquals(outfitId, result.getId());
     verify(outfitRepository, times(1)).save(any());
-    assertEquals(1000, result.getDiscountedPriceInCents());
+    assertEquals(10, result.getDiscountPercentage());
   }
 
   @Test
@@ -232,7 +232,7 @@ class OutfitServiceTest {
     OutfitUpdateDTO dto = new OutfitUpdateDTO();
     dto.setName("Updated Outfit");
     dto.setDescription("Updated Description");
-    dto.setDiscountedPriceInCents(2000);
+    dto.setDiscountPercentage(20);
     dto.setIndex(1);
 
     when(outfitRepository.findById(outfitId)).thenReturn(Optional.of(outfit));
