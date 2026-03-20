@@ -35,3 +35,5 @@ databaseChangeLog:
       file: db/changelog/020-add-social-media/add-social-media.changelog.yaml
   - include:
       file: db/changelog/021-eliminate-collections/eliminate-collections.changelog.yaml
+  - include:
+      file: db/changelog/022-change-outfits-discount/change-outfits-discount.changelog.yaml

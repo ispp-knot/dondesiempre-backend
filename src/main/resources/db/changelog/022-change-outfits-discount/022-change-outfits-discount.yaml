@@ -1,0 +1,55 @@
+databaseChangeLog:
+  - changeSet:
+      id: add-discount-percentage-to-outfits
+      author: pepe (adapted by grnln)
+      changes:
+        - addColumn:
+            tableName: outfits
+            columns:
+              - column:
+                  name: discount_percentage
+                  type: INT
+                  constraints:
+                    nullable: true
+
+  - changeSet:
+      id: migrate-outfit-discount-values
+      author: pepe (adapted by grnln)
+      changes:
+        - sql:
+            sql: |
+              UPDATE outfits AS o
+              SET discount_percentage =
+                CASE
+                  WHEN o.discounted_price_in_cents IS NULL
+                    OR o.discounted_price_in_cents = (
+                        SELECT SUM(p.price_in_cents)
+                          FROM outfit_products AS op INNER JOIN products AS p ON op.product_id = p.id
+                          WHERE op.outfit_id = o.id
+                        )
+                    THEN NULL
+                  ELSE GREATEST(
+                    ROUND(
+                      100.0 * (
+                        (
+                          SELECT SUM(p.price_in_cents)
+                            FROM outfit_products AS op INNER JOIN products AS p ON op.product_id = p.id
+                            WHERE op.outfit_id = o.id
+                        ) - o.discounted_price_in_cents
+                      ) / (
+                        SELECT SUM(p.price_in_cents)
+                          FROM outfit_products AS op INNER JOIN products AS p ON op.product_id = p.id
+                          WHERE op.outfit_id = o.id
+                      )
+                    ),
+                    1
+                  )
+                END;
+
+  - changeSet:
+      id: drop-outfit-discounted-price
+      author: pepe (adapted by grnln)
+      changes:
+        - dropColumn:
+            tableName: outfits
+            columnName: discounted_price_in_cents
