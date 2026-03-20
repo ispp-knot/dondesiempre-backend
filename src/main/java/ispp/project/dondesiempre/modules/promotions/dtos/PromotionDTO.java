@@ -20,6 +20,7 @@ public class PromotionDTO {
   private String description;
   private UUID storeId;
   private List<ProductDTO> products;
+  private String promotionImageUrl;
 
   public PromotionDTO(Promotion promotion, List<ProductDTO> products) {
     this.id = promotion.getId();
@@ -29,5 +30,6 @@ public class PromotionDTO {
     this.description = promotion.getDescription().orElse(null);
     this.storeId = promotion.getStore().getId();
     this.products = products;
+    this.promotionImageUrl = promotion.getPromotionImageUrl().orElse(null);
   }
 }
