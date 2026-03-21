@@ -1,5 +1,6 @@
 package ispp.project.dondesiempre.modules.products.controllers;
 
+import ispp.project.dondesiempre.modules.products.dtos.ProductTypeDTO;
 import ispp.project.dondesiempre.modules.products.models.ProductType;
 import ispp.project.dondesiempre.modules.products.services.ProductTypeService;
 import java.util.List;
@@ -20,15 +21,16 @@ public class ProductTypeController {
   private final ProductTypeService productTypeService;
 
   @GetMapping("/product-types")
-  public ResponseEntity<List<ProductType>> getAllProductTypes() {
+  public ResponseEntity<List<ProductTypeDTO>> getAllProductTypes() {
 
     List<ProductType> productTypes = productTypeService.findAll();
-    return new ResponseEntity<>(productTypes, HttpStatus.OK);
+    List<ProductTypeDTO> productTypeDTOs = productTypes.stream().map(ProductTypeDTO::new).toList();
+    return new ResponseEntity<>(productTypeDTOs, HttpStatus.OK);
   }
 
   @GetMapping("/product-types/{id}")
-  public ResponseEntity<ProductType> getProductTypeById(@PathVariable UUID id) {
+  public ResponseEntity<ProductTypeDTO> getProductTypeById(@PathVariable UUID id) {
     ProductType productType = productTypeService.getProductTypeById(id);
-    return new ResponseEntity<>(productType, HttpStatus.OK);
+    return new ResponseEntity<>(new ProductTypeDTO(productType), HttpStatus.OK);
   }
 }
