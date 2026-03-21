@@ -12,20 +12,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.BeanUtils;
-import org.springframework.context.ApplicationContext;
-
 import ispp.project.dondesiempre.modules.auth.models.User;
 import ispp.project.dondesiempre.modules.auth.services.AuthService;
 import ispp.project.dondesiempre.modules.common.exceptions.InvalidRequestException;
@@ -45,31 +31,32 @@ import ispp.project.dondesiempre.modules.stores.models.Store;
 import ispp.project.dondesiempre.modules.stores.models.Storefront;
 import ispp.project.dondesiempre.modules.stores.services.StoreService;
 import ispp.project.dondesiempre.modules.stores.services.StorefrontService;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationContext;
 
 @ExtendWith(MockitoExtension.class)
 class OutfitServiceTest {
 
-  @Mock
-  private OutfitRepository outfitRepository;
-  @Mock
-  private OutfitProductService outfitProductService;
-  @Mock
-  private OutfitTagRelationService outfitTagRelationService;
-  @Mock
-  private OutfitTagService outfitTagService;
-  @Mock
-  private ProductService productService;
-  @Mock
-  private AuthService authService;
-  @Mock
-  private StorefrontService storefrontService;
-  @Mock
-  private StoreService storeService;
-  @Mock
-  private ApplicationContext applicationContext;
+  @Mock private OutfitRepository outfitRepository;
+  @Mock private OutfitProductService outfitProductService;
+  @Mock private OutfitTagRelationService outfitTagRelationService;
+  @Mock private OutfitTagService outfitTagService;
+  @Mock private ProductService productService;
+  @Mock private AuthService authService;
+  @Mock private StorefrontService storefrontService;
+  @Mock private StoreService storeService;
+  @Mock private ApplicationContext applicationContext;
 
-  @InjectMocks
-  private OutfitService outfitService;
+  @InjectMocks private OutfitService outfitService;
 
   private UUID outfitId;
   private UUID productId;
@@ -476,12 +463,13 @@ class OutfitServiceTest {
   }
 
   @Test
-  void shouldThrowInvalidRequestException_whenOutfitHasLessThanTwoProducts() throws ResourceNotFoundException {
+  void shouldThrowInvalidRequestException_whenOutfitHasLessThanTwoProducts()
+      throws ResourceNotFoundException {
     when(outfitRepository.findById(outfitId)).thenReturn(Optional.of(outfit));
-    when(outfitProductService.findOutfitProductsById(outfitId))
-        .thenReturn(new ArrayList<>());
+    when(outfitProductService.findOutfitProductsById(outfitId)).thenReturn(new ArrayList<>());
 
-    assertThrows(InvalidRequestException.class, () -> outfitService.removeProduct(outfitId, product));
+    assertThrows(
+        InvalidRequestException.class, () -> outfitService.removeProduct(outfitId, product));
 
     verify(outfitProductService, never()).delete(outfitProduct);
   }
