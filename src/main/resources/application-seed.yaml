@@ -5,6 +5,8 @@ spring:
   main:
     web-application-type: none
 
+AES_SECRET_KEY: VICV&EZWVr"G8e2s+Xmg}bOy^&VK6gV+
+
 seed:
   random-seed: 42
   client-count: 10
