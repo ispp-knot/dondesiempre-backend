@@ -230,7 +230,7 @@ class OutfitServiceTest {
     OutfitUpdateDTO dto = new OutfitUpdateDTO();
     dto.setName("Updated Outfit");
     dto.setDescription("Updated Description");
-    dto.setDiscountedPriceInCents(2000);
+    dto.setDiscountPercentage(20);
 
     when(outfitRepository.findById(outfitId)).thenReturn(Optional.of(outfit));
     when(outfitRepository.save(any())).thenReturn(outfit);

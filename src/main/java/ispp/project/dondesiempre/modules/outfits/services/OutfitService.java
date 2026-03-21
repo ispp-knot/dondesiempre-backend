@@ -168,7 +168,7 @@ public class OutfitService {
 
     outfitToUpdate.setName(dto.getName());
     outfitToUpdate.setDescription(dto.getDescription());
-    outfitToUpdate.setDiscountedPriceInCents(dto.getDiscountedPriceInCents());
+    outfitToUpdate.setDiscountPercentage(dto.getDiscountPercentage());
 
     if (image != null && !image.isEmpty()) {
       outfitToUpdate.setImage(cloudinaryService.upload(image));

@@ -191,7 +191,7 @@ class OutfitsControllerTest {
   void update_shouldReturnOk_whenOutfitExists() throws Exception {
     OutfitUpdateDTO updateDTO = new OutfitUpdateDTO();
     updateDTO.setName("Updated Outfit");
-    updateDTO.setDiscountedPriceInCents(2000);
+    updateDTO.setDiscountPercentage(20);
 
     when(outfitService.update(eq(outfitId), any(), any())).thenReturn(outfit);
     when(outfitService.findTagsByOutfitId(outfitId)).thenReturn(List.of());
