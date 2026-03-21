@@ -7,6 +7,7 @@ import ispp.project.dondesiempre.modules.common.exceptions.UnauthorizedException
 import ispp.project.dondesiempre.modules.outfits.dtos.OutfitCreationDTO;
 import ispp.project.dondesiempre.modules.outfits.dtos.OutfitCreationProductDTO;
 import ispp.project.dondesiempre.modules.outfits.dtos.OutfitDTO;
+import ispp.project.dondesiempre.modules.outfits.dtos.OutfitSortDTO;
 import ispp.project.dondesiempre.modules.outfits.dtos.OutfitUpdateDTO;
 import ispp.project.dondesiempre.modules.outfits.models.Outfit;
 import ispp.project.dondesiempre.modules.outfits.models.OutfitProduct;
@@ -303,5 +304,31 @@ public class OutfitService {
     outfitTagRelationService.findOutfitTagsById(id).stream()
         .forEach(t -> outfitTagRelationService.deleteById(t.getId()));
     outfitRepository.deleteById(id);
+  }
+
+  @Transactional(
+      rollbackFor = {
+        UnauthorizedException.class,
+        ResourceNotFoundException.class,
+        InvalidRequestException.class
+      })
+  public void sortOutfits(UUID storeId, List<OutfitSortDTO> dtos)
+      throws UnauthorizedException, ResourceNotFoundException, InvalidRequestException {
+    Store store;
+
+    store = applicationContext.getBean(StoreService.class).findById(storeId);
+    authService.assertUserOwnsStore(store);
+
+    if (dtos.stream().mapToInt(OutfitSortDTO::getIndex).distinct().count() < dtos.size()) {
+      throw new InvalidRequestException("All outfits must have different indices.");
+    }
+
+    for (OutfitSortDTO dto : dtos) {
+      Outfit outfit;
+
+      outfit = applicationContext.getBean(OutfitService.class).findById(dto.getId());
+      outfit.setIndex(dto.getIndex());
+      outfitRepository.save(outfit);
+    }
   }
 }
