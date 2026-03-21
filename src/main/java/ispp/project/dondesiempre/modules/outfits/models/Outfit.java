@@ -7,6 +7,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -40,9 +41,10 @@ public class Outfit extends BaseEntity {
   @Column @Nullable @URL private String image;
 
   @Column
-  @NotNull
-  @Min(0)
-  private Integer discountedPriceInCents;
+  @Nullable
+  @Min(1)
+  @Max(100)
+  Integer discountPercentage;
 
   @NotNull
   @ManyToOne(optional = false)
@@ -55,5 +57,9 @@ public class Outfit extends BaseEntity {
 
   public Optional<String> getImage() {
     return Optional.ofNullable(this.image);
+  }
+
+  public Optional<Integer> getDiscountPercentage() {
+    return Optional.ofNullable(this.discountPercentage);
   }
 }
