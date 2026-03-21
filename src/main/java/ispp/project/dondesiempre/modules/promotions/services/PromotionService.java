@@ -182,10 +182,19 @@ public class PromotionService {
       // Remove existing associations
       promotionProductService.findByPromotionId(id).forEach(promotionProductService::delete);
 
+      // Forzar flush para que el DELETE llegue a BD antes del INSERT
+      promotionProductService.flushChanges(); //
       // Add new associations
       products.forEach(
           product ->
               applicationContext.getBean(PromotionService.class).addProduct(id, product.getId()));
+
+      // Update discounted percentage for each product and update it
+      products.forEach(
+          product -> {
+            productService.updateProductDiscount(
+                product.getId(), promotion.getDiscountPercentage());
+          });
     }
     try {
       return promotionRepository.save(promotion);
