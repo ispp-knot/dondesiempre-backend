@@ -1,6 +1,7 @@
 package ispp.project.dondesiempre.modules.products.dtos;
 
 import ispp.project.dondesiempre.modules.products.models.ProductType;
+import jakarta.validation.constraints.Size;
 import java.util.UUID;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,6 +13,8 @@ import lombok.Setter;
 public class ProductTypeDTO {
 
   private UUID id;
+
+  @Size(max = 255)
   private String name;
 
   public ProductTypeDTO(ProductType type) {
