@@ -1,6 +1,7 @@
 package ispp.project.dondesiempre.modules.promotions.dtos;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import ispp.project.dondesiempre.modules.promotions.validators.HasDateRange;
 import ispp.project.dondesiempre.modules.promotions.validators.StartDateBeforeEndDate;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -16,7 +17,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @StartDateBeforeEndDate
-public class PromotionUpdateDTO {
+public class PromotionUpdateDTO implements HasDateRange {
 
   @Size(max = 255)
   private String name;
