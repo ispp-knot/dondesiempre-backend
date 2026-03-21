@@ -164,7 +164,6 @@ class OutfitsControllerTest {
 
     OutfitCreationDTO creationDTO = new OutfitCreationDTO();
     creationDTO.setName("New Outfit");
-    creationDTO.setIndex(0);
     creationDTO.setTags(List.of(TEST_TAG));
     creationDTO.setProducts(List.of(productDTO));
 
@@ -192,7 +191,6 @@ class OutfitsControllerTest {
     OutfitUpdateDTO updateDTO = new OutfitUpdateDTO();
     updateDTO.setName("Updated Outfit");
     updateDTO.setDiscountedPriceInCents(2000);
-    updateDTO.setIndex(1);
 
     when(outfitService.update(eq(outfitId), any(), any())).thenReturn(outfit);
     when(outfitService.findTagsByOutfitId(outfitId)).thenReturn(List.of());

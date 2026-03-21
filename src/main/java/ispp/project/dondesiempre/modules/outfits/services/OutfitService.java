@@ -118,18 +118,22 @@ public class OutfitService {
       throws UnauthorizedException, ResourceNotFoundException, InvalidRequestException {
     Outfit outfit;
     UUID outfitId;
+    List<Outfit> outfitsOfStore;
 
     outfit = new Outfit();
 
     outfit.setName(dto.getName());
     outfit.setDescription(dto.getDescription());
-    outfit.setIndex(dto.getIndex());
+
     if (image != null && !image.isEmpty()) {
       outfit.setImage(cloudinaryService.upload(image));
     }
     Store store = storeService.findById(storeId);
     authService.assertUserOwnsStore(store);
     outfit.setStore(store);
+
+    outfitsOfStore = applicationContext.getBean(OutfitService.class).findByStore(store);
+    outfit.setIndex(outfitsOfStore.stream().mapToInt(Outfit::getIndex).max().orElse(-1) + 1);
 
     if (dto.getProducts() == null || (dto.getProducts() != null && dto.getProducts().size() <= 0)) {
       throw new InvalidRequestException("An outfit cannot be created without products.");
@@ -176,11 +180,10 @@ public class OutfitService {
     outfitToUpdate.setName(dto.getName());
     outfitToUpdate.setDescription(dto.getDescription());
     outfitToUpdate.setDiscountedPriceInCents(dto.getDiscountedPriceInCents());
+
     if (image != null && !image.isEmpty()) {
       outfitToUpdate.setImage(cloudinaryService.upload(image));
     }
-    outfitToUpdate.setIndex(dto.getIndex());
-
     return outfitRepository.save(outfitToUpdate);
   }
 

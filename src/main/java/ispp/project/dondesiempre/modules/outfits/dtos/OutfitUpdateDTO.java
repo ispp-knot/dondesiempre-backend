@@ -11,9 +11,6 @@ import lombok.Setter;
 @NoArgsConstructor
 public class OutfitUpdateDTO {
 
-  @Min(0)
-  private Integer index;
-
   @Size(max = 255)
   private String name;
 

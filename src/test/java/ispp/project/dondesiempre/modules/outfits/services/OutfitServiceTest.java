@@ -166,7 +166,6 @@ class OutfitServiceTest {
     OutfitCreationDTO dto = new OutfitCreationDTO();
     dto.setName("New Outfit");
     dto.setDescription("Description");
-    dto.setIndex(0);
     dto.setTags(List.of("casual"));
     dto.setProducts(List.of(productDTO));
     return dto;
@@ -201,7 +200,6 @@ class OutfitServiceTest {
   void shouldThrowInvalidRequestException_whenProductsIsNull() {
     OutfitCreationDTO dto = new OutfitCreationDTO();
     dto.setName("New Outfit");
-    dto.setIndex(0);
     dto.setTags(List.of());
     dto.setProducts(null);
 
@@ -215,7 +213,6 @@ class OutfitServiceTest {
   void shouldThrowInvalidRequestException_whenProductsIsEmpty() {
     OutfitCreationDTO dto = new OutfitCreationDTO();
     dto.setName("New Outfit");
-    dto.setIndex(0);
     dto.setTags(List.of());
     dto.setProducts(List.of());
 
@@ -233,7 +230,6 @@ class OutfitServiceTest {
     dto.setName("Updated Outfit");
     dto.setDescription("Updated Description");
     dto.setDiscountedPriceInCents(2000);
-    dto.setIndex(1);
 
     when(outfitRepository.findById(outfitId)).thenReturn(Optional.of(outfit));
     when(outfitRepository.save(any())).thenReturn(outfit);
