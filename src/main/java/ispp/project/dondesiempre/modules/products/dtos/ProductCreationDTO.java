@@ -21,6 +21,7 @@ public class ProductCreationDTO {
   @Min(0)
   private Integer priceInCents;
 
+  @Size(max = 5000)
   private String description;
 
   @NotNull private UUID typeId;

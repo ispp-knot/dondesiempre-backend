@@ -14,7 +14,6 @@ public class StoreMockEntities {
     store.setId(TEST_STORE_ID);
     store.setName("Tienda de Prueba");
     Storefront storefront = new Storefront();
-    storefront.setIsFirstCollections(true);
     store.setStorefront(storefront);
     return store;
   }

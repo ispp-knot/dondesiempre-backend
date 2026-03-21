@@ -13,9 +13,6 @@ import org.springframework.stereotype.Component;
 @Setter
 public class SeedProperties {
   private long randomSeed = 42;
-  private int storeCount = 5;
-  private int productsPerStore = 6;
-  private int socialNetworksPerStore = 2;
-  private int outfitsPerStore = 2;
   private int clientCount = 10;
+  private boolean uploadImages = true;
 }

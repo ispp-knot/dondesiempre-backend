@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001-add-social-media
+      author: miniluz
+      changes:
+        - sql:
+            sql: |
+              INSERT INTO social_networks (id, version, name) VALUES
+                ('f35a8b85-7e9f-4327-8984-f44107b77285', 0, 'Web'), ('bafa763b-a932-4713-bcdd-554fa0dd2564', 0, 'Teléfono');
