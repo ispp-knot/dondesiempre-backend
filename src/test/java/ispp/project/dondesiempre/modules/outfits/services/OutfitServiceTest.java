@@ -18,6 +18,7 @@ import ispp.project.dondesiempre.modules.common.exceptions.InvalidRequestExcepti
 import ispp.project.dondesiempre.modules.common.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.modules.outfits.dtos.OutfitCreationDTO;
 import ispp.project.dondesiempre.modules.outfits.dtos.OutfitCreationProductDTO;
+import ispp.project.dondesiempre.modules.outfits.dtos.OutfitSortDTO;
 import ispp.project.dondesiempre.modules.outfits.dtos.OutfitUpdateDTO;
 import ispp.project.dondesiempre.modules.outfits.models.Outfit;
 import ispp.project.dondesiempre.modules.outfits.models.OutfitProduct;
@@ -511,5 +512,94 @@ class OutfitServiceTest {
 
     assertThrows(ResourceNotFoundException.class, () -> outfitService.removeTag(outfitId, tagName));
     verify(outfitTagRelationService, never()).delete(any());
+  }
+
+  // --- sortOutfits ---
+
+  @Test
+  void shouldSortOutfits_whenValidData() throws ResourceNotFoundException {
+    UUID outfitId2 = UUID.randomUUID();
+    Outfit outfit2 = new Outfit();
+
+    outfit2.setId(outfitId2);
+    outfit2.setName("Test Outfit 2");
+    outfit2.setStore(store);
+
+    OutfitSortDTO dto1 = new OutfitSortDTO();
+    dto1.setId(outfitId);
+    dto1.setIndex(1);
+
+    OutfitSortDTO dto2 = new OutfitSortDTO();
+    dto2.setId(outfitId2);
+    dto2.setIndex(0);
+
+    List<OutfitSortDTO> outfits = List.of(dto1, dto2);
+
+    when(storeService.findById(storeId)).thenReturn(store);
+    when(outfitRepository.findById(outfitId)).thenReturn(Optional.of(outfit));
+    when(outfitRepository.findById(outfitId2)).thenReturn(Optional.of(outfit2));
+
+    when(outfitRepository.save(any(Outfit.class))).thenReturn(outfit);
+
+    outfitService.sortOutfits(storeId, outfits);
+
+    assertEquals(1, outfit.getIndex());
+    assertEquals(0, outfit2.getIndex());
+
+    verify(outfitRepository, times(2)).save(any());
+  }
+
+  @Test
+  void shouldThrowInvalidRequestException_whenNotAllIndicesDistinct() {
+    UUID outfitId2 = UUID.randomUUID();
+    Outfit outfit2 = new Outfit();
+
+    outfit2.setId(outfitId2);
+    outfit2.setName("Test Outfit 2");
+    outfit2.setStore(store);
+
+    OutfitSortDTO dto1 = new OutfitSortDTO();
+    dto1.setId(outfitId);
+    dto1.setIndex(0);
+
+    OutfitSortDTO dto2 = new OutfitSortDTO();
+    dto2.setId(outfitId2);
+    dto2.setIndex(0);
+
+    List<OutfitSortDTO> outfits = List.of(dto1, dto2);
+
+    assertThrows(InvalidRequestException.class, () -> outfitService.sortOutfits(storeId, outfits));
+
+    verify(outfitRepository, never()).save(any());
+  }
+
+  @Test
+  void shouldThrowInvalidRequestException_whenOutfitNotInStore() {
+    UUID storeId2 = UUID.randomUUID();
+    Store store2 = new Store();
+
+    store.setId(storeId2);
+    store.setName("Test Store 2");
+
+    UUID outfitId2 = UUID.randomUUID();
+    Outfit outfit2 = new Outfit();
+
+    outfit2.setId(outfitId2);
+    outfit2.setName("Test Outfit 2");
+    outfit2.setStore(store2);
+
+    OutfitSortDTO dto1 = new OutfitSortDTO();
+    dto1.setId(outfitId);
+    dto1.setIndex(0);
+
+    OutfitSortDTO dto2 = new OutfitSortDTO();
+    dto2.setId(outfitId2);
+    dto2.setIndex(0);
+
+    List<OutfitSortDTO> outfits = List.of(dto1, dto2);
+
+    assertThrows(InvalidRequestException.class, () -> outfitService.sortOutfits(storeId, outfits));
+
+    verify(outfitRepository, never()).save(any());
   }
 }

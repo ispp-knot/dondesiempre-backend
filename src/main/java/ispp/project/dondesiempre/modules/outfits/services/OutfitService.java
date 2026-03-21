@@ -318,8 +318,9 @@ public class OutfitService {
   public void sortOutfits(UUID storeId, List<OutfitSortDTO> dtos)
       throws UnauthorizedException, ResourceNotFoundException, InvalidRequestException {
     Store store;
+    List<Outfit> outfits;
 
-    store = applicationContext.getBean(StoreService.class).findById(storeId);
+    store = storeService.findById(storeId);
     authService.assertUserOwnsStore(store);
 
     if (dtos.stream().mapToInt(OutfitSortDTO::getIndex).distinct().count() < dtos.size()) {
@@ -330,6 +331,10 @@ public class OutfitService {
       Outfit outfit;
 
       outfit = applicationContext.getBean(OutfitService.class).findById(dto.getId());
+
+      if (outfit.getStore().getId() != storeId) {
+        throw new InvalidRequestException("All outfits must belong to the requested store.");
+      }
       outfit.setIndex(dto.getIndex());
       outfitRepository.save(outfit);
     }

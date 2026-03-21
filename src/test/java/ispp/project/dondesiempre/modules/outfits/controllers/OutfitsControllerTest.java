@@ -17,6 +17,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import ispp.project.dondesiempre.config.GlobalExceptionHandler;
 import ispp.project.dondesiempre.modules.outfits.dtos.OutfitCreationDTO;
 import ispp.project.dondesiempre.modules.outfits.dtos.OutfitCreationProductDTO;
+import ispp.project.dondesiempre.modules.outfits.dtos.OutfitSortDTO;
 import ispp.project.dondesiempre.modules.outfits.dtos.OutfitUpdateDTO;
 import ispp.project.dondesiempre.modules.outfits.models.Outfit;
 import ispp.project.dondesiempre.modules.outfits.models.OutfitProduct;
@@ -314,5 +315,27 @@ class OutfitsControllerTest {
         .perform(delete("/api/v1/outfits/" + outfitId))
         .andExpect(status().isOk())
         .andExpect(content().string("Outfit successfully deleted."));
+  }
+
+  // -------------------------------------------------------------------------
+  // PATCH /api/v1/stores/{id}/outfits/sort
+  // -------------------------------------------------------------------------
+
+  @Test
+  @WithMockUser
+  void sortOutfits_shouldReturnOk_whenValid() throws Exception {
+    OutfitSortDTO o1 = new OutfitSortDTO();
+    o1.setId(outfitId);
+    o1.setIndex(0);
+
+    doNothing().when(outfitService).sortOutfits(eq(storeId), any());
+
+    mockMvc
+        .perform(
+            patch("/api/v1/stores/" + storeId + "/outfits/sort")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(List.of(o1))))
+        .andExpect(status().isOk())
+        .andExpect(content().string("Outfits successfully sorted."));
   }
 }
