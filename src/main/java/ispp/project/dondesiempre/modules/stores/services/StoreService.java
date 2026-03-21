@@ -130,8 +130,8 @@ public class StoreService {
     if (dto.getEmail() != null) storeToUpdate.setEmail(dto.getEmail());
     if (dto.getAddress() != null) storeToUpdate.setAddress(dto.getAddress());
     if (dto.getOpeningHours() != null) storeToUpdate.setOpeningHours(dto.getOpeningHours());
-    if (dto.getPhone() != null) storeToUpdate.setPhone(dto.getPhone());
-    if (dto.getAboutUs() != null) storeToUpdate.setAboutUs(dto.getAboutUs());
+    storeToUpdate.setPhone(dto.getPhone());
+    storeToUpdate.setAboutUs(dto.getAboutUs());
 
     return applicationContext
         .getBean(StoreService.class)
