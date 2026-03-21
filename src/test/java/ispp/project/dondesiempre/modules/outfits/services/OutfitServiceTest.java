@@ -12,6 +12,20 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.BeanUtils;
+import org.springframework.context.ApplicationContext;
+
 import ispp.project.dondesiempre.modules.auth.models.User;
 import ispp.project.dondesiempre.modules.auth.services.AuthService;
 import ispp.project.dondesiempre.modules.common.exceptions.InvalidRequestException;
@@ -31,32 +45,31 @@ import ispp.project.dondesiempre.modules.stores.models.Store;
 import ispp.project.dondesiempre.modules.stores.models.Storefront;
 import ispp.project.dondesiempre.modules.stores.services.StoreService;
 import ispp.project.dondesiempre.modules.stores.services.StorefrontService;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.context.ApplicationContext;
 
 @ExtendWith(MockitoExtension.class)
 class OutfitServiceTest {
 
-  @Mock private OutfitRepository outfitRepository;
-  @Mock private OutfitProductService outfitProductService;
-  @Mock private OutfitTagRelationService outfitTagRelationService;
-  @Mock private OutfitTagService outfitTagService;
-  @Mock private ProductService productService;
-  @Mock private AuthService authService;
-  @Mock private StorefrontService storefrontService;
-  @Mock private StoreService storeService;
-  @Mock private ApplicationContext applicationContext;
+  @Mock
+  private OutfitRepository outfitRepository;
+  @Mock
+  private OutfitProductService outfitProductService;
+  @Mock
+  private OutfitTagRelationService outfitTagRelationService;
+  @Mock
+  private OutfitTagService outfitTagService;
+  @Mock
+  private ProductService productService;
+  @Mock
+  private AuthService authService;
+  @Mock
+  private StorefrontService storefrontService;
+  @Mock
+  private StoreService storeService;
+  @Mock
+  private ApplicationContext applicationContext;
 
-  @InjectMocks private OutfitService outfitService;
+  @InjectMocks
+  private OutfitService outfitService;
 
   private UUID outfitId;
   private UUID productId;
@@ -211,7 +224,7 @@ class OutfitServiceTest {
   }
 
   @Test
-  void shouldThrowInvalidRequestException_whenProductsIsEmpty() {
+  void shouldThrowInvalidRequestException_whenLessThanTwoProducts() {
     OutfitCreationDTO dto = new OutfitCreationDTO();
     dto.setName("New Outfit");
     dto.setTags(List.of());
@@ -428,8 +441,34 @@ class OutfitServiceTest {
 
   @Test
   void shouldRemoveProduct_whenProductBelongsToOutfit() throws ResourceNotFoundException {
+    Product product2 = new Product();
+    product2.setId(UUID.randomUUID());
+    product2.setName("Test Product");
+    product2.setPriceInCents(1000);
+    product2.setStore(store);
+
+    Product product3 = new Product();
+    product3.setId(UUID.randomUUID());
+    product3.setName("Test Product");
+    product3.setPriceInCents(1000);
+    product3.setStore(store);
+
+    OutfitProduct outfitProduct2 = new OutfitProduct();
+    outfitProduct2.setId(UUID.randomUUID());
+    outfitProduct2.setIndex(1);
+    outfitProduct2.setOutfit(outfit);
+    outfitProduct2.setProduct(product2);
+
+    OutfitProduct outfitProduct3 = new OutfitProduct();
+    outfitProduct3.setId(UUID.randomUUID());
+    outfitProduct3.setIndex(2);
+    outfitProduct3.setOutfit(outfit);
+    outfitProduct3.setProduct(product3);
+
     when(outfitRepository.findById(outfitId)).thenReturn(Optional.of(outfit));
     when(outfitProductService.findProductRelation(outfitId, productId)).thenReturn(outfitProduct);
+    when(outfitProductService.findOutfitProductsById(outfitId))
+        .thenReturn(List.of(outfitProduct, outfitProduct2, outfitProduct3));
 
     outfitService.removeProduct(outfitId, product);
 
@@ -437,7 +476,42 @@ class OutfitServiceTest {
   }
 
   @Test
+  void shouldThrowInvalidRequestException_whenOutfitHasLessThanTwoProducts() throws ResourceNotFoundException {
+    when(outfitRepository.findById(outfitId)).thenReturn(Optional.of(outfit));
+    when(outfitProductService.findOutfitProductsById(outfitId))
+        .thenReturn(new ArrayList<>());
+
+    assertThrows(InvalidRequestException.class, () -> outfitService.removeProduct(outfitId, product));
+
+    verify(outfitProductService, never()).delete(outfitProduct);
+  }
+
+  @Test
   void shouldThrowResourceNotFoundException_whenProductDoesNotBelongToOutfit() {
+    Product product2 = new Product();
+    product2.setId(UUID.randomUUID());
+    product2.setName("Test Product");
+    product2.setPriceInCents(1000);
+    product2.setStore(store);
+
+    Product product3 = new Product();
+    product3.setId(UUID.randomUUID());
+    product3.setName("Test Product");
+    product3.setPriceInCents(1000);
+    product3.setStore(store);
+
+    OutfitProduct outfitProduct2 = new OutfitProduct();
+    outfitProduct2.setId(UUID.randomUUID());
+    outfitProduct2.setIndex(1);
+    outfitProduct2.setOutfit(outfit);
+    outfitProduct2.setProduct(product2);
+
+    OutfitProduct outfitProduct3 = new OutfitProduct();
+    outfitProduct3.setId(UUID.randomUUID());
+    outfitProduct3.setIndex(2);
+    outfitProduct3.setOutfit(outfit);
+    outfitProduct3.setProduct(product3);
+
     UUID nonExistentProductId = UUID.randomUUID();
     Product nonExistentProduct = new Product();
     nonExistentProduct.setId(nonExistentProductId);
@@ -445,6 +519,8 @@ class OutfitServiceTest {
     when(outfitRepository.findById(outfitId)).thenReturn(Optional.of(outfit));
     when(outfitProductService.findProductRelation(outfitId, nonExistentProductId))
         .thenThrow(new ResourceNotFoundException("Requested product does not belong to outfit."));
+    when(outfitProductService.findOutfitProductsById(outfitId))
+        .thenReturn(List.of(outfitProduct, outfitProduct2, outfitProduct3));
 
     assertThrows(
         ResourceNotFoundException.class,
