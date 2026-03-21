@@ -47,6 +47,6 @@ public class ProductTypeControllerTest {
     mockMvc
         .perform(get("/api/v1/product-types/{id}", id))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.type").value("Test"));
+        .andExpect(jsonPath("$.name").value("Test"));
   }
 }

@@ -8,6 +8,10 @@ import ispp.project.dondesiempre.modules.clients.models.Client;
 import ispp.project.dondesiempre.modules.clients.repositories.ClientRepository;
 import ispp.project.dondesiempre.modules.follows.models.StoreFollower;
 import ispp.project.dondesiempre.modules.follows.repositories.StoreFollowerRepository;
+import ispp.project.dondesiempre.modules.orders.models.Order;
+import ispp.project.dondesiempre.modules.orders.models.OrderItem;
+import ispp.project.dondesiempre.modules.orders.models.OrderStatus;
+import ispp.project.dondesiempre.modules.orders.repositories.OrderRepository;
 import ispp.project.dondesiempre.modules.outfits.models.Outfit;
 import ispp.project.dondesiempre.modules.outfits.models.OutfitProduct;
 import ispp.project.dondesiempre.modules.outfits.models.OutfitTag;
@@ -39,6 +43,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -63,7 +68,6 @@ import org.springframework.stereotype.Component;
 public class DataSeeder implements CommandLineRunner {
 
   private static final Logger log = LoggerFactory.getLogger(DataSeeder.class);
-
   private final SeedProperties props;
   private final PasswordEncoder passwordEncoder;
   private final UserRepository userRepository;
@@ -80,6 +84,7 @@ public class DataSeeder implements CommandLineRunner {
   private final OutfitTagRepository outfitTagRepository;
   private final OutfitTagRelationRepository outfitTagRelationRepository;
   private final ClientRepository clientRepository;
+  private final OrderRepository orderRepository;
   private final StoreFollowerRepository storeFollowerRepository;
   private final CloudinaryService cloudinaryService;
   private final Cloudinary cloudinary;
@@ -191,6 +196,7 @@ public class DataSeeder implements CommandLineRunner {
             greta,
             "outfit1_vestido_blanco_49.99.jpg");
     createVariant(greta_vestidoBlanco, productSizes.get("M"), productColors.get("Blanco"), true);
+
     Product greta_botasNegras1 =
         createProduct(
             "Botas Negras",
@@ -201,6 +207,7 @@ public class DataSeeder implements CommandLineRunner {
             greta,
             "outfit1_botas_negras_69.99.jpg");
     createVariant(greta_botasNegras1, productSizes.get("M"), productColors.get("Negro"), true);
+
     Product greta_bolsoMarron =
         createProduct(
             "Bolso Marrón",
@@ -211,6 +218,7 @@ public class DataSeeder implements CommandLineRunner {
             greta,
             "outfit1_bolso_marron_34.99.jpg");
     createVariant(greta_bolsoMarron, productSizes.get("M"), productColors.get("Beige"), true);
+
     Product greta_vestidoAzul =
         createProduct(
             "Vestido Azul",
@@ -221,6 +229,7 @@ public class DataSeeder implements CommandLineRunner {
             greta,
             "outfit2_vestido_azul_69.99.jpg");
     createVariant(greta_vestidoAzul, productSizes.get("M"), productColors.get("Azul"), true);
+
     Product greta_bolsoBeige =
         createProduct(
             "Bolso Beige",
@@ -231,6 +240,7 @@ public class DataSeeder implements CommandLineRunner {
             greta,
             "outfit2_bolso_beige_49.99.jpg");
     createVariant(greta_bolsoBeige, productSizes.get("M"), productColors.get("Beige"), true);
+
     Product greta_pendientes =
         createProduct(
             "Pendientes Mariposa Oro",
@@ -243,14 +253,14 @@ public class DataSeeder implements CommandLineRunner {
     createVariant(greta_pendientes, productSizes.get("S"), productColors.get("Beige"), true);
 
     Outfit greta_outfit1 =
-        createOutfit("Conjunto Mihai", 0, 12398, greta, "outfit1_conjunto_mihai.jpg");
+        createOutfit("Conjunto Mihai", 0, null, greta, "outfit1_conjunto_mihai.jpg");
     createOutfitTagRelation(greta_outfit1, outfitTags.get("Elegante"));
     createOutfitProduct(greta_outfit1, greta_vestidoBlanco, 0);
     createOutfitProduct(greta_outfit1, greta_botasNegras1, 1);
     createOutfitProduct(greta_outfit1, greta_bolsoMarron, 2);
 
     Outfit greta_outfit2 =
-        createOutfit("Conjunto Galilea", 1, 11198, greta, "outfit2_conjunto_galilea.jpg");
+        createOutfit("Conjunto Galilea", 1, 25, greta, "outfit2_conjunto_galilea.jpg");
     createOutfitTagRelation(greta_outfit2, outfitTags.get("Casual"));
     createOutfitProduct(greta_outfit2, greta_vestidoAzul, 0);
     createOutfitProduct(greta_outfit2, greta_bolsoBeige, 1);
@@ -286,6 +296,7 @@ public class DataSeeder implements CommandLineRunner {
             romantika,
             "outfit3_vestido_rojo_64.99.jpg");
     createVariant(rom_vestidoRojo, productSizes.get("M"), productColors.get("Rojo"), true);
+
     Product rom_sandaliasRojas =
         createProduct(
             "Sandalias Rojas con Tacón",
@@ -296,6 +307,7 @@ public class DataSeeder implements CommandLineRunner {
             romantika,
             "outfit3_sandalias_rojas_con_tacón_46.99.jpg");
     createVariant(rom_sandaliasRojas, productSizes.get("M"), productColors.get("Rojo"), true);
+
     Product rom_vestidoVerde =
         createProduct(
             "Vestido Verde",
@@ -306,6 +318,7 @@ public class DataSeeder implements CommandLineRunner {
             romantika,
             "outfit4_vestido_verde_49.99.jpg");
     createVariant(rom_vestidoVerde, productSizes.get("M"), productColors.get("Verde"), true);
+
     Product rom_taconesBeige =
         createProduct(
             "Tacones Beige",
@@ -317,13 +330,13 @@ public class DataSeeder implements CommandLineRunner {
             "outfit4_tacones_beige_44.99.jpg");
     createVariant(rom_taconesBeige, productSizes.get("M"), productColors.get("Beige"), true);
 
-    Outfit rom_outfit1 = createOutfit("Verano Rojo", 0, 8958, romantika, "outfit3_verano_rojo.jpg");
+    Outfit rom_outfit1 = createOutfit("Verano Rojo", 0, 10, romantika, "outfit3_verano_rojo.jpg");
     createOutfitTagRelation(rom_outfit1, outfitTags.get("Verano"));
     createOutfitProduct(rom_outfit1, rom_vestidoRojo, 0);
     createOutfitProduct(rom_outfit1, rom_sandaliasRojas, 1);
 
     Outfit rom_outfit2 =
-        createOutfit("Primavera Verde", 1, 7598, romantika, "outfit4_primavera_verde.jpg");
+        createOutfit("Primavera Verde", 1, 15, romantika, "outfit4_primavera_verde.jpg");
     createOutfitTagRelation(rom_outfit2, outfitTags.get("Verano"));
     createOutfitProduct(rom_outfit2, rom_vestidoVerde, 0);
     createOutfitProduct(rom_outfit2, rom_taconesBeige, 1);
@@ -360,6 +373,7 @@ public class DataSeeder implements CommandLineRunner {
             sanSebastian,
             "outfit5_albornoz_blanco_19.99.jpg");
     createVariant(ss_albornoz, productSizes.get("M"), productColors.get("Blanco"), true);
+
     Product ss_crocs =
         createProduct(
             "Crocs Negras",
@@ -373,7 +387,7 @@ public class DataSeeder implements CommandLineRunner {
 
     Outfit ss_outfit1 =
         createOutfit(
-            "Tranquilidad Casera", 0, 2878, sanSebastian, "outfit5_tranquilidad_casera.jpg");
+            "Tranquilidad Casera", 0, null, sanSebastian, "outfit5_tranquilidad_casera.jpg");
     createOutfitTagRelation(ss_outfit1, outfitTags.get("Casual"));
     createOutfitProduct(ss_outfit1, ss_albornoz, 0);
     createOutfitProduct(ss_outfit1, ss_crocs, 1);
@@ -405,6 +419,7 @@ public class DataSeeder implements CommandLineRunner {
             roire,
             "outfit6_falda_cebra_29.99.jpg");
     createVariant(roire_faldaCebra, productSizes.get("M"), productColors.get("Blanco"), true);
+
     Product roire_sueterMarron =
         createProduct(
             "Suéter Marrón",
@@ -416,8 +431,7 @@ public class DataSeeder implements CommandLineRunner {
             "outfit6_suéter_marrón_49.99.jpg");
     createVariant(roire_sueterMarron, productSizes.get("M"), productColors.get("Beige"), true);
 
-    Outfit roire_outfit1 =
-        createOutfit("Savana Otoñal", 0, 6398, roire, "outfit6_savana_otoñal.jpg");
+    Outfit roire_outfit1 = createOutfit("Savana Otoñal", 0, 20, roire, "outfit6_savana_otoñal.jpg");
     createOutfitTagRelation(roire_outfit1, outfitTags.get("Casual"));
     createOutfitProduct(roire_outfit1, roire_faldaCebra, 0);
     createOutfitProduct(roire_outfit1, roire_sueterMarron, 1);
@@ -457,6 +471,7 @@ public class DataSeeder implements CommandLineRunner {
             pineapple,
             "outfit7_camisa_blanca_15.99.jpg");
     createVariant(pine_camisaBlanca, productSizes.get("M"), productColors.get("Blanco"), true);
+
     Product pine_faldaRoja =
         createProduct(
             "Falda Roja",
@@ -469,7 +484,7 @@ public class DataSeeder implements CommandLineRunner {
     createVariant(pine_faldaRoja, productSizes.get("M"), productColors.get("Rojo"), true);
 
     Outfit pine_outfit1 =
-        createOutfit("Pasión de Otoño", 0, 4958, pineapple, "outfit7_pasión_de_otoño.jpg");
+        createOutfit("Pasión de Otoño", 0, 30, pineapple, "outfit7_pasión_de_otoño.jpg");
     createOutfitTagRelation(pine_outfit1, outfitTags.get("Casual"));
     createOutfitProduct(pine_outfit1, pine_camisaBlanca, 0);
     createOutfitProduct(pine_outfit1, pine_faldaRoja, 1);
@@ -491,7 +506,6 @@ public class DataSeeder implements CommandLineRunner {
         socialNetworks,
         "Facebook",
         "https://www.facebook.com/profile.php?id=100090603545882");
-
     createProduct(
         "Bolso Crema",
         1599,
@@ -534,6 +548,7 @@ public class DataSeeder implements CommandLineRunner {
             alfonsi,
             "outfit8_parka_blanca_79.99.jpg");
     createVariant(alf_parkaBlanca, productSizes.get("M"), productColors.get("Blanco"), true);
+
     Product alf_pantalonesNegros =
         createProduct(
             "Pantalones Negros",
@@ -544,6 +559,7 @@ public class DataSeeder implements CommandLineRunner {
             alfonsi,
             "outfit8_pantalones_negros_46.99.jpg");
     createVariant(alf_pantalonesNegros, productSizes.get("M"), productColors.get("Negro"), true);
+
     Product alf_botasNegras =
         createProduct(
             "Botas Negras",
@@ -556,7 +572,7 @@ public class DataSeeder implements CommandLineRunner {
     createVariant(alf_botasNegras, productSizes.get("M"), productColors.get("Negro"), true);
 
     Outfit alf_outfit1 =
-        createOutfit("Cómodo Invierno", 0, 17358, alfonsi, "outfit8_cómodo_invierno.jpg");
+        createOutfit("Cómodo Invierno", 0, null, alfonsi, "outfit8_cómodo_invierno.jpg");
     createOutfitTagRelation(alf_outfit1, outfitTags.get("Invierno"));
     createOutfitProduct(alf_outfit1, alf_parkaBlanca, 0);
     createOutfitProduct(alf_outfit1, alf_pantalonesNegros, 1);
@@ -623,6 +639,7 @@ public class DataSeeder implements CommandLineRunner {
             marGovantes,
             "outfit_9_americana_marina_45.99.jpg");
     createVariant(mg_americanaMarina, productSizes.get("M"), productColors.get("Azul"), true);
+
     Product mg_pantalonesMari =
         createProduct(
             "Pantalones Marinos",
@@ -633,6 +650,7 @@ public class DataSeeder implements CommandLineRunner {
             marGovantes,
             "outfit_9_pantalones_marinos_39.99.jpg");
     createVariant(mg_pantalonesMari, productSizes.get("M"), productColors.get("Azul"), true);
+
     Product mg_camisaFloral =
         createProduct(
             "Camisa Floral",
@@ -643,6 +661,7 @@ public class DataSeeder implements CommandLineRunner {
             marGovantes,
             "outfit_10_camisa_floral_23.99.jpg");
     createVariant(mg_camisaFloral, productSizes.get("M"), productColors.get("Rosa"), true);
+
     Product mg_pantalonesVerdes =
         createProduct(
             "Pantalones Verdes",
@@ -653,6 +672,7 @@ public class DataSeeder implements CommandLineRunner {
             marGovantes,
             "outfit_10_pantalones_verdes_34.99.jpg");
     createVariant(mg_pantalonesVerdes, productSizes.get("M"), productColors.get("Verde"), true);
+
     Product mg_sueterVerde =
         createProduct(
             "Suéter Verde",
@@ -665,13 +685,13 @@ public class DataSeeder implements CommandLineRunner {
     createVariant(mg_sueterVerde, productSizes.get("M"), productColors.get("Verde"), true);
 
     Outfit mg_outfit1 =
-        createOutfit("Negocio Oceánico", 0, 6878, marGovantes, "outfit_9_negocio_oceánico.jpg");
+        createOutfit("Negocio Oceánico", 0, null, marGovantes, "outfit_9_negocio_oceánico.jpg");
     createOutfitTagRelation(mg_outfit1, outfitTags.get("Formal"));
     createOutfitProduct(mg_outfit1, mg_americanaMarina, 0);
     createOutfitProduct(mg_outfit1, mg_pantalonesMari, 1);
 
     Outfit mg_outfit2 =
-        createOutfit("Río Interior", 1, 8398, marGovantes, "outfit_10_río_interior.jpg");
+        createOutfit("Río Interior", 1, null, marGovantes, "outfit_10_río_interior.jpg");
     createOutfitTagRelation(mg_outfit2, outfitTags.get("Casual"));
     createOutfitProduct(mg_outfit2, mg_camisaFloral, 0);
     createOutfitProduct(mg_outfit2, mg_pantalonesVerdes, 1);
@@ -687,8 +707,8 @@ public class DataSeeder implements CommandLineRunner {
     List<String> surnames = loadTextFile("seed/client-surnames.txt");
 
     List<Store> allStores = storeRepository.findAll();
+    List<Product> allProducts = productRepository.findAll();
 
-    // Manual client (for testing)
     User clientUser = new User();
     clientUser.setId(seedUuid("user:client@client.com"));
     clientUser.setEmail("client@client.com");
@@ -705,7 +725,6 @@ public class DataSeeder implements CommandLineRunner {
     manualClient.setUser(clientUser);
     clientRepository.save(manualClient);
 
-    // Manual client for delete-client test (reuses first store user)
     User storeOwner = userRepository.findByEmail("demo@gretacloset.com").orElseThrow();
     Client clientWithStoreUser = new Client();
     clientWithStoreUser.setId(seedUuid("client:storeclient@ejemplo.es"));
@@ -717,7 +736,47 @@ public class DataSeeder implements CommandLineRunner {
     clientWithStoreUser.setUser(storeOwner);
     clientRepository.save(clientWithStoreUser);
 
-    // Random clients with predictable emails
+    Product p1 = allProducts.size() > 0 ? allProducts.get(0) : null;
+    Product p3 = allProducts.size() > 2 ? allProducts.get(2) : p1;
+    Product p4 = allProducts.size() > 3 ? allProducts.get(3) : p1;
+
+    if (p3 != null && p4 != null && p1 != null) {
+      Order order = new Order();
+      order.setUser(clientUser);
+      order.setOrderDate(LocalDateTime.now());
+      order.setOrderStatus(OrderStatus.PENDING);
+      order.setOrderCode("ORD-MANUAL-001");
+      order.setItems(new ArrayList<>());
+      addItemsToOrder(order, List.of(p3));
+
+      Order orderConfirmed = new Order();
+      orderConfirmed.setUser(clientUser);
+      orderConfirmed.setOrderDate(LocalDateTime.now().minusDays(2));
+      orderConfirmed.setOrderStatus(OrderStatus.CONFIRMED);
+      orderConfirmed.setOrderCode("ORD-CONFIRM-002");
+      orderConfirmed.setItems(new ArrayList<>());
+      addItemsToOrder(orderConfirmed, List.of(p3));
+      orderRepository.save(orderConfirmed);
+
+      Order orderRejected = new Order();
+      orderRejected.setUser(clientUser);
+      orderRejected.setOrderDate(LocalDateTime.now().minusDays(5));
+      orderRejected.setOrderStatus(OrderStatus.REJECTED);
+      orderRejected.setOrderCode("ORD-REJECT-003");
+      orderRejected.setItems(new ArrayList<>());
+      addItemsToOrder(orderRejected, List.of(p4));
+      orderRepository.save(orderRejected);
+
+      Order orderPicked = new Order();
+      orderPicked.setUser(clientUser);
+      orderPicked.setOrderDate(LocalDateTime.now().minusDays(1));
+      orderPicked.setOrderStatus(OrderStatus.PICKED);
+      orderPicked.setOrderCode("ORD-PICKED-004");
+      orderPicked.setItems(new ArrayList<>());
+      addItemsToOrder(orderPicked, List.of(p1, p4));
+      orderRepository.save(orderPicked);
+    }
+
     for (int i = 1; i <= props.getClientCount(); i++) {
       String name = pick(firstNames, rng);
       String surname = pick(surnames, rng);
@@ -739,7 +798,32 @@ public class DataSeeder implements CommandLineRunner {
       client.setUser(user);
       clientRepository.save(client);
 
-      // Follow 1-3 random stores
+      if (rng.nextDouble() < 0.5 && !allProducts.isEmpty()) {
+        Order randomOrder = new Order();
+        randomOrder.setUser(user);
+        randomOrder.setOrderDate(LocalDateTime.now().minusDays(rng.nextInt(10)));
+        randomOrder.setOrderStatus(OrderStatus.PENDING);
+        randomOrder.setOrderCode(
+            "ORD-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase());
+        randomOrder.setItems(new ArrayList<>());
+
+        int itemsToCreate = 1 + rng.nextInt(3);
+        int randomTotal = 0;
+
+        for (int k = 0; k < itemsToCreate; k++) {
+          Product p = pick(allProducts, rng);
+          OrderItem item = new OrderItem();
+          item.setOrder(randomOrder);
+          item.setProduct(p);
+          item.setQuantity(1 + rng.nextInt(2));
+          item.setPriceAtPurchase(p.getPriceInCents());
+          randomOrder.getItems().add(item);
+          randomTotal += item.getPriceAtPurchase() * item.getQuantity();
+        }
+        randomOrder.setTotalPrice(randomTotal);
+        orderRepository.save(randomOrder);
+      }
+
       int followCount = 1 + rng.nextInt(3);
       List<Store> shuffled = new ArrayList<>(allStores);
       for (int j = 0; j < followCount && j < shuffled.size(); j++) {
@@ -844,12 +928,12 @@ public class DataSeeder implements CommandLineRunner {
   }
 
   private Outfit createOutfit(
-      String name, int index, int discountedPriceInCents, Store store, String imageFilename) {
+      String name, int index, Integer discountPercentage, Store store, String imageFilename) {
     Outfit outfit = new Outfit();
     outfit.setId(seedUuid("outfit:" + store.getId() + ":" + name));
     outfit.setName(name);
     outfit.setIndex(index);
-    outfit.setDiscountedPriceInCents(discountedPriceInCents);
+    outfit.setDiscountPercentage(discountPercentage);
     outfit.setStore(store);
 
     String imageUrl = uploadImage(imageFilename);
@@ -897,6 +981,20 @@ public class DataSeeder implements CommandLineRunner {
 
   private <T> T pick(List<T> list, Random rng) {
     return list.get(rng.nextInt(list.size()));
+  }
+
+  private void addItemsToOrder(Order order, List<Product> products) {
+    int total = 0;
+    for (Product p : products) {
+      OrderItem item = new OrderItem();
+      item.setOrder(order);
+      item.setProduct(p);
+      item.setQuantity(1);
+      item.setPriceAtPurchase(p.getPriceInCents());
+      order.getItems().add(item);
+      total += p.getPriceInCents();
+    }
+    order.setTotalPrice(total);
   }
 
   private List<String> loadTextFile(String path) {

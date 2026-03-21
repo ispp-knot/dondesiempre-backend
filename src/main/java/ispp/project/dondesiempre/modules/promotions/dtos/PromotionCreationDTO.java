@@ -1,5 +1,6 @@
 package ispp.project.dondesiempre.modules.promotions.dtos;
 
+import ispp.project.dondesiempre.modules.promotions.validators.StartDateBeforeEndDate;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
@@ -15,6 +16,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
+@StartDateBeforeEndDate
 public class PromotionCreationDTO {
 
   @NotNull
