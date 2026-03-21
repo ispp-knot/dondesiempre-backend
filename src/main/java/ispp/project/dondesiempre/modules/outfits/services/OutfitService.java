@@ -138,10 +138,7 @@ public class OutfitService {
     if (dto.getProducts() == null || (dto.getProducts() != null && dto.getProducts().size() <= 0)) {
       throw new InvalidRequestException("An outfit cannot be created without products.");
     }
-    outfit.setDiscountedPriceInCents(
-        applicationContext
-            .getBean(OutfitService.class)
-            .calculatePriceOnCreation(dto.getProducts()));
+    outfit.setDiscountPercentage(null);
 
     outfit = outfitRepository.save(outfit);
     outfitId = outfit.getId();
@@ -154,14 +151,6 @@ public class OutfitService {
                 applicationContext.getBean(OutfitService.class).addProduct(outfitId, product));
 
     return outfit;
-  }
-
-  @Transactional(readOnly = true, rollbackFor = ResourceNotFoundException.class)
-  public Integer calculatePriceOnCreation(List<OutfitCreationProductDTO> dtos)
-      throws ResourceNotFoundException {
-    return dtos.stream()
-        .mapToInt(dto -> productService.getProductById(dto.getProductId()).getPriceInCents())
-        .sum();
   }
 
   @Transactional(
@@ -179,7 +168,7 @@ public class OutfitService {
 
     outfitToUpdate.setName(dto.getName());
     outfitToUpdate.setDescription(dto.getDescription());
-    outfitToUpdate.setDiscountedPriceInCents(dto.getDiscountedPriceInCents());
+    outfitToUpdate.setDiscountPercentage(dto.getDiscountPercentage());
 
     if (image != null && !image.isEmpty()) {
       outfitToUpdate.setImage(cloudinaryService.upload(image));

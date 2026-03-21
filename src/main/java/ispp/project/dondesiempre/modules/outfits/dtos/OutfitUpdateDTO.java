@@ -1,5 +1,6 @@
 package ispp.project.dondesiempre.modules.outfits.dtos;
 
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -18,5 +19,6 @@ public class OutfitUpdateDTO {
   private String description;
 
   @Min(0)
-  private Integer discountedPriceInCents;
+  @Max(100)
+  private Integer discountPercentage;
 }

@@ -118,7 +118,7 @@ class OutfitRepositoryTest {
 
     outfit = new Outfit();
     outfit.setName("Test outfit");
-    outfit.setDiscountedPriceInCents(100);
+    outfit.setDiscountPercentage(10);
     outfit.setIndex(0);
     outfit.setStore(store);
     outfit = outfitRepository.save(outfit);
@@ -186,21 +186,21 @@ class OutfitRepositoryTest {
 
     outfit1 = new Outfit();
     outfit1.setName("Test outfit 1");
-    outfit1.setDiscountedPriceInCents(100);
+    outfit1.setDiscountPercentage(100);
     outfit1.setIndex(0);
     outfit1.setStore(store1);
     outfit1 = outfitRepository.save(outfit1);
 
     outfit2 = new Outfit();
     outfit2.setName("Test outfit 2");
-    outfit2.setDiscountedPriceInCents(20);
+    outfit2.setDiscountPercentage(20);
     outfit2.setIndex(1);
     outfit2.setStore(store1);
     outfit2 = outfitRepository.save(outfit2);
 
     outfit3 = new Outfit();
     outfit3.setName("Test outfit 3");
-    outfit3.setDiscountedPriceInCents(1);
+    outfit3.setDiscountPercentage(null);
     outfit3.setIndex(0);
     outfit3.setStore(store2);
     outfit3 = outfitRepository.save(outfit3);
