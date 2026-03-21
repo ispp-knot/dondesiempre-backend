@@ -15,6 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -55,20 +56,20 @@ public class ProductController {
   }
 
   @PostMapping(value = "products", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-  public ResponseEntity<Product> createProduct(
+  public ResponseEntity<ProductDTO> createProduct(
       @RequestPart("dto") @Valid ProductCreationDTO dto,
       @RequestPart(value = "image", required = false) MultipartFile image,
       @RequestParam UUID storeId) {
     Product savedProduct = productService.createProduct(dto, image, storeId);
-    return new ResponseEntity<>(savedProduct, HttpStatus.CREATED);
+    return new ResponseEntity<>(new ProductDTO(savedProduct), HttpStatus.CREATED);
   }
 
-  @PutMapping("products/{id}/discount")
-  public ResponseEntity<Product> updateDiscount(
+  @PatchMapping("products/{id}/discount")
+  public ResponseEntity<ProductDTO> updateDiscount(
       @PathVariable UUID id, @RequestBody @Valid ProductDiscountUpdateDTO discount) {
     Product updatedProduct =
         productService.updateProductDiscount(id, discount.getDiscountPercentage());
-    return new ResponseEntity<>(updatedProduct, HttpStatus.ACCEPTED);
+    return new ResponseEntity<>(new ProductDTO(updatedProduct), HttpStatus.ACCEPTED);
   }
 
   @GetMapping("/stores/{storeId}/products")
@@ -79,11 +80,12 @@ public class ProductController {
   }
 
   @PutMapping(value = "/products/{productId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-  public Product updateProduct(
+  public ResponseEntity<ProductDTO> updateProduct(
       @PathVariable UUID productId,
       @Valid @RequestPart(value = "product", required = false) ProductUpdateDTO product,
       @RequestPart(value = "image", required = false) MultipartFile image) {
-    return productService.updateProduct(productId, product, image);
+    Product updatedProduct = productService.updateProduct(productId, product, image);
+    return new ResponseEntity<>(new ProductDTO(updatedProduct), HttpStatus.ACCEPTED);
   }
 
   @DeleteMapping("/products/{productId}")

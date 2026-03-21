@@ -12,6 +12,8 @@ on:
 jobs:
   seed:
     runs-on: ubuntu-latest
+    env:
+      AES_SECRET_KEY: VICV&EZWVr"G8e2s+Xmg}bOy^&VK6gV+
 
     services:
       postgres:
