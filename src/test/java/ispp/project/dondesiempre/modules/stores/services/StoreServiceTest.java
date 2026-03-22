@@ -2,18 +2,24 @@ package ispp.project.dondesiempre.modules.stores.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import ispp.project.dondesiempre.mockEntities.StoreMockEntities;
+import ispp.project.dondesiempre.modules.auth.models.User;
 import ispp.project.dondesiempre.modules.auth.services.AuthService;
 import ispp.project.dondesiempre.modules.common.exceptions.InvalidBoundingBoxException;
 import ispp.project.dondesiempre.modules.common.exceptions.ResourceNotFoundException;
+import ispp.project.dondesiempre.modules.common.exceptions.UnauthorizedException;
 import ispp.project.dondesiempre.modules.promotions.repositories.PromotionRepository;
 import ispp.project.dondesiempre.modules.stores.dtos.StoreDTO;
+import ispp.project.dondesiempre.modules.stores.dtos.StoreUpdateDTO;
 import ispp.project.dondesiempre.modules.stores.models.SocialNetwork;
 import ispp.project.dondesiempre.modules.stores.models.Store;
 import ispp.project.dondesiempre.modules.stores.models.StoreSocialNetwork;
@@ -46,6 +52,9 @@ public class StoreServiceTest {
   private Store store;
   private UUID storeId;
 
+  private User owner;
+  private User intruder;
+
   @BeforeEach
   void setUp() {
     store = new Store();
@@ -55,6 +64,13 @@ public class StoreServiceTest {
     Storefront storefront = new Storefront();
 
     store.setStorefront(storefront);
+
+    owner = new User();
+    owner.setEmail("owner@test.com");
+    store.setUser(owner);
+
+    intruder = new User();
+    intruder.setEmail("intruder@test.com");
   }
 
   private static final UUID TEST_STORE_ID = UUID.randomUUID();
@@ -129,5 +145,101 @@ public class StoreServiceTest {
     assertEquals(1, result.getSocialNetworks().size());
     assertEquals("instagram", result.getSocialNetworks().get(0).getName());
     assertEquals("https://instagram.com/store", result.getSocialNetworks().get(0).getLink());
+  }
+
+  @Test
+  void shouldReturnStoreDTO_whenUpdateStoreIsSuccessful()
+      throws UnauthorizedException, ResourceNotFoundException {
+
+    when(storeRepository.findById(storeId)).thenReturn(Optional.of(store));
+    when(storeRepository.save(store)).thenReturn(store);
+    when(applicationContext.getBean(StoreService.class)).thenReturn(storeService);
+
+    StoreUpdateDTO storeUpdateDTO = new StoreUpdateDTO();
+    storeUpdateDTO.setName("Nombre Actualizado");
+
+    StoreDTO result = storeService.updateStore(storeId, storeUpdateDTO);
+
+    assertEquals("Nombre Actualizado", result.getName());
+    assertEquals("Nombre Actualizado", store.getName());
+
+    verify(storeRepository, times(1)).findById(storeId);
+    verify(authService, times(1)).assertUserOwnsStore(store);
+    verify(storeRepository, times(1)).save(store);
+  }
+
+  @Test
+  void shouldUpdateOnlyNonNullFieldsSuccessfully()
+      throws UnauthorizedException, ResourceNotFoundException {
+
+    when(storeRepository.findById(storeId)).thenReturn(Optional.of(store));
+    when(storeRepository.save(store)).thenReturn(store);
+    when(applicationContext.getBean(StoreService.class)).thenReturn(storeService);
+
+    StoreUpdateDTO dto = new StoreUpdateDTO();
+    dto.setName("Nombre Nuevo");
+    dto.setPhone("123456789");
+
+    StoreDTO result = storeService.updateStore(storeId, dto);
+
+    assertEquals("Nombre Nuevo", store.getName());
+    assertEquals("123456789", store.getPhone().orElse(null));
+    assertEquals("Nombre Nuevo", result.getName());
+    assertEquals("123456789", result.getPhone());
+
+    verify(storeRepository, times(1)).findById(storeId);
+    verify(authService, times(1)).assertUserOwnsStore(store);
+    verify(storeRepository, times(1)).save(store);
+  }
+
+  @Test
+  void shouldThrowResourceNotFound_whenStoreDoesNotExist() {
+    UUID nonExistentId = UUID.randomUUID();
+    when(storeRepository.findById(nonExistentId)).thenReturn(Optional.empty());
+    when(applicationContext.getBean(StoreService.class)).thenReturn(storeService);
+
+    StoreUpdateDTO dto = new StoreUpdateDTO();
+
+    assertThrows(
+        ResourceNotFoundException.class, () -> storeService.updateStore(nonExistentId, dto));
+    verify(storeRepository, never()).save(any());
+  }
+
+  @Test
+  void shouldThrowUnauthorized_whenUserIsNotOwner() throws ResourceNotFoundException {
+    when(storeRepository.findById(storeId)).thenReturn(Optional.of(store));
+    doThrow(new UnauthorizedException("Not owner")).when(authService).assertUserOwnsStore(store);
+    when(applicationContext.getBean(StoreService.class)).thenReturn(storeService);
+
+    StoreUpdateDTO dto = new StoreUpdateDTO();
+
+    assertThrows(UnauthorizedException.class, () -> storeService.updateStore(storeId, dto));
+    verify(storeRepository, never()).save(any());
+  }
+
+  @Test
+  void shouldUpdateOnlySpecifiedFields() throws UnauthorizedException, ResourceNotFoundException {
+
+    when(storeRepository.findById(storeId)).thenReturn(Optional.of(store));
+    when(storeRepository.save(store)).thenReturn(store);
+    when(applicationContext.getBean(StoreService.class)).thenReturn(storeService);
+
+    StoreUpdateDTO dto = new StoreUpdateDTO();
+    dto.setEmail("nuevo@email.com");
+    dto.setPhone("555555");
+
+    StoreDTO result = storeService.updateStore(storeId, dto);
+
+    assertEquals("nuevo@email.com", store.getEmail());
+    assertEquals("555555", store.getPhone().orElse(null));
+    assertEquals("Tienda de Prueba", store.getName());
+
+    assertEquals("nuevo@email.com", result.getEmail());
+    assertEquals("555555", result.getPhone());
+    assertEquals("Tienda de Prueba", result.getName());
+
+    verify(storeRepository, times(1)).findById(storeId);
+    verify(authService, times(1)).assertUserOwnsStore(store);
+    verify(storeRepository, times(1)).save(store);
   }
 }
