@@ -18,4 +18,7 @@ public interface StoreSocialNetworkRepository extends JpaRepository<StoreSocialN
   Boolean existsByStoreIdAndSocialNetworkId(UUID storeId, UUID socialNetworkId);
 
   Optional<StoreSocialNetwork> findByStoreIdAndSocialNetworkId(UUID storeId, UUID socialNetworkId);
+
+  @Query("SELECT s FROM StoreSocialNetwork s JOIN FETCH s.socialNetwork WHERE s.id = :id")
+  Optional<StoreSocialNetwork> findByIdWithSocialNetwork(@Param("id") UUID id);
 }

@@ -66,12 +66,12 @@ public class StoreSocialNetworkService {
   }
 
   @Transactional(rollbackFor = {UnauthorizedException.class, ResourceNotFoundException.class})
-  public StoreSocialNetwork update(UUID storeId, UUID socialNetworkId, SocialNetworkUpdateDTO dto)
+  public StoreSocialNetwork update(UUID id, SocialNetworkUpdateDTO dto)
       throws UnauthorizedException, ResourceNotFoundException {
 
     StoreSocialNetwork relation =
         storeSocialNetworkRepository
-            .findByStoreIdAndSocialNetworkId(storeId, socialNetworkId)
+            .findByIdWithSocialNetwork(id)
             .orElseThrow(() -> new ResourceNotFoundException("Store social network not found"));
 
     authService.assertUserOwnsStore(relation.getStore());
@@ -82,12 +82,11 @@ public class StoreSocialNetworkService {
   }
 
   @Transactional(rollbackFor = {UnauthorizedException.class, ResourceNotFoundException.class})
-  public void delete(UUID storeId, UUID socialNetworkId)
-      throws UnauthorizedException, ResourceNotFoundException {
+  public void delete(UUID id) throws UnauthorizedException, ResourceNotFoundException {
 
     StoreSocialNetwork relation =
         storeSocialNetworkRepository
-            .findByStoreIdAndSocialNetworkId(storeId, socialNetworkId)
+            .findByIdWithSocialNetwork(id)
             .orElseThrow(() -> new ResourceNotFoundException("Store social network not found"));
 
     authService.assertUserOwnsStore(relation.getStore());

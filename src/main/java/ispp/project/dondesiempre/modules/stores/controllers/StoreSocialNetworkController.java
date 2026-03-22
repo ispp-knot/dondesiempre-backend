@@ -2,6 +2,7 @@ package ispp.project.dondesiempre.modules.stores.controllers;
 
 import ispp.project.dondesiempre.modules.stores.dtos.SocialNetworkDTO;
 import ispp.project.dondesiempre.modules.stores.dtos.SocialNetworkUpdateDTO;
+import ispp.project.dondesiempre.modules.stores.dtos.StoreSocialNetworkDTO;
 import ispp.project.dondesiempre.modules.stores.models.StoreSocialNetwork;
 import ispp.project.dondesiempre.modules.stores.services.StoreService;
 import ispp.project.dondesiempre.modules.stores.services.StoreSocialNetworkService;
@@ -53,23 +54,20 @@ public class StoreSocialNetworkController {
     return new ResponseEntity<>(new SocialNetworkDTO(ssn), HttpStatus.CREATED);
   }
 
-  @PutMapping("stores/{storeId}/social-networks/{socialNetworkId}")
-  public ResponseEntity<SocialNetworkDTO> update(
-      @PathVariable UUID storeId,
-      @PathVariable UUID socialNetworkId,
-      @RequestBody @Valid SocialNetworkUpdateDTO dto) {
+  @PutMapping("store-social-networks/{id}")
+  public ResponseEntity<StoreSocialNetworkDTO> update(
+      @PathVariable UUID id, @RequestBody @Valid SocialNetworkUpdateDTO dto) {
 
-    StoreSocialNetwork ssn = storeSocialNetworkService.update(storeId, socialNetworkId, dto);
+    StoreSocialNetwork ssn = storeSocialNetworkService.update(id, dto);
 
-    return new ResponseEntity<>(new SocialNetworkDTO(ssn), HttpStatus.OK);
+    return new ResponseEntity<>(new StoreSocialNetworkDTO(ssn), HttpStatus.OK);
   }
 
-  @DeleteMapping("stores/{storeId}/social-networks/{socialNetworkId}")
+  @DeleteMapping("store-social-networks/{id}")
   @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<String> delete(
-      @PathVariable UUID storeId, @PathVariable UUID socialNetworkId) {
+  public ResponseEntity<String> delete(@PathVariable UUID id) {
 
-    storeSocialNetworkService.delete(storeId, socialNetworkId);
+    storeSocialNetworkService.delete(id);
 
     return new ResponseEntity<>("Social network successfully removed.", HttpStatus.OK);
   }
