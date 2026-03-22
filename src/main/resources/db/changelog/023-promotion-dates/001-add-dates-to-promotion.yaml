@@ -1,0 +1,21 @@
+databaseChangeLog:
+  - changeSet:
+      id: 023-add-dates-to-promotion
+      author: ivanm
+      changes:
+        - addColumn:
+            tableName: promotions
+            columns:
+              - column:
+                  name: start_date
+                  type: DATE
+              - column:
+                  name: end_date
+                  type: DATE
+      rollback:
+        - dropColumn:
+            tableName: promotions
+            columnName: start_date
+        - dropColumn:
+            tableName: promotions
+            columnName: end_date

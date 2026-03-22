@@ -211,7 +211,7 @@ class OutfitServiceTest {
   }
 
   @Test
-  void shouldThrowInvalidRequestException_whenProductsIsEmpty() {
+  void shouldThrowInvalidRequestException_whenLessThanTwoProducts() {
     OutfitCreationDTO dto = new OutfitCreationDTO();
     dto.setName("New Outfit");
     dto.setTags(List.of());
@@ -428,8 +428,34 @@ class OutfitServiceTest {
 
   @Test
   void shouldRemoveProduct_whenProductBelongsToOutfit() throws ResourceNotFoundException {
+    Product product2 = new Product();
+    product2.setId(UUID.randomUUID());
+    product2.setName("Test Product");
+    product2.setPriceInCents(1000);
+    product2.setStore(store);
+
+    Product product3 = new Product();
+    product3.setId(UUID.randomUUID());
+    product3.setName("Test Product");
+    product3.setPriceInCents(1000);
+    product3.setStore(store);
+
+    OutfitProduct outfitProduct2 = new OutfitProduct();
+    outfitProduct2.setId(UUID.randomUUID());
+    outfitProduct2.setIndex(1);
+    outfitProduct2.setOutfit(outfit);
+    outfitProduct2.setProduct(product2);
+
+    OutfitProduct outfitProduct3 = new OutfitProduct();
+    outfitProduct3.setId(UUID.randomUUID());
+    outfitProduct3.setIndex(2);
+    outfitProduct3.setOutfit(outfit);
+    outfitProduct3.setProduct(product3);
+
     when(outfitRepository.findById(outfitId)).thenReturn(Optional.of(outfit));
     when(outfitProductService.findProductRelation(outfitId, productId)).thenReturn(outfitProduct);
+    when(outfitProductService.findOutfitProductsById(outfitId))
+        .thenReturn(List.of(outfitProduct, outfitProduct2, outfitProduct3));
 
     outfitService.removeProduct(outfitId, product);
 
@@ -437,7 +463,43 @@ class OutfitServiceTest {
   }
 
   @Test
+  void shouldThrowInvalidRequestException_whenOutfitHasLessThanTwoProducts()
+      throws ResourceNotFoundException {
+    when(outfitRepository.findById(outfitId)).thenReturn(Optional.of(outfit));
+    when(outfitProductService.findOutfitProductsById(outfitId)).thenReturn(new ArrayList<>());
+
+    assertThrows(
+        InvalidRequestException.class, () -> outfitService.removeProduct(outfitId, product));
+
+    verify(outfitProductService, never()).delete(outfitProduct);
+  }
+
+  @Test
   void shouldThrowResourceNotFoundException_whenProductDoesNotBelongToOutfit() {
+    Product product2 = new Product();
+    product2.setId(UUID.randomUUID());
+    product2.setName("Test Product");
+    product2.setPriceInCents(1000);
+    product2.setStore(store);
+
+    Product product3 = new Product();
+    product3.setId(UUID.randomUUID());
+    product3.setName("Test Product");
+    product3.setPriceInCents(1000);
+    product3.setStore(store);
+
+    OutfitProduct outfitProduct2 = new OutfitProduct();
+    outfitProduct2.setId(UUID.randomUUID());
+    outfitProduct2.setIndex(1);
+    outfitProduct2.setOutfit(outfit);
+    outfitProduct2.setProduct(product2);
+
+    OutfitProduct outfitProduct3 = new OutfitProduct();
+    outfitProduct3.setId(UUID.randomUUID());
+    outfitProduct3.setIndex(2);
+    outfitProduct3.setOutfit(outfit);
+    outfitProduct3.setProduct(product3);
+
     UUID nonExistentProductId = UUID.randomUUID();
     Product nonExistentProduct = new Product();
     nonExistentProduct.setId(nonExistentProductId);
@@ -445,6 +507,8 @@ class OutfitServiceTest {
     when(outfitRepository.findById(outfitId)).thenReturn(Optional.of(outfit));
     when(outfitProductService.findProductRelation(outfitId, nonExistentProductId))
         .thenThrow(new ResourceNotFoundException("Requested product does not belong to outfit."));
+    when(outfitProductService.findOutfitProductsById(outfitId))
+        .thenReturn(List.of(outfitProduct, outfitProduct2, outfitProduct3));
 
     assertThrows(
         ResourceNotFoundException.class,

@@ -1,10 +1,14 @@
 package ispp.project.dondesiempre.modules.promotions.dtos;
 
+import ispp.project.dondesiempre.modules.promotions.validators.HasDateRange;
+import ispp.project.dondesiempre.modules.promotions.validators.StartDateBeforeEndDate;
+import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 import lombok.Getter;
@@ -14,7 +18,8 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class PromotionCreationDTO {
+@StartDateBeforeEndDate
+public class PromotionCreationDTO implements HasDateRange {
 
   @NotNull
   @Size(max = 255)
@@ -32,4 +37,8 @@ public class PromotionCreationDTO {
   @NotNull private UUID storeId;
 
   private String description;
+
+  private LocalDate startDate;
+
+  @FutureOrPresent private LocalDate endDate;
 }

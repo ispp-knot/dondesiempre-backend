@@ -249,14 +249,23 @@ public class OutfitService {
     return outfitProduct;
   }
 
-  @Transactional(rollbackFor = {UnauthorizedException.class, ResourceNotFoundException.class})
+  @Transactional(
+      rollbackFor = {
+        UnauthorizedException.class,
+        ResourceNotFoundException.class,
+        InvalidRequestException.class
+      })
   public void removeProduct(UUID outfitId, Product product)
-      throws UnauthorizedException, ResourceNotFoundException {
+      throws UnauthorizedException, ResourceNotFoundException, InvalidRequestException {
     Outfit outfit;
     OutfitProduct relation;
 
     outfit = applicationContext.getBean(OutfitService.class).findById(outfitId);
     authService.assertUserOwnsStore(outfit.getStore());
+
+    if (outfitProductService.findOutfitProductsById(outfitId).size() <= 2) {
+      throw new InvalidRequestException("Outfits must contain at least two products.");
+    }
     relation = outfitProductService.findProductRelation(outfit.getId(), product.getId());
     outfitProductService.delete(relation);
   }

@@ -58,6 +58,14 @@ public class PromotionService {
       promotion.setPromotionImageUrl(cloudinaryService.upload(image));
     }
 
+    if (dto.getStartDate() != null) {
+      promotion.setStartDate(dto.getStartDate());
+    }
+
+    if (dto.getEndDate() != null) {
+      promotion.setEndDate(dto.getEndDate());
+    }
+
     Store store = storeService.findById(dto.getStoreId());
     promotion.setStore(store);
 
@@ -165,6 +173,14 @@ public class PromotionService {
 
     if (image != null) {
       promotion.setPromotionImageUrl(cloudinaryService.upload(image));
+    }
+
+    if (dto.getStartDate() != null) {
+      promotion.setStartDate(dto.getStartDate());
+    }
+
+    if (dto.getEndDate() != null) {
+      promotion.setEndDate(dto.getEndDate());
     }
 
     if (dto.getProductIds() != null && !dto.getProductIds().isEmpty()) {
