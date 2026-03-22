@@ -1,15 +1,19 @@
 package ispp.project.dondesiempre.modules.promotions.models;
 
 import ispp.project.dondesiempre.modules.common.models.BaseEntity;
+import ispp.project.dondesiempre.modules.promotions.validators.HasDateRange;
+import ispp.project.dondesiempre.modules.promotions.validators.StartDateBeforeEndDate;
 import ispp.project.dondesiempre.modules.stores.models.Store;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import java.time.LocalDate;
 import java.util.Optional;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,7 +23,8 @@ import org.hibernate.validator.constraints.URL;
 @Getter
 @Setter
 @Table(name = "promotions")
-public class Promotion extends BaseEntity {
+@StartDateBeforeEndDate
+public class Promotion extends BaseEntity implements HasDateRange {
 
   @Column
   @NotNull
@@ -37,6 +42,13 @@ public class Promotion extends BaseEntity {
   @ManyToOne(optional = false)
   @NotNull
   private Store store;
+
+  @Column(name = "start_date")
+  private LocalDate startDate;
+
+  @Column(name = "end_date")
+  @FutureOrPresent
+  private LocalDate endDate;
 
   @Column(columnDefinition = "TEXT")
   private String description;
