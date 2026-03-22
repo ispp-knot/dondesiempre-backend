@@ -4,6 +4,7 @@ import ispp.project.dondesiempre.modules.outfits.dtos.OutfitCreationDTO;
 import ispp.project.dondesiempre.modules.outfits.dtos.OutfitCreationProductDTO;
 import ispp.project.dondesiempre.modules.outfits.dtos.OutfitDTO;
 import ispp.project.dondesiempre.modules.outfits.dtos.OutfitProductDTO;
+import ispp.project.dondesiempre.modules.outfits.dtos.OutfitSortDTO;
 import ispp.project.dondesiempre.modules.outfits.dtos.OutfitUpdateDTO;
 import ispp.project.dondesiempre.modules.outfits.models.Outfit;
 import ispp.project.dondesiempre.modules.outfits.services.OutfitService;
@@ -17,7 +18,17 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
@@ -113,5 +124,13 @@ public class OutfitController {
   public ResponseEntity<String> delete(@PathVariable("id") UUID id) {
     outfitService.delete(id);
     return new ResponseEntity<>("Outfit successfully deleted.", HttpStatus.OK);
+  }
+
+  @PatchMapping("stores/{id}/outfits/sort")
+  @ResponseStatus(HttpStatus.OK)
+  public ResponseEntity<String> sortOutfits(
+      @PathVariable("id") UUID id, @RequestBody @Valid List<OutfitSortDTO> outfits) {
+    outfitService.sortOutfits(id, outfits);
+    return new ResponseEntity<>("Outfits successfully sorted.", HttpStatus.OK);
   }
 }

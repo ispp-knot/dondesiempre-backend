@@ -7,6 +7,7 @@ import ispp.project.dondesiempre.modules.common.exceptions.UnauthorizedException
 import ispp.project.dondesiempre.modules.outfits.dtos.OutfitCreationDTO;
 import ispp.project.dondesiempre.modules.outfits.dtos.OutfitCreationProductDTO;
 import ispp.project.dondesiempre.modules.outfits.dtos.OutfitDTO;
+import ispp.project.dondesiempre.modules.outfits.dtos.OutfitSortDTO;
 import ispp.project.dondesiempre.modules.outfits.dtos.OutfitUpdateDTO;
 import ispp.project.dondesiempre.modules.outfits.models.Outfit;
 import ispp.project.dondesiempre.modules.outfits.models.OutfitProduct;
@@ -117,12 +118,13 @@ public class OutfitService {
       throws UnauthorizedException, ResourceNotFoundException, InvalidRequestException {
     Outfit outfit;
     UUID outfitId;
+    List<Outfit> outfitsOfStore;
 
     outfit = new Outfit();
 
     outfit.setName(dto.getName());
     outfit.setDescription(dto.getDescription());
-    outfit.setIndex(dto.getIndex());
+
     if (image != null && !image.isEmpty()) {
       outfit.setImage(cloudinaryService.upload(image));
     }
@@ -130,13 +132,13 @@ public class OutfitService {
     authService.assertUserOwnsStore(store);
     outfit.setStore(store);
 
+    outfitsOfStore = applicationContext.getBean(OutfitService.class).findByStore(store);
+    outfit.setIndex(outfitsOfStore.stream().mapToInt(Outfit::getIndex).max().orElse(-1) + 1);
+
     if (dto.getProducts() == null || (dto.getProducts() != null && dto.getProducts().size() <= 0)) {
       throw new InvalidRequestException("An outfit cannot be created without products.");
     }
-    outfit.setDiscountedPriceInCents(
-        applicationContext
-            .getBean(OutfitService.class)
-            .calculatePriceOnCreation(dto.getProducts()));
+    outfit.setDiscountPercentage(null);
 
     outfit = outfitRepository.save(outfit);
     outfitId = outfit.getId();
@@ -149,14 +151,6 @@ public class OutfitService {
                 applicationContext.getBean(OutfitService.class).addProduct(outfitId, product));
 
     return outfit;
-  }
-
-  @Transactional(readOnly = true, rollbackFor = ResourceNotFoundException.class)
-  public Integer calculatePriceOnCreation(List<OutfitCreationProductDTO> dtos)
-      throws ResourceNotFoundException {
-    return dtos.stream()
-        .mapToInt(dto -> productService.getProductById(dto.getProductId()).getPriceInCents())
-        .sum();
   }
 
   @Transactional(
@@ -174,12 +168,11 @@ public class OutfitService {
 
     outfitToUpdate.setName(dto.getName());
     outfitToUpdate.setDescription(dto.getDescription());
-    outfitToUpdate.setDiscountedPriceInCents(dto.getDiscountedPriceInCents());
+    outfitToUpdate.setDiscountPercentage(dto.getDiscountPercentage());
+
     if (image != null && !image.isEmpty()) {
       outfitToUpdate.setImage(cloudinaryService.upload(image));
     }
-    outfitToUpdate.setIndex(dto.getIndex());
-
     return outfitRepository.save(outfitToUpdate);
   }
 
@@ -303,5 +296,36 @@ public class OutfitService {
     outfitTagRelationService.findOutfitTagsById(id).stream()
         .forEach(t -> outfitTagRelationService.deleteById(t.getId()));
     outfitRepository.deleteById(id);
+  }
+
+  @Transactional(
+      rollbackFor = {
+        UnauthorizedException.class,
+        ResourceNotFoundException.class,
+        InvalidRequestException.class
+      })
+  public void sortOutfits(UUID storeId, List<OutfitSortDTO> dtos)
+      throws UnauthorizedException, ResourceNotFoundException, InvalidRequestException {
+    Store store;
+    List<Outfit> outfits;
+
+    store = storeService.findById(storeId);
+    authService.assertUserOwnsStore(store);
+
+    if (dtos.stream().mapToInt(OutfitSortDTO::getIndex).distinct().count() < dtos.size()) {
+      throw new InvalidRequestException("All outfits must have different indices.");
+    }
+
+    for (OutfitSortDTO dto : dtos) {
+      Outfit outfit;
+
+      outfit = applicationContext.getBean(OutfitService.class).findById(dto.getId());
+
+      if (outfit.getStore().getId() != storeId) {
+        throw new InvalidRequestException("All outfits must belong to the requested store.");
+      }
+      outfit.setIndex(dto.getIndex());
+      outfitRepository.save(outfit);
+    }
   }
 }

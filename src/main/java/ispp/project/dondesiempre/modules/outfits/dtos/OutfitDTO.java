@@ -20,7 +20,7 @@ public class OutfitDTO {
   private String image;
 
   private Integer priceInCents;
-  private Integer discountedPriceInCents;
+  private Integer discountPercentage;
 
   private Integer index;
   private UUID storeId;
@@ -35,7 +35,7 @@ public class OutfitDTO {
     this.description = outfit.getDescription().orElse(null);
     this.image = outfit.getImage().orElse(null);
 
-    this.discountedPriceInCents = outfit.getDiscountedPriceInCents();
+    this.discountPercentage = outfit.getDiscountPercentage().orElse(null);
 
     this.index = outfit.getIndex();
     this.storeId = outfit.getStore().getId();
