@@ -5,12 +5,12 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ispp.project.dondesiempre.modules.auth.dtos.LoginRequestDTO;
 import ispp.project.dondesiempre.modules.auth.models.User;
 import ispp.project.dondesiempre.modules.auth.repositories.UserRepository;
 import ispp.project.dondesiempre.utils.cloudinary.CloudinaryService;
-import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -67,13 +67,14 @@ class AuthIntegrationTest {
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(loginDTO)))
             .andExpect(status().isOk())
+            .andExpect(jsonPath("$.token").isNotEmpty())
             .andReturn();
 
-    String setCookieHeader = loginResult.getResponse().getHeader("Set-Cookie");
-    String jwtToken = setCookieHeader.split(";")[0].split("=", 2)[1];
+    JsonNode loginBody = objectMapper.readTree(loginResult.getResponse().getContentAsString());
+    String jwtToken = loginBody.get("token").asText();
 
     mockMvc
-        .perform(get("/api/v1/auth/me").cookie(new Cookie("token", jwtToken)))
+        .perform(get("/api/v1/auth/me").header("Authorization", "Bearer " + jwtToken))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.email").value(TEST_EMAIL))
         .andExpect(jsonPath("$.id").isNotEmpty());
