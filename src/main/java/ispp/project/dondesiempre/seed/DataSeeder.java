@@ -937,7 +937,8 @@ public class DataSeeder implements CommandLineRunner {
   private String uploadImage(String filename) {
     if (filename == null)
       return null;
-    String publicId = filename.replaceAll("\\.[^.]+$", "").replace(" ", "_");
+    String nameOnly = filename.substring(filename.lastIndexOf('/') + 1);
+    String publicId = nameOnly.replaceAll("\\.[^.]+$", "").replace(" ", "_");
     if (!props.isUploadImages()) {
       return "https://res.cloudinary.com/"
           + cloudinary.config.cloudName
