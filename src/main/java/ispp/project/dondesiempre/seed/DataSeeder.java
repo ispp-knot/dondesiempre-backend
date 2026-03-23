@@ -110,24 +110,21 @@ public class DataSeeder implements CommandLineRunner {
 
   private void seedReferenceData() {
     if (socialNetworkRepository.count() == 0) {
-      for (String name :
-          List.of("Instagram", "Facebook", "TikTok", "X", "WhatsApp", "Web", "Teléfono")) {
+      for (String name : List.of("Instagram", "Facebook", "TikTok", "X", "WhatsApp", "Web", "Teléfono")) {
         SocialNetwork sn = new SocialNetwork();
         sn.setName(name);
         socialNetworkRepository.save(sn);
       }
     }
     if (productTypeRepository.count() == 0) {
-      for (String type :
-          List.of("Camiseta", "Pantalón", "Vestido", "Chaqueta", "Zapatos", "Accesorio")) {
+      for (String type : List.of("Camiseta", "Pantalón", "Vestido", "Chaqueta", "Zapatos", "Accesorio")) {
         ProductType pt = new ProductType();
         pt.setType(type);
         productTypeRepository.save(pt);
       }
     }
     if (productColorRepository.count() == 0) {
-      for (String color :
-          List.of("Negro", "Blanco", "Rojo", "Azul", "Verde", "Rosa", "Gris", "Beige")) {
+      for (String color : List.of("Negro", "Blanco", "Rojo", "Azul", "Verde", "Rosa", "Gris", "Beige")) {
         ProductColor pc = new ProductColor();
         pc.setColor(color);
         productColorRepository.save(pc);
@@ -141,8 +138,7 @@ public class DataSeeder implements CommandLineRunner {
       }
     }
     if (outfitTagRepository.count() == 0) {
-      for (String name :
-          List.of("Verano", "Invierno", "Casual", "Formal", "Deportivo", "Elegante")) {
+      for (String name : List.of("Verano", "Invierno", "Casual", "Formal", "Deportivo", "Elegante")) {
         OutfitTag tag = new OutfitTag();
         tag.setName(name);
         outfitTagRepository.save(tag);
@@ -151,35 +147,29 @@ public class DataSeeder implements CommandLineRunner {
   }
 
   private void loadStoreData() {
-    Map<String, SocialNetwork> socialNetworks =
-        socialNetworkRepository.findAll().stream()
-            .collect(Collectors.toMap(SocialNetwork::getName, sn -> sn));
-    Map<String, ProductType> productTypes =
-        productTypeRepository.findAll().stream()
-            .collect(Collectors.toMap(ProductType::getType, pt -> pt));
-    Map<String, ProductColor> productColors =
-        productColorRepository.findAll().stream()
-            .collect(Collectors.toMap(ProductColor::getColor, pc -> pc));
-    Map<String, ProductSize> productSizes =
-        productSizeRepository.findAll().stream()
-            .collect(Collectors.toMap(ProductSize::getSize, ps -> ps));
-    Map<String, OutfitTag> outfitTags =
-        outfitTagRepository.findAll().stream()
-            .collect(Collectors.toMap(OutfitTag::getName, ot -> ot));
+    Map<String, SocialNetwork> socialNetworks = socialNetworkRepository.findAll().stream()
+        .collect(Collectors.toMap(SocialNetwork::getName, sn -> sn));
+    Map<String, ProductType> productTypes = productTypeRepository.findAll().stream()
+        .collect(Collectors.toMap(ProductType::getType, pt -> pt));
+    Map<String, ProductColor> productColors = productColorRepository.findAll().stream()
+        .collect(Collectors.toMap(ProductColor::getColor, pc -> pc));
+    Map<String, ProductSize> productSizes = productSizeRepository.findAll().stream()
+        .collect(Collectors.toMap(ProductSize::getSize, ps -> ps));
+    Map<String, OutfitTag> outfitTags = outfitTagRepository.findAll().stream()
+        .collect(Collectors.toMap(OutfitTag::getName, ot -> ot));
 
     // ── 1. Greta Closet ──────────────────────────────────────────────────────
-    Store greta =
-        createStore(
-            "Greta Closet",
-            "demo@gretacloset.com",
-            37.283160057885304,
-            -5.9237761491318235,
-            "C. Sta. María Magdalena, 14, 41701 Dos Hermanas, Sevilla",
-            "Lun-Vie 10:00-13:00, 17:30-20:30. Sab 10:30-14:00",
-            "#000000",
-            "#a1005c",
-            "escaparate_greta_closet.png",
-            "C. Sta. María Magdalena, 14, 41701 Dos Hermanas, Sevilla, España");
+    Store greta = createStore(
+        "Greta Closet",
+        "demo@gretacloset.com",
+        37.283160057885304,
+        -5.9237761491318235,
+        "C. Sta. María Magdalena, 14, 41701 Dos Hermanas, Sevilla",
+        "Lun-Vie 10:00-13:00, 17:30-20:30. Sab 10:30-14:00",
+        "#000000",
+        "#a1005c",
+        "greta/escaparate_greta_closet.png",
+        "C. Sta. María Magdalena, 14, 41701 Dos Hermanas, Sevilla, España");
     addSocialNetwork(greta, socialNetworks, "Instagram", "https://www.instagram.com/gretacloset/");
     addSocialNetwork(
         greta, socialNetworks, "TikTok", "https://www.tiktok.com/@gretaclosetcomplementos");
@@ -187,101 +177,92 @@ public class DataSeeder implements CommandLineRunner {
     addSocialNetwork(greta, socialNetworks, "Web", "https://gretacloset.com/");
     addSocialNetwork(greta, socialNetworks, "Teléfono", "tel:+34694466991");
 
-    Product greta_vestidoBlanco =
-        createProduct(
-            "Vestido Blanco",
-            4999,
-            null,
-            "Vestido blanco, perfecto para los días de calor.",
-            productTypes.get("Vestido"),
-            greta,
-            "outfit1_vestido_blanco_49.99.jpg");
+    Product greta_vestidoBlanco = createProduct(
+        "Vestido Blanco",
+        4999,
+        null,
+        "Vestido blanco, perfecto para los días de calor.",
+        productTypes.get("Vestido"),
+        greta,
+        "greta/outfit1_vestido_blanco_49.99.jpg");
     createVariant(greta_vestidoBlanco, productSizes.get("M"), productColors.get("Blanco"), true);
 
-    Product greta_botasNegras1 =
-        createProduct(
-            "Botas Negras",
-            6999,
-            15,
-            "Botas negras, ideales para los meses de frío.",
-            productTypes.get("Zapatos"),
-            greta,
-            "outfit1_botas_negras_69.99.jpg");
+    Product greta_botasNegras1 = createProduct(
+        "Botas Negras",
+        6999,
+        15,
+        "Botas negras, ideales para los meses de frío.",
+        productTypes.get("Zapatos"),
+        greta,
+        "greta/outfit1_botas_negras_69.99.jpg");
     createVariant(greta_botasNegras1, productSizes.get("M"), productColors.get("Negro"), true);
 
-    Product greta_bolsoMarron =
-        createProduct(
-            "Bolso Marrón",
-            3499,
-            null,
-            "Bolso marrón de estilo moderno, perfecto para el día a día.",
-            productTypes.get("Accesorio"),
-            greta,
-            "outfit1_bolso_marron_34.99.jpg");
+    Product greta_bolsoMarron = createProduct(
+        "Bolso Marrón",
+        3499,
+        null,
+        "Bolso marrón de estilo moderno, perfecto para el día a día.",
+        productTypes.get("Accesorio"),
+        greta,
+        "greta/outfit1_bolso_marron_34.99.jpg");
     createVariant(greta_bolsoMarron, productSizes.get("M"), productColors.get("Beige"), true);
 
-    Product greta_vestidoAzul =
-        createProduct(
-            "Vestido Azul",
-            6999,
-            20,
-            "Vestido azul, perfecto para una tarde de verano.",
-            productTypes.get("Vestido"),
-            greta,
-            "outfit2_vestido_azul_69.99.jpg");
+    Product greta_vestidoAzul = createProduct(
+        "Vestido Azul",
+        6999,
+        20,
+        "Vestido azul, perfecto para una tarde de verano.",
+        productTypes.get("Vestido"),
+        greta,
+        "greta/outfit2_vestido_azul_69.99.jpg");
     createVariant(greta_vestidoAzul, productSizes.get("M"), productColors.get("Azul"), true);
 
-    Product greta_bolsoBeige =
-        createProduct(
-            "Bolso Beige",
-            4999,
-            null,
-            "Bolso beige de estilo moderno, ideal para el día a día.",
-            productTypes.get("Accesorio"),
-            greta,
-            "outfit2_bolso_beige_49.99.jpg");
+    Product greta_bolsoBeige = createProduct(
+        "Bolso Beige",
+        4999,
+        null,
+        "Bolso beige de estilo moderno, ideal para el día a día.",
+        productTypes.get("Accesorio"),
+        greta,
+        "greta/outfit2_bolso_beige_49.99.jpg");
     createVariant(greta_bolsoBeige, productSizes.get("M"), productColors.get("Beige"), true);
 
-    Product greta_pendientes =
-        createProduct(
-            "Pendientes Mariposa Oro",
-            1999,
-            10,
-            "Pendientes mariposa dorados, un toque elegante para cualquier look.",
-            productTypes.get("Accesorio"),
-            greta,
-            "outfit2_pendientes_mariposa_oro_19.99.jpg");
+    Product greta_pendientes = createProduct(
+        "Pendientes Mariposa Oro",
+        1999,
+        10,
+        "Pendientes mariposa dorados, un toque elegante para cualquier look.",
+        productTypes.get("Accesorio"),
+        greta,
+        "greta/outfit2_pendientes_mariposa_oro_19.99.jpg");
     createVariant(greta_pendientes, productSizes.get("S"), productColors.get("Beige"), true);
 
-    Outfit greta_outfit1 =
-        createOutfit("Conjunto Mihai", 0, null, greta, "outfit1_conjunto_mihai.jpg");
+    Outfit greta_outfit1 = createOutfit("Conjunto Mihai", 0, null, greta, "greta/outfit1_conjunto_mihai.jpg");
     createOutfitTagRelation(greta_outfit1, outfitTags.get("Elegante"));
     createOutfitProduct(greta_outfit1, greta_vestidoBlanco, 0);
     createOutfitProduct(greta_outfit1, greta_botasNegras1, 1);
     createOutfitProduct(greta_outfit1, greta_bolsoMarron, 2);
 
-    Outfit greta_outfit2 =
-        createOutfit("Conjunto Galilea", 1, 25, greta, "outfit2_conjunto_galilea.jpg");
+    Outfit greta_outfit2 = createOutfit("Conjunto Galilea", 1, 25, greta, "greta/outfit2_conjunto_galilea.jpg");
     createOutfitTagRelation(greta_outfit2, outfitTags.get("Casual"));
     createOutfitProduct(greta_outfit2, greta_vestidoAzul, 0);
     createOutfitProduct(greta_outfit2, greta_bolsoBeige, 1);
     createOutfitProduct(greta_outfit2, greta_pendientes, 2);
 
     // ── 2. Modas Romantika Vintage ────────────────────────────────────────────
-    Store romantika =
-        createStore(
-            "Modas Romantika Vintage",
-            "demo@romantikavintage.com",
-            37.280502359992376,
-            -5.920509768052806,
-            "C. San Sebastián, 17, 41701 Dos Hermanas, Sevilla",
-            "Lun-Vie 10:30-13:30, 17:30-20:30. Sab 10:30-13:30",
-            "#315750",
-            "#2b4f39",
-            "escaparate_romantika.png",
-            "Encuentra tus complementos originales\n"
-                + "Moda para eventos y ocasiones especiales\n"
-                + "Toda la moda urbana divertida y diferente que hace única a cada mujer");
+    Store romantika = createStore(
+        "Modas Romantika Vintage",
+        "demo@romantikavintage.com",
+        37.280502359992376,
+        -5.920509768052806,
+        "C. San Sebastián, 17, 41701 Dos Hermanas, Sevilla",
+        "Lun-Vie 10:30-13:30, 17:30-20:30. Sab 10:30-13:30",
+        "#315750",
+        "#2b4f39",
+        "escaparate_romantika.png",
+        "Encuentra tus complementos originales\n"
+            + "Moda para eventos y ocasiones especiales\n"
+            + "Toda la moda urbana divertida y diferente que hace única a cada mujer");
     addSocialNetwork(romantika, socialNetworks, "WhatsApp", "https://wa.me/34645142782");
     addSocialNetwork(
         romantika, socialNetworks, "Instagram", "https://www.instagram.com/modasromantikavintage/");
@@ -290,48 +271,44 @@ public class DataSeeder implements CommandLineRunner {
     addSocialNetwork(romantika, socialNetworks, "Web", "http://www.romantikavintage.es/");
     addSocialNetwork(romantika, socialNetworks, "Teléfono", "tel:+34955668820");
 
-    Product rom_vestidoRojo =
-        createProduct(
-            "Vestido Rojo",
-            6499,
-            null,
-            "Vestido rojo, ideal para una ocasión especial en verano.",
-            productTypes.get("Vestido"),
-            romantika,
-            "outfit3_vestido_rojo_64.99.jpg");
+    Product rom_vestidoRojo = createProduct(
+        "Vestido Rojo",
+        6499,
+        null,
+        "Vestido rojo, ideal para una ocasión especial en verano.",
+        productTypes.get("Vestido"),
+        romantika,
+        "outfit3_vestido_rojo_64.99.jpg");
     createVariant(rom_vestidoRojo, productSizes.get("M"), productColors.get("Rojo"), true);
 
-    Product rom_sandaliasRojas =
-        createProduct(
-            "Sandalias Rojas con Tacón",
-            4699,
-            25,
-            "Sandalias rojas con tacón, perfectas para el buen tiempo.",
-            productTypes.get("Zapatos"),
-            romantika,
-            "outfit3_sandalias_rojas_con_tacón_46.99.jpg");
+    Product rom_sandaliasRojas = createProduct(
+        "Sandalias Rojas con Tacón",
+        4699,
+        25,
+        "Sandalias rojas con tacón, perfectas para el buen tiempo.",
+        productTypes.get("Zapatos"),
+        romantika,
+        "outfit3_sandalias_rojas_con_tacón_46.99.jpg");
     createVariant(rom_sandaliasRojas, productSizes.get("M"), productColors.get("Rojo"), true);
 
-    Product rom_vestidoVerde =
-        createProduct(
-            "Vestido Verde",
-            4999,
-            null,
-            "Vestido verde, una opción fresca para la primavera.",
-            productTypes.get("Vestido"),
-            romantika,
-            "outfit4_vestido_verde_49.99.jpg");
+    Product rom_vestidoVerde = createProduct(
+        "Vestido Verde",
+        4999,
+        null,
+        "Vestido verde, una opción fresca para la primavera.",
+        productTypes.get("Vestido"),
+        romantika,
+        "outfit4_vestido_verde_49.99.jpg");
     createVariant(rom_vestidoVerde, productSizes.get("M"), productColors.get("Verde"), true);
 
-    Product rom_taconesBeige =
-        createProduct(
-            "Tacones Beige",
-            4499,
-            10,
-            "Tacones beige, versátiles para cualquier ocasión.",
-            productTypes.get("Zapatos"),
-            romantika,
-            "outfit4_tacones_beige_44.99.jpg");
+    Product rom_taconesBeige = createProduct(
+        "Tacones Beige",
+        4499,
+        10,
+        "Tacones beige, versátiles para cualquier ocasión.",
+        productTypes.get("Zapatos"),
+        romantika,
+        "outfit4_tacones_beige_44.99.jpg");
     createVariant(rom_taconesBeige, productSizes.get("M"), productColors.get("Beige"), true);
 
     Outfit rom_outfit1 = createOutfit("Verano Rojo", 0, 10, romantika, "outfit3_verano_rojo.jpg");
@@ -339,31 +316,29 @@ public class DataSeeder implements CommandLineRunner {
     createOutfitProduct(rom_outfit1, rom_vestidoRojo, 0);
     createOutfitProduct(rom_outfit1, rom_sandaliasRojas, 1);
 
-    Outfit rom_outfit2 =
-        createOutfit("Primavera Verde", 1, 15, romantika, "outfit4_primavera_verde.jpg");
+    Outfit rom_outfit2 = createOutfit("Primavera Verde", 1, 15, romantika, "outfit4_primavera_verde.jpg");
     createOutfitTagRelation(rom_outfit2, outfitTags.get("Verano"));
     createOutfitProduct(rom_outfit2, rom_vestidoVerde, 0);
     createOutfitProduct(rom_outfit2, rom_taconesBeige, 1);
 
     // ── 3. Confecciones y Hogar San Sebastián ─────────────────────────────────
-    Store sanSebastian =
-        createStore(
-            "Confecciones y Hogar San Sebastián",
-            "demo@confeccionesyhogarsansebastian.com",
-            37.27961006469284,
-            -5.920175962489425,
-            "C/ San Sebastián, 35, 41701 Dos Hermanas, Sevilla",
-            "Lun-Vie 9:45-21:00, Sab 9:30-13:30",
-            "#000000",
-            "#ab327d",
-            "escaparate_san_sebastian.png",
-            "Somos una empresa local física, llevamos en el mercado desde 1959, trabajamos cada día para satisfacer las necesidades de nuestros clientes.\n"
-                + "\n"
-                + "Nos dedicamos a la venta de confección de caballero y señora, tallas especiales, interiores de caballeros, señoras y niñ@s, todo tipo de paquetería y calcetería y también trabajamos el textil de hogar.\n"
-                + "\n"
-                + "Nuestros proveedores son todos nacionales, como son Harper and Neyer, La Bassette, Kents, Dos Galgos, Brown Fury, Carlos Córdoba, Capelhi, Persam, Tachi and Zucca, Boguar, Egatex, Señoretta, Ysabel Mora, Dolores Cortés, Selmark, Belty, Abanderado, Ferry, Avet, Set, Morante, Naiara, Selene, Burrito Blanco, Catotex, Cañete, Manterol, Belnou, Cotopour, etc…\n"
-                + "\n"
-                + "Si busca un artículo y no lo encuentra, intentamos conseguirlo poniendo todo lo que está en nuestras manos para satisfacer al cliente.");
+    Store sanSebastian = createStore(
+        "Confecciones y Hogar San Sebastián",
+        "demo@confeccionesyhogarsansebastian.com",
+        37.27961006469284,
+        -5.920175962489425,
+        "C/ San Sebastián, 35, 41701 Dos Hermanas, Sevilla",
+        "Lun-Vie 9:45-21:00, Sab 9:30-13:30",
+        "#000000",
+        "#ab327d",
+        "escaparate_san_sebastian.png",
+        "Somos una empresa local física, llevamos en el mercado desde 1959, trabajamos cada día para satisfacer las necesidades de nuestros clientes.\n"
+            + "\n"
+            + "Nos dedicamos a la venta de confección de caballero y señora, tallas especiales, interiores de caballeros, señoras y niñ@s, todo tipo de paquetería y calcetería y también trabajamos el textil de hogar.\n"
+            + "\n"
+            + "Nuestros proveedores son todos nacionales, como son Harper and Neyer, La Bassette, Kents, Dos Galgos, Brown Fury, Carlos Córdoba, Capelhi, Persam, Tachi and Zucca, Boguar, Egatex, Señoretta, Ysabel Mora, Dolores Cortés, Selmark, Belty, Abanderado, Ferry, Avet, Set, Morante, Naiara, Selene, Burrito Blanco, Catotex, Cañete, Manterol, Belnou, Cotopour, etc…\n"
+            + "\n"
+            + "Si busca un artículo y no lo encuentra, intentamos conseguirlo poniendo todo lo que está en nuestras manos para satisfacer al cliente.");
     addSocialNetwork(
         sanSebastian,
         socialNetworks,
@@ -374,74 +349,68 @@ public class DataSeeder implements CommandLineRunner {
         sanSebastian, socialNetworks, "Web", "https://www.confeccionesyhogarsansebastian.com/");
     addSocialNetwork(sanSebastian, socialNetworks, "Teléfono", "tel:+34691537089");
 
-    Product ss_albornoz =
-        createProduct(
-            "Albornoz Blanco",
-            1999,
-            null,
-            "Albornoz blanco, perfecto para después del baño o la playa.",
-            productTypes.get("Accesorio"),
-            sanSebastian,
-            "outfit5_albornoz_blanco_19.99.jpg");
+    Product ss_albornoz = createProduct(
+        "Albornoz Blanco",
+        1999,
+        null,
+        "Albornoz blanco, perfecto para después del baño o la playa.",
+        productTypes.get("Accesorio"),
+        sanSebastian,
+        "outfit5_albornoz_blanco_19.99.jpg");
     createVariant(ss_albornoz, productSizes.get("M"), productColors.get("Blanco"), true);
 
-    Product ss_crocs =
-        createProduct(
-            "Crocs Negras",
-            1599,
-            15,
-            "Crocs negras, cómodas para el uso diario en casa o en la calle.",
-            productTypes.get("Zapatos"),
-            sanSebastian,
-            "outfit5_crocs_negras_15.99.jpg");
+    Product ss_crocs = createProduct(
+        "Crocs Negras",
+        1599,
+        15,
+        "Crocs negras, cómodas para el uso diario en casa o en la calle.",
+        productTypes.get("Zapatos"),
+        sanSebastian,
+        "outfit5_crocs_negras_15.99.jpg");
     createVariant(ss_crocs, productSizes.get("M"), productColors.get("Negro"), true);
 
-    Outfit ss_outfit1 =
-        createOutfit(
-            "Tranquilidad Casera", 0, null, sanSebastian, "outfit5_tranquilidad_casera.jpg");
+    Outfit ss_outfit1 = createOutfit(
+        "Tranquilidad Casera", 0, null, sanSebastian, "outfit5_tranquilidad_casera.jpg");
     createOutfitTagRelation(ss_outfit1, outfitTags.get("Casual"));
     createOutfitProduct(ss_outfit1, ss_albornoz, 0);
     createOutfitProduct(ss_outfit1, ss_crocs, 1);
 
     // ── 4. Roire ──────────────────────────────────────────────────────────────
-    Store roire =
-        createStore(
-            "Roire",
-            "demo@roire.com",
-            37.280633989355685,
-            -5.920593858571272,
-            "C. San Sebastián, 15, 41701 Dos Hermanas, Sevilla",
-            "Lun-Vie 10:00-13:45, 17:30-21:00, Sábado 10:00-14:00",
-            "#ad0000",
-            "#633a00",
-            "escaparate_roire.png",
-            "Nos aseguramos de que solo vendemos productos de alta calidad y que cumplen con los estándares de nuestros clientes. "
-                + "Nos esforzamos por comprender las necesidades de nuestros clientes leales y trabajamos para brindarles un servicio personalizado y adaptado a sus necesidades específicas.");
+    Store roire = createStore(
+        "Roire",
+        "demo@roire.com",
+        37.280633989355685,
+        -5.920593858571272,
+        "C. San Sebastián, 15, 41701 Dos Hermanas, Sevilla",
+        "Lun-Vie 10:00-13:45, 17:30-21:00, Sábado 10:00-14:00",
+        "#ad0000",
+        "#633a00",
+        "escaparate_roire.png",
+        "Nos aseguramos de que solo vendemos productos de alta calidad y que cumplen con los estándares de nuestros clientes. "
+            + "Nos esforzamos por comprender las necesidades de nuestros clientes leales y trabajamos para brindarles un servicio personalizado y adaptado a sus necesidades específicas.");
     addSocialNetwork(roire, socialNetworks, "WhatsApp", "https://wa.me/34641231378");
     addSocialNetwork(roire, socialNetworks, "Instagram", "https://www.instagram.com/roire.es");
     addSocialNetwork(roire, socialNetworks, "Web", "https://tiendaroire.es/");
     addSocialNetwork(roire, socialNetworks, "Teléfono", "tel:+34641231378");
 
-    Product roire_faldaCebra =
-        createProduct(
-            "Falda Cebra",
-            2999,
-            20,
-            "Falda cebra con estilo, ideal para un look casual llamativo.",
-            productTypes.get("Pantalón"),
-            roire,
-            "outfit6_falda_cebra_29.99.jpg");
+    Product roire_faldaCebra = createProduct(
+        "Falda Cebra",
+        2999,
+        20,
+        "Falda cebra con estilo, ideal para un look casual llamativo.",
+        productTypes.get("Pantalón"),
+        roire,
+        "outfit6_falda_cebra_29.99.jpg");
     createVariant(roire_faldaCebra, productSizes.get("M"), productColors.get("Blanco"), true);
 
-    Product roire_sueterMarron =
-        createProduct(
-            "Suéter Marrón",
-            4999,
-            null,
-            "Suéter marrón, muy abrigado para los días de frío.",
-            productTypes.get("Chaqueta"),
-            roire,
-            "outfit6_suéter_marrón_49.99.jpg");
+    Product roire_sueterMarron = createProduct(
+        "Suéter Marrón",
+        4999,
+        null,
+        "Suéter marrón, muy abrigado para los días de frío.",
+        productTypes.get("Chaqueta"),
+        roire,
+        "outfit6_suéter_marrón_49.99.jpg");
     createVariant(roire_sueterMarron, productSizes.get("M"), productColors.get("Beige"), true);
 
     Outfit roire_outfit1 = createOutfit("Savana Otoñal", 0, 20, roire, "outfit6_savana_otoñal.jpg");
@@ -450,18 +419,17 @@ public class DataSeeder implements CommandLineRunner {
     createOutfitProduct(roire_outfit1, roire_sueterMarron, 1);
 
     // ── 5. Pineapple Moda ─────────────────────────────────────────────────────
-    Store pineapple =
-        createStore(
-            "Pineapple Moda",
-            "demo@pineapplemoda.com",
-            37.28212759058594,
-            -5.921767187403529,
-            "C. Canónigo, 73, 41701 Dos Hermanas, Sevilla",
-            "Lun-Vie 10:30-13:30, 17:30-20:30, Sab 10:30-13:30",
-            "#75502b",
-            "#333333",
-            "escaparate_pineapple.png",
-            "Calle Canónigo 73 Dos Hermanas | 41071 | Sevilla");
+    Store pineapple = createStore(
+        "Pineapple Moda",
+        "demo@pineapplemoda.com",
+        37.28212759058594,
+        -5.921767187403529,
+        "C. Canónigo, 73, 41701 Dos Hermanas, Sevilla",
+        "Lun-Vie 10:30-13:30, 17:30-20:30, Sab 10:30-13:30",
+        "#75502b",
+        "#333333",
+        "escaparate_pineapple.png",
+        "Calle Canónigo 73 Dos Hermanas | 41071 | Sevilla");
     addSocialNetwork(pineapple, socialNetworks, "WhatsApp", "https://wa.me/34644807498");
     addSocialNetwork(
         pineapple,
@@ -475,47 +443,43 @@ public class DataSeeder implements CommandLineRunner {
     addSocialNetwork(pineapple, socialNetworks, "Web", "https://pineapplemoda.com/");
     addSocialNetwork(pineapple, socialNetworks, "Teléfono", "tel:+34644807498");
 
-    Product pine_camisaBlanca =
-        createProduct(
-            "Camisa Blanca",
-            1599,
-            null,
-            "Camisa blanca, un básico de armario para cualquier época del año.",
-            productTypes.get("Camiseta"),
-            pineapple,
-            "outfit7_camisa_blanca_15.99.jpg");
+    Product pine_camisaBlanca = createProduct(
+        "Camisa Blanca",
+        1599,
+        null,
+        "Camisa blanca, un básico de armario para cualquier época del año.",
+        productTypes.get("Camiseta"),
+        pineapple,
+        "outfit7_camisa_blanca_15.99.jpg");
     createVariant(pine_camisaBlanca, productSizes.get("M"), productColors.get("Blanco"), true);
 
-    Product pine_faldaRoja =
-        createProduct(
-            "Falda Roja",
-            4599,
-            10,
-            "Falda roja, perfecta para darle color al otoño.",
-            productTypes.get("Pantalón"),
-            pineapple,
-            "outfit7_falda_roja_45.99.jpg");
+    Product pine_faldaRoja = createProduct(
+        "Falda Roja",
+        4599,
+        10,
+        "Falda roja, perfecta para darle color al otoño.",
+        productTypes.get("Pantalón"),
+        pineapple,
+        "outfit7_falda_roja_45.99.jpg");
     createVariant(pine_faldaRoja, productSizes.get("M"), productColors.get("Rojo"), true);
 
-    Outfit pine_outfit1 =
-        createOutfit("Pasión de Otoño", 0, 30, pineapple, "outfit7_pasión_de_otoño.jpg");
+    Outfit pine_outfit1 = createOutfit("Pasión de Otoño", 0, 30, pineapple, "outfit7_pasión_de_otoño.jpg");
     createOutfitTagRelation(pine_outfit1, outfitTags.get("Casual"));
     createOutfitProduct(pine_outfit1, pine_camisaBlanca, 0);
     createOutfitProduct(pine_outfit1, pine_faldaRoja, 1);
 
     // ── 6. Luceme's Bags ──────────────────────────────────────────────────────
-    Store lucemes =
-        createStore(
-            "Luceme's Bags",
-            "demo@lucemesbags.com",
-            37.28090292017098,
-            -5.9208650271174506,
-            "C/ San Sebastián, 6 - Dos Hermanas",
-            "Horarios sin confirmar",
-            "#a88743",
-            "#a84843",
-            "escaparate_lucemes_bags.png",
-            "Los mejores bolsos.");
+    Store lucemes = createStore(
+        "Luceme's Bags",
+        "demo@lucemesbags.com",
+        37.28090292017098,
+        -5.9208650271174506,
+        "C/ San Sebastián, 6 - Dos Hermanas",
+        "Horarios sin confirmar",
+        "#a88743",
+        "#a84843",
+        "escaparate_lucemes_bags.png",
+        "Los mejores bolsos.");
     addSocialNetwork(
         lucemes,
         socialNetworks,
@@ -539,74 +503,68 @@ public class DataSeeder implements CommandLineRunner {
         "producto_bolso_crema_oro_18.99.jpg");
 
     // ── 7. Confecciones Alfonsi ───────────────────────────────────────────────
-    Store alfonsi =
-        createStore(
-            "Confecciones Alfonsi",
-            "demo@alfonsi.com",
-            37.28073691177687,
-            -5.922528642533732,
-            "Calle Romera, 32, 41701 Dos Hermanas, Sevilla",
-            "Horarios sin confirmar",
-            "#183b27",
-            "#214a1b",
-            "escaparate_alfonsi.png",
-            "Calle Romera, 32, 41701 Dos Hermanas, Sevilla ");
+    Store alfonsi = createStore(
+        "Confecciones Alfonsi",
+        "demo@alfonsi.com",
+        37.28073691177687,
+        -5.922528642533732,
+        "Calle Romera, 32, 41701 Dos Hermanas, Sevilla",
+        "Horarios sin confirmar",
+        "#183b27",
+        "#214a1b",
+        "escaparate_alfonsi.png",
+        "Calle Romera, 32, 41701 Dos Hermanas, Sevilla ");
     addSocialNetwork(
         alfonsi, socialNetworks, "Facebook", "https://www.facebook.com/confecciones.alfonsi/");
 
-    Product alf_parkaBlanca =
-        createProduct(
-            "Parka Blanca",
-            7999,
-            30,
-            "Parka blanca, ideal para afrontar el invierno con estilo.",
-            productTypes.get("Chaqueta"),
-            alfonsi,
-            "outfit8_parka_blanca_79.99.jpg");
+    Product alf_parkaBlanca = createProduct(
+        "Parka Blanca",
+        7999,
+        30,
+        "Parka blanca, ideal para afrontar el invierno con estilo.",
+        productTypes.get("Chaqueta"),
+        alfonsi,
+        "outfit8_parka_blanca_79.99.jpg");
     createVariant(alf_parkaBlanca, productSizes.get("M"), productColors.get("Blanco"), true);
 
-    Product alf_pantalonesNegros =
-        createProduct(
-            "Pantalones Negros",
-            4699,
-            null,
-            "Pantalones negros, un básico imprescindible para cualquier temporada.",
-            productTypes.get("Pantalón"),
-            alfonsi,
-            "outfit8_pantalones_negros_46.99.jpg");
+    Product alf_pantalonesNegros = createProduct(
+        "Pantalones Negros",
+        4699,
+        null,
+        "Pantalones negros, un básico imprescindible para cualquier temporada.",
+        productTypes.get("Pantalón"),
+        alfonsi,
+        "outfit8_pantalones_negros_46.99.jpg");
     createVariant(alf_pantalonesNegros, productSizes.get("M"), productColors.get("Negro"), true);
 
-    Product alf_botasNegras =
-        createProduct(
-            "Botas Negras",
-            8999,
-            null,
-            "Botas negras, perfectas para los días fríos de invierno.",
-            productTypes.get("Zapatos"),
-            alfonsi,
-            "outfit8_botas_negras_89.99.jpg");
+    Product alf_botasNegras = createProduct(
+        "Botas Negras",
+        8999,
+        null,
+        "Botas negras, perfectas para los días fríos de invierno.",
+        productTypes.get("Zapatos"),
+        alfonsi,
+        "outfit8_botas_negras_89.99.jpg");
     createVariant(alf_botasNegras, productSizes.get("M"), productColors.get("Negro"), true);
 
-    Outfit alf_outfit1 =
-        createOutfit("Cómodo Invierno", 0, null, alfonsi, "outfit8_cómodo_invierno.jpg");
+    Outfit alf_outfit1 = createOutfit("Cómodo Invierno", 0, null, alfonsi, "outfit8_cómodo_invierno.jpg");
     createOutfitTagRelation(alf_outfit1, outfitTags.get("Invierno"));
     createOutfitProduct(alf_outfit1, alf_parkaBlanca, 0);
     createOutfitProduct(alf_outfit1, alf_pantalonesNegros, 1);
     createOutfitProduct(alf_outfit1, alf_botasNegras, 2);
 
     // ── 8. Bazar Romera ───────────────────────────────────────────────────────
-    Store bazarRomera =
-        createStore(
-            "Bazar Romera",
-            "demo@bazarromera.com",
-            37.28156704784245,
-            -5.921647213639721,
-            "C. Romera, 8, 41701 Dos Hermanas, Sevilla",
-            "Lun-Vie: 9:00-14:00, 17:00-21:00. Sab 9:00-14:00",
-            "#255d56",
-            "#247054",
-            "escaparate_bazar_romera.png",
-            "Romera, 8. 41701 Dos Hermanas (Sevilla)");
+    Store bazarRomera = createStore(
+        "Bazar Romera",
+        "demo@bazarromera.com",
+        37.28156704784245,
+        -5.921647213639721,
+        "C. Romera, 8, 41701 Dos Hermanas, Sevilla",
+        "Lun-Vie: 9:00-14:00, 17:00-21:00. Sab 9:00-14:00",
+        "#255d56",
+        "#247054",
+        "escaparate_bazar_romera.png",
+        "Romera, 8. 41701 Dos Hermanas (Sevilla)");
     addSocialNetwork(bazarRomera, socialNetworks, "Teléfono", "tel:+34631122308");
 
     createProduct(
@@ -627,22 +585,21 @@ public class DataSeeder implements CommandLineRunner {
         "producto_chandal_negro_29.99.jpg");
 
     // ── 9. Mar Govantes ───────────────────────────────────────────────────────
-    Store marGovantes =
-        createStore(
-            "Mar Govantes",
-            "demo@margovantes.com",
-            37.282795534740714,
-            -5.924663169087747,
-            "41701 Dos Hermanas, Sevilla",
-            "Lun,Mar,Jue,Vie: 9:30-14:00. Mie: 9:30-14:00, 5:30-8:30. Sab 10:00-13:30",
-            "#000045",
-            "#844652",
-            "escaparate_mar_govantes.jpg",
-            "👗Tienda de ropa especializada en #moda mujer en Dos Hermanas (Sevilla).\n"
-                + //
-                "Ropa casual y de vestir.\n"
-                + //
-                "🏷️Tallas grandes.");
+    Store marGovantes = createStore(
+        "Mar Govantes",
+        "demo@margovantes.com",
+        37.282795534740714,
+        -5.924663169087747,
+        "41701 Dos Hermanas, Sevilla",
+        "Lun,Mar,Jue,Vie: 9:30-14:00. Mie: 9:30-14:00, 5:30-8:30. Sab 10:00-13:30",
+        "#000045",
+        "#844652",
+        "escaparate_mar_govantes.jpg",
+        "👗Tienda de ropa especializada en #moda mujer en Dos Hermanas (Sevilla).\n"
+            + //
+            "Ropa casual y de vestir.\n"
+            + //
+            "🏷️Tallas grandes.");
     addSocialNetwork(
         marGovantes, socialNetworks, "Facebook", "https://www.facebook.com/margovantesmodas/");
     addSocialNetwork(
@@ -651,69 +608,62 @@ public class DataSeeder implements CommandLineRunner {
         marGovantes, socialNetworks, "TikTok", "https://www.tiktok.com/@margovantesmodas");
     addSocialNetwork(marGovantes, socialNetworks, "Teléfono", "tel:+34670080639");
 
-    Product mg_americanaMarina =
-        createProduct(
-            "Americana Marina",
-            4599,
-            null,
-            "Americana marina, perfecta para looks formales o de oficina.",
-            productTypes.get("Chaqueta"),
-            marGovantes,
-            "outfit_9_americana_marina_45.99.jpg");
+    Product mg_americanaMarina = createProduct(
+        "Americana Marina",
+        4599,
+        null,
+        "Americana marina, perfecta para looks formales o de oficina.",
+        productTypes.get("Chaqueta"),
+        marGovantes,
+        "outfit_9_americana_marina_45.99.jpg");
     createVariant(mg_americanaMarina, productSizes.get("M"), productColors.get("Azul"), true);
 
-    Product mg_pantalonesMari =
-        createProduct(
-            "Pantalones Marinos",
-            3999,
-            15,
-            "Pantalones marinos, elegantes y apropiados para un look formal.",
-            productTypes.get("Pantalón"),
-            marGovantes,
-            "outfit_9_pantalones_marinos_39.99.jpg");
+    Product mg_pantalonesMari = createProduct(
+        "Pantalones Marinos",
+        3999,
+        15,
+        "Pantalones marinos, elegantes y apropiados para un look formal.",
+        productTypes.get("Pantalón"),
+        marGovantes,
+        "outfit_9_pantalones_marinos_39.99.jpg");
     createVariant(mg_pantalonesMari, productSizes.get("M"), productColors.get("Azul"), true);
 
-    Product mg_camisaFloral =
-        createProduct(
-            "Camisa Floral",
-            2399,
-            null,
-            "Camisa floral, una opción fresca y alegre para el buen tiempo.",
-            productTypes.get("Camiseta"),
-            marGovantes,
-            "outfit_10_camisa_floral_23.99.jpg");
+    Product mg_camisaFloral = createProduct(
+        "Camisa Floral",
+        2399,
+        null,
+        "Camisa floral, una opción fresca y alegre para el buen tiempo.",
+        productTypes.get("Camiseta"),
+        marGovantes,
+        "outfit_10_camisa_floral_23.99.jpg");
     createVariant(mg_camisaFloral, productSizes.get("M"), productColors.get("Rosa"), true);
 
-    Product mg_pantalonesVerdes =
-        createProduct(
-            "Pantalones Verdes",
-            3499,
-            null,
-            "Pantalones verdes, ideales para un look casual de primavera.",
-            productTypes.get("Pantalón"),
-            marGovantes,
-            "outfit_10_pantalones_verdes_34.99.jpg");
+    Product mg_pantalonesVerdes = createProduct(
+        "Pantalones Verdes",
+        3499,
+        null,
+        "Pantalones verdes, ideales para un look casual de primavera.",
+        productTypes.get("Pantalón"),
+        marGovantes,
+        "outfit_10_pantalones_verdes_34.99.jpg");
     createVariant(mg_pantalonesVerdes, productSizes.get("M"), productColors.get("Verde"), true);
 
-    Product mg_sueterVerde =
-        createProduct(
-            "Suéter Verde",
-            4599,
-            20,
-            "Suéter verde, apropiado para el entretiempo y los días frescos.",
-            productTypes.get("Chaqueta"),
-            marGovantes,
-            "outfit_10_suéter_verde_45_99.jpg");
+    Product mg_sueterVerde = createProduct(
+        "Suéter Verde",
+        4599,
+        20,
+        "Suéter verde, apropiado para el entretiempo y los días frescos.",
+        productTypes.get("Chaqueta"),
+        marGovantes,
+        "outfit_10_suéter_verde_45_99.jpg");
     createVariant(mg_sueterVerde, productSizes.get("M"), productColors.get("Verde"), true);
 
-    Outfit mg_outfit1 =
-        createOutfit("Negocio Oceánico", 0, null, marGovantes, "outfit_9_negocio_oceánico.jpg");
+    Outfit mg_outfit1 = createOutfit("Negocio Oceánico", 0, null, marGovantes, "outfit_9_negocio_oceánico.jpg");
     createOutfitTagRelation(mg_outfit1, outfitTags.get("Formal"));
     createOutfitProduct(mg_outfit1, mg_americanaMarina, 0);
     createOutfitProduct(mg_outfit1, mg_pantalonesMari, 1);
 
-    Outfit mg_outfit2 =
-        createOutfit("Río Interior", 1, null, marGovantes, "outfit_10_río_interior.jpg");
+    Outfit mg_outfit2 = createOutfit("Río Interior", 1, null, marGovantes, "outfit_10_río_interior.jpg");
     createOutfitTagRelation(mg_outfit2, outfitTags.get("Casual"));
     createOutfitProduct(mg_outfit2, mg_camisaFloral, 0);
     createOutfitProduct(mg_outfit2, mg_pantalonesVerdes, 1);
@@ -984,7 +934,8 @@ public class DataSeeder implements CommandLineRunner {
   }
 
   private String uploadImage(String filename) {
-    if (filename == null) return null;
+    if (filename == null)
+      return null;
     String publicId = filename.replaceAll("\\.[^.]+$", "").replace(" ", "_");
     if (!props.isUploadImages()) {
       return "https://res.cloudinary.com/"
@@ -1026,8 +977,7 @@ public class DataSeeder implements CommandLineRunner {
     if (is == null) {
       throw new IllegalStateException("Seed file not found: " + path);
     }
-    try (BufferedReader reader =
-        new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
+    try (BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
       return reader
           .lines()
           .map(
