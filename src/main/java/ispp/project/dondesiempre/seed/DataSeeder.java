@@ -563,7 +563,7 @@ public class DataSeeder implements CommandLineRunner {
         "Lun-Vie: 9:00-14:00, 17:00-21:00. Sab 9:00-14:00",
         "#255d56",
         "#247054",
-        "escaparate_bazar_romera.png",
+        "romera/escaparate_bazar_romera.png",
         "Romera, 8. 41701 Dos Hermanas (Sevilla)");
     addSocialNetwork(bazarRomera, socialNetworks, "Teléfono", "tel:+34631122308");
 
@@ -574,7 +574,7 @@ public class DataSeeder implements CommandLineRunner {
         "Camisa azul, un básico cómodo para el día a día.",
         productTypes.get("Camiseta"),
         bazarRomera,
-        "producto_camisa_azul_34.99.jpg");
+        "romera/producto_camisa_azul_34.99.jpg");
     createProduct(
         "Chandal Negro",
         2999,
@@ -582,7 +582,7 @@ public class DataSeeder implements CommandLineRunner {
         "Chándal negro, cómodo y apropiado para el día a día.",
         productTypes.get("Pantalón"),
         bazarRomera,
-        "producto_chandal_negro_29.99.jpg");
+        "romera/producto_chandal_negro_29.99.jpg");
 
     // ── 9. Mar Govantes ───────────────────────────────────────────────────────
     Store marGovantes = createStore(
