@@ -31,27 +31,25 @@ public class StoreSocialNetworkController {
   private final StoreService storeService;
 
   @GetMapping("stores/{storeId}/social-networks")
-  @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<List<SocialNetworkDTO>> getByStore(@PathVariable UUID storeId) {
+  public ResponseEntity<List<StoreSocialNetworkDTO>> getByStore(@PathVariable UUID storeId) {
 
-    storeService.findById(storeId); // valida que existe
+    storeService.findById(storeId);
 
-    List<SocialNetworkDTO> socialNetworks =
+    List<StoreSocialNetworkDTO> socialNetworks =
         storeSocialNetworkService.findByStoreId(storeId).stream()
-            .map(SocialNetworkDTO::new)
+            .map(StoreSocialNetworkDTO::new)
             .toList();
 
     return new ResponseEntity<>(socialNetworks, HttpStatus.OK);
   }
 
   @PostMapping("stores/{storeId}/social-networks")
-  @ResponseStatus(HttpStatus.CREATED)
-  public ResponseEntity<SocialNetworkDTO> create(
+  public ResponseEntity<StoreSocialNetworkDTO> create(
       @PathVariable UUID storeId, @RequestBody @Valid SocialNetworkDTO dto) {
 
     StoreSocialNetwork ssn = storeSocialNetworkService.addStoreSocialNetwork(storeId, dto);
 
-    return new ResponseEntity<>(new SocialNetworkDTO(ssn), HttpStatus.CREATED);
+    return new ResponseEntity<>(new StoreSocialNetworkDTO(ssn), HttpStatus.CREATED);
   }
 
   @PutMapping("store-social-networks/{id}")
