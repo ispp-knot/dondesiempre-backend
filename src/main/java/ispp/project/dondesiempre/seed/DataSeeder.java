@@ -478,7 +478,7 @@ public class DataSeeder implements CommandLineRunner {
         "Horarios sin confirmar",
         "#a88743",
         "#a84843",
-        "escaparate_lucemes_bags.png",
+        "luceme/escaparate_lucemes_bags.png",
         "Los mejores bolsos.");
     addSocialNetwork(
         lucemes,
@@ -492,7 +492,7 @@ public class DataSeeder implements CommandLineRunner {
         "Bolso crema de estilo moderno, ideal para cualquier ocasión.",
         productTypes.get("Accesorio"),
         lucemes,
-        "producto_bolso_crema_15.99.jpg");
+        "luceme/producto_bolso_crema_15.99.jpg");
     createProduct(
         "Bolso Crema Oro",
         1899,
@@ -500,7 +500,7 @@ public class DataSeeder implements CommandLineRunner {
         "Bolso crema con detalles dorados, un complemento elegante y atemporal.",
         productTypes.get("Accesorio"),
         lucemes,
-        "producto_bolso_crema_oro_18.99.jpg");
+        "luceme/producto_bolso_crema_oro_18.99.jpg");
 
     // ── 7. Confecciones Alfonsi ───────────────────────────────────────────────
     Store alfonsi = createStore(
