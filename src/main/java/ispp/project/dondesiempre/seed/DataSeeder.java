@@ -385,7 +385,7 @@ public class DataSeeder implements CommandLineRunner {
         "Lun-Vie 10:00-13:45, 17:30-21:00, Sábado 10:00-14:00",
         "#ad0000",
         "#633a00",
-        "escaparate_roire.png",
+        "roire/escaparate_roire.png",
         "Nos aseguramos de que solo vendemos productos de alta calidad y que cumplen con los estándares de nuestros clientes. "
             + "Nos esforzamos por comprender las necesidades de nuestros clientes leales y trabajamos para brindarles un servicio personalizado y adaptado a sus necesidades específicas.");
     addSocialNetwork(roire, socialNetworks, "WhatsApp", "https://wa.me/34641231378");
@@ -400,7 +400,7 @@ public class DataSeeder implements CommandLineRunner {
         "Falda cebra con estilo, ideal para un look casual llamativo.",
         productTypes.get("Pantalón"),
         roire,
-        "outfit6_falda_cebra_29.99.jpg");
+        "roire/outfit6_falda_cebra_29.99.jpg");
     createVariant(roire_faldaCebra, productSizes.get("M"), productColors.get("Blanco"), true);
 
     Product roire_sueterMarron = createProduct(
@@ -410,10 +410,10 @@ public class DataSeeder implements CommandLineRunner {
         "Suéter marrón, muy abrigado para los días de frío.",
         productTypes.get("Chaqueta"),
         roire,
-        "outfit6_suéter_marrón_49.99.jpg");
+        "roire/outfit6_suéter_marrón_49.99.jpg");
     createVariant(roire_sueterMarron, productSizes.get("M"), productColors.get("Beige"), true);
 
-    Outfit roire_outfit1 = createOutfit("Savana Otoñal", 0, 20, roire, "outfit6_savana_otoñal.jpg");
+    Outfit roire_outfit1 = createOutfit("Savana Otoñal", 0, 20, roire, "roire/outfit6_savana_otoñal.jpg");
     createOutfitTagRelation(roire_outfit1, outfitTags.get("Casual"));
     createOutfitProduct(roire_outfit1, roire_faldaCebra, 0);
     createOutfitProduct(roire_outfit1, roire_sueterMarron, 1);
