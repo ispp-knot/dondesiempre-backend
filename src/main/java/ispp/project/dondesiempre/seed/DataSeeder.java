@@ -512,7 +512,7 @@ public class DataSeeder implements CommandLineRunner {
         "Horarios sin confirmar",
         "#183b27",
         "#214a1b",
-        "escaparate_alfonsi.png",
+        "alfonsi/escaparate_alfonsi.png",
         "Calle Romera, 32, 41701 Dos Hermanas, Sevilla ");
     addSocialNetwork(
         alfonsi, socialNetworks, "Facebook", "https://www.facebook.com/confecciones.alfonsi/");
@@ -524,7 +524,7 @@ public class DataSeeder implements CommandLineRunner {
         "Parka blanca, ideal para afrontar el invierno con estilo.",
         productTypes.get("Chaqueta"),
         alfonsi,
-        "outfit8_parka_blanca_79.99.jpg");
+        "alfonsi/outfit8_parka_blanca_79.99.jpg");
     createVariant(alf_parkaBlanca, productSizes.get("M"), productColors.get("Blanco"), true);
 
     Product alf_pantalonesNegros = createProduct(
@@ -534,7 +534,7 @@ public class DataSeeder implements CommandLineRunner {
         "Pantalones negros, un básico imprescindible para cualquier temporada.",
         productTypes.get("Pantalón"),
         alfonsi,
-        "outfit8_pantalones_negros_46.99.jpg");
+        "alfonsi/outfit8_pantalones_negros_46.99.jpg");
     createVariant(alf_pantalonesNegros, productSizes.get("M"), productColors.get("Negro"), true);
 
     Product alf_botasNegras = createProduct(
@@ -544,10 +544,10 @@ public class DataSeeder implements CommandLineRunner {
         "Botas negras, perfectas para los días fríos de invierno.",
         productTypes.get("Zapatos"),
         alfonsi,
-        "outfit8_botas_negras_89.99.jpg");
+        "alfonsi/outfit8_botas_negras_89.99.jpg");
     createVariant(alf_botasNegras, productSizes.get("M"), productColors.get("Negro"), true);
 
-    Outfit alf_outfit1 = createOutfit("Cómodo Invierno", 0, null, alfonsi, "outfit8_cómodo_invierno.jpg");
+    Outfit alf_outfit1 = createOutfit("Cómodo Invierno", 0, null, alfonsi, "alfonsi/outfit8_cómodo_invierno.jpg");
     createOutfitTagRelation(alf_outfit1, outfitTags.get("Invierno"));
     createOutfitProduct(alf_outfit1, alf_parkaBlanca, 0);
     createOutfitProduct(alf_outfit1, alf_pantalonesNegros, 1);
