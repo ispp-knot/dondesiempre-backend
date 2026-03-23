@@ -428,7 +428,7 @@ public class DataSeeder implements CommandLineRunner {
         "Lun-Vie 10:30-13:30, 17:30-20:30, Sab 10:30-13:30",
         "#75502b",
         "#333333",
-        "escaparate_pineapple.png",
+        "pineapple/escaparate_pineapple.png",
         "Calle Canónigo 73 Dos Hermanas | 41071 | Sevilla");
     addSocialNetwork(pineapple, socialNetworks, "WhatsApp", "https://wa.me/34644807498");
     addSocialNetwork(
@@ -450,7 +450,7 @@ public class DataSeeder implements CommandLineRunner {
         "Camisa blanca, un básico de armario para cualquier época del año.",
         productTypes.get("Camiseta"),
         pineapple,
-        "outfit7_camisa_blanca_15.99.jpg");
+        "pineapple/outfit7_camisa_blanca_15.99.jpg");
     createVariant(pine_camisaBlanca, productSizes.get("M"), productColors.get("Blanco"), true);
 
     Product pine_faldaRoja = createProduct(
@@ -460,10 +460,10 @@ public class DataSeeder implements CommandLineRunner {
         "Falda roja, perfecta para darle color al otoño.",
         productTypes.get("Pantalón"),
         pineapple,
-        "outfit7_falda_roja_45.99.jpg");
+        "pineapple/outfit7_falda_roja_45.99.jpg");
     createVariant(pine_faldaRoja, productSizes.get("M"), productColors.get("Rojo"), true);
 
-    Outfit pine_outfit1 = createOutfit("Pasión de Otoño", 0, 30, pineapple, "outfit7_pasión_de_otoño.jpg");
+    Outfit pine_outfit1 = createOutfit("Pasión de Otoño", 0, 30, pineapple, "pineapple/outfit7_pasión_de_otoño.jpg");
     createOutfitTagRelation(pine_outfit1, outfitTags.get("Casual"));
     createOutfitProduct(pine_outfit1, pine_camisaBlanca, 0);
     createOutfitProduct(pine_outfit1, pine_faldaRoja, 1);
