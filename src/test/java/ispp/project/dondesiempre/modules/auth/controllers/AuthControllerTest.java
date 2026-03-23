@@ -1,17 +1,16 @@
 package ispp.project.dondesiempre.modules.auth.controllers;
 
-import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ispp.project.dondesiempre.config.GlobalExceptionHandler;
-import ispp.project.dondesiempre.config.JwtProperties;
 import ispp.project.dondesiempre.modules.auth.dtos.LoginRequestDTO;
 import ispp.project.dondesiempre.modules.auth.dtos.UserResponseDTO;
 import ispp.project.dondesiempre.modules.auth.models.User;
@@ -20,7 +19,6 @@ import ispp.project.dondesiempre.modules.auth.services.JwtService;
 import ispp.project.dondesiempre.modules.auth.services.UserService;
 import ispp.project.dondesiempre.modules.common.exceptions.UnauthorizedException;
 import ispp.project.dondesiempre.modules.stores.services.StoreService;
-import jakarta.servlet.http.Cookie;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
@@ -49,7 +47,6 @@ class AuthControllerTest {
   @MockitoBean private UserService userService;
   @MockitoBean private StoreService storeService;
   @MockitoBean private JwtService jwtService;
-  @MockitoBean private JwtProperties jwtProperties;
 
   private User createTestUser() {
     User user = new User();
@@ -64,16 +61,15 @@ class AuthControllerTest {
   }
 
   @Test
-  void logIn_shouldReturn200AndSetCookie_whenCredentialsAreValid() throws Exception {
+  void logIn_shouldReturn200AndTokenInBody_whenCredentialsAreValid() throws Exception {
     User user = createTestUser();
     UserResponseDTO responseDTO = createTestUserResponseDTO(user);
 
     when(authService.logIn("user@test.com", "password")).thenReturn(user);
-    when(jwtService.generateToken("user@test.com")).thenReturn("jwt-token");
+    when(authService.getStoreId(user)).thenReturn(null);
+    when(authService.getClientId(user)).thenReturn(null);
+    when(jwtService.generateToken(eq("user@test.com"), isNull(), isNull())).thenReturn("jwt-token");
     when(authService.buildUserResponse(any(), any())).thenReturn(responseDTO);
-    when(jwtProperties.getDuration()).thenReturn(2592000L);
-    when(jwtProperties.isSecureCookie()).thenReturn(false);
-    when(jwtProperties.getSameSite()).thenReturn("Lax");
 
     LoginRequestDTO dto = new LoginRequestDTO("user@test.com", "password");
 
@@ -83,8 +79,8 @@ class AuthControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto)))
         .andExpect(status().isOk())
-        .andExpect(header().string("Set-Cookie", containsString("token=jwt-token")))
-        .andExpect(header().string("Set-Cookie", containsString("HttpOnly")));
+        .andExpect(jsonPath("$.token").value("jwt-token"))
+        .andExpect(jsonPath("$.user.email").value("user@test.com"));
   }
 
   @Test
@@ -103,18 +99,6 @@ class AuthControllerTest {
   }
 
   @Test
-  void logOut_shouldReturn204AndClearCookie() throws Exception {
-    when(jwtProperties.isSecureCookie()).thenReturn(false);
-    when(jwtProperties.getSameSite()).thenReturn("Lax");
-
-    mockMvc
-        .perform(post("/api/v1/auth/logout").cookie(new Cookie("token", "jwt-token")))
-        .andExpect(status().isNoContent())
-        .andExpect(header().string("Set-Cookie", containsString("token=")))
-        .andExpect(header().string("Set-Cookie", containsString("Max-Age=0")));
-  }
-
-  @Test
   @WithMockUser
   void me_shouldReturnUserInfo_whenAuthenticated() throws Exception {
     User user = createTestUser();
@@ -124,7 +108,7 @@ class AuthControllerTest {
     when(authService.buildUserResponse(any(), any())).thenReturn(responseDTO);
 
     mockMvc
-        .perform(get("/api/v1/auth/me").cookie(new Cookie("token", "jwt-token")))
+        .perform(get("/api/v1/auth/me").header("Authorization", "Bearer jwt-token"))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.email").value("user@test.com"))
         .andExpect(jsonPath("$.id").isNotEmpty());
@@ -136,7 +120,7 @@ class AuthControllerTest {
     when(authService.getCurrentUser()).thenThrow(new UnauthorizedException("Not authenticated."));
 
     mockMvc
-        .perform(get("/api/v1/auth/me").cookie(new Cookie("token", "jwt-token")))
+        .perform(get("/api/v1/auth/me").header("Authorization", "Bearer jwt-token"))
         .andExpect(status().isForbidden());
   }
 }
