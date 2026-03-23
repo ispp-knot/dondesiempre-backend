@@ -331,7 +331,7 @@ public class DataSeeder implements CommandLineRunner {
         "Lun-Vie 9:45-21:00, Sab 9:30-13:30",
         "#000000",
         "#ab327d",
-        "escaparate_san_sebastian.png",
+        "sebastian/escaparate_san_sebastian.png",
         "Somos una empresa local física, llevamos en el mercado desde 1959, trabajamos cada día para satisfacer las necesidades de nuestros clientes.\n"
             + "\n"
             + "Nos dedicamos a la venta de confección de caballero y señora, tallas especiales, interiores de caballeros, señoras y niñ@s, todo tipo de paquetería y calcetería y también trabajamos el textil de hogar.\n"
@@ -356,7 +356,7 @@ public class DataSeeder implements CommandLineRunner {
         "Albornoz blanco, perfecto para después del baño o la playa.",
         productTypes.get("Accesorio"),
         sanSebastian,
-        "outfit5_albornoz_blanco_19.99.jpg");
+        "sebastian/outfit5_albornoz_blanco_19.99.jpg");
     createVariant(ss_albornoz, productSizes.get("M"), productColors.get("Blanco"), true);
 
     Product ss_crocs = createProduct(
@@ -366,11 +366,11 @@ public class DataSeeder implements CommandLineRunner {
         "Crocs negras, cómodas para el uso diario en casa o en la calle.",
         productTypes.get("Zapatos"),
         sanSebastian,
-        "outfit5_crocs_negras_15.99.jpg");
+        "sebastian/outfit5_crocs_negras_15.99.jpg");
     createVariant(ss_crocs, productSizes.get("M"), productColors.get("Negro"), true);
 
     Outfit ss_outfit1 = createOutfit(
-        "Tranquilidad Casera", 0, null, sanSebastian, "outfit5_tranquilidad_casera.jpg");
+        "Tranquilidad Casera", 0, null, sanSebastian, "sebastian/outfit5_tranquilidad_casera.jpg");
     createOutfitTagRelation(ss_outfit1, outfitTags.get("Casual"));
     createOutfitProduct(ss_outfit1, ss_albornoz, 0);
     createOutfitProduct(ss_outfit1, ss_crocs, 1);
