@@ -30,7 +30,7 @@ class JwtServiceTest {
   @Test
   void generateToken_shouldReturnThreePartJwt() {
     when(jwtProperties.getDuration()).thenReturn(3600L);
-    String token = jwtService.generateToken("user@test.com");
+    String token = jwtService.generateToken("user@test.com", null, null);
     assertNotNull(token);
     assertEquals(3, token.split("\\.").length);
   }
@@ -38,28 +38,28 @@ class JwtServiceTest {
   @Test
   void extractEmail_shouldReturnEmailEmbeddedInToken() {
     when(jwtProperties.getDuration()).thenReturn(3600L);
-    String token = jwtService.generateToken("user@test.com");
+    String token = jwtService.generateToken("user@test.com", null, null);
     assertEquals("user@test.com", jwtService.extractEmail(token));
   }
 
   @Test
   void isTokenValid_shouldReturnTrue_forFreshToken() {
     when(jwtProperties.getDuration()).thenReturn(3600L);
-    String token = jwtService.generateToken("user@test.com");
+    String token = jwtService.generateToken("user@test.com", null, null);
     assertTrue(jwtService.isTokenValid(token));
   }
 
   @Test
   void isTokenValid_shouldReturnFalse_forExpiredToken() {
     when(jwtProperties.getDuration()).thenReturn(-3600L);
-    String token = jwtService.generateToken("user@test.com");
+    String token = jwtService.generateToken("user@test.com", null, null);
     assertFalse(jwtService.isTokenValid(token));
   }
 
   @Test
   void isTokenValid_shouldReturnFalse_forTamperedToken() {
     when(jwtProperties.getDuration()).thenReturn(3600L);
-    String token = jwtService.generateToken("user@test.com");
+    String token = jwtService.generateToken("user@test.com", null, null);
     assertFalse(jwtService.isTokenValid(token + "tampered"));
   }
 
