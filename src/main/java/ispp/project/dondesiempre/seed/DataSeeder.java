@@ -259,7 +259,7 @@ public class DataSeeder implements CommandLineRunner {
         "Lun-Vie 10:30-13:30, 17:30-20:30. Sab 10:30-13:30",
         "#315750",
         "#2b4f39",
-        "escaparate_romantika.png",
+        "romantika/escaparate_romantika.png",
         "Encuentra tus complementos originales\n"
             + "Moda para eventos y ocasiones especiales\n"
             + "Toda la moda urbana divertida y diferente que hace única a cada mujer");
@@ -278,7 +278,7 @@ public class DataSeeder implements CommandLineRunner {
         "Vestido rojo, ideal para una ocasión especial en verano.",
         productTypes.get("Vestido"),
         romantika,
-        "outfit3_vestido_rojo_64.99.jpg");
+        "romantika/outfit3_vestido_rojo_64.99.jpg");
     createVariant(rom_vestidoRojo, productSizes.get("M"), productColors.get("Rojo"), true);
 
     Product rom_sandaliasRojas = createProduct(
@@ -288,7 +288,7 @@ public class DataSeeder implements CommandLineRunner {
         "Sandalias rojas con tacón, perfectas para el buen tiempo.",
         productTypes.get("Zapatos"),
         romantika,
-        "outfit3_sandalias_rojas_con_tacón_46.99.jpg");
+        "romantika/outfit3_sandalias_rojas_con_tacón_46.99.jpg");
     createVariant(rom_sandaliasRojas, productSizes.get("M"), productColors.get("Rojo"), true);
 
     Product rom_vestidoVerde = createProduct(
@@ -298,7 +298,7 @@ public class DataSeeder implements CommandLineRunner {
         "Vestido verde, una opción fresca para la primavera.",
         productTypes.get("Vestido"),
         romantika,
-        "outfit4_vestido_verde_49.99.jpg");
+        "romantika/outfit4_vestido_verde_49.99.jpg");
     createVariant(rom_vestidoVerde, productSizes.get("M"), productColors.get("Verde"), true);
 
     Product rom_taconesBeige = createProduct(
@@ -308,15 +308,15 @@ public class DataSeeder implements CommandLineRunner {
         "Tacones beige, versátiles para cualquier ocasión.",
         productTypes.get("Zapatos"),
         romantika,
-        "outfit4_tacones_beige_44.99.jpg");
+        "romantika/outfit4_tacones_beige_44.99.jpg");
     createVariant(rom_taconesBeige, productSizes.get("M"), productColors.get("Beige"), true);
 
-    Outfit rom_outfit1 = createOutfit("Verano Rojo", 0, 10, romantika, "outfit3_verano_rojo.jpg");
+    Outfit rom_outfit1 = createOutfit("Verano Rojo", 0, 10, romantika, "romantika/outfit3_verano_rojo.jpg");
     createOutfitTagRelation(rom_outfit1, outfitTags.get("Verano"));
     createOutfitProduct(rom_outfit1, rom_vestidoRojo, 0);
     createOutfitProduct(rom_outfit1, rom_sandaliasRojas, 1);
 
-    Outfit rom_outfit2 = createOutfit("Primavera Verde", 1, 15, romantika, "outfit4_primavera_verde.jpg");
+    Outfit rom_outfit2 = createOutfit("Primavera Verde", 1, 15, romantika, "romantika/outfit4_primavera_verde.jpg");
     createOutfitTagRelation(rom_outfit2, outfitTags.get("Verano"));
     createOutfitProduct(rom_outfit2, rom_vestidoVerde, 0);
     createOutfitProduct(rom_outfit2, rom_taconesBeige, 1);
