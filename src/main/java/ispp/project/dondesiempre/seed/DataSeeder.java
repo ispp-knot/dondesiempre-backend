@@ -178,7 +178,8 @@ public class DataSeeder implements CommandLineRunner {
             "Lun-Vie 10:00-13:00, 17:30-20:30. Sab 10:30-14:00",
             "#000000",
             "#a1005c",
-            "escaparate_greta_closet.png");
+            "escaparate_greta_closet.png",
+            "C. Sta. María Magdalena, 14, 41701 Dos Hermanas, Sevilla, España");
     addSocialNetwork(greta, socialNetworks, "Instagram", "https://www.instagram.com/gretacloset/");
     addSocialNetwork(
         greta, socialNetworks, "TikTok", "https://www.tiktok.com/@gretaclosetcomplementos");
@@ -277,7 +278,10 @@ public class DataSeeder implements CommandLineRunner {
             "Lun-Vie 10:30-13:30, 17:30-20:30. Sab 10:30-13:30",
             "#315750",
             "#2b4f39",
-            "escaparate_romantika.png");
+            "escaparate_romantika.png",
+            "Encuentra tus complementos originales\n"
+                + "Moda para eventos y ocasiones especiales\n"
+                + "Toda la moda urbana divertida y diferente que hace única a cada mujer");
     addSocialNetwork(romantika, socialNetworks, "WhatsApp", "https://wa.me/34645142782");
     addSocialNetwork(
         romantika, socialNetworks, "Instagram", "https://www.instagram.com/modasromantikavintage/");
@@ -352,7 +356,14 @@ public class DataSeeder implements CommandLineRunner {
             "Lun-Vie 9:45-21:00, Sab 9:30-13:30",
             "#000000",
             "#ab327d",
-            "escaparate_san_sebastian.png");
+            "escaparate_san_sebastian.png",
+            "Somos una empresa local física, llevamos en el mercado desde 1959, trabajamos cada día para satisfacer las necesidades de nuestros clientes.\n"
+                + "\n"
+                + "Nos dedicamos a la venta de confección de caballero y señora, tallas especiales, interiores de caballeros, señoras y niñ@s, todo tipo de paquetería y calcetería y también trabajamos el textil de hogar.\n"
+                + "\n"
+                + "Nuestros proveedores son todos nacionales, como son Harper and Neyer, La Bassette, Kents, Dos Galgos, Brown Fury, Carlos Córdoba, Capelhi, Persam, Tachi and Zucca, Boguar, Egatex, Señoretta, Ysabel Mora, Dolores Cortés, Selmark, Belty, Abanderado, Ferry, Avet, Set, Morante, Naiara, Selene, Burrito Blanco, Catotex, Cañete, Manterol, Belnou, Cotopour, etc…\n"
+                + "\n"
+                + "Si busca un artículo y no lo encuentra, intentamos conseguirlo poniendo todo lo que está en nuestras manos para satisfacer al cliente.");
     addSocialNetwork(
         sanSebastian,
         socialNetworks,
@@ -403,7 +414,9 @@ public class DataSeeder implements CommandLineRunner {
             "Lun-Vie 10:00-13:45, 17:30-21:00, Sábado 10:00-14:00",
             "#ad0000",
             "#633a00",
-            "escaparate_roire.png");
+            "escaparate_roire.png",
+            "Nos aseguramos de que solo vendemos productos de alta calidad y que cumplen con los estándares de nuestros clientes. "
+                + "Nos esforzamos por comprender las necesidades de nuestros clientes leales y trabajamos para brindarles un servicio personalizado y adaptado a sus necesidades específicas.");
     addSocialNetwork(roire, socialNetworks, "WhatsApp", "https://wa.me/34641231378");
     addSocialNetwork(roire, socialNetworks, "Instagram", "https://www.instagram.com/roire.es");
     addSocialNetwork(roire, socialNetworks, "Web", "https://tiendaroire.es/");
@@ -447,7 +460,8 @@ public class DataSeeder implements CommandLineRunner {
             "Lun-Vie 10:30-13:30, 17:30-20:30, Sab 10:30-13:30",
             "#75502b",
             "#333333",
-            "escaparate_pineapple.png");
+            "escaparate_pineapple.png",
+            "Calle Canónigo 73 Dos Hermanas | 41071 | Sevilla");
     addSocialNetwork(pineapple, socialNetworks, "WhatsApp", "https://wa.me/34644807498");
     addSocialNetwork(
         pineapple,
@@ -500,7 +514,8 @@ public class DataSeeder implements CommandLineRunner {
             "Horarios sin confirmar",
             "#a88743",
             "#a84843",
-            "escaparate_lucemes_bags.png");
+            "escaparate_lucemes_bags.png",
+            "Los mejores bolsos.");
     addSocialNetwork(
         lucemes,
         socialNetworks,
@@ -534,7 +549,8 @@ public class DataSeeder implements CommandLineRunner {
             "Horarios sin confirmar",
             "#183b27",
             "#214a1b",
-            "escaparate_alfonsi.png");
+            "escaparate_alfonsi.png",
+            "Calle Romera, 32, 41701 Dos Hermanas, Sevilla ");
     addSocialNetwork(
         alfonsi, socialNetworks, "Facebook", "https://www.facebook.com/confecciones.alfonsi/");
 
@@ -589,7 +605,8 @@ public class DataSeeder implements CommandLineRunner {
             "Lun-Vie: 9:00-14:00, 17:00-21:00. Sab 9:00-14:00",
             "#255d56",
             "#247054",
-            "escaparate_bazar_romera.png");
+            "escaparate_bazar_romera.png",
+            "Romera, 8. 41701 Dos Hermanas (Sevilla)");
     addSocialNetwork(bazarRomera, socialNetworks, "Teléfono", "tel:+34631122308");
 
     createProduct(
@@ -620,7 +637,12 @@ public class DataSeeder implements CommandLineRunner {
             "Lun,Mar,Jue,Vie: 9:30-14:00. Mie: 9:30-14:00, 5:30-8:30. Sab 10:00-13:30",
             "#000045",
             "#844652",
-            "escaparate_mar_govantes.jpg");
+            "escaparate_mar_govantes.jpg",
+            "👗Tienda de ropa especializada en #moda mujer en Dos Hermanas (Sevilla).\n"
+                + //
+                "Ropa casual y de vestir.\n"
+                + //
+                "🏷️Tallas grandes.");
     addSocialNetwork(
         marGovantes, socialNetworks, "Facebook", "https://www.facebook.com/margovantesmodas/");
     addSocialNetwork(
@@ -849,7 +871,8 @@ public class DataSeeder implements CommandLineRunner {
       String openingHours,
       String primaryColor,
       String secondaryColor,
-      String bannerImageFilename) {
+      String bannerImageFilename,
+      String aboutUs) {
 
     User user = new User();
     user.setId(seedUuid("user:" + email));
@@ -878,6 +901,7 @@ public class DataSeeder implements CommandLineRunner {
     store.setAcceptsShipping(false);
     store.setStorefront(storefront);
     store.setUser(user);
+    store.setAboutUs(aboutUs);
     storeRepository.save(store);
 
     return store;
