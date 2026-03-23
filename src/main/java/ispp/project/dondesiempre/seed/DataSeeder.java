@@ -270,7 +270,7 @@ public class DataSeeder implements CommandLineRunner {
     Store romantika =
         createStore(
             "Modas Romantika Vintage",
-            "demo@romantikavintage.es",
+            "demo@romantikavintage.com",
             37.280502359992376,
             -5.920509768052806,
             "C. San Sebastián, 17, 41701 Dos Hermanas, Sevilla",
@@ -280,7 +280,7 @@ public class DataSeeder implements CommandLineRunner {
             "escaparate_romantika.png");
     addSocialNetwork(romantika, socialNetworks, "WhatsApp", "https://wa.me/34645142782");
     addSocialNetwork(
-        romantika, socialNetworks, "Instagram", "https://www.instagram.com/romantikavintage/");
+        romantika, socialNetworks, "Instagram", "https://www.instagram.com/modasromantikavintage/");
     addSocialNetwork(
         romantika, socialNetworks, "Facebook", "https://www.facebook.com/RomantikaVintage/");
     addSocialNetwork(romantika, socialNetworks, "Web", "http://www.romantikavintage.es/");
@@ -396,7 +396,7 @@ public class DataSeeder implements CommandLineRunner {
     Store roire =
         createStore(
             "Roire",
-            "demo@roire.es",
+            "demo@roire.com",
             37.280633989355685,
             -5.920593858571272,
             "C. San Sebastián, 15, 41701 Dos Hermanas, Sevilla",
@@ -613,7 +613,7 @@ public class DataSeeder implements CommandLineRunner {
     Store marGovantes =
         createStore(
             "Mar Govantes",
-            "demo.margovantes@gmail.com",
+            "demo@margovantes.com",
             37.282795534740714,
             -5.924663169087747,
             "41701 Dos Hermanas, Sevilla",
