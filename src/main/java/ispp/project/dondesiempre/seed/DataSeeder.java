@@ -237,6 +237,26 @@ public class DataSeeder implements CommandLineRunner {
         "greta/outfit2_pendientes_mariposa_oro_19.99.jpg");
     createVariant(greta_pendientes, productSizes.get("S"), productColors.get("Beige"), true);
 
+    Product greta_chaqueta_lunares = createProduct(
+        "Chaqueta Lunares",
+        1999,
+        10,
+        "Chaqueta corta negra con lunares blancos.",
+        productTypes.get("Chaqueta"),
+        greta,
+        "greta/chaqueta_lunares_lola.png");
+    createVariant(greta_chaqueta_lunares, productSizes.get("S"), productColors.get("Negro"), true);
+
+    Product greta_falda_lunares = createProduct(
+        "Falda Lunares",
+        1999,
+        10,
+        "Falda larga  negra con lunares blancos.",
+        productTypes.get("Chaqueta"),
+        greta,
+        "greta/falda_lunares_lola.png");
+    createVariant(greta_falda_lunares, productSizes.get("S"), productColors.get("Negro"), true);
+
     Outfit greta_outfit1 = createOutfit("Conjunto Mihai", 0, null, greta, "greta/outfit1_conjunto_mihai.jpg");
     createOutfitTagRelation(greta_outfit1, outfitTags.get("Elegante"));
     createOutfitProduct(greta_outfit1, greta_vestidoBlanco, 0);
@@ -248,6 +268,11 @@ public class DataSeeder implements CommandLineRunner {
     createOutfitProduct(greta_outfit2, greta_vestidoAzul, 0);
     createOutfitProduct(greta_outfit2, greta_bolsoBeige, 1);
     createOutfitProduct(greta_outfit2, greta_pendientes, 2);
+
+    Outfit greta_outfit_lola = createOutfit("Conjunto Lola", 2, 25, greta, "greta/conjunto_lola.png");
+    createOutfitTagRelation(greta_outfit_lola, outfitTags.get("Casual"));
+    createOutfitProduct(greta_outfit_lola, greta_chaqueta_lunares, 0);
+    createOutfitProduct(greta_outfit_lola, greta_falda_lunares, 1);
 
     // ── 2. Modas Romantika Vintage ────────────────────────────────────────────
     Store romantika = createStore(
