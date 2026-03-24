@@ -30,15 +30,11 @@ public class StorefrontController {
     return new ResponseEntity<>(new StorefrontDTO(storefrontService.findById(id)), HttpStatus.OK);
   }
 
-  // TODO: Descomentar la línea 39 para validar que el usuario es dueño de la
-  // tienda
   @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ResponseEntity<StorefrontDTO> updateStorefront(
       @PathVariable UUID id,
       @RequestPart("dto") @Valid StorefrontDTO storefrontDTO,
       @RequestPart(value = "image", required = false) MultipartFile image) {
-    Storefront storefront = storefrontService.findById(id);
-    // userService.assertUserOwnsStore(storefront.getStore());
     StorefrontDTO updated = storefrontService.updateStorefront(id, storefrontDTO, image);
     return ResponseEntity.ok(updated);
   }
