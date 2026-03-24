@@ -204,13 +204,6 @@ public class PromotionService {
       products.forEach(
           product ->
               applicationContext.getBean(PromotionService.class).addProduct(id, product.getId()));
-
-      // Update discounted percentage for each product and update it
-      products.forEach(
-          product -> {
-            productService.updateProductDiscount(
-                product.getId(), promotion.getDiscountPercentage());
-          });
     }
     try {
       return promotionRepository.save(promotion);
