@@ -1,7 +1,6 @@
 package ispp.project.dondesiempre.modules.stores.controllers;
 
 import ispp.project.dondesiempre.modules.stores.dtos.StorefrontDTO;
-import ispp.project.dondesiempre.modules.stores.models.Storefront;
 import ispp.project.dondesiempre.modules.stores.services.StorefrontService;
 import jakarta.validation.Valid;
 import java.util.UUID;
