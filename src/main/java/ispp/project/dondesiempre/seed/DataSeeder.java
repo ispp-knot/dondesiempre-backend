@@ -723,17 +723,6 @@ public class DataSeeder implements CommandLineRunner {
     manualClient.setUser(clientUser);
     clientRepository.save(manualClient);
 
-    User storeOwner = userRepository.findByEmail("demo@gretacloset.com").orElseThrow();
-    Client clientWithStoreUser = new Client();
-    clientWithStoreUser.setId(seedUuid("client:storeclient@ejemplo.es"));
-    clientWithStoreUser.setName("Ana");
-    clientWithStoreUser.setSurname("García");
-    clientWithStoreUser.setEmail("storeclient@ejemplo.es");
-    clientWithStoreUser.setPhone("+34 623456780");
-    clientWithStoreUser.setAddress("Calle San Fernando, nº 12, Sevilla");
-    clientWithStoreUser.setUser(storeOwner);
-    clientRepository.save(clientWithStoreUser);
-
     Product p1 = allProducts.size() > 0 ? allProducts.get(0) : null;
     Product p3 = allProducts.size() > 2 ? allProducts.get(2) : p1;
     Product p4 = allProducts.size() > 3 ? allProducts.get(3) : p1;

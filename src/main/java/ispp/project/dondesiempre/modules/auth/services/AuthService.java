@@ -14,6 +14,7 @@ import ispp.project.dondesiempre.modules.stores.repositories.StoreRepository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -80,6 +81,16 @@ public class AuthService {
     user.setEmail(email);
     user.setPassword(passwordEncoder.encode(password));
     return userRepository.save(user);
+  }
+
+  @Transactional(readOnly = true)
+  public UUID getStoreId(User user) {
+    return storeRepository.findByUserId(user.getId()).map(Store::getId).orElse(null);
+  }
+
+  @Transactional(readOnly = true)
+  public UUID getClientId(User user) {
+    return clientRepository.findByUserId(user.getId()).map(Client::getId).orElse(null);
   }
 
   @Transactional(readOnly = true)

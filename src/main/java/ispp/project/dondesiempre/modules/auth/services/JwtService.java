@@ -8,6 +8,7 @@ import ispp.project.dondesiempre.config.JwtProperties;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.Date;
+import java.util.UUID;
 import javax.crypto.SecretKey;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,15 +23,14 @@ public class JwtService {
     return Keys.hmacShaKeyFor(jwtProperties.getSecret().getBytes(StandardCharsets.UTF_8));
   }
 
-  public String generateToken(String email) {
+  public String generateToken(String email, UUID storeId, UUID clientId) {
     long nowMillis = System.currentTimeMillis();
     long expMillis = nowMillis + jwtProperties.getDuration() * 1000;
-    return Jwts.builder()
-        .subject(email)
-        .issuedAt(new Date(nowMillis))
-        .expiration(new Date(expMillis))
-        .signWith(getSigningKey())
-        .compact();
+    var builder =
+        Jwts.builder().subject(email).issuedAt(new Date(nowMillis)).expiration(new Date(expMillis));
+    if (storeId != null) builder.claim("storeId", storeId.toString());
+    if (clientId != null) builder.claim("clientId", clientId.toString());
+    return builder.signWith(getSigningKey()).compact();
   }
 
   public String extractEmail(String token) {
