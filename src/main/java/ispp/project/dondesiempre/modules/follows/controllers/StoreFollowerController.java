@@ -2,6 +2,7 @@ package ispp.project.dondesiempre.modules.follows.controllers;
 
 import ispp.project.dondesiempre.modules.auth.services.UserService;
 import ispp.project.dondesiempre.modules.clients.models.Client;
+import ispp.project.dondesiempre.modules.common.exceptions.UnauthorizedException;
 import ispp.project.dondesiempre.modules.follows.dtos.StoreFollowerDTO;
 import ispp.project.dondesiempre.modules.follows.services.StoreFollowerService;
 import ispp.project.dondesiempre.modules.stores.dtos.StoreDTO;
@@ -22,9 +23,13 @@ public class StoreFollowerController {
   private final StoreService storeService;
   private final UserService userService;
 
-  @GetMapping("/clients/me/following")
+  @GetMapping("/clients/{clientId}/following")
   @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<List<StoreDTO>> getMyFollowedStores() {
+  public ResponseEntity<List<StoreDTO>> getMyFollowedStores(@PathVariable UUID clientId) {
+    Client currentClient = userService.getCurrentClient();
+    if (!clientId.equals(currentClient.getId())) {
+      throw new UnauthorizedException("You can only view your own followed stores.");
+    }
     List<StoreDTO> followedStores =
         followersService.getMyFollowedStores().stream().map(storeService::toDTO).toList();
     return new ResponseEntity<>(followedStores, HttpStatus.OK);
@@ -38,7 +43,7 @@ public class StoreFollowerController {
         new StoreFollowerDTO(currentClient.getId(), storeId, follows), HttpStatus.OK);
   }
 
-  @PostMapping("/stores/{storeId}/followers")
+  @PostMapping("/stores/{storeId}/follow")
   @ResponseStatus(HttpStatus.CREATED)
   public ResponseEntity<String> followStore(@PathVariable("storeId") UUID storeId) {
     followersService.followStore(storeId);

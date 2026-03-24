@@ -52,7 +52,7 @@ public class StoreFollowerControllerTest {
   void followStore_shouldFollowStore_whenAuthorized() throws Exception {
     when(storeFollowerService.followStore(TEST_STORE_ID)).thenReturn(TEST_FOLLOWER);
     mockMvc
-        .perform(post("/api/v1/stores/{storeId}/followers", TEST_STORE_ID))
+        .perform(post("/api/v1/stores/{storeId}/follow", TEST_STORE_ID))
         .andExpect(status().isCreated());
   }
 
@@ -90,11 +90,12 @@ public class StoreFollowerControllerTest {
     StoreDTO storeDTO = new StoreDTO();
     storeDTO.setId(TEST_STORE_ID);
 
+    when(userService.getCurrentClient()).thenReturn(TEST_CLIENT);
     when(storeFollowerService.getMyFollowedStores()).thenReturn(List.of(TEST_STORE));
     when(storeService.toDTO(TEST_STORE)).thenReturn(storeDTO);
 
     mockMvc
-        .perform(get("/api/v1/clients/me/following"))
+        .perform(get("/api/v1/clients/{clientId}/following", TEST_CLIENT.getId()))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.length()").value(1))
         .andExpect(jsonPath("$[0].id").value(TEST_STORE_ID.toString()));
