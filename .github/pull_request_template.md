@@ -30,3 +30,6 @@ Explain what this PR changes and why.
 - [ ] I followed the style guides
 - [ ] I followed the Controller-Service-Repository pattern
 - [ ] I tested my code
+
+
+> Recuerda revisar que la notificación de la pull request llega a Discord en el canal de #github
