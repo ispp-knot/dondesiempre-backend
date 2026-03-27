@@ -42,6 +42,8 @@ public class Order extends BaseEntity {
 
   @Column @NotNull Integer totalPrice;
 
+  @Column String paymentIntentId;
+
   @NotNull
   @ManyToOne(optional = false)
   @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)

@@ -123,4 +123,20 @@ public class OrderRepositoryTest {
     Optional<Order> order = orderRepository.findByOrderCode("NON-EXISTENT-CODE");
     assertFalse(order.isPresent());
   }
+
+  @Test
+  void shouldReturnFalse_whenPaymentIntentIdIsNull() {
+    Order order = orderRepository.findByOrderCode(testOrderCode).get();
+    boolean res = orderRepository.existsByIdAndPaymentIntentIdIsNotNull(order.getId());
+    assertFalse(res);
+  }
+
+  @Test
+  void shouldReturnTrue_whenPaymentIntentIdIsNotNull() {
+    Order order = orderRepository.findByOrderCode(testOrderCode).get();
+    order.setPaymentIntentId("pi_asuhuiashuidahiuahaskoa");
+    orderRepository.save(order);
+    boolean res = orderRepository.existsByIdAndPaymentIntentIdIsNotNull(order.getId());
+    assertTrue(res);
+  }
 }
