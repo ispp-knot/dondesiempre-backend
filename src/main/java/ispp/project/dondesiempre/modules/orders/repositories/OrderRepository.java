@@ -20,4 +20,6 @@ public interface OrderRepository extends JpaRepository<Order, UUID> {
 
   // Para comprobar si un pedido está pagado
   boolean existsByIdAndPaymentIntentIdIsNotNull(UUID id);
+
+  Optional<Order> findByPaymentIntentId(String paymentIntentId);
 }

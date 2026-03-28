@@ -210,7 +210,8 @@ public class OrderService {
     }
   }
 
-  // Este método se puede usar para cancelar un pedido que aún no ha sido confirmado.
+  // Este método se puede usar para cancelar un pedido que aún no ha sido
+  // confirmado.
   /**
    * TODO: Podría añadirse que un pedido sea cancelado por un cliente o una tienda, si y solo si: -
    * Cliente: puede cancelar un pedido si está PENDING (se ha equivocado, se ha dado cuenta que no
@@ -232,6 +233,18 @@ public class OrderService {
       throw new UnauthorizedException(
           "This order is not in the pending state, it cannot be canceled.");
     }
+  }
+
+  @Transactional(readOnly = true)
+  public boolean irOrderPaid(UUID orderId) {
+    return orderRepository.existsByIdAndPaymentIntentIdIsNotNull(orderId);
+  }
+
+  @Transactional(readOnly = true)
+  public Order findByPaymentIntentId(String paymentIntentId) {
+    return orderRepository
+        .findByPaymentIntentId(paymentIntentId)
+        .orElseThrow(() -> new ResourceNotFoundException("The order is not paid"));
   }
 
   private Integer calculateAndSetTotalPrice(Order order) {

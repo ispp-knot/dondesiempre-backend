@@ -42,6 +42,7 @@ public class OrderRepositoryTest {
   private User savedUser;
   private Store savedStore;
   private String testOrderCode = "TEST-ORDER-CODE-123";
+  private final String PAYMENT_INTENT_ID = "pi_asuhuiashuidahiuahaskoa";
 
   @BeforeEach
   void setUp() {
@@ -134,9 +135,18 @@ public class OrderRepositoryTest {
   @Test
   void shouldReturnTrue_whenPaymentIntentIdIsNotNull() {
     Order order = orderRepository.findByOrderCode(testOrderCode).get();
-    order.setPaymentIntentId("pi_asuhuiashuidahiuahaskoa");
+    order.setPaymentIntentId(PAYMENT_INTENT_ID);
     orderRepository.save(order);
     boolean res = orderRepository.existsByIdAndPaymentIntentIdIsNotNull(order.getId());
     assertTrue(res);
+  }
+
+  @Test
+  void shouldReturnOrder_whenFindingByPaymentIntentId() {
+    Order order = orderRepository.findByOrderCode(testOrderCode).get();
+    order.setPaymentIntentId(PAYMENT_INTENT_ID);
+    orderRepository.save(order);
+    Optional<Order> res = orderRepository.findByPaymentIntentId(PAYMENT_INTENT_ID);
+    assertTrue(res.isPresent());
   }
 }
