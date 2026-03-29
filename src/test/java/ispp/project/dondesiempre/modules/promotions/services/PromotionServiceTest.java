@@ -77,6 +77,7 @@ public class PromotionServiceTest {
     store.setAcceptsShipping(true);
     store.setStorefront(createStorefront());
     store.setUser(user);
+    store.setAccountId("acc_AAAAA");
     return storeRepository.save(store);
   }
 

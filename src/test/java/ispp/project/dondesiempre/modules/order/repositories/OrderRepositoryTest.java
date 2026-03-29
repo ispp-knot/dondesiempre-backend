@@ -63,6 +63,7 @@ public class OrderRepositoryTest {
     savedStore.setLocation(coordinatesService.createPoint(0.0, 0.0));
     savedStore.setStorefront(storefront);
     savedStore.setUser(savedUser);
+    savedStore.setAccountId("acc_AAAAAA");
     entityManager.persist(savedStore);
 
     ProductType type = new ProductType();
