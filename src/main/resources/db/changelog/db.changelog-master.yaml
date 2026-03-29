@@ -42,4 +42,4 @@ databaseChangeLog:
   - include:
       file: db/changelog/023-promotion-dates/promotion-dates.changelog.yaml
   - include:
-      file: db/changelog/024-payment-intent/payment-intent.changelog.yaml
+      file: db/changelog/024-stripe/stripe.changelog.yaml

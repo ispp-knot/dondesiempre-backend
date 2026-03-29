@@ -56,6 +56,8 @@ public class Store extends BaseEntity {
 
   @Column @NotNull Boolean acceptsShipping;
 
+  @Column @NotBlank String accountId;
+
   @OneToOne(cascade = CascadeType.ALL)
   @JoinColumn(name = "storefront_id", referencedColumnName = "id", nullable = false)
   private Storefront storefront;
