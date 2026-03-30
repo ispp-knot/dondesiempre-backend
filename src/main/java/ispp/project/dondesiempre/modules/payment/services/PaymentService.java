@@ -1,29 +1,13 @@
 package ispp.project.dondesiempre.modules.payment.services;
 
-import com.stripe.exception.EventDataObjectDeserializationException;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Account;
-import com.stripe.model.Event;
-import com.stripe.model.EventDataObjectDeserializer;
-import com.stripe.model.Refund;
-import com.stripe.model.StripeObject;
-import com.stripe.model.checkout.Session;
 import com.stripe.param.AccountCreateParams;
-import com.stripe.param.RefundCreateParams;
-import com.stripe.param.checkout.SessionCreateParams;
-import ispp.project.dondesiempre.modules.auth.models.User;
 import ispp.project.dondesiempre.modules.auth.services.AuthService;
-import ispp.project.dondesiempre.modules.common.exceptions.InvalidRequestException;
 import ispp.project.dondesiempre.modules.common.exceptions.StripeFailException;
-import ispp.project.dondesiempre.modules.common.exceptions.UnauthorizedException;
-import ispp.project.dondesiempre.modules.orders.models.Order;
-import ispp.project.dondesiempre.modules.orders.models.OrderItem;
 import ispp.project.dondesiempre.modules.orders.services.OrderService;
 import ispp.project.dondesiempre.modules.stores.models.Store;
 import ispp.project.dondesiempre.modules.stores.services.StoreService;
-import java.util.List;
-import java.util.UUID;
-import java.util.function.Function;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,7 +32,6 @@ public class PaymentService {
     this.authService = authService;
     this.storeService = storeService;
   }
-
 
   @Transactional
   public void createConnectAccount(Store store) {
