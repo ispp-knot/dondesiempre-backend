@@ -16,6 +16,7 @@ import ispp.project.dondesiempre.modules.auth.services.JwtService;
 import ispp.project.dondesiempre.modules.auth.services.UserService;
 import ispp.project.dondesiempre.modules.clients.dtos.ClientDTO;
 import ispp.project.dondesiempre.modules.common.exceptions.AlreadyExistsException;
+import ispp.project.dondesiempre.modules.payment.services.PaymentService;
 import ispp.project.dondesiempre.modules.stores.dtos.StoreDTO;
 import ispp.project.dondesiempre.modules.stores.models.Store;
 import ispp.project.dondesiempre.modules.stores.services.StoreService;
@@ -38,6 +39,7 @@ class AuthControllerRegisterTest {
   @MockitoBean private StoreService storeService;
   @MockitoBean private JwtService jwtService;
   @MockitoBean private JwtProperties jwtProperties;
+  @MockitoBean private PaymentService paymentService;
 
   // --- registerStore ---
 
