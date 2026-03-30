@@ -237,10 +237,4 @@ public class OrderServiceTest {
     String code = orderService.generateRandomCode();
     assertTrue(code.matches("^[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$"));
   }
-
-  @Test
-  void shouldThrowResourceNotFound_whenOrderIsNotPaid() {
-    when(orderRepository.findByPaymentIntentId(any())).thenReturn(Optional.empty());
-    assertThrows(ResourceNotFoundException.class, () -> orderService.findByPaymentIntentId(null));
-  }
 }

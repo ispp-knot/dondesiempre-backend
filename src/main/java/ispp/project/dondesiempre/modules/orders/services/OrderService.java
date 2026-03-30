@@ -252,13 +252,6 @@ public class OrderService {
     return orderRepository.existsByIdAndPaymentIntentIdIsNotNull(orderId);
   }
 
-  @Transactional(readOnly = true)
-  public Order findByPaymentIntentId(String paymentIntentId) {
-    return orderRepository
-        .findByPaymentIntentId(paymentIntentId)
-        .orElseThrow(() -> new ResourceNotFoundException("The order is not paid"));
-  }
-
   private Integer calculateAndSetTotalPrice(Order order) {
     Integer total = 0;
     if (order.getItems() != null && !order.getItems().isEmpty()) {

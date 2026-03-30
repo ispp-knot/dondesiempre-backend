@@ -141,13 +141,4 @@ public class OrderRepositoryTest {
     boolean res = orderRepository.existsByIdAndPaymentIntentIdIsNotNull(order.getId());
     assertTrue(res);
   }
-
-  @Test
-  void shouldReturnOrder_whenFindingByPaymentIntentId() {
-    Order order = orderRepository.findByOrderCode(testOrderCode).get();
-    order.setPaymentIntentId(PAYMENT_INTENT_ID);
-    orderRepository.save(order);
-    Optional<Order> res = orderRepository.findByPaymentIntentId(PAYMENT_INTENT_ID);
-    assertTrue(res.isPresent());
-  }
 }
