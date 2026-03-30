@@ -84,6 +84,18 @@ public class OrderService {
     orderRepository.deleteById(orderId);
   }
 
+  @Transactional
+  public Order setPaymentIntentId(UUID orderId, String paymentIntentId) {
+    Order order = findById(orderId);
+
+    if (!authService.getCurrentUser().equals(order.getUser())) {
+      throw new UnauthorizedException(
+          "You can't set the paymentIntent id of a order you don't own.");
+    }
+    order.setPaymentIntentId(paymentIntentId);
+    return order;
+  }
+
   public String generateRandomCode() {
     StringBuilder sb = new StringBuilder();
     for (int i = 0; i < 12; i++) {

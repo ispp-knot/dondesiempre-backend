@@ -137,4 +137,17 @@ public class StoreService {
         .getBean(StoreService.class)
         .toDTO(storeRepository.save(storeToUpdate));
   }
+
+  @Transactional(rollbackFor = {UnauthorizedException.class})
+  public Store setAccountId(UUID storeId, String accountId) {
+    Store store = findById(storeId);
+
+    if (!authService.getCurrentUser().equals(store.getUser())) {
+      throw new UnauthorizedException("You can't set the account id of a store you don't own.");
+    }
+
+    store.setAccountId(accountId);
+
+    return store;
+  }
 }
