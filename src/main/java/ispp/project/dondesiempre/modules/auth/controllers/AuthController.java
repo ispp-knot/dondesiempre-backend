@@ -18,12 +18,7 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -61,5 +56,12 @@ public class AuthController {
   @PostMapping("/register/client")
   public ResponseEntity<ClientDTO> registerClient(@Valid @RequestBody RegisterClientDTO dto) {
     return new ResponseEntity<>(userService.registerClient(dto), HttpStatus.CREATED);
+  }
+
+  @PatchMapping("/password")
+  public ResponseEntity<Void> changePassword(
+      @RequestParam String oldPassword, @RequestParam String newPassword) {
+    userService.changePassword(oldPassword, newPassword);
+    return ResponseEntity.accepted().build();
   }
 }
