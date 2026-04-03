@@ -1,10 +1,6 @@
 package ispp.project.dondesiempre.modules.auth.controllers;
 
-import ispp.project.dondesiempre.modules.auth.dtos.LoginRequestDTO;
-import ispp.project.dondesiempre.modules.auth.dtos.LoginResponseDTO;
-import ispp.project.dondesiempre.modules.auth.dtos.RegisterClientDTO;
-import ispp.project.dondesiempre.modules.auth.dtos.RegisterStoreDTO;
-import ispp.project.dondesiempre.modules.auth.dtos.UserResponseDTO;
+import ispp.project.dondesiempre.modules.auth.dtos.*;
 import ispp.project.dondesiempre.modules.auth.models.User;
 import ispp.project.dondesiempre.modules.auth.services.AuthService;
 import ispp.project.dondesiempre.modules.auth.services.JwtService;
@@ -58,10 +54,10 @@ public class AuthController {
     return new ResponseEntity<>(userService.registerClient(dto), HttpStatus.CREATED);
   }
 
-  @PatchMapping("/password")
+  @PutMapping("/password")
   public ResponseEntity<Void> changePassword(
-      @RequestParam String oldPassword, @RequestParam String newPassword) {
-    userService.changePassword(oldPassword, newPassword);
+          @RequestBody @Valid ChangePasswordDTO dto) {
+    userService.changePassword(dto.getOldPassword(), dto.getNewPassword());
     return ResponseEntity.accepted().build();
   }
 }
