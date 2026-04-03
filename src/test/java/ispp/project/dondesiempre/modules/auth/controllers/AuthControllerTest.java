@@ -127,11 +127,11 @@ class AuthControllerTest {
   @WithMockUser
   void changePassword_shouldReturn202_whenPasswordsAreValid() throws Exception {
     mockMvc
-            .perform(
-                    patch("/api/v1/auth/password")
-                            .param("oldPassword", "correct-old-pass")
-                            .param("newPassword", "new-pass"))
-            .andExpect(status().isAccepted());
+        .perform(
+            patch("/api/v1/auth/password")
+                .param("oldPassword", "correct-old-pass")
+                .param("newPassword", "new-pass"))
+        .andExpect(status().isAccepted());
 
     verify(userService).changePassword("correct-old-pass", "new-pass");
   }
@@ -140,23 +140,24 @@ class AuthControllerTest {
   @WithMockUser
   void changePassword_shouldReturn403_whenOldPasswordIsWrong() throws Exception {
     doThrow(new UnauthorizedException("Wrong password."))
-            .when(userService).changePassword("wrong-old-pass", "new-pass");
+        .when(userService)
+        .changePassword("wrong-old-pass", "new-pass");
 
     mockMvc
-            .perform(
-                    patch("/api/v1/auth/password")
-                            .param("oldPassword", "wrong-old-pass")
-                            .param("newPassword", "new-pass"))
-            .andExpect(status().isForbidden());
+        .perform(
+            patch("/api/v1/auth/password")
+                .param("oldPassword", "wrong-old-pass")
+                .param("newPassword", "new-pass"))
+        .andExpect(status().isForbidden());
   }
 
   @Test
   void changePassword_shouldReturn403_whenNotAuthenticated() throws Exception {
     mockMvc
-            .perform(
-                    patch("/api/v1/auth/password")
-                            .param("oldPassword", "old-pass")
-                            .param("newPassword", "new-pass"))
-            .andExpect(status().isForbidden());
+        .perform(
+            patch("/api/v1/auth/password")
+                .param("oldPassword", "old-pass")
+                .param("newPassword", "new-pass"))
+        .andExpect(status().isForbidden());
   }
 }

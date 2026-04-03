@@ -61,7 +61,10 @@ class UserServiceTest {
 
     userService.changePassword("correct-old-password", "new-password");
 
-    assertEquals("new-hashed-password", user.getPassword(), "La contraseña del usuario debería haberse actualizado con el nuevo hash");
+    assertEquals(
+        "new-hashed-password",
+        user.getPassword(),
+        "La contraseña del usuario debería haberse actualizado con el nuevo hash");
     verify(userRepository).save(user);
   }
 
@@ -74,9 +77,9 @@ class UserServiceTest {
     when(authService.getCurrentUser()).thenReturn(user);
     when(passwordEncoder.matches("wrong-old-password", "old-hashed-password")).thenReturn(false);
 
-    assertThrows(UnauthorizedException.class,
-            () -> userService.changePassword("wrong-old-password", "new-password")
-    );
+    assertThrows(
+        UnauthorizedException.class,
+        () -> userService.changePassword("wrong-old-password", "new-password"));
 
     verify(passwordEncoder, never()).encode(any());
     verify(userRepository, never()).save(any());

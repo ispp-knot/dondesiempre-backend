@@ -1,6 +1,11 @@
 package ispp.project.dondesiempre.modules.clients.controllers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ispp.project.dondesiempre.config.GlobalExceptionHandler;
 import ispp.project.dondesiempre.config.security.SecurityConfig;
@@ -20,148 +25,140 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 @WebMvcTest(
-        controllers = ClientController.class,
-        excludeFilters =
+    controllers = ClientController.class,
+    excludeFilters =
         @ComponentScan.Filter(
-                type = FilterType.ASSIGNABLE_TYPE,
-                classes = {GlobalExceptionHandler.class}))
+            type = FilterType.ASSIGNABLE_TYPE,
+            classes = {GlobalExceptionHandler.class}))
 @Import(SecurityConfig.class)
 public class ClientControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
-    @Autowired private ObjectMapper objectMapper;
+  @Autowired private MockMvc mockMvc;
+  @Autowired private ObjectMapper objectMapper;
 
-    @MockitoBean
-    private ClientService clientService;
+  @MockitoBean private ClientService clientService;
 
-    @Test
-    @WithMockUser(roles = "CLIENT")
-    void shouldReturnDTOWhenSucess() throws Exception {
-        ClientUpdateDTO dto = new ClientUpdateDTO();
-        dto.setEmail("client@test.com");
-        dto.setAddress("fake address");
-        dto.setName("client");
-        dto.setPhone("123456789");
-        dto.setSurname("surname");
+  @Test
+  @WithMockUser(roles = "CLIENT")
+  void shouldReturnDTOWhenSucess() throws Exception {
+    ClientUpdateDTO dto = new ClientUpdateDTO();
+    dto.setEmail("client@test.com");
+    dto.setAddress("fake address");
+    dto.setName("client");
+    dto.setPhone("123456789");
+    dto.setSurname("surname");
 
-        ClientDTO response =  new ClientDTO();
-        response.setEmail("client@test.com");
-        response.setAddress("fake address");
-        response.setName("client");
-        response.setPhone("123456789");
-        response.setSurname("surname");
+    ClientDTO response = new ClientDTO();
+    response.setEmail("client@test.com");
+    response.setAddress("fake address");
+    response.setName("client");
+    response.setPhone("123456789");
+    response.setSurname("surname");
 
-        when(clientService.updateClient(any(ClientUpdateDTO.class))).thenReturn(response);
+    when(clientService.updateClient(any(ClientUpdateDTO.class))).thenReturn(response);
 
-        mockMvc
-                .perform(
-                        put("/api/v1/clients")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(dto)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.email").value(dto.getEmail()))
-                .andExpect(jsonPath("$.name").value(dto.getName()))
-                .andExpect(jsonPath("$.address").value(dto.getAddress()));
+    mockMvc
+        .perform(
+            put("/api/v1/clients")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.email").value(dto.getEmail()))
+        .andExpect(jsonPath("$.name").value(dto.getName()))
+        .andExpect(jsonPath("$.address").value(dto.getAddress()));
 
-        verify(clientService).updateClient(any(ClientUpdateDTO.class));
-    }
+    verify(clientService).updateClient(any(ClientUpdateDTO.class));
+  }
 
-    @Test
-    void shouldReturnForbiddenWhenNotAutenticated() throws Exception {
-        ClientUpdateDTO dto = new ClientUpdateDTO();
-        dto.setEmail("client@test.com");
+  @Test
+  void shouldReturnForbiddenWhenNotAutenticated() throws Exception {
+    ClientUpdateDTO dto = new ClientUpdateDTO();
+    dto.setEmail("client@test.com");
 
-        mockMvc
-                .perform(
-                        put("/api/v1/clients")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(dto)))
-                .andExpect(status().isForbidden());
+    mockMvc
+        .perform(
+            put("/api/v1/clients")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)))
+        .andExpect(status().isForbidden());
 
-        verify(clientService, never()).updateClient(any());
-    }
+    verify(clientService, never()).updateClient(any());
+  }
 
-    @Test
-    @WithMockUser(roles = "CLIENT")
-    void shouldReturnBadRequestWhenInvalidData() throws Exception {
-        ClientUpdateDTO dto1 = new ClientUpdateDTO();
-        dto1.setEmail("correo-invalido");
-        dto1.setAddress("fake address");
-        dto1.setName("client");
-        dto1.setPhone("123456789");
-        dto1.setSurname("surname");
+  @Test
+  @WithMockUser(roles = "CLIENT")
+  void shouldReturnBadRequestWhenInvalidData() throws Exception {
+    ClientUpdateDTO dto1 = new ClientUpdateDTO();
+    dto1.setEmail("correo-invalido");
+    dto1.setAddress("fake address");
+    dto1.setName("client");
+    dto1.setPhone("123456789");
+    dto1.setSurname("surname");
 
-        mockMvc
-                .perform(
-                        put("/api/v1/clients")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(dto1)))
-                .andExpect(status().isBadRequest());
+    mockMvc
+        .perform(
+            put("/api/v1/clients")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto1)))
+        .andExpect(status().isBadRequest());
 
-        ClientUpdateDTO dto2 = new ClientUpdateDTO();
-        dto2.setEmail("client@test.com");
-        dto2.setAddress("fake address");
-        dto2.setName(null);
-        dto2.setPhone("123456789");
-        dto2.setSurname("surname");
+    ClientUpdateDTO dto2 = new ClientUpdateDTO();
+    dto2.setEmail("client@test.com");
+    dto2.setAddress("fake address");
+    dto2.setName(null);
+    dto2.setPhone("123456789");
+    dto2.setSurname("surname");
 
-        mockMvc
-                .perform(
-                        put("/api/v1/clients")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(dto2)))
-                .andExpect(status().isBadRequest());
+    mockMvc
+        .perform(
+            put("/api/v1/clients")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto2)))
+        .andExpect(status().isBadRequest());
 
-        verify(clientService, never()).updateClient(any());
-    }
+    verify(clientService, never()).updateClient(any());
+  }
 
-    @Test
-    @WithMockUser(roles = "CLIENT")
-    void shouldReturnConflictWhenEmailAlreadyExists() throws Exception {
-        ClientUpdateDTO dto = new ClientUpdateDTO();
-        dto.setEmail("correo.ocupado@test.com");
-        dto.setAddress("fake address");
-        dto.setName("client");
-        dto.setPhone("123456789");
-        dto.setSurname("surname");
+  @Test
+  @WithMockUser(roles = "CLIENT")
+  void shouldReturnConflictWhenEmailAlreadyExists() throws Exception {
+    ClientUpdateDTO dto = new ClientUpdateDTO();
+    dto.setEmail("correo.ocupado@test.com");
+    dto.setAddress("fake address");
+    dto.setName("client");
+    dto.setPhone("123456789");
+    dto.setSurname("surname");
 
-        when(clientService.updateClient(any(ClientUpdateDTO.class)))
-                .thenThrow(new AlreadyExistsException("Email already in use."));
+    when(clientService.updateClient(any(ClientUpdateDTO.class)))
+        .thenThrow(new AlreadyExistsException("Email already in use."));
 
-        mockMvc
-                .perform(
-                        put("/api/v1/clients")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(dto)))
-                .andExpect(status().isConflict());
-    }
+    mockMvc
+        .perform(
+            put("/api/v1/clients")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)))
+        .andExpect(status().isConflict());
+  }
 
-    @Test
-    @WithMockUser(roles = "STORE")
-    void shouldReturnNotFoundWhenStoreTriesToUpdateClient() throws Exception {
-        ClientUpdateDTO dto = new ClientUpdateDTO();
-        dto.setEmail("store@test.com");
-        dto.setAddress("fake address");
-        dto.setName("store");
-        dto.setPhone("123456789");
-        dto.setSurname("surname");
+  @Test
+  @WithMockUser(roles = "STORE")
+  void shouldReturnNotFoundWhenStoreTriesToUpdateClient() throws Exception {
+    ClientUpdateDTO dto = new ClientUpdateDTO();
+    dto.setEmail("store@test.com");
+    dto.setAddress("fake address");
+    dto.setName("store");
+    dto.setPhone("123456789");
+    dto.setSurname("surname");
 
-        when(clientService.updateClient(any(ClientUpdateDTO.class)))
-                .thenThrow(new ResourceNotFoundException("Current client not found."));
+    when(clientService.updateClient(any(ClientUpdateDTO.class)))
+        .thenThrow(new ResourceNotFoundException("Current client not found."));
 
-        mockMvc
-                .perform(
-                        put("/api/v1/clients")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(dto)))
-                .andExpect(status().isNotFound());
-    }
+    mockMvc
+        .perform(
+            put("/api/v1/clients")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)))
+        .andExpect(status().isNotFound());
+  }
 }
