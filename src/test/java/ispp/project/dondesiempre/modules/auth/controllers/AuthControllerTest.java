@@ -132,11 +132,11 @@ class AuthControllerTest {
     dto.setNewPassword("StrongPass1!");
 
     mockMvc
-            .perform(
-                    put("/api/v1/auth/password")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(dto)))
-            .andExpect(status().isAccepted());
+        .perform(
+            put("/api/v1/auth/password")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)))
+        .andExpect(status().isAccepted());
 
     verify(userService).changePassword("correct-old-pass", "StrongPass1!");
   }
@@ -149,15 +149,15 @@ class AuthControllerTest {
     dto.setNewPassword("StrongPass1!");
 
     doThrow(new UnauthorizedException("Wrong password."))
-            .when(userService)
-            .changePassword("wrong-old-pass", "StrongPass1!");
+        .when(userService)
+        .changePassword("wrong-old-pass", "StrongPass1!");
 
     mockMvc
-            .perform(
-                    put("/api/v1/auth/password")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(dto)))
-            .andExpect(status().isForbidden());
+        .perform(
+            put("/api/v1/auth/password")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)))
+        .andExpect(status().isForbidden());
   }
 
   @Test
@@ -167,11 +167,11 @@ class AuthControllerTest {
     dto.setNewPassword("StrongPass1!");
 
     mockMvc
-            .perform(
-                    put("/api/v1/auth/password")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(dto)))
-            .andExpect(status().isForbidden());
+        .perform(
+            put("/api/v1/auth/password")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)))
+        .andExpect(status().isForbidden());
   }
 
   @Test
@@ -182,11 +182,11 @@ class AuthControllerTest {
     dto.setNewPassword("weakpass");
 
     mockMvc
-            .perform(
-                    put("/api/v1/auth/password")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(dto)))
-            .andExpect(status().isBadRequest());
+        .perform(
+            put("/api/v1/auth/password")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)))
+        .andExpect(status().isBadRequest());
 
     verify(userService, never()).changePassword(any(), any());
   }

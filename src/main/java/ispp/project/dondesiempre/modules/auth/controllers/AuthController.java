@@ -55,8 +55,7 @@ public class AuthController {
   }
 
   @PutMapping("/password")
-  public ResponseEntity<Void> changePassword(
-          @RequestBody @Valid ChangePasswordDTO dto) {
+  public ResponseEntity<Void> changePassword(@RequestBody @Valid ChangePasswordDTO dto) {
     userService.changePassword(dto.getOldPassword(), dto.getNewPassword());
     return ResponseEntity.accepted().build();
   }

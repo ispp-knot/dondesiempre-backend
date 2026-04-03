@@ -9,10 +9,7 @@ import lombok.Setter;
 @Setter
 public class ChangePasswordDTO {
 
-    @NotBlank
-    private String oldPassword;
+  @NotBlank private String oldPassword;
 
-    @NotBlank
-    @StrongPassword
-    private String newPassword;
+  @NotBlank @StrongPassword private String newPassword;
 }
