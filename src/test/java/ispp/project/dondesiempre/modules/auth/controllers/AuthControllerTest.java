@@ -3,9 +3,8 @@ package ispp.project.dondesiempre.modules.auth.controllers;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -122,5 +121,42 @@ class AuthControllerTest {
     mockMvc
         .perform(get("/api/v1/auth/me").header("Authorization", "Bearer jwt-token"))
         .andExpect(status().isForbidden());
+  }
+
+  @Test
+  @WithMockUser
+  void changePassword_shouldReturn202_whenPasswordsAreValid() throws Exception {
+    mockMvc
+            .perform(
+                    patch("/api/v1/auth/password")
+                            .param("oldPassword", "correct-old-pass")
+                            .param("newPassword", "new-pass"))
+            .andExpect(status().isAccepted());
+
+    verify(userService).changePassword("correct-old-pass", "new-pass");
+  }
+
+  @Test
+  @WithMockUser
+  void changePassword_shouldReturn403_whenOldPasswordIsWrong() throws Exception {
+    doThrow(new UnauthorizedException("Wrong password."))
+            .when(userService).changePassword("wrong-old-pass", "new-pass");
+
+    mockMvc
+            .perform(
+                    patch("/api/v1/auth/password")
+                            .param("oldPassword", "wrong-old-pass")
+                            .param("newPassword", "new-pass"))
+            .andExpect(status().isForbidden());
+  }
+
+  @Test
+  void changePassword_shouldReturn403_whenNotAuthenticated() throws Exception {
+    mockMvc
+            .perform(
+                    patch("/api/v1/auth/password")
+                            .param("oldPassword", "old-pass")
+                            .param("newPassword", "new-pass"))
+            .andExpect(status().isForbidden());
   }
 }
