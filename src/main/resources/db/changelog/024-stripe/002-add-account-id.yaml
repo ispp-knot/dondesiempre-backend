@@ -11,12 +11,3 @@ databaseChangeLog:
                   type: VARCHAR(255)
                   constraints:
                     nullable: true
-
-  - changeSet:
-      id: 20260329-02
-      author: emilio
-      changes:
-        - addNotNullConstraint:
-            tableName: stores
-            columnName: account_id
-            columnDataType: VARCHAR(255)

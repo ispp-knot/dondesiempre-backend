@@ -56,7 +56,7 @@ public class Store extends BaseEntity {
 
   @Column @NotNull Boolean acceptsShipping;
 
-  @Column @NotBlank String accountId;
+  @Column String accountId;
 
   @OneToOne(cascade = CascadeType.ALL)
   @JoinColumn(name = "storefront_id", referencedColumnName = "id", nullable = false)
@@ -73,5 +73,9 @@ public class Store extends BaseEntity {
 
   public Optional<String> getAboutUs() {
     return Optional.ofNullable(this.aboutUs);
+  }
+
+  public Optional<String> getAccountId() {
+    return Optional.ofNullable(this.accountId);
   }
 }
