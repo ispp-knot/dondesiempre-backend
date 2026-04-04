@@ -16,6 +16,10 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.PrecisionModel;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -136,5 +140,18 @@ public class StoreService {
     return applicationContext
         .getBean(StoreService.class)
         .toDTO(storeRepository.save(storeToUpdate));
+  }
+
+  @Transactional
+  public StoreDTO updateLocation(UUID id, Double longitude, Double latitude) {
+    Store store = applicationContext.getBean(StoreService.class).findById(id);
+    authService.assertUserOwnsStore(store);
+
+    Coordinate coordinate = new Coordinate(longitude, latitude);
+    GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
+    Point newLocation = geometryFactory.createPoint(coordinate);
+
+    store.setLocation(newLocation);
+    return applicationContext.getBean(StoreService.class).toDTO(storeRepository.save(store));
   }
 }

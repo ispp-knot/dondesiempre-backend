@@ -2,6 +2,7 @@ package ispp.project.dondesiempre.modules.stores.controllers;
 
 import ispp.project.dondesiempre.modules.stores.dtos.StoreDTO;
 import ispp.project.dondesiempre.modules.stores.dtos.StoreUpdateDTO;
+import ispp.project.dondesiempre.modules.stores.dtos.StoreUpdateLocationDTO;
 import ispp.project.dondesiempre.modules.stores.services.StoreService;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -59,5 +60,12 @@ public class StoreController {
   public ResponseEntity<StoreDTO> updateStore(
       @PathVariable("id") UUID id, @RequestBody @Valid StoreUpdateDTO dto) {
     return new ResponseEntity<>(storeService.updateStore(id, dto), HttpStatus.OK);
+  }
+
+  @PutMapping("/stores/{id}/location")
+  public ResponseEntity<StoreDTO> updateStoreLocation(
+      @PathVariable UUID id, @RequestBody @Valid StoreUpdateLocationDTO dto) {
+    return new ResponseEntity<>(
+        storeService.updateLocation(id, dto.getLongitude(), dto.getLatitude()), HttpStatus.OK);
   }
 }
