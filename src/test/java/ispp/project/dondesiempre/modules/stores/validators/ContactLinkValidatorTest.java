@@ -2,6 +2,7 @@ package ispp.project.dondesiempre.modules.stores.validators;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.junit.jupiter.api.Test;
 
 public class ContactLinkValidatorTest {
@@ -29,7 +30,9 @@ public class ContactLinkValidatorTest {
 
   @Test
   void shouldAccept_WhenComplexUrlWithSpecialCharacters() {
-    assertTrue(validator.isValid("https://github.com/orgs/ispp-knot/projects/1/views/1?pane=issue&itemId=168", null));
+    assertTrue(
+        validator.isValid(
+            "https://github.com/orgs/ispp-knot/projects/1/views/1?pane=issue&itemId=168", null));
   }
 
   @Test

@@ -1,8 +1,5 @@
 package ispp.project.dondesiempre.modules.stores.models;
 
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-
 import ispp.project.dondesiempre.modules.common.models.BaseEntity;
 import ispp.project.dondesiempre.modules.stores.validators.ValidContactLink;
 import jakarta.persistence.Column;
@@ -13,6 +10,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Getter
