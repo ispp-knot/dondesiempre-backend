@@ -117,8 +117,7 @@ class ClientSeed {
         randomOrder.setOrderDate(LocalDateTime.now().minusDays(rng.nextInt(10)));
         randomOrder.setOrderStatus(OrderStatus.PENDING);
         String uuidStr = UUID.randomUUID().toString().replace("-", "").toUpperCase();
-        randomOrder.setOrderCode(
-          "SEED-" + uuidStr.substring(0, 4) + "-" + uuidStr.substring(4, 8));
+        randomOrder.setOrderCode("SEED-" + uuidStr.substring(0, 4) + "-" + uuidStr.substring(4, 8));
         randomOrder.setItems(new ArrayList<>());
 
         int itemsToCreate = 1 + rng.nextInt(3);
