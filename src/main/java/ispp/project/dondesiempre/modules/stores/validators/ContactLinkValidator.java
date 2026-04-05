@@ -7,7 +7,8 @@ import java.util.regex.Pattern;
 public class ContactLinkValidator implements ConstraintValidator<ValidContactLink, String> {
 
   private static final String URL_REGEX =
-      "^(https?://)?(([a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,}|localhost|(\\d{1,3}\\.){3}\\d{1,3})(:\\d+)?(/[\\w\\d.\\-!$%&'()*+,;=:@?#|%]*)*$";
+      "^(https?://)?(([a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,}|localhost|(\\d{1,3}\\.){3}\\d{1,3})(:\\d+)?(/[^\\s]*)?$";
+
   private static final String PHONE_REGEX = "^\\+?[1-9]\\d{8,14}$";
 
   @Override

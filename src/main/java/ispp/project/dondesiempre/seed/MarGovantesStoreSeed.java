@@ -47,7 +47,7 @@ class MarGovantesStoreSeed {
         marGovantes, socialNetworks, "Instagram", "https://www.instagram.com/margovantesmodas");
     s.addSocialNetwork(
         marGovantes, socialNetworks, "TikTok", "https://www.tiktok.com/@margovantesmodas");
-    s.addSocialNetwork(marGovantes, socialNetworks, "Teléfono", "tel:+34670080639");
+    s.addSocialNetwork(marGovantes, socialNetworks, "Teléfono", "+34670080639");
 
     Product mg_americanaMarina =
         s.createProduct(

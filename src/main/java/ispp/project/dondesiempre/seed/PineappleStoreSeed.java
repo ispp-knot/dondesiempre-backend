@@ -48,7 +48,7 @@ class PineappleStoreSeed {
     s.addSocialNetwork(
         pineapple, socialNetworks, "TikTok", "https://www.tiktok.com/@pineapplesevilla");
     s.addSocialNetwork(pineapple, socialNetworks, "Web", "https://pineapplemoda.com/");
-    s.addSocialNetwork(pineapple, socialNetworks, "Teléfono", "tel:+34644807498");
+    s.addSocialNetwork(pineapple, socialNetworks, "Teléfono", "+34644807498");
 
     Product pine_camisaBlanca =
         s.createProduct(

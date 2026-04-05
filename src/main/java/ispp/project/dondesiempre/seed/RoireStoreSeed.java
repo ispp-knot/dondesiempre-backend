@@ -41,7 +41,7 @@ class RoireStoreSeed {
     s.addSocialNetwork(roire, socialNetworks, "WhatsApp", "https://wa.me/34641231378");
     s.addSocialNetwork(roire, socialNetworks, "Instagram", "https://www.instagram.com/roire.es");
     s.addSocialNetwork(roire, socialNetworks, "Web", "https://tiendaroire.es/");
-    s.addSocialNetwork(roire, socialNetworks, "Teléfono", "tel:+34641231378");
+    s.addSocialNetwork(roire, socialNetworks, "Teléfono", "+34641231378");
 
     Product roire_faldaCebra =
         s.createProduct(
