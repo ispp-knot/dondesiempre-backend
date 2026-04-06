@@ -4,7 +4,9 @@ import ispp.project.dondesiempre.modules.promotions.dtos.PromotionCreationDTO;
 import ispp.project.dondesiempre.modules.promotions.dtos.PromotionDTO;
 import ispp.project.dondesiempre.modules.promotions.dtos.PromotionUpdateDTO;
 import ispp.project.dondesiempre.modules.promotions.models.Promotion;
+import ispp.project.dondesiempre.modules.promotions.models.PromotionShare;
 import ispp.project.dondesiempre.modules.promotions.services.PromotionService;
+import ispp.project.dondesiempre.modules.promotions.services.PromotionShareService;
 import jakarta.validation.Valid;
 import java.util.List;
 import java.util.UUID;
@@ -24,6 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class PromotionController {
 
   private final PromotionService promotionService;
+  private final PromotionShareService promotionShareService;
 
   @PostMapping("/api/v1/promotions")
   public ResponseEntity<PromotionDTO> createPromotion(
@@ -87,4 +90,12 @@ public class PromotionController {
                         promotionService.getAllProductsDTOByPromotionId(promotion.getId())))
             .toList());
   }
+
+  @PostMapping("/api/v1/promotions/{id}/share")
+  public ResponseEntity<Void> sharePromotion(@PathVariable UUID id) {
+    promotionShareService.save(id);
+    return ResponseEntity.ok().build();
+  }
+
+
 }
