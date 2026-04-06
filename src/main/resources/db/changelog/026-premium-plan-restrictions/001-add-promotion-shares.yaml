@@ -1,0 +1,30 @@
+databaseChangeLog:
+    - changeSet:
+          id: add-promotion-shares
+          author: daniherurb
+          changes:
+              - createTable:
+                    tableName: promotion_shares
+                    columns:
+                        - column:
+                              name: id
+                              type: UUID
+                              constraints:
+                                  primaryKey: true
+                                  nullable: false
+                        - column:
+                              name: version
+                              type: INTEGER
+                        - column:
+                              name: promotion_id
+                              type: UUID
+                              constraints:
+                                  nullable: false
+                                  foreignKeyName: fk_promotion_shares_promotion
+                                  references: promotions(id)
+                                  deleteCascade: true
+                        - column:
+                              name: date
+                              type: DATE
+                              constraints:
+                                  nullable: false
