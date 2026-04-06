@@ -31,11 +31,9 @@ public class PromotionShareRepositoryTest {
     @Autowired private StoreRepository storeRepository;
     @Autowired private UserRepository userRepository;
     @Autowired CoordinatesService coordinatesService;
-    @Autowired private ProductTypeRepository productTypeRepository;
     @Autowired private StorefrontRepository storefrontRepository;
     @Autowired private PromotionRepository promotionRepository;
     @Autowired private PromotionShareRepository promotionShareRepository;
-    @Autowired private ProductRepository productRepository;
 
     private Promotion savedPromotion;
 

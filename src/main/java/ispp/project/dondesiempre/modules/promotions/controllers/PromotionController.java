@@ -4,7 +4,6 @@ import ispp.project.dondesiempre.modules.promotions.dtos.PromotionCreationDTO;
 import ispp.project.dondesiempre.modules.promotions.dtos.PromotionDTO;
 import ispp.project.dondesiempre.modules.promotions.dtos.PromotionUpdateDTO;
 import ispp.project.dondesiempre.modules.promotions.models.Promotion;
-import ispp.project.dondesiempre.modules.promotions.models.PromotionShare;
 import ispp.project.dondesiempre.modules.promotions.services.PromotionService;
 import ispp.project.dondesiempre.modules.promotions.services.PromotionShareService;
 import jakarta.validation.Valid;
