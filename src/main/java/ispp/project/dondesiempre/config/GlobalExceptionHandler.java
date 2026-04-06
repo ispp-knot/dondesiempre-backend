@@ -1,10 +1,6 @@
 package ispp.project.dondesiempre.config;
 
-import ispp.project.dondesiempre.modules.common.exceptions.AlreadyExistsException;
-import ispp.project.dondesiempre.modules.common.exceptions.InvalidBoundingBoxException;
-import ispp.project.dondesiempre.modules.common.exceptions.InvalidRequestException;
-import ispp.project.dondesiempre.modules.common.exceptions.ResourceNotFoundException;
-import ispp.project.dondesiempre.modules.common.exceptions.UnauthorizedException;
+import ispp.project.dondesiempre.modules.common.exceptions.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -66,5 +62,11 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(Exception.class)
   public ResponseEntity<String> handleException(Exception exception, WebRequest request) {
     return new ResponseEntity<>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+  }
+
+  @ResponseStatus(HttpStatus.UNAUTHORIZED)
+  @ExceptionHandler(LimitExceededException.class)
+  public ResponseEntity<String> handleLimitExceededException(LimitExceededException exception, WebRequest request) {
+    return new ResponseEntity<>(exception.getMessage(), HttpStatus.UNAUTHORIZED);
   }
 }
