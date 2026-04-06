@@ -270,7 +270,7 @@ public class PromotionControllerTest {
 
   @Test
   @WithMockUser
-  void shouldCreatePromotionShare() throws Exception {
+  void shouldCreatePromotionShare_WhenIsValid() throws Exception {
     doNothing().when(promotionShareService).save(any());
     mockMvc
         .perform(post("/api/v1/promotions/{id}/share", TEST_PROMOTION_ID))
@@ -279,7 +279,7 @@ public class PromotionControllerTest {
 
   @Test
   @WithMockUser
-  void shouldReturn401WhenLimitExceeded() throws Exception {
+  void shouldReturnUnauthorized_WhenLimitExceeded() throws Exception {
     doThrow(new LimitExceededException()).when(promotionShareService).save(any());
 
     mockMvc

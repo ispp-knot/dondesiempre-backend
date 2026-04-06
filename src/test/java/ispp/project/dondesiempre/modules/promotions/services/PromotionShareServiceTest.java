@@ -75,7 +75,7 @@ public class PromotionShareServiceTest {
   }
 
   @Test
-  public void createsNewPromotionShare() {
+  public void shouldCreateNewPromotionShare_WhenIsValid() {
     Store store = createAndSaveStore(false);
     Promotion promotion = createPromotion(store);
     long before = promotionShareRepository.count();
@@ -85,7 +85,7 @@ public class PromotionShareServiceTest {
   }
 
   @Test
-  public void throwsExceptionWhenLimitExceeded() {
+  public void shouldThrowLimitException_WhenLimitExceeded() {
     Store store = createAndSaveStore(false);
     Promotion promotion = createPromotion(store);
 
@@ -97,7 +97,7 @@ public class PromotionShareServiceTest {
   }
 
   @Test
-  public void allowsPremiumWhenLimitExceeded() {
+  public void shouldAllowPromotionShare_WhenLimitExceededByPremiumStore() {
     Store store = createAndSaveStore(true);
     Promotion promotion = createPromotion(store);
 

@@ -80,14 +80,14 @@ public class PromotionShareRepositoryTest {
   }
 
   @Test
-  public void shouldReturnNotExceededLimit() {
+  public void shouldReturnNotExceededLimit_WhenNoShares() {
     boolean exceedsLimit =
         promotionShareRepository.hasReachedMonthlyLimit(savedPromotion, LocalDate.now());
     assertFalse(exceedsLimit);
   }
 
   @Test
-  public void shouldReturnNotExceededLimit_whenMonthHasPassed() {
+  public void shouldReturnNotExceededLimit_WhenMonthHasPassed() {
     for (int i = 0; i < 5; i++) {
       createOldPromotionShare();
     }
@@ -98,7 +98,7 @@ public class PromotionShareRepositoryTest {
   }
 
   @Test
-  public void shouldReturnNotExceededLimit_whenPremiumLimitNotSurpassed() {
+  public void shouldReturnNotExceededLimit_WhenPremiumLimitNotSurpassed() {
     for (int i = 0; i < 1; i++) {
       createPromotionShare();
     }
@@ -109,7 +109,7 @@ public class PromotionShareRepositoryTest {
   }
 
   @Test
-  public void shouldReturnExceededLimit() {
+  public void shouldReturnExceededLimit_WhenPremiumLimitSurpassed() {
     for (int i = 0; i < 3; i++) {
       createPromotionShare();
     }
