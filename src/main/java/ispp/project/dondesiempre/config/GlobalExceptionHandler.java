@@ -1,6 +1,12 @@
 package ispp.project.dondesiempre.config;
 
 import ispp.project.dondesiempre.modules.common.exceptions.*;
+import com.stripe.exception.StripeException;
+import ispp.project.dondesiempre.modules.common.exceptions.AlreadyExistsException;
+import ispp.project.dondesiempre.modules.common.exceptions.InvalidBoundingBoxException;
+import ispp.project.dondesiempre.modules.common.exceptions.InvalidRequestException;
+import ispp.project.dondesiempre.modules.common.exceptions.ResourceNotFoundException;
+import ispp.project.dondesiempre.modules.common.exceptions.UnauthorizedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -56,6 +62,13 @@ public class GlobalExceptionHandler {
   public ResponseEntity<String> handleAlreadyExistsException(
       AlreadyExistsException exception, WebRequest request) {
     return new ResponseEntity<>(exception.getMessage(), HttpStatus.CONFLICT);
+  }
+
+  @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+  @ExceptionHandler(StripeException.class)
+  public ResponseEntity<String> handleStripeException(
+      AlreadyExistsException exception, WebRequest request) {
+    return new ResponseEntity<>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
   }
 
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)

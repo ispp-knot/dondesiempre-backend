@@ -9,3 +9,7 @@ AES_SECRET_KEY: VICV&EZWVr"G8e2s+Xmg}bOy^&VK6gV+
 
 frontend:
   url: http://localhost:3000
+
+stripe:
+  key:
+    secret: sk_test_fake_key

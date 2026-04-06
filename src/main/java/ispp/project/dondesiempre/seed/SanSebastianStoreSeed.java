@@ -42,7 +42,8 @@ class SanSebastianStoreSeed {
                 + "\n"
                 + "Nuestros proveedores son todos nacionales, como son Harper and Neyer, La Bassette, Kents, Dos Galgos, Brown Fury, Carlos Córdoba, Capelhi, Persam, Tachi and Zucca, Boguar, Egatex, Señoretta, Ysabel Mora, Dolores Cortés, Selmark, Belty, Abanderado, Ferry, Avet, Set, Morante, Naiara, Selene, Burrito Blanco, Catotex, Cañete, Manterol, Belnou, Cotopour, etc…\n"
                 + "\n"
-                + "Si busca un artículo y no lo encuentra, intentamos conseguirlo poniendo todo lo que está en nuestras manos para satisfacer al cliente.");
+                + "Si busca un artículo y no lo encuentra, intentamos conseguirlo poniendo todo lo que está en nuestras manos para satisfacer al cliente.",
+            "acct_1TFzN97Xt9jc8bVg");
     s.addSocialNetwork(
         sanSebastian,
         socialNetworks,

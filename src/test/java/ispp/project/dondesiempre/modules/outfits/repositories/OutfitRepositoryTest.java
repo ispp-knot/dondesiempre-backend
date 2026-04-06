@@ -69,6 +69,7 @@ class OutfitRepositoryTest {
     store.setEmail("test@test.com");
     store.setAcceptsShipping(false);
     store.setUser(createTestUser());
+    store.setAccountId("acc_AAAAA");
     store = storeRepository.save(store);
 
     result = outfitRepository.findByStoreIdOrderByIndexAsc(store.getId());
@@ -102,6 +103,7 @@ class OutfitRepositoryTest {
     store.setEmail("test@test.com");
     store.setAcceptsShipping(false);
     store.setUser(createTestUser());
+    store.setAccountId("acc_AAAAA");
     store = storeRepository.save(store);
 
     type = new ProductType();
@@ -166,6 +168,7 @@ class OutfitRepositoryTest {
     store1.setEmail("test@test.com");
     store1.setAcceptsShipping(false);
     store1.setUser(createTestUser());
+    store1.setAccountId("acc_AAAA");
     store1 = storeRepository.save(store1);
 
     store2 = new Store();
@@ -178,6 +181,7 @@ class OutfitRepositoryTest {
     store2.setEmail("test@test.com");
     store2.setAcceptsShipping(false);
     store2.setUser(createTestUser());
+    store2.setAccountId("acc_AAAA");
     store2 = storeRepository.save(store2);
 
     type = new ProductType();

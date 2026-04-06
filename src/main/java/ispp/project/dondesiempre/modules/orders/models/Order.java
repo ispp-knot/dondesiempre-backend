@@ -19,6 +19,7 @@ import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -42,6 +43,8 @@ public class Order extends BaseEntity {
 
   @Column @NotNull Integer totalPrice;
 
+  @Column String paymentIntentId;
+
   @NotNull
   @ManyToOne(optional = false)
   @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
@@ -49,4 +52,8 @@ public class Order extends BaseEntity {
 
   @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<OrderItem> items = new ArrayList<>();
+
+  public Optional<String> getPaymentIntentId() {
+    return Optional.ofNullable(this.paymentIntentId);
+  }
 }

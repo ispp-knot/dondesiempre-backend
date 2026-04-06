@@ -34,7 +34,8 @@ class LucemesStoreSeed {
             "#a88743",
             "#a84843",
             "luceme/escaparate_lucemes_bags.png",
-            "Los mejores bolsos.");
+            "Los mejores bolsos.",
+            "acct_1TFzN97Xt9jc8bVg");
     s.addSocialNetwork(
         lucemes,
         socialNetworks,

@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20260327-01
+      author: emilio
+      changes:
+        - addColumn:
+            tableName: orders
+            columns:
+              - column:
+                  name: payment_intent_id
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: true

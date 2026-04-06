@@ -58,7 +58,7 @@ class ClientSeed {
       order.setUser(clientUser);
       order.setOrderDate(LocalDateTime.now());
       order.setOrderStatus(OrderStatus.PENDING);
-      order.setOrderCode("ORD-MANUAL-001");
+      order.setOrderCode("SEED-MANU-0001");
       order.setItems(new ArrayList<>());
       s.addItemsToOrder(order, List.of(p3));
 
@@ -66,7 +66,7 @@ class ClientSeed {
       orderConfirmed.setUser(clientUser);
       orderConfirmed.setOrderDate(LocalDateTime.now().minusDays(2));
       orderConfirmed.setOrderStatus(OrderStatus.CONFIRMED);
-      orderConfirmed.setOrderCode("ORD-CONFIRM-002");
+      orderConfirmed.setOrderCode("SEED-CONF-0002");
       orderConfirmed.setItems(new ArrayList<>());
       s.addItemsToOrder(orderConfirmed, List.of(p3));
       s.orderRepository.save(orderConfirmed);
@@ -75,7 +75,7 @@ class ClientSeed {
       orderRejected.setUser(clientUser);
       orderRejected.setOrderDate(LocalDateTime.now().minusDays(5));
       orderRejected.setOrderStatus(OrderStatus.REJECTED);
-      orderRejected.setOrderCode("ORD-REJECT-003");
+      orderRejected.setOrderCode("SEED-REJE-0003");
       orderRejected.setItems(new ArrayList<>());
       s.addItemsToOrder(orderRejected, List.of(p4));
       s.orderRepository.save(orderRejected);
@@ -84,7 +84,7 @@ class ClientSeed {
       orderPicked.setUser(clientUser);
       orderPicked.setOrderDate(LocalDateTime.now().minusDays(1));
       orderPicked.setOrderStatus(OrderStatus.PICKED);
-      orderPicked.setOrderCode("ORD-PICKED-004");
+      orderPicked.setOrderCode("SEED-PICK-0004");
       orderPicked.setItems(new ArrayList<>());
       s.addItemsToOrder(orderPicked, List.of(p1, p4));
       s.orderRepository.save(orderPicked);
@@ -116,8 +116,8 @@ class ClientSeed {
         randomOrder.setUser(user);
         randomOrder.setOrderDate(LocalDateTime.now().minusDays(rng.nextInt(10)));
         randomOrder.setOrderStatus(OrderStatus.PENDING);
-        randomOrder.setOrderCode(
-            "ORD-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase());
+        String uuidStr = UUID.randomUUID().toString().replace("-", "").toUpperCase();
+        randomOrder.setOrderCode("SEED-" + uuidStr.substring(0, 4) + "-" + uuidStr.substring(4, 8));
         randomOrder.setItems(new ArrayList<>());
 
         int itemsToCreate = 1 + rng.nextInt(3);
