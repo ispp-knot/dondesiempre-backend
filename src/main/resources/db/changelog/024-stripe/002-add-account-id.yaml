@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20260329-01
+      author: emilio
+      changes:
+        - addColumn:
+            tableName: stores
+            columns:
+              - column:
+                  name: account_id
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: true

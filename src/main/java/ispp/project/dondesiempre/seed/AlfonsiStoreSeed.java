@@ -36,7 +36,8 @@ class AlfonsiStoreSeed {
             "#183b27",
             "#214a1b",
             "alfonsi/escaparate_alfonsi.png",
-            "Calle Romera, 32, 41701 Dos Hermanas, Sevilla ");
+            "Calle Romera, 32, 41701 Dos Hermanas, Sevilla ",
+            "acct_1TFzN97Xt9jc8bVg");
     s.addSocialNetwork(
         alfonsi, socialNetworks, "Facebook", "https://www.facebook.com/confecciones.alfonsi/");
 

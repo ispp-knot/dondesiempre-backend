@@ -40,7 +40,8 @@ class MarGovantesStoreSeed {
                 + //
                 "Ropa casual y de vestir.\n"
                 + //
-                "🏷️Tallas grandes.");
+                "🏷️Tallas grandes.",
+            "acct_1TFzN97Xt9jc8bVg");
     s.addSocialNetwork(
         marGovantes, socialNetworks, "Facebook", "https://www.facebook.com/margovantesmodas/");
     s.addSocialNetwork(

@@ -15,6 +15,7 @@ import ispp.project.dondesiempre.modules.stores.models.Storefront;
 import ispp.project.dondesiempre.modules.stores.repositories.StoreRepository;
 import ispp.project.dondesiempre.modules.stores.repositories.StorefrontRepository;
 import ispp.project.dondesiempre.utils.cloudinary.CoordinatesService;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -35,6 +36,16 @@ public class UserService {
 
   public boolean checkPassword(User user, String rawPassword) {
     return passwordEncoder.matches(rawPassword, user.getPassword());
+  }
+
+  @Transactional(readOnly = true)
+  public Optional<User> findByEmail(String email) {
+    return userRepository.findByEmail(email);
+  }
+
+  @Transactional
+  public User save(User user) {
+    return userRepository.save(user);
   }
 
   @Transactional(rollbackFor = Exception.class)
@@ -108,5 +119,17 @@ public class UserService {
     return storeRepository
         .findByUserId(currentUser.getId())
         .orElseThrow(() -> new ResourceNotFoundException("Current store not found."));
+  }
+
+  @Transactional
+  public void changePassword(String oldPassword, String newPassword) {
+    User currentUser = applicationContext.getBean(AuthService.class).getCurrentUser();
+
+    if (!passwordEncoder.matches(oldPassword, currentUser.getPassword())) {
+      throw new UnauthorizedException("Wrong password.");
+    }
+
+    currentUser.setPassword(passwordEncoder.encode(newPassword));
+    userRepository.save(currentUser);
   }
 }

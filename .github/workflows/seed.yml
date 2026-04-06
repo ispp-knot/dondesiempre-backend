@@ -14,6 +14,9 @@ jobs:
     runs-on: ubuntu-latest
     env:
       AES_SECRET_KEY: VICV&EZWVr"G8e2s+Xmg}bOy^&VK6gV+
+      STRIPE_KEY_SECRET: sk_test_fake_key
+      FRONTEND_URL: http://localhost:3000
+
 
     services:
       postgres:

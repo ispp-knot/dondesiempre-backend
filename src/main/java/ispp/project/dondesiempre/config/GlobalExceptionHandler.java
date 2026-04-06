@@ -1,5 +1,6 @@
 package ispp.project.dondesiempre.config;
 
+import com.stripe.exception.StripeException;
 import ispp.project.dondesiempre.modules.common.exceptions.AlreadyExistsException;
 import ispp.project.dondesiempre.modules.common.exceptions.InvalidBoundingBoxException;
 import ispp.project.dondesiempre.modules.common.exceptions.InvalidRequestException;
@@ -60,6 +61,13 @@ public class GlobalExceptionHandler {
   public ResponseEntity<String> handleAlreadyExistsException(
       AlreadyExistsException exception, WebRequest request) {
     return new ResponseEntity<>(exception.getMessage(), HttpStatus.CONFLICT);
+  }
+
+  @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+  @ExceptionHandler(StripeException.class)
+  public ResponseEntity<String> handleStripeException(
+      AlreadyExistsException exception, WebRequest request) {
+    return new ResponseEntity<>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
   }
 
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)

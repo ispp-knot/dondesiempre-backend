@@ -196,7 +196,8 @@ public class DataSeeder implements CommandLineRunner {
       String primaryColor,
       String secondaryColor,
       String bannerImageFilename,
-      String aboutUs) {
+      String aboutUs,
+      String accountId) {
 
     User user = new User();
     user.setId(seedUuid("user:" + email));
@@ -226,6 +227,7 @@ public class DataSeeder implements CommandLineRunner {
     store.setStorefront(storefront);
     store.setUser(user);
     store.setAboutUs(aboutUs);
+    store.setAccountId(accountId);
     storeRepository.save(store);
 
     return store;

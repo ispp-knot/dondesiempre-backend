@@ -32,6 +32,7 @@ import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.locationtech.jts.geom.Point;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -241,5 +242,60 @@ public class StoreServiceTest {
     verify(storeRepository, times(1)).findById(storeId);
     verify(authService, times(1)).assertUserOwnsStore(store);
     verify(storeRepository, times(1)).save(store);
+  }
+
+  @Test
+  void shouldUpdateLocationSuccessfully_whenUserIsOwner()
+      throws UnauthorizedException, ResourceNotFoundException {
+
+    when(applicationContext.getBean(StoreService.class)).thenReturn(storeService);
+    when(storeRepository.findById(storeId)).thenReturn(Optional.of(store));
+    when(storeRepository.save(store)).thenReturn(store);
+
+    when(socialNetworkRepository.findByStoreId(storeId)).thenReturn(List.of());
+    when(promotionRepository.existsByStoreIdAndIsActiveTrue(storeId)).thenReturn(false);
+
+    Double newLon = -5.9281;
+    Double newLat = 37.2829;
+
+    StoreDTO result = storeService.updateLocation(storeId, newLon, newLat);
+
+    Point location = store.getLocation();
+
+    assertEquals(newLon, location.getX());
+    assertEquals(newLat, location.getY());
+    assertEquals(4326, location.getSRID());
+
+    assertEquals("Tienda de Prueba", result.getName());
+
+    verify(storeRepository, times(1)).findById(storeId);
+    verify(authService, times(1)).assertUserOwnsStore(store);
+    verify(storeRepository, times(1)).save(store);
+  }
+
+  @Test
+  void shouldThrowUnauthorized_whenUpdatingLocationAndNotOwner() throws ResourceNotFoundException {
+    when(applicationContext.getBean(StoreService.class)).thenReturn(storeService);
+    when(storeRepository.findById(storeId)).thenReturn(Optional.of(store));
+    doThrow(new UnauthorizedException("You do not own this store."))
+        .when(authService)
+        .assertUserOwnsStore(store);
+
+    assertThrows(
+        UnauthorizedException.class, () -> storeService.updateLocation(storeId, -5.9281, 37.2829));
+
+    verify(storeRepository, never()).save(any());
+  }
+
+  @Test
+  void shouldThrowResourceNotFound_whenUpdatingLocationOfNonExistentStore() {
+    UUID nonExistentId = UUID.randomUUID();
+    when(applicationContext.getBean(StoreService.class)).thenReturn(storeService);
+    when(storeRepository.findById(nonExistentId)).thenReturn(Optional.empty());
+    assertThrows(
+        ResourceNotFoundException.class,
+        () -> storeService.updateLocation(nonExistentId, -5.9281, 37.2829));
+
+    verify(storeRepository, never()).save(any());
   }
 }
