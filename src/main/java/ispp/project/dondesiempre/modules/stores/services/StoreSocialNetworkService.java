@@ -12,6 +12,7 @@ import ispp.project.dondesiempre.modules.stores.models.StoreSocialNetwork;
 import ispp.project.dondesiempre.modules.stores.repositories.SocialNetworkRepository;
 import ispp.project.dondesiempre.modules.stores.repositories.StoreSocialNetworkRepository;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;
@@ -26,6 +27,49 @@ public class StoreSocialNetworkService {
   private final SocialNetworkRepository socialNetworkRepository;
   private final AuthService authService;
   private final ApplicationContext applicationContext;
+
+  private static final String PHONE_REGEX = "^\\+?[1-9]\\d{8,14}$";
+
+  private static final String URL_REGEX =
+      "^https?://(([a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,}|localhost|(\\d{1,3}\\.){3}\\d{1,3})(:\\d+)?(/[^\\s]*)?$";
+
+  private static final Set<String> PHONE_NETWORKS = Set.of("Teléfono", "Phone");
+
+  private void validateByNetwork(String name, String link) {
+    String clean = link.replaceAll("\\s+", "");
+
+    if (PHONE_NETWORKS.contains(name)) {
+      String phoneDigits = clean.startsWith("tel:") ? clean.replace("tel:", "") : clean;
+      if (!phoneDigits.matches(PHONE_REGEX)) {
+        throw new IllegalArgumentException(
+            "Must be a valid telephone number, formed by 9-15 digits, prefix allowed.");
+      }
+    } else {
+      if (!link.matches(URL_REGEX)) {
+        throw new IllegalArgumentException("Must be a valid URL.");
+      }
+    }
+  }
+
+  private String normalizeLink(String value) {
+    if (value == null) {
+      return null;
+    }
+
+    String clean = value.trim();
+    String noSpaces = clean.replaceAll("\\s+", "");
+    String phoneDigits = noSpaces.startsWith("tel:") ? noSpaces.replace("tel:", "") : noSpaces;
+
+    if (phoneDigits.matches(PHONE_REGEX)) {
+      return "tel:" + phoneDigits;
+    }
+
+    if (!clean.startsWith("http://") && !clean.startsWith("https://") && clean.contains(".")) {
+      return "https://" + clean;
+    }
+
+    return clean;
+  }
 
   @Transactional(readOnly = true, rollbackFor = ResourceNotFoundException.class)
   public List<StoreSocialNetwork> findByStoreId(UUID storeId) throws ResourceNotFoundException {
@@ -57,10 +101,12 @@ public class StoreSocialNetworkService {
       throw new AlreadyExistsException("La tienda ya tiene esta red social");
     }
 
+    validateByNetwork(socialNetwork.getName(), dto.getLink());
+
     StoreSocialNetwork ssn = new StoreSocialNetwork();
     ssn.setStore(store);
     ssn.setSocialNetwork(socialNetwork);
-    ssn.setLink(dto.getLink());
+    ssn.setLink(normalizeLink(dto.getLink()));
 
     return storeSocialNetworkRepository.save(ssn);
   }
@@ -76,7 +122,9 @@ public class StoreSocialNetworkService {
 
     authService.assertUserOwnsStore(relation.getStore());
 
-    relation.setLink(dto.getLink());
+    validateByNetwork(relation.getSocialNetwork().getName(), dto.getLink());
+
+    relation.setLink(normalizeLink(dto.getLink()));
 
     return storeSocialNetworkRepository.save(relation);
   }
