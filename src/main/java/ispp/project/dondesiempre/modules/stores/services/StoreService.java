@@ -153,7 +153,8 @@ public class StoreService {
 
     store.setLocation(newLocation);
     return applicationContext.getBean(StoreService.class).toDTO(storeRepository.save(store));
-    
+  }
+
   @Transactional(rollbackFor = {UnauthorizedException.class})
   public Store setAccountId(UUID storeId, String accountId) {
     Store store = applicationContext.getBean(StoreService.class).findById(storeId);
