@@ -7,6 +7,10 @@ spring:
 
 AES_SECRET_KEY: VICV&EZWVr"G8e2s+Xmg}bOy^&VK6gV+
 
+stripe:
+  key:
+    secret: sk_test_fake_key
+
 seed:
   random-seed: 42
   client-count: 10

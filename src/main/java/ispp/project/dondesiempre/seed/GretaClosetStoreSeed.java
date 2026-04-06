@@ -36,7 +36,8 @@ class GretaClosetStoreSeed {
             "#000000",
             "#a1005c",
             "greta/escaparate_greta_closet.png",
-            "C. Sta. María Magdalena, 14, 41701 Dos Hermanas, Sevilla, España");
+            "C. Sta. María Magdalena, 14, 41701 Dos Hermanas, Sevilla, España",
+            "acct_1TFzN97Xt9jc8bVg");
     s.addSocialNetwork(
         greta, socialNetworks, "Instagram", "https://www.instagram.com/gretacloset/");
     s.addSocialNetwork(

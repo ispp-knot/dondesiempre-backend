@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,6 +34,7 @@ public class OrderService {
   private final StoreRepository storeRepository;
   private final AuthService authService;
   private final CryptoConverter cryptoConverter;
+  private final ApplicationContext applicationContext;
 
   private final SecureRandom secureRandom = new SecureRandom();
   private static final String CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -82,6 +84,18 @@ public class OrderService {
   @Transactional
   public void deleteOrder(UUID orderId) {
     orderRepository.deleteById(orderId);
+  }
+
+  @Transactional
+  public Order setPaymentIntentId(UUID orderId, String paymentIntentId) {
+    Order order = applicationContext.getBean(OrderService.class).findById(orderId);
+
+    if (!authService.getCurrentUser().equals(order.getUser())) {
+      throw new UnauthorizedException(
+          "You can't set the paymentIntent id of an order you don't own.");
+    }
+    order.setPaymentIntentId(paymentIntentId);
+    return order;
   }
 
   public String generateRandomCode() {
@@ -210,7 +224,8 @@ public class OrderService {
     }
   }
 
-  // Este método se puede usar para cancelar un pedido que aún no ha sido confirmado.
+  // Este método se puede usar para cancelar un pedido que aún no ha sido
+  // confirmado.
   /**
    * TODO: Podría añadirse que un pedido sea cancelado por un cliente o una tienda, si y solo si: -
    * Cliente: puede cancelar un pedido si está PENDING (se ha equivocado, se ha dado cuenta que no
@@ -232,6 +247,11 @@ public class OrderService {
       throw new UnauthorizedException(
           "This order is not in the pending state, it cannot be canceled.");
     }
+  }
+
+  @Transactional(readOnly = true)
+  public boolean irOrderPaid(UUID orderId) {
+    return orderRepository.existsByIdAndPaymentIntentIdIsNotNull(orderId);
   }
 
   private Integer calculateAndSetTotalPrice(Order order) {
