@@ -56,6 +56,7 @@ public class Store extends BaseEntity {
 
   @Column @NotNull Boolean acceptsShipping;
 
+  @Column String accountId;
   @Column @NotNull Boolean premiumPlan = false;
 
   @OneToOne(cascade = CascadeType.ALL)
@@ -73,5 +74,9 @@ public class Store extends BaseEntity {
 
   public Optional<String> getAboutUs() {
     return Optional.ofNullable(this.aboutUs);
+  }
+
+  public Optional<String> getAccountId() {
+    return Optional.ofNullable(this.accountId);
   }
 }

@@ -34,7 +34,8 @@ class BazarRomeraStoreSeed {
             "#255d56",
             "#247054",
             "romera/escaparate_bazar_romera.png",
-            "Romera, 8. 41701 Dos Hermanas (Sevilla)");
+            "Romera, 8. 41701 Dos Hermanas (Sevilla)",
+            "acct_1TFzN97Xt9jc8bVg");
     s.addSocialNetwork(bazarRomera, socialNetworks, "Teléfono", "tel:+34631122308");
 
     s.createProduct(

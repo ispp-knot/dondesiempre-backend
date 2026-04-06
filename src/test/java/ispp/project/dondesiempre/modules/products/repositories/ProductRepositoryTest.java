@@ -54,6 +54,7 @@ public class ProductRepositoryTest {
     store.setLocation(coordinatesService.createPoint(0.0, 0.0));
     store.setStorefront(storefront);
     store.setUser(user);
+    store.setAccountId("acc_AAAAA");
     storeRepository.save(store);
 
     ProductType type = new ProductType();

@@ -37,7 +37,8 @@ class RoireStoreSeed {
             "#633a00",
             "roire/escaparate_roire.png",
             "Nos aseguramos de que solo vendemos productos de alta calidad y que cumplen con los estándares de nuestros clientes. "
-                + "Nos esforzamos por comprender las necesidades de nuestros clientes leales y trabajamos para brindarles un servicio personalizado y adaptado a sus necesidades específicas.");
+                + "Nos esforzamos por comprender las necesidades de nuestros clientes leales y trabajamos para brindarles un servicio personalizado y adaptado a sus necesidades específicas.",
+            "acct_1TFzN97Xt9jc8bVg");
     s.addSocialNetwork(roire, socialNetworks, "WhatsApp", "https://wa.me/34641231378");
     s.addSocialNetwork(roire, socialNetworks, "Instagram", "https://www.instagram.com/roire.es");
     s.addSocialNetwork(roire, socialNetworks, "Web", "https://tiendaroire.es/");
