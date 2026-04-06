@@ -38,7 +38,8 @@ class RomantikaStoreSeed {
             "romantika/escaparate_romantika.png",
             "Encuentra tus complementos originales\n"
                 + "Moda para eventos y ocasiones especiales\n"
-                + "Toda la moda urbana divertida y diferente que hace única a cada mujer");
+                + "Toda la moda urbana divertida y diferente que hace única a cada mujer",
+            "acct_1TFzN97Xt9jc8bVg");
     s.addSocialNetwork(romantika, socialNetworks, "WhatsApp", "https://wa.me/34645142782");
     s.addSocialNetwork(
         romantika, socialNetworks, "Instagram", "https://www.instagram.com/modasromantikavintage/");

@@ -36,7 +36,8 @@ class PineappleStoreSeed {
             "#75502b",
             "#333333",
             "pineapple/escaparate_pineapple.png",
-            "Calle Canónigo 73 Dos Hermanas | 41071 | Sevilla");
+            "Calle Canónigo 73 Dos Hermanas | 41071 | Sevilla",
+            "acct_1TFzN97Xt9jc8bVg");
     s.addSocialNetwork(pineapple, socialNetworks, "WhatsApp", "https://wa.me/34644807498");
     s.addSocialNetwork(
         pineapple,

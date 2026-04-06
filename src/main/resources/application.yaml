@@ -36,3 +36,7 @@ springdoc:
     enabled: false
   api-docs:
     enabled: false
+
+stripe:
+  key:
+    secret: ${STRIPE_SECRET_KEY}

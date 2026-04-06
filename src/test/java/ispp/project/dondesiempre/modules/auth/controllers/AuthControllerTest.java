@@ -18,6 +18,7 @@ import ispp.project.dondesiempre.modules.auth.services.AuthService;
 import ispp.project.dondesiempre.modules.auth.services.JwtService;
 import ispp.project.dondesiempre.modules.auth.services.UserService;
 import ispp.project.dondesiempre.modules.common.exceptions.UnauthorizedException;
+import ispp.project.dondesiempre.modules.payment.services.PaymentService;
 import ispp.project.dondesiempre.modules.stores.services.StoreService;
 import java.time.Instant;
 import java.util.List;
@@ -47,6 +48,7 @@ class AuthControllerTest {
   @MockitoBean private UserService userService;
   @MockitoBean private StoreService storeService;
   @MockitoBean private JwtService jwtService;
+  @MockitoBean private PaymentService paymentService;
 
   private User createTestUser() {
     User user = new User();

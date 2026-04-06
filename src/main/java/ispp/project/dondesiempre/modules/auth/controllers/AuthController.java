@@ -6,6 +6,7 @@ import ispp.project.dondesiempre.modules.auth.services.AuthService;
 import ispp.project.dondesiempre.modules.auth.services.JwtService;
 import ispp.project.dondesiempre.modules.auth.services.UserService;
 import ispp.project.dondesiempre.modules.clients.dtos.ClientDTO;
+import ispp.project.dondesiempre.modules.payment.services.PaymentService;
 import ispp.project.dondesiempre.modules.stores.dtos.StoreDTO;
 import ispp.project.dondesiempre.modules.stores.models.Store;
 import ispp.project.dondesiempre.modules.stores.services.StoreService;
@@ -24,6 +25,7 @@ public class AuthController {
   private final AuthService authService;
   private final UserService userService;
   private final StoreService storeService;
+  private final PaymentService paymentService;
   private final JwtService jwtService;
 
   @PostMapping("/login")
@@ -46,6 +48,7 @@ public class AuthController {
   @PostMapping("/register/store")
   public ResponseEntity<StoreDTO> registerStore(@Valid @RequestBody RegisterStoreDTO dto) {
     Store store = userService.registerStore(dto);
+    paymentService.createConnectAccount(store);
     return new ResponseEntity<>(storeService.toDTO(store), HttpStatus.CREATED);
   }
 

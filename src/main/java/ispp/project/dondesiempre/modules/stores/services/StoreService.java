@@ -137,4 +137,13 @@ public class StoreService {
         .getBean(StoreService.class)
         .toDTO(storeRepository.save(storeToUpdate));
   }
+
+  @Transactional(rollbackFor = {UnauthorizedException.class})
+  public Store setAccountId(UUID storeId, String accountId) {
+    Store store = applicationContext.getBean(StoreService.class).findById(storeId);
+
+    store.setAccountId(accountId);
+
+    return store;
+  }
 }

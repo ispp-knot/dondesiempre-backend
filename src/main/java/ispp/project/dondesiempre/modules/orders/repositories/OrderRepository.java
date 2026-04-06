@@ -17,4 +17,7 @@ public interface OrderRepository extends JpaRepository<Order, UUID> {
 
   @Query("SELECT DISTINCT o FROM Order o WHERE o.orderCode = :orderCode")
   Optional<Order> findByOrderCode(@Param("orderCode") String orderCode);
+
+  // Para comprobar si un pedido está pagado
+  boolean existsByIdAndPaymentIntentIdIsNotNull(UUID id);
 }
