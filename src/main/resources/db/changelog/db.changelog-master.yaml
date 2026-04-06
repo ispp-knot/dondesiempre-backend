@@ -43,3 +43,5 @@ databaseChangeLog:
       file: db/changelog/023-promotion-dates/promotion-dates.changelog.yaml
   - include:
       file: db/changelog/024-stripe/stripe.changelog.yaml
+  - include:
+      file: db/changelog/025-premium-plan/premium-plan.changelog.yaml

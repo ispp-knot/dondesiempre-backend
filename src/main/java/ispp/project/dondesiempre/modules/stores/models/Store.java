@@ -31,7 +31,10 @@ public class Store extends BaseEntity {
   @Size(max = 255)
   String name;
 
-  @Column @NotBlank @Email String email;
+  @Column
+  @NotBlank
+  @Email
+  String email;
 
   @Column(columnDefinition = "geometry(Point, 4326)")
   @JdbcTypeCode(SqlTypes.GEOMETRY)
@@ -48,15 +51,23 @@ public class Store extends BaseEntity {
   @Size(max = 255)
   String openingHours;
 
-  @Column @Phone String phone;
+  @Column
+  @Phone
+  String phone;
 
   @Column(columnDefinition = "TEXT")
   @Size(max = 5000)
   String aboutUs;
 
-  @Column @NotNull Boolean acceptsShipping;
+  @Column
+  @NotNull
+  Boolean acceptsShipping;
 
-  @Column String accountId;
+  @Column
+  String accountId;
+  @Column
+  @NotNull
+  Boolean premiumPlan = false;
 
   @OneToOne(cascade = CascadeType.ALL)
   @JoinColumn(name = "storefront_id", referencedColumnName = "id", nullable = false)

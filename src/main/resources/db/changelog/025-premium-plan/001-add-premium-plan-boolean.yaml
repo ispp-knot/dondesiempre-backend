@@ -1,0 +1,15 @@
+databaseChangeLog:
+    - changeSet:
+          id: add-premium-plan-to-stores
+          author: User (generated)
+          changes:
+              - addColumn:
+                    tableName: stores
+                    columns:
+                        - column:
+                              name: premium_plan
+                              type: boolean
+                              defaultValueBoolean: false
+                              constraints:
+                                  nullable: false
+
