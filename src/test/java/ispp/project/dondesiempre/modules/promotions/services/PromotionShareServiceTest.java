@@ -40,8 +40,6 @@ public class PromotionShareServiceTest {
     @Autowired
     private PromotionShareRepository promotionShareRepository;
 
-    @Mock
-    private CloudinaryService cloudinaryService;
     @Autowired
     private PromotionShareService promotionShareService;
 
@@ -104,9 +102,9 @@ public class PromotionShareServiceTest {
             promotionShareService.save(promotion.getId());
         }
 
-        assertThrows(LimitExceededException.class, () -> {
-            promotionShareService.save(promotion.getId());
-        });
+        assertThrows(LimitExceededException.class, () ->
+            promotionShareService.save(promotion.getId())
+        );
     }
 
     @Test
@@ -118,8 +116,8 @@ public class PromotionShareServiceTest {
             promotionShareService.save(promotion.getId());
         }
 
-        assertDoesNotThrow(() -> {
-            promotionShareService.save(promotion.getId());
-        });
+        assertDoesNotThrow(() ->
+            promotionShareService.save(promotion.getId())
+        );
     }
 }

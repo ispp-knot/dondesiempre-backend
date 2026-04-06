@@ -3,8 +3,6 @@ package ispp.project.dondesiempre.modules.promotions.repositories;
 import ispp.project.dondesiempre.config.coordinates.GeometryFactoryConfig;
 import ispp.project.dondesiempre.modules.auth.models.User;
 import ispp.project.dondesiempre.modules.auth.repositories.UserRepository;
-import ispp.project.dondesiempre.modules.products.repositories.ProductRepository;
-import ispp.project.dondesiempre.modules.products.repositories.ProductTypeRepository;
 import ispp.project.dondesiempre.modules.promotions.models.Promotion;
 import ispp.project.dondesiempre.modules.promotions.models.PromotionShare;
 import ispp.project.dondesiempre.modules.stores.models.Store;
