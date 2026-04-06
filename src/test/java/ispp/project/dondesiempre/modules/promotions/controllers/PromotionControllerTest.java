@@ -1,22 +1,22 @@
 package ispp.project.dondesiempre.modules.promotions.controllers;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ispp.project.dondesiempre.config.GlobalExceptionHandler;
 import ispp.project.dondesiempre.modules.auth.services.UserService;
+import ispp.project.dondesiempre.modules.common.exceptions.LimitExceededException;
 import ispp.project.dondesiempre.modules.common.exceptions.UnauthorizedException;
 import ispp.project.dondesiempre.modules.promotions.dtos.PromotionCreationDTO;
 import ispp.project.dondesiempre.modules.promotions.dtos.PromotionUpdateDTO;
 import ispp.project.dondesiempre.modules.promotions.models.Promotion;
 import ispp.project.dondesiempre.modules.promotions.services.PromotionService;
+import ispp.project.dondesiempre.modules.promotions.services.PromotionShareService;
 import ispp.project.dondesiempre.modules.stores.models.Store;
 import java.util.List;
 import java.util.UUID;
@@ -45,6 +45,7 @@ public class PromotionControllerTest {
 
   @MockitoBean private PromotionService promotionService;
   @MockitoBean private UserService userService;
+  @MockitoBean private PromotionShareService promotionShareService;
 
   private static final UUID TEST_PROMOTION_ID = UUID.randomUUID();
   private static final UUID TEST_STORE_ID = UUID.randomUUID();
@@ -265,5 +266,24 @@ public class PromotionControllerTest {
     mockMvc
         .perform(delete("/api/v1/promotions/{id}", TEST_PROMOTION_ID))
         .andExpect(status().isNoContent());
+  }
+
+  @Test
+  @WithMockUser
+  void shouldCreatePromotionShare_whenIsValid() throws Exception {
+    doNothing().when(promotionShareService).save(any());
+    mockMvc
+        .perform(post("/api/v1/promotions/{id}/share", TEST_PROMOTION_ID))
+        .andExpect(status().isOk());
+  }
+
+  @Test
+  @WithMockUser
+  void shouldReturnUnauthorized_whenLimitExceeded() throws Exception {
+    doThrow(new LimitExceededException()).when(promotionShareService).save(any());
+
+    mockMvc
+        .perform(post("/api/v1/promotions/{id}/share", TEST_PROMOTION_ID))
+        .andExpect(status().isUnauthorized());
   }
 }

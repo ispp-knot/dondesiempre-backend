@@ -1,7 +1,7 @@
 databaseChangeLog:
     - changeSet:
           id: add-premium-plan-to-stores
-          author: User (generated)
+          author: daniherurb
           changes:
               - addColumn:
                     tableName: stores

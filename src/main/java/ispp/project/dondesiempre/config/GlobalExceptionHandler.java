@@ -1,6 +1,7 @@
 package ispp.project.dondesiempre.config;
 
 import com.stripe.exception.StripeException;
+import ispp.project.dondesiempre.modules.common.exceptions.*;
 import ispp.project.dondesiempre.modules.common.exceptions.AlreadyExistsException;
 import ispp.project.dondesiempre.modules.common.exceptions.InvalidBoundingBoxException;
 import ispp.project.dondesiempre.modules.common.exceptions.InvalidRequestException;
@@ -74,5 +75,12 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(Exception.class)
   public ResponseEntity<String> handleException(Exception exception, WebRequest request) {
     return new ResponseEntity<>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+  }
+
+  @ResponseStatus(HttpStatus.UNAUTHORIZED)
+  @ExceptionHandler(LimitExceededException.class)
+  public ResponseEntity<String> handleLimitExceededException(
+      LimitExceededException exception, WebRequest request) {
+    return new ResponseEntity<>(exception.getMessage(), HttpStatus.UNAUTHORIZED);
   }
 }

@@ -45,3 +45,5 @@ databaseChangeLog:
       file: db/changelog/024-stripe/stripe.changelog.yaml
   - include:
       file: db/changelog/025-premium-plan/premium-plan.changelog.yaml
+  - include:
+      file: db/changelog/026-premium-plan-restrictions/premium-plan-restrictions.changelog.yaml
