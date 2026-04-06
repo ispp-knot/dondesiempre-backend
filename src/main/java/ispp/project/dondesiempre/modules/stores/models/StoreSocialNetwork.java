@@ -1,6 +1,7 @@
 package ispp.project.dondesiempre.modules.stores.models;
 
 import ispp.project.dondesiempre.modules.common.models.BaseEntity;
+import ispp.project.dondesiempre.modules.stores.validators.ValidContactLink;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
@@ -21,6 +22,7 @@ public class StoreSocialNetwork extends BaseEntity {
   @Column(length = 500)
   @NotNull
   @Size(max = 500)
+  @ValidContactLink
   String link;
 
   @NotNull
