@@ -2,9 +2,7 @@ package ispp.project.dondesiempre.modules.stores.controllers;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -16,6 +14,7 @@ import ispp.project.dondesiempre.config.security.SecurityConfig;
 import ispp.project.dondesiempre.modules.common.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.modules.stores.dtos.StoreDTO;
 import ispp.project.dondesiempre.modules.stores.dtos.StoreUpdateDTO;
+import ispp.project.dondesiempre.modules.stores.dtos.StoreUpdateLocationDTO;
 import ispp.project.dondesiempre.modules.stores.services.StoreService;
 import java.util.List;
 import java.util.UUID;
@@ -227,4 +226,66 @@ public class StoreControllerTest {
   // .andExpect(status().is(403));
   // }
 
+  @Test
+  @WithMockUser
+  void updateStoreLocation_shouldReturnOk_whenValidRequest() throws Exception {
+    UUID storeId = UUID.randomUUID();
+    StoreUpdateLocationDTO dto = new StoreUpdateLocationDTO();
+    dto.setLongitude(-5.9281);
+    dto.setLatitude(37.2829);
+
+    StoreDTO responseDTO = new StoreDTO();
+    responseDTO.setId(storeId);
+    responseDTO.setName("Store with new location");
+
+    when(storeService.updateLocation(eq(storeId), eq(-5.9281), eq(37.2829)))
+        .thenReturn(responseDTO);
+
+    mockMvc
+        .perform(
+            put("/api/v1/stores/" + storeId + "/location")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.id").value(storeId.toString()))
+        .andExpect(jsonPath("$.name").value("Store with new location"));
+
+    verify(storeService, times(1)).updateLocation(eq(storeId), eq(-5.9281), eq(37.2829));
+  }
+
+  @Test
+  @WithMockUser
+  void updateStoreLocation_shouldReturnForbidden_whenUserIsNotOwner() throws Exception {
+    UUID storeId = UUID.randomUUID();
+    StoreUpdateLocationDTO dto = new StoreUpdateLocationDTO();
+    dto.setLongitude(-5.9281);
+    dto.setLatitude(37.2829);
+
+    when(storeService.updateLocation(eq(storeId), any(), any()))
+        .thenThrow(new org.springframework.security.access.AccessDeniedException("Not owner"));
+
+    mockMvc
+        .perform(
+            put("/api/v1/stores/" + storeId + "/location")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)))
+        .andExpect(status().isForbidden());
+  }
+
+  @Test
+  @WithMockUser
+  void updateStoreLocation_shouldReturnBadRequest_whenMissingCoordinates() throws Exception {
+    UUID storeId = UUID.randomUUID();
+
+    StoreUpdateLocationDTO emptyDto = new StoreUpdateLocationDTO();
+
+    mockMvc
+        .perform(
+            put("/api/v1/stores/" + storeId + "/location")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(emptyDto)))
+        .andExpect(status().isBadRequest());
+
+    verify(storeService, never()).updateLocation(any(), any(), any());
+  }
 }
