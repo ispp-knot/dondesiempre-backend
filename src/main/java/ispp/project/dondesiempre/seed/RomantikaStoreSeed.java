@@ -45,7 +45,7 @@ class RomantikaStoreSeed {
     s.addSocialNetwork(
         romantika, socialNetworks, "Facebook", "https://www.facebook.com/RomantikaVintage/");
     s.addSocialNetwork(romantika, socialNetworks, "Web", "http://www.romantikavintage.es/");
-    s.addSocialNetwork(romantika, socialNetworks, "Teléfono", "+34955668820");
+    s.addSocialNetwork(romantika, socialNetworks, "Teléfono", "tel:+34955668820");
 
     Product rom_vestidoRojo =
         s.createProduct(

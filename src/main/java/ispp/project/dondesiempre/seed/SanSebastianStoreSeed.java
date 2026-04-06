@@ -51,7 +51,7 @@ class SanSebastianStoreSeed {
     s.addSocialNetwork(sanSebastian, socialNetworks, "WhatsApp", "https://wa.me/34691537089");
     s.addSocialNetwork(
         sanSebastian, socialNetworks, "Web", "https://www.confeccionesyhogarsansebastian.com/");
-    s.addSocialNetwork(sanSebastian, socialNetworks, "Teléfono", "+34691537089");
+    s.addSocialNetwork(sanSebastian, socialNetworks, "Teléfono", "tel:+34691537089");
 
     Product ss_albornoz =
         s.createProduct(

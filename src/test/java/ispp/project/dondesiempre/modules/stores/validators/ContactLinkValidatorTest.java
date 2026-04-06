@@ -24,8 +24,8 @@ class ContactLinkValidatorTest {
   void shouldAccept_WhenValidUrl() {
     assertTrue(validator.isValid("https://github.com/ispp-knot", null));
     assertTrue(validator.isValid("http://localhost:3000/test", null));
-    assertTrue(validator.isValid("www.google.com", null));
-    assertTrue(validator.isValid("instagram.com/user", null));
+    assertTrue(validator.isValid("http://www.google.com", null));
+    assertTrue(validator.isValid("https://instagram.com/user", null));
   }
 
   @Test
@@ -37,18 +37,18 @@ class ContactLinkValidatorTest {
 
   @Test
   void shouldAccept_WhenValidInternationalPhone() {
-    assertTrue(validator.isValid("+34600123456", null));
-    assertTrue(validator.isValid("+15551234567", null));
+    assertTrue(validator.isValid("tel:+34600123456", null));
+    assertTrue(validator.isValid("tel:+15551234567", null));
   }
 
   @Test
-  void shouldAccept_WhenPhoneWithSpaces() {
-    assertTrue(validator.isValid("+34 600 123 456", null));
+  void shouldReject_WhenPhoneWithSpaces() {
+    assertFalse(validator.isValid("tel:+34 600 123 456", null));
   }
 
   @Test
   void shouldAccept_WhenNationalPhone() {
-    assertTrue(validator.isValid("954123456", null));
+    assertTrue(validator.isValid("tel:954123456", null));
   }
 
   @Test
@@ -58,12 +58,12 @@ class ContactLinkValidatorTest {
 
   @Test
   void shouldReject_WhenTooShortPhone() {
-    assertFalse(validator.isValid("123", null));
+    assertFalse(validator.isValid("tel:1", null));
   }
 
   @Test
   void shouldReject_WhenInvalidCharactersInPhone() {
-    assertFalse(validator.isValid("+34-600-ABC-123", null));
+    assertFalse(validator.isValid("tel:+34-600-ABC-123", null));
   }
 
   @Test

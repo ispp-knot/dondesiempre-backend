@@ -181,6 +181,45 @@ public class StoreSocialNetworkServiceTest {
   }
 
   @Test
+  void addStoreSocialNetwork_shouldThrowException_whenLinkIsInvalidUrl() {
+    SocialNetworkDTO dto = new SocialNetworkDTO();
+    dto.setName("Instagram");
+    dto.setLink("invalid-url-format");
+
+    when(applicationContext.getBean(StoreService.class)).thenReturn(storeService);
+    when(storeService.findById(storeId)).thenReturn(store);
+    when(socialNetworkRepository.findByName("Instagram")).thenReturn(Optional.of(socialNetwork));
+    when(storeSocialNetworkRepository.existsByStoreIdAndSocialNetworkId(storeId, socialNetworkId))
+        .thenReturn(false);
+
+    assertThrows(
+        IllegalArgumentException.class,
+        () -> storeSocialNetworkService.addStoreSocialNetwork(storeId, dto));
+  }
+
+  @Test
+  void addStoreSocialNetwork_shouldThrowException_whenLinkIsInvalidPhone() {
+    SocialNetworkDTO dto = new SocialNetworkDTO();
+    dto.setName("Teléfono");
+    dto.setLink("123");
+
+    SocialNetwork phoneNetwork = new SocialNetwork();
+    phoneNetwork.setId(UUID.randomUUID());
+    phoneNetwork.setName("Teléfono");
+
+    when(applicationContext.getBean(StoreService.class)).thenReturn(storeService);
+    when(storeService.findById(storeId)).thenReturn(store);
+    when(socialNetworkRepository.findByName("Teléfono")).thenReturn(Optional.of(phoneNetwork));
+    when(storeSocialNetworkRepository.existsByStoreIdAndSocialNetworkId(
+            storeId, phoneNetwork.getId()))
+        .thenReturn(false);
+
+    assertThrows(
+        IllegalArgumentException.class,
+        () -> storeSocialNetworkService.addStoreSocialNetwork(storeId, dto));
+  }
+
+  @Test
   void update_shouldModifyLink_whenRelationExists() {
     SocialNetworkUpdateDTO dto = new SocialNetworkUpdateDTO();
     dto.setLink("https://instagram.com/new-link");
@@ -211,6 +250,18 @@ public class StoreSocialNetworkServiceTest {
     verify(storeSocialNetworkRepository).findByIdWithSocialNetwork(relationId);
     verify(authService, never()).assertUserOwnsStore(store);
     verify(storeSocialNetworkRepository, never()).save(relation);
+  }
+
+  @Test
+  void update_shouldThrowException_whenLinkIsInvalidUrl() {
+    SocialNetworkUpdateDTO dto = new SocialNetworkUpdateDTO();
+    dto.setLink("invalid-url-format");
+
+    when(storeSocialNetworkRepository.findByIdWithSocialNetwork(relationId))
+        .thenReturn(Optional.of(relation));
+
+    assertThrows(
+        IllegalArgumentException.class, () -> storeSocialNetworkService.update(relationId, dto));
   }
 
   @Test

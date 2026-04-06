@@ -43,7 +43,7 @@ class GretaClosetStoreSeed {
         greta, socialNetworks, "TikTok", "https://www.tiktok.com/@gretaclosetcomplementos");
     s.addSocialNetwork(greta, socialNetworks, "WhatsApp", "https://wa.me/34694466991");
     s.addSocialNetwork(greta, socialNetworks, "Web", "https://gretacloset.com/");
-    s.addSocialNetwork(greta, socialNetworks, "Teléfono", "+34694466991");
+    s.addSocialNetwork(greta, socialNetworks, "Teléfono", "tel:+34694466991");
 
     Product greta_vestidoBlanco =
         s.createProduct(

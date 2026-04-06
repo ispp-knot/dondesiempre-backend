@@ -7,9 +7,8 @@ import java.util.regex.Pattern;
 public class ContactLinkValidator implements ConstraintValidator<ValidContactLink, String> {
 
   private static final String URL_REGEX =
-      "^(https?://)?(([a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,}|localhost|(\\d{1,3}\\.){3}\\d{1,3})(:\\d+)?(/[^\\s]*)?$";
-
-  private static final String PHONE_REGEX = "^\\+?[1-9]\\d{8,14}$";
+      "^(https?://)(([a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,}|localhost|(\\d{1,3}\\.){3}\\d{1,3})(:\\d+)?(/[\\w\\d.\\-!$%&'()*+,;=:@?#|%]*)*$";
+  private static final String TEL_URI_REGEX = "^tel:\\+?[1-9]\\d{1,14}$|^tel:[0-9]{9,15}$";
 
   @Override
   public boolean isValid(String value, ConstraintValidatorContext context) {
@@ -17,11 +16,9 @@ public class ContactLinkValidator implements ConstraintValidator<ValidContactLin
       return true;
     }
 
-    String cleanPhone = value.replaceAll("\\s+", "");
-
     boolean isUrl = Pattern.compile(URL_REGEX, Pattern.CASE_INSENSITIVE).matcher(value).matches();
-    boolean isPhone = Pattern.compile(PHONE_REGEX).matcher(cleanPhone).matches();
+    boolean isTel = Pattern.compile(TEL_URI_REGEX).matcher(value).matches();
 
-    return isUrl || isPhone;
+    return isUrl || isTel;
   }
 }
