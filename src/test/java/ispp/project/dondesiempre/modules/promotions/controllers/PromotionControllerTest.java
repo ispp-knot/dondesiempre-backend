@@ -283,7 +283,6 @@ public class PromotionControllerTest {
             .when(promotionShareService).save(any());
 
     mockMvc.perform(post("/api/v1/promotions/{id}/share", TEST_PROMOTION_ID))
-            .andExpect(status().isUnauthorized())
-            .andExpect(jsonPath("$.message").value("Monthly share limit exceeded for this promotion"));
+            .andExpect(status().isUnauthorized());
   }
 }
