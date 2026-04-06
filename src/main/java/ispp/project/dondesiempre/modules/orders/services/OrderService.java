@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,6 +34,7 @@ public class OrderService {
   private final StoreRepository storeRepository;
   private final AuthService authService;
   private final CryptoConverter cryptoConverter;
+  private final ApplicationContext applicationContext;
 
   private final SecureRandom secureRandom = new SecureRandom();
   private static final String CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -86,11 +88,11 @@ public class OrderService {
 
   @Transactional
   public Order setPaymentIntentId(UUID orderId, String paymentIntentId) {
-    Order order = findById(orderId);
+    Order order = applicationContext.getBean(OrderService.class).findById(orderId);
 
     if (!authService.getCurrentUser().equals(order.getUser())) {
       throw new UnauthorizedException(
-          "You can't set the paymentIntent id of a order you don't own.");
+          "You can't set the paymentIntent id of an order you don't own.");
     }
     order.setPaymentIntentId(paymentIntentId);
     return order;

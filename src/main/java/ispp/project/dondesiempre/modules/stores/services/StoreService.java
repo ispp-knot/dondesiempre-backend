@@ -140,11 +140,7 @@ public class StoreService {
 
   @Transactional(rollbackFor = {UnauthorizedException.class})
   public Store setAccountId(UUID storeId, String accountId) {
-    Store store = findById(storeId);
-
-    if (!authService.getCurrentUser().equals(store.getUser())) {
-      throw new UnauthorizedException("You can't set the account id of a store you don't own.");
-    }
+    Store store = applicationContext.getBean(StoreService.class).findById(storeId);
 
     store.setAccountId(accountId);
 
