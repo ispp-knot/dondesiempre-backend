@@ -10,6 +10,6 @@ public class LimitExceededException extends RuntimeException {
   }
 
   public LimitExceededException() {
-      super("Limit for your plan exceeded.");
+    super("Limit for your plan exceeded.");
   }
 }

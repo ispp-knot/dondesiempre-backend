@@ -66,7 +66,8 @@ public class GlobalExceptionHandler {
 
   @ResponseStatus(HttpStatus.UNAUTHORIZED)
   @ExceptionHandler(LimitExceededException.class)
-  public ResponseEntity<String> handleLimitExceededException(LimitExceededException exception, WebRequest request) {
+  public ResponseEntity<String> handleLimitExceededException(
+      LimitExceededException exception, WebRequest request) {
     return new ResponseEntity<>(exception.getMessage(), HttpStatus.UNAUTHORIZED);
   }
 }

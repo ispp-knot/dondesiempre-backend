@@ -272,17 +272,18 @@ public class PromotionControllerTest {
   @WithMockUser
   void shouldCreatePromotionShare() throws Exception {
     doNothing().when(promotionShareService).save(any());
-    mockMvc.perform(post("/api/v1/promotions/{id}/share", TEST_PROMOTION_ID))
-            .andExpect(status().isOk());
+    mockMvc
+        .perform(post("/api/v1/promotions/{id}/share", TEST_PROMOTION_ID))
+        .andExpect(status().isOk());
   }
 
   @Test
   @WithMockUser
   void shouldReturn401WhenLimitExceeded() throws Exception {
-    doThrow(new LimitExceededException())
-            .when(promotionShareService).save(any());
+    doThrow(new LimitExceededException()).when(promotionShareService).save(any());
 
-    mockMvc.perform(post("/api/v1/promotions/{id}/share", TEST_PROMOTION_ID))
-            .andExpect(status().isUnauthorized());
+    mockMvc
+        .perform(post("/api/v1/promotions/{id}/share", TEST_PROMOTION_ID))
+        .andExpect(status().isUnauthorized());
   }
 }

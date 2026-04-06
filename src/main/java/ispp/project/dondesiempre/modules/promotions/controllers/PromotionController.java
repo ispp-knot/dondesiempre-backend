@@ -95,6 +95,4 @@ public class PromotionController {
     promotionShareService.save(id);
     return ResponseEntity.ok().build();
   }
-
-
 }
