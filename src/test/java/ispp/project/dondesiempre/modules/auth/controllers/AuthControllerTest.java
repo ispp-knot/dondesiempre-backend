@@ -3,14 +3,14 @@ package ispp.project.dondesiempre.modules.auth.controllers;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ispp.project.dondesiempre.config.GlobalExceptionHandler;
+import ispp.project.dondesiempre.modules.auth.dtos.ChangePasswordDTO;
 import ispp.project.dondesiempre.modules.auth.dtos.LoginRequestDTO;
 import ispp.project.dondesiempre.modules.auth.dtos.UserResponseDTO;
 import ispp.project.dondesiempre.modules.auth.models.User;
@@ -124,5 +124,72 @@ class AuthControllerTest {
     mockMvc
         .perform(get("/api/v1/auth/me").header("Authorization", "Bearer jwt-token"))
         .andExpect(status().isForbidden());
+  }
+
+  @Test
+  @WithMockUser
+  void changePassword_shouldReturn202_whenPasswordsAreValid() throws Exception {
+    ChangePasswordDTO dto = new ChangePasswordDTO();
+    dto.setOldPassword("correct-old-pass");
+    dto.setNewPassword("StrongPass1!");
+
+    mockMvc
+        .perform(
+            put("/api/v1/auth/password")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)))
+        .andExpect(status().isAccepted());
+
+    verify(userService).changePassword("correct-old-pass", "StrongPass1!");
+  }
+
+  @Test
+  @WithMockUser
+  void changePassword_shouldReturn403_whenOldPasswordIsWrong() throws Exception {
+    ChangePasswordDTO dto = new ChangePasswordDTO();
+    dto.setOldPassword("wrong-old-pass");
+    dto.setNewPassword("StrongPass1!");
+
+    doThrow(new UnauthorizedException("Wrong password."))
+        .when(userService)
+        .changePassword("wrong-old-pass", "StrongPass1!");
+
+    mockMvc
+        .perform(
+            put("/api/v1/auth/password")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)))
+        .andExpect(status().isForbidden());
+  }
+
+  @Test
+  void changePassword_shouldReturn403_whenNotAuthenticated() throws Exception {
+    ChangePasswordDTO dto = new ChangePasswordDTO();
+    dto.setOldPassword("old-pass");
+    dto.setNewPassword("StrongPass1!");
+
+    mockMvc
+        .perform(
+            put("/api/v1/auth/password")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)))
+        .andExpect(status().isForbidden());
+  }
+
+  @Test
+  @WithMockUser
+  void changePassword_shouldReturn400_whenNewPasswordIsWeak() throws Exception {
+    ChangePasswordDTO dto = new ChangePasswordDTO();
+    dto.setOldPassword("old-pass");
+    dto.setNewPassword("weakpass");
+
+    mockMvc
+        .perform(
+            put("/api/v1/auth/password")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)))
+        .andExpect(status().isBadRequest());
+
+    verify(userService, never()).changePassword(any(), any());
   }
 }
