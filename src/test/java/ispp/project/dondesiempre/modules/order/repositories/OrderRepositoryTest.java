@@ -42,6 +42,7 @@ public class OrderRepositoryTest {
   private User savedUser;
   private Store savedStore;
   private String testOrderCode = "TEST-ORDER-CODE-123";
+  private final String PAYMENT_INTENT_ID = "pi_asuhuiashuidahiuahaskoa";
 
   @BeforeEach
   void setUp() {
@@ -62,6 +63,7 @@ public class OrderRepositoryTest {
     savedStore.setLocation(coordinatesService.createPoint(0.0, 0.0));
     savedStore.setStorefront(storefront);
     savedStore.setUser(savedUser);
+    savedStore.setAccountId("acc_AAAAAA");
     entityManager.persist(savedStore);
 
     ProductType type = new ProductType();
@@ -122,5 +124,21 @@ public class OrderRepositoryTest {
   void shouldNotFindNonExistentOrderCode() {
     Optional<Order> order = orderRepository.findByOrderCode("NON-EXISTENT-CODE");
     assertFalse(order.isPresent());
+  }
+
+  @Test
+  void shouldReturnFalse_whenPaymentIntentIdIsNull() {
+    Order order = orderRepository.findByOrderCode(testOrderCode).get();
+    boolean res = orderRepository.existsByIdAndPaymentIntentIdIsNotNull(order.getId());
+    assertFalse(res);
+  }
+
+  @Test
+  void shouldReturnTrue_whenPaymentIntentIdIsNotNull() {
+    Order order = orderRepository.findByOrderCode(testOrderCode).get();
+    order.setPaymentIntentId(PAYMENT_INTENT_ID);
+    orderRepository.save(order);
+    boolean res = orderRepository.existsByIdAndPaymentIntentIdIsNotNull(order.getId());
+    assertTrue(res);
   }
 }

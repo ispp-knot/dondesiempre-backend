@@ -71,6 +71,7 @@ public class ProductServiceTest {
     store.setAcceptsShipping(true);
     store.setStorefront(storefront);
     store.setUser(testUser);
+    store.setAccountId("acc_AAAAA");
     saved_store = storeRepository.save(store);
 
     ProductType type = new ProductType();

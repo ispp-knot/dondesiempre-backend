@@ -52,6 +52,7 @@ public class StoreRepositoryTest {
     store.setPhone("123456789");
     store.setAcceptsShipping(true);
     store.setLocation(coordinatesService.createPoint(longitude, latitude));
+    store.setAccountId("acc_AAAAA");
     store.setUser(createTestUser());
 
     Storefront storefront = new Storefront();
