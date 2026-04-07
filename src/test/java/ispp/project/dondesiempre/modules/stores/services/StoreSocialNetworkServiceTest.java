@@ -220,6 +220,52 @@ public class StoreSocialNetworkServiceTest {
   }
 
   @Test
+  void addStoreSocialNetwork_shouldThrowException_whenMismatchedDomain() {
+    SocialNetworkDTO dto = new SocialNetworkDTO();
+    dto.setName("Instagram");
+    dto.setLink("https://tiktok.com/@midominio");
+
+    when(applicationContext.getBean(StoreService.class)).thenReturn(storeService);
+    when(storeService.findById(storeId)).thenReturn(store);
+    when(socialNetworkRepository.findByName("Instagram")).thenReturn(Optional.of(socialNetwork));
+    when(storeSocialNetworkRepository.existsByStoreIdAndSocialNetworkId(storeId, socialNetworkId))
+        .thenReturn(false);
+
+    IllegalArgumentException exception =
+        assertThrows(
+            IllegalArgumentException.class,
+            () -> storeSocialNetworkService.addStoreSocialNetwork(storeId, dto));
+
+    assertEquals("Link must be a valid Instagram URL.", exception.getMessage());
+  }
+
+  @Test
+  void addStoreSocialNetwork_shouldThrowException_whenWhatsappHasInvalidLink() {
+    SocialNetworkDTO dto = new SocialNetworkDTO();
+    dto.setName("Whatsapp");
+    dto.setLink("https://google.com");
+
+    SocialNetwork whatsappNetwork = new SocialNetwork();
+    whatsappNetwork.setId(UUID.randomUUID());
+    whatsappNetwork.setName("Whatsapp");
+
+    when(applicationContext.getBean(StoreService.class)).thenReturn(storeService);
+    when(storeService.findById(storeId)).thenReturn(store);
+    when(socialNetworkRepository.findByName("Whatsapp")).thenReturn(Optional.of(whatsappNetwork));
+    when(storeSocialNetworkRepository.existsByStoreIdAndSocialNetworkId(
+            storeId, whatsappNetwork.getId()))
+        .thenReturn(false);
+
+    IllegalArgumentException exception =
+        assertThrows(
+            IllegalArgumentException.class,
+            () -> storeSocialNetworkService.addStoreSocialNetwork(storeId, dto));
+
+    assertEquals(
+        "Link must be a valid WhatsApp URL (wa.me) or phone number.", exception.getMessage());
+  }
+
+  @Test
   void update_shouldModifyLink_whenRelationExists() {
     SocialNetworkUpdateDTO dto = new SocialNetworkUpdateDTO();
     dto.setLink("https://instagram.com/new-link");
@@ -262,6 +308,22 @@ public class StoreSocialNetworkServiceTest {
 
     assertThrows(
         IllegalArgumentException.class, () -> storeSocialNetworkService.update(relationId, dto));
+  }
+
+  @Test
+  void update_shouldThrowException_whenMismatchedDomain() {
+    SocialNetworkUpdateDTO dto = new SocialNetworkUpdateDTO();
+    dto.setLink("https://facebook.com/mi-pagina");
+
+    when(storeSocialNetworkRepository.findByIdWithSocialNetwork(relationId))
+        .thenReturn(Optional.of(relation));
+
+    IllegalArgumentException exception =
+        assertThrows(
+            IllegalArgumentException.class,
+            () -> storeSocialNetworkService.update(relationId, dto));
+
+    assertEquals("Link must be a valid Instagram URL.", exception.getMessage());
   }
 
   @Test
