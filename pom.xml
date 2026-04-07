@@ -257,6 +257,7 @@
 					</execution>
 				</executions>
 			</plugin>
+			<!-- Coverage -->
 			<plugin>
             <groupId>org.jacoco</groupId>
             <artifactId>jacoco-maven-plugin</artifactId>
@@ -274,6 +275,11 @@
                     </goals>
                 </execution>
             </executions>
+						<configuration>
+							<excludes>
+								<exclude>ispp/project/dondesiempre/seed/**/*</exclude>
+							</excludes>
+						</configuration>
         </plugin>
 		</plugins>
 		<pluginManagement>
