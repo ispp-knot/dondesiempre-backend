@@ -1,17 +1,11 @@
 package ispp.project.dondesiempre.modules.stores.repositories;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import ispp.project.dondesiempre.config.coordinates.GeometryFactoryConfig;
-import ispp.project.dondesiempre.modules.auth.models.User;
-import ispp.project.dondesiempre.modules.auth.repositories.UserRepository;
-import ispp.project.dondesiempre.modules.stores.models.Store;
-import ispp.project.dondesiempre.modules.stores.models.Storefront;
-import ispp.project.dondesiempre.utils.cloudinary.CoordinatesService;
-import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +13,13 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
+
+import ispp.project.dondesiempre.config.coordinates.GeometryFactoryConfig;
+import ispp.project.dondesiempre.modules.auth.models.User;
+import ispp.project.dondesiempre.modules.auth.repositories.UserRepository;
+import ispp.project.dondesiempre.modules.stores.models.Store;
+import ispp.project.dondesiempre.modules.stores.models.Storefront;
+import ispp.project.dondesiempre.utils.cloudinary.CoordinatesService;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = Replace.NONE)
@@ -50,7 +51,6 @@ public class StoreRepositoryTest {
     store.setAddress("Direccion de prueba");
     store.setOpeningHours("09:00-18:00");
     store.setPhone("123456789");
-    store.setAcceptsShipping(true);
     store.setLocation(coordinatesService.createPoint(longitude, latitude));
     store.setAccountId("acc_AAAAA");
     store.setUser(createTestUser());
@@ -94,7 +94,6 @@ public class StoreRepositoryTest {
     assertNotNull(store.getId());
     assertEquals("Tienda Mapeo", store.getName());
     assertEquals("09:00-18:00", store.getOpeningHours());
-    assertTrue(store.getAcceptsShipping());
     assertEquals(37.290025, store.getLocation().getY());
     assertEquals(-5.932650, store.getLocation().getX());
   }

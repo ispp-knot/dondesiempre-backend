@@ -1,0 +1,16 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1775583700424-56
+      author: lunaf
+      changes:
+        - dropColumn:
+            columnName: accepts_shipping
+            tableName: stores
+      rollback:
+        addColumn:
+          tableName: stores
+          columns:
+            - column:
+                name: accepts_shipping
+                type: boolean
+                defaultValueBoolean: false

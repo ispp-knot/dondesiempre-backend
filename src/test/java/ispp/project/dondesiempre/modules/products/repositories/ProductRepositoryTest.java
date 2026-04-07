@@ -1,8 +1,17 @@
 package ispp.project.dondesiempre.modules.products.repositories;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
 
 import ispp.project.dondesiempre.config.coordinates.GeometryFactoryConfig;
 import ispp.project.dondesiempre.modules.auth.models.User;
@@ -14,14 +23,6 @@ import ispp.project.dondesiempre.modules.stores.models.Storefront;
 import ispp.project.dondesiempre.modules.stores.repositories.StoreRepository;
 import ispp.project.dondesiempre.modules.stores.repositories.StorefrontRepository;
 import ispp.project.dondesiempre.utils.cloudinary.CoordinatesService;
-import java.util.List;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.context.annotation.Import;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = Replace.NONE)
@@ -50,7 +51,6 @@ public class ProductRepositoryTest {
     store.setEmail("test@test.com");
     store.setAddress("Test address");
     store.setOpeningHours("9-5");
-    store.setAcceptsShipping(false);
     store.setLocation(coordinatesService.createPoint(0.0, 0.0));
     store.setStorefront(storefront);
     store.setUser(user);

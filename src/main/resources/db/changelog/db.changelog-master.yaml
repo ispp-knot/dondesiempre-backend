@@ -47,3 +47,5 @@ databaseChangeLog:
       file: db/changelog/025-premium-plan/premium-plan.changelog.yaml
   - include:
       file: db/changelog/026-premium-plan-restrictions/premium-plan-restrictions.changelog.yaml
+  - include:
+      file: db/changelog/027-remove-accepts-shipping/remove-accepts-shipping.changelog.yaml

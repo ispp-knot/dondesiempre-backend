@@ -1,8 +1,17 @@
 package ispp.project.dondesiempre.modules.outfits.repositories;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
 
 import ispp.project.dondesiempre.config.coordinates.GeometryFactoryConfig;
 import ispp.project.dondesiempre.modules.auth.models.User;
@@ -18,14 +27,6 @@ import ispp.project.dondesiempre.modules.stores.models.Storefront;
 import ispp.project.dondesiempre.modules.stores.repositories.StoreRepository;
 import ispp.project.dondesiempre.modules.stores.repositories.StorefrontRepository;
 import ispp.project.dondesiempre.utils.cloudinary.CoordinatesService;
-import java.util.ArrayList;
-import java.util.List;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.context.annotation.Import;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = Replace.NONE)
@@ -67,7 +68,6 @@ class OutfitRepositoryTest {
     store.setAboutUs("Test description");
     store.setOpeningHours("Test opening hours");
     store.setEmail("test@test.com");
-    store.setAcceptsShipping(false);
     store.setUser(createTestUser());
     store.setAccountId("acc_AAAAA");
     store = storeRepository.save(store);
@@ -101,7 +101,6 @@ class OutfitRepositoryTest {
     store.setAboutUs("Test description");
     store.setOpeningHours("Test opening hours");
     store.setEmail("test@test.com");
-    store.setAcceptsShipping(false);
     store.setUser(createTestUser());
     store.setAccountId("acc_AAAAA");
     store = storeRepository.save(store);
@@ -166,7 +165,6 @@ class OutfitRepositoryTest {
     store1.setAboutUs("Test description");
     store1.setOpeningHours("Test opening hours");
     store1.setEmail("test@test.com");
-    store1.setAcceptsShipping(false);
     store1.setUser(createTestUser());
     store1.setAccountId("acc_AAAA");
     store1 = storeRepository.save(store1);
@@ -179,7 +177,6 @@ class OutfitRepositoryTest {
     store2.setAboutUs("Test description");
     store2.setOpeningHours("Test opening hours");
     store2.setEmail("test@test.com");
-    store2.setAcceptsShipping(false);
     store2.setUser(createTestUser());
     store2.setAccountId("acc_AAAA");
     store2 = storeRepository.save(store2);
