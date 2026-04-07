@@ -37,6 +37,7 @@ public class StoreSocialNetworkService {
 
   private void validateByNetwork(String name, String link) {
     String clean = link.replaceAll("\\s+", "");
+    String nameLower = name.toLowerCase();
 
     if (PHONE_NETWORKS.contains(name)) {
       String phoneDigits = clean.startsWith("tel:") ? clean.replace("tel:", "") : clean;
@@ -45,8 +46,46 @@ public class StoreSocialNetworkService {
             "Must be a valid telephone number, formed by 9-15 digits, prefix allowed.");
       }
     } else {
-      if (!link.matches(URL_REGEX)) {
+      boolean isWhatsappPhone = nameLower.equals("whatsapp") && clean.matches(PHONE_REGEX);
+
+      if (!isWhatsappPhone && !link.matches(URL_REGEX)) {
         throw new IllegalArgumentException("Must be a valid URL.");
+      }
+
+      String linkLower = link.toLowerCase();
+
+      switch (nameLower) {
+        case "instagram":
+          if (!linkLower.contains("instagram.com")) {
+            throw new IllegalArgumentException("Link must be a valid Instagram URL.");
+          }
+          break;
+        case "tiktok":
+          if (!linkLower.contains("tiktok.com")) {
+            throw new IllegalArgumentException("Link must be a valid TikTok URL.");
+          }
+          break;
+        case "facebook":
+          if (!linkLower.contains("facebook.com")) {
+            throw new IllegalArgumentException("Link must be a valid Facebook URL.");
+          }
+          break;
+        case "x":
+        case "twitter":
+          if (!linkLower.contains("x.com") && !linkLower.contains("twitter.com")) {
+            throw new IllegalArgumentException("Link must be a valid X/Twitter URL.");
+          }
+          break;
+        case "whatsapp":
+          if (!isWhatsappPhone
+              && !linkLower.contains("wa.me")
+              && !linkLower.contains("whatsapp.com")) {
+            throw new IllegalArgumentException(
+                "Link must be a valid WhatsApp URL (wa.me) or phone number.");
+          }
+          break;
+        default:
+          break;
       }
     }
   }
