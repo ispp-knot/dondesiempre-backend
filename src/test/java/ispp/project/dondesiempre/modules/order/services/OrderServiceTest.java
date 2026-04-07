@@ -21,6 +21,8 @@ import ispp.project.dondesiempre.modules.orders.models.OrderItem;
 import ispp.project.dondesiempre.modules.orders.models.OrderStatus;
 import ispp.project.dondesiempre.modules.orders.repositories.OrderRepository;
 import ispp.project.dondesiempre.modules.orders.services.OrderService;
+import ispp.project.dondesiempre.modules.outfits.models.Outfit;
+import ispp.project.dondesiempre.modules.outfits.repositories.OutfitRepository;
 import ispp.project.dondesiempre.modules.products.models.Product;
 import ispp.project.dondesiempre.modules.stores.models.Store;
 import ispp.project.dondesiempre.modules.stores.repositories.StoreRepository;
@@ -37,6 +39,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationContext;
 import org.springframework.test.util.ReflectionTestUtils;
 
 @ExtendWith(MockitoExtension.class)
@@ -47,6 +50,8 @@ public class OrderServiceTest {
   @Mock private StoreRepository storeRepository;
   @Mock private AuthService authService;
   @Mock private CryptoConverter cryptoConverter;
+  @Mock private ApplicationContext applicationContext;
+  @Mock private OutfitRepository outfitRepository;
 
   @InjectMocks private OrderService orderService;
 
@@ -159,10 +164,56 @@ public class OrderServiceTest {
     when(orderRepository.save(any())).thenReturn(order);
     Map<Product, Integer> products = Map.of(product, 2);
 
-    OrderDTO result = orderService.createOrder(products);
+    OrderDTO result = orderService.createOrder(products, null);
 
     assertNotNull(result);
     verify(orderRepository).save(any(Order.class));
+  }
+
+  @Test
+  void createOrder_WithOutfitDiscount_ShouldApplyDiscount() {
+    UUID outfitId = UUID.randomUUID();
+    Outfit outfit = new Outfit();
+    outfit.setId(outfitId);
+    outfit.setDiscountPercentage(20);
+
+    when(authService.getCurrentUser()).thenReturn(user);
+    when(outfitRepository.findById(outfitId)).thenReturn(Optional.of(outfit));
+    when(orderRepository.save(any(Order.class)))
+        .thenAnswer(invocation -> invocation.getArgument(0));
+
+    Map<Product, Integer> products = Map.of(product, 2);
+
+    OrderDTO result = orderService.createOrder(products, outfitId);
+
+    assertNotNull(result);
+    assertEquals(160, result.getTotalPrice());
+    verify(orderRepository).save(any(Order.class));
+  }
+
+  @Test
+  void createOrder_WithOutfitDiscount_ShouldTruncateCorrectly() {
+    UUID outfitId = UUID.randomUUID();
+    Outfit outfit = new Outfit();
+    outfit.setId(outfitId);
+    outfit.setDiscountPercentage(25);
+
+    when(authService.getCurrentUser()).thenReturn(user);
+    when(outfitRepository.findById(outfitId)).thenReturn(Optional.of(outfit));
+    when(orderRepository.save(any(Order.class)))
+        .thenAnswer(invocation -> invocation.getArgument(0));
+
+    Product productTruncateTest = new Product();
+    productTruncateTest.setStore(store);
+    productTruncateTest.setPriceInCents(3998);
+    productTruncateTest.setName("Producto Truncado");
+
+    Map<Product, Integer> products = Map.of(productTruncateTest, 1);
+
+    OrderDTO result = orderService.createOrder(products, outfitId);
+
+    assertNotNull(result);
+    assertEquals(2998, result.getTotalPrice());
   }
 
   @Test
