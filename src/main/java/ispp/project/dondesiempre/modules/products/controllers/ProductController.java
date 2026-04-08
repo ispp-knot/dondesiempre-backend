@@ -1,5 +1,8 @@
 package ispp.project.dondesiempre.modules.products.controllers;
 
+import ispp.project.dondesiempre.modules.common.exceptions.InvalidRequestException;
+import ispp.project.dondesiempre.modules.outfits.models.Outfit;
+import ispp.project.dondesiempre.modules.outfits.services.OutfitService;
 import ispp.project.dondesiempre.modules.products.dtos.ProductCreationDTO;
 import ispp.project.dondesiempre.modules.products.dtos.ProductDTO;
 import ispp.project.dondesiempre.modules.products.dtos.ProductDiscountUpdateDTO;
@@ -32,6 +35,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class ProductController {
 
   private final ProductService productService;
+  private final OutfitService outfitService;
 
   @GetMapping("products")
   public ResponseEntity<List<ProductDTO>> getAllProducts() {
@@ -90,6 +94,11 @@ public class ProductController {
 
   @DeleteMapping("/products/{productId}")
   public void deleteProduct(@PathVariable UUID productId) {
+    List<Outfit> outfitsUsingProduct = outfitService.findOutfitsByProductId(productId);
+    if (!outfitsUsingProduct.isEmpty()) {
+      throw new InvalidRequestException(
+          "Cannot delete product because it is used in one or more outfits.");
+    }
     productService.deleteProduct(productId);
   }
 }

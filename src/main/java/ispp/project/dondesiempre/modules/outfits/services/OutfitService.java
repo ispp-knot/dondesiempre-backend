@@ -63,6 +63,11 @@ public class OutfitService {
   }
 
   @Transactional(readOnly = true)
+  public List<Outfit> findOutfitsByProductId(UUID productId) {
+    return outfitProductRepository.findByProductId(productId).stream().map(OutfitProduct::getOutfit).toList();
+  }
+
+  @Transactional(readOnly = true)
   public List<OutfitProduct> findOutfitProductsByOutfitId(UUID id) {
     return outfitProductService.findOutfitProductsById(id);
   }
