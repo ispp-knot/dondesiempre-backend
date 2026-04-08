@@ -18,7 +18,7 @@ public interface OutfitProductRepository extends JpaRepository<OutfitProduct, UU
 
   Optional<OutfitProduct> findByOutfitIdAndProductId(UUID outfitId, UUID productId);
 
-  List<OutfitProduct> findByProductId(UUID productId);
+    boolean existsByProductId(UUID productId);
 
   @Query(
       """
