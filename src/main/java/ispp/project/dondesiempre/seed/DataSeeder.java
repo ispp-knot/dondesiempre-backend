@@ -223,7 +223,6 @@ public class DataSeeder implements CommandLineRunner {
     store.setLocation(location);
     store.setAddress(address);
     store.setOpeningHours(openingHours);
-    store.setAcceptsShipping(false);
     store.setStorefront(storefront);
     store.setUser(user);
     store.setAboutUs(aboutUs);

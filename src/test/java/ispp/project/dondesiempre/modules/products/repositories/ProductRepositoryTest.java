@@ -50,7 +50,6 @@ public class ProductRepositoryTest {
     store.setEmail("test@test.com");
     store.setAddress("Test address");
     store.setOpeningHours("9-5");
-    store.setAcceptsShipping(false);
     store.setLocation(coordinatesService.createPoint(0.0, 0.0));
     store.setStorefront(storefront);
     store.setUser(user);

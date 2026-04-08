@@ -72,7 +72,6 @@ public class ProductServiceTest {
     store.setLocation(coordinatesService.createPoint(0.0, 0.0));
     store.setAddress("123 Test Street");
     store.setOpeningHours("9am - 5pm");
-    store.setAcceptsShipping(true);
     store.setStorefront(storefront);
     store.setUser(testUser);
     store.setAccountId("acc_AAAAA");
