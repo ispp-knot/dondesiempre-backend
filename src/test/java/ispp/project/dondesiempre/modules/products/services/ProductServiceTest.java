@@ -145,7 +145,7 @@ public class ProductServiceTest {
     Product product = createTestProduct();
     when(outfitProductRepository.existsByProductId(product.getId())).thenReturn(true);
     doNothing().when(authService).assertUserOwnsStore(any(Store.class));
-    
+
     assertThrows(
         InvalidRequestException.class, () -> productService.deleteProduct(product.getId()));
   }
