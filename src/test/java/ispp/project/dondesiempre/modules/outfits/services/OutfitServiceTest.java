@@ -19,6 +19,7 @@ import ispp.project.dondesiempre.modules.common.exceptions.ResourceNotFoundExcep
 import ispp.project.dondesiempre.modules.outfits.dtos.OutfitCreationDTO;
 import ispp.project.dondesiempre.modules.outfits.dtos.OutfitCreationProductDTO;
 import ispp.project.dondesiempre.modules.outfits.dtos.OutfitSortDTO;
+import ispp.project.dondesiempre.modules.outfits.dtos.OutfitTagDTO;
 import ispp.project.dondesiempre.modules.outfits.dtos.OutfitUpdateDTO;
 import ispp.project.dondesiempre.modules.outfits.models.Outfit;
 import ispp.project.dondesiempre.modules.outfits.models.OutfitProduct;
@@ -167,7 +168,7 @@ class OutfitServiceTest {
     OutfitCreationDTO dto = new OutfitCreationDTO();
     dto.setName("New Outfit");
     dto.setDescription("Description");
-    dto.setTags(List.of("casual"));
+    dto.setTags(List.of(new OutfitTagDTO("casual")));
     dto.setProducts(List.of(productDTO));
     return dto;
   }
@@ -254,9 +255,9 @@ class OutfitServiceTest {
     when(outfitTagService.findOrCreate("new-tag")).thenReturn(newTag);
     when(outfitTagRelationService.save(any())).thenReturn(new OutfitTagRelation());
 
-    String result = outfitService.addTag(outfitId, "new-tag");
-
-    assertEquals("new-tag", result);
+    OutfitTagDTO result = outfitService.addTag(outfitId, new OutfitTagDTO("new-tag"));
+    assertNotNull(result);
+    assertEquals("new-tag", result.getName());
     verify(outfitTagService, times(1)).findOrCreate("new-tag");
     verify(outfitTagRelationService, times(1)).save(any());
   }
@@ -521,8 +522,11 @@ class OutfitServiceTest {
 
     when(outfitTagService.findOutfitTagsById(outfitId)).thenReturn(List.of("casual", "summer"));
 
-    List<String> result = outfitService.findTagsByOutfitId(outfitId);
+    List<OutfitTagDTO> result = outfitService.findTagsByOutfitId(outfitId);
     assertNotNull(result);
+    assertEquals(2, result.size());
+    assertEquals("casual", result.get(0).getName());
+    assertEquals("summer", result.get(1).getName());
     verify(outfitTagService, times(1)).findOutfitTagsById(outfitId);
   }
 
@@ -554,7 +558,7 @@ class OutfitServiceTest {
     when(outfitTagService.findByName(tagName)).thenReturn(tag);
     when(outfitTagRelationService.findTagRelation(outfitId, tagId)).thenReturn(relation);
 
-    outfitService.removeTag(outfitId, tagName);
+    outfitService.removeTag(outfitId, new OutfitTagDTO(tagName));
 
     verify(outfitTagRelationService, times(1)).delete(relation);
   }
@@ -574,7 +578,9 @@ class OutfitServiceTest {
             new ResourceNotFoundException(
                 "Requested tag does not belong to outfit.")); // No relation found
 
-    assertThrows(ResourceNotFoundException.class, () -> outfitService.removeTag(outfitId, tagName));
+    assertThrows(
+        ResourceNotFoundException.class,
+        () -> outfitService.removeTag(outfitId, new OutfitTagDTO(tagName)));
     verify(outfitTagRelationService, never()).delete(any());
   }
 

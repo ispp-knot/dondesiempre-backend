@@ -8,6 +8,7 @@ import ispp.project.dondesiempre.modules.outfits.dtos.OutfitCreationDTO;
 import ispp.project.dondesiempre.modules.outfits.dtos.OutfitCreationProductDTO;
 import ispp.project.dondesiempre.modules.outfits.dtos.OutfitDTO;
 import ispp.project.dondesiempre.modules.outfits.dtos.OutfitSortDTO;
+import ispp.project.dondesiempre.modules.outfits.dtos.OutfitTagDTO;
 import ispp.project.dondesiempre.modules.outfits.dtos.OutfitUpdateDTO;
 import ispp.project.dondesiempre.modules.outfits.models.Outfit;
 import ispp.project.dondesiempre.modules.outfits.models.OutfitProduct;
@@ -57,8 +58,8 @@ public class OutfitService {
   }
 
   @Transactional(readOnly = true)
-  public List<String> findTagsByOutfitId(UUID id) {
-    return outfitTagService.findOutfitTagsById(id);
+  public List<OutfitTagDTO> findTagsByOutfitId(UUID id) {
+    return outfitTagService.findOutfitTagsById(id).stream().map(OutfitTagDTO::new).toList();
   }
 
   @Transactional(readOnly = true)
@@ -74,7 +75,8 @@ public class OutfitService {
   @Transactional(readOnly = true)
   public OutfitDTO findByIdAsDTO(UUID id) {
     Outfit outfit = applicationContext.getBean(OutfitService.class).findById(id);
-    List<String> tags = outfitTagService.findOutfitTagsById(id);
+    List<OutfitTagDTO> tags =
+        applicationContext.getBean(OutfitService.class).findTagsByOutfitId(id);
     List<OutfitProduct> products = outfitProductRepository.findByOutfitIdWithDetails(id);
     return new OutfitDTO(outfit, tags, products);
   }
@@ -86,13 +88,13 @@ public class OutfitService {
 
     List<UUID> ids = outfits.stream().map(Outfit::getId).toList();
 
-    Map<UUID, List<String>> tagsByOutfit =
+    Map<UUID, List<OutfitTagDTO>> tagsByOutfit =
         outfitTagRepository.findTagEntriesByOutfitIds(ids).stream()
             .collect(
                 Collectors.groupingBy(
                     OutfitTagRepository.OutfitTagEntry::getOutfitId,
                     Collectors.mapping(
-                        OutfitTagRepository.OutfitTagEntry::getTagName, Collectors.toList())));
+                        entry -> new OutfitTagDTO(entry.getTagName()), Collectors.toList())));
 
     Map<UUID, List<OutfitProduct>> productsByOutfit =
         outfitProductRepository.findByOutfitIdsWithDetails(ids).stream()
@@ -143,8 +145,10 @@ public class OutfitService {
     outfit = outfitRepository.save(outfit);
     outfitId = outfit.getId();
 
-    dto.getTags().stream()
-        .forEach(name -> applicationContext.getBean(OutfitService.class).addTag(outfitId, name));
+    if (dto.getTags() != null) {
+      dto.getTags()
+          .forEach(tag -> applicationContext.getBean(OutfitService.class).addTag(outfitId, tag));
+    }
     dto.getProducts().stream()
         .forEach(
             product ->
@@ -177,7 +181,7 @@ public class OutfitService {
   }
 
   @Transactional(rollbackFor = {UnauthorizedException.class, ResourceNotFoundException.class})
-  public String addTag(UUID outfitId, String tagName)
+  public OutfitTagDTO addTag(UUID outfitId, OutfitTagDTO tagDTO)
       throws UnauthorizedException, ResourceNotFoundException {
     Outfit outfit;
     OutfitTag tag;
@@ -185,18 +189,18 @@ public class OutfitService {
 
     outfit = applicationContext.getBean(OutfitService.class).findById(outfitId);
     authService.assertUserOwnsStore(outfit.getStore());
-    tag = outfitTagService.findOrCreate(tagName);
+    tag = outfitTagService.findOrCreate(tagDTO.getName());
 
     outfitTag = new OutfitTagRelation();
     outfitTag.setOutfit(outfit);
     outfitTag.setTag(tag);
     outfitTagRelationService.save(outfitTag);
 
-    return tag.getName();
+    return new OutfitTagDTO(tag.getName());
   }
 
   @Transactional(rollbackFor = {UnauthorizedException.class, ResourceNotFoundException.class})
-  public void removeTag(UUID outfitId, String tagName)
+  public void removeTag(UUID outfitId, OutfitTagDTO tagDTO)
       throws UnauthorizedException, ResourceNotFoundException {
     Outfit outfit;
     OutfitTag tag;
@@ -204,7 +208,7 @@ public class OutfitService {
 
     outfit = applicationContext.getBean(OutfitService.class).findById(outfitId);
     authService.assertUserOwnsStore(outfit.getStore());
-    tag = outfitTagService.findByName(tagName);
+    tag = outfitTagService.findByName(tagDTO.getName());
 
     relation = outfitTagRelationService.findTagRelation(outfit.getId(), tag.getId());
     outfitTagRelationService.delete(relation);

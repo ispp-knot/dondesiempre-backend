@@ -18,6 +18,7 @@ import ispp.project.dondesiempre.config.GlobalExceptionHandler;
 import ispp.project.dondesiempre.modules.outfits.dtos.OutfitCreationDTO;
 import ispp.project.dondesiempre.modules.outfits.dtos.OutfitCreationProductDTO;
 import ispp.project.dondesiempre.modules.outfits.dtos.OutfitSortDTO;
+import ispp.project.dondesiempre.modules.outfits.dtos.OutfitTagDTO;
 import ispp.project.dondesiempre.modules.outfits.dtos.OutfitUpdateDTO;
 import ispp.project.dondesiempre.modules.outfits.models.Outfit;
 import ispp.project.dondesiempre.modules.outfits.models.OutfitProduct;
@@ -123,7 +124,7 @@ class OutfitsControllerTest {
   void getById_shouldReturnOk_whenOutfitExists() throws Exception {
     ispp.project.dondesiempre.modules.outfits.dtos.OutfitDTO outfitDTO =
         new ispp.project.dondesiempre.modules.outfits.dtos.OutfitDTO(
-            outfit, List.of(TEST_TAG), List.of(outfitProduct));
+            outfit, List.of(new OutfitTagDTO(TEST_TAG)), List.of(outfitProduct));
     when(outfitService.findByIdAsDTO(outfitId)).thenReturn(outfitDTO);
 
     mockMvc
@@ -165,11 +166,12 @@ class OutfitsControllerTest {
 
     OutfitCreationDTO creationDTO = new OutfitCreationDTO();
     creationDTO.setName("New Outfit");
-    creationDTO.setTags(List.of(TEST_TAG));
+    creationDTO.setTags(List.of(new OutfitTagDTO(TEST_TAG)));
     creationDTO.setProducts(List.of(productDTO));
 
     when(outfitService.create(any(), any(), any())).thenReturn(outfit);
-    when(outfitService.findTagsByOutfitId(outfitId)).thenReturn(List.of(TEST_TAG));
+    when(outfitService.findTagsByOutfitId(outfitId))
+        .thenReturn(List.of(new OutfitTagDTO(TEST_TAG)));
     when(outfitService.findOutfitProductsByOutfitId(outfitId)).thenReturn(List.of(outfitProduct));
 
     MockPart dtoPart = new MockPart("dto", objectMapper.writeValueAsBytes(creationDTO));
@@ -213,15 +215,15 @@ class OutfitsControllerTest {
   @Test
   @WithMockUser
   void addTag_shouldReturnCreated_whenOutfitExists() throws Exception {
-    when(outfitService.addTag(eq(outfitId), any())).thenReturn(TEST_TAG);
+    when(outfitService.addTag(eq(outfitId), any())).thenReturn(new OutfitTagDTO(TEST_TAG));
 
     mockMvc
         .perform(
             post("/api/v1/outfits/" + outfitId + "/tags")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("\"" + TEST_TAG + "\""))
+                .content(objectMapper.writeValueAsString(new OutfitTagDTO(TEST_TAG))))
         .andExpect(status().isCreated())
-        .andExpect(content().string(TEST_TAG));
+        .andExpect(jsonPath("$.name").value(TEST_TAG));
   }
 
   // -------------------------------------------------------------------------
@@ -237,7 +239,7 @@ class OutfitsControllerTest {
         .perform(
             delete("/api/v1/outfits/" + outfitId + "/tags")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("\"" + TEST_TAG + "\""))
+                .content(objectMapper.writeValueAsString(new OutfitTagDTO(TEST_TAG))))
         .andExpect(status().isOk())
         .andExpect(content().string("Tag successfully removed from outfit."));
   }

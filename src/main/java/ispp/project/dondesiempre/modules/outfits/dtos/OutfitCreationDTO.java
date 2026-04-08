@@ -20,7 +20,7 @@ public class OutfitCreationDTO {
   @Size(max = 5000)
   private String description;
 
-  private List<String> tags;
+  @Valid private List<OutfitTagDTO> tags;
 
   @NotEmpty @Valid private List<OutfitCreationProductDTO> products;
 }
