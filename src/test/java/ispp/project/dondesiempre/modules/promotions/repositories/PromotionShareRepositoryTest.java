@@ -1,6 +1,7 @@
 package ispp.project.dondesiempre.modules.promotions.repositories;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import ispp.project.dondesiempre.config.coordinates.GeometryFactoryConfig;
 import ispp.project.dondesiempre.modules.auth.models.User;
@@ -49,7 +50,6 @@ public class PromotionShareRepositoryTest {
     store.setEmail("test@test.com");
     store.setAddress("Test address");
     store.setOpeningHours("9-5");
-    store.setAcceptsShipping(false);
     store.setLocation(coordinatesService.createPoint(0.0, 0.0));
     store.setStorefront(storefront);
     store.setUser(user);

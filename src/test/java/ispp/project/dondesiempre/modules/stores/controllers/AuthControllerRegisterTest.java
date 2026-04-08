@@ -156,7 +156,6 @@ class AuthControllerRegisterTest {
     dto.setLongitude(-3.703790);
     dto.setAddress("Gran Vía 1, Madrid");
     dto.setOpeningHours("Mon-Fri 9-18");
-    dto.setAcceptsShipping(true);
     dto.setPhone("+34600000000");
     dto.setAboutUs("A great store.");
     dto.setPrimaryColor("#c65a3a");

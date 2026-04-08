@@ -67,7 +67,6 @@ class OutfitRepositoryTest {
     store.setAboutUs("Test description");
     store.setOpeningHours("Test opening hours");
     store.setEmail("test@test.com");
-    store.setAcceptsShipping(false);
     store.setUser(createTestUser());
     store.setAccountId("acc_AAAAA");
     store = storeRepository.save(store);
@@ -101,7 +100,6 @@ class OutfitRepositoryTest {
     store.setAboutUs("Test description");
     store.setOpeningHours("Test opening hours");
     store.setEmail("test@test.com");
-    store.setAcceptsShipping(false);
     store.setUser(createTestUser());
     store.setAccountId("acc_AAAAA");
     store = storeRepository.save(store);
@@ -166,7 +164,6 @@ class OutfitRepositoryTest {
     store1.setAboutUs("Test description");
     store1.setOpeningHours("Test opening hours");
     store1.setEmail("test@test.com");
-    store1.setAcceptsShipping(false);
     store1.setUser(createTestUser());
     store1.setAccountId("acc_AAAA");
     store1 = storeRepository.save(store1);
@@ -179,7 +176,6 @@ class OutfitRepositoryTest {
     store2.setAboutUs("Test description");
     store2.setOpeningHours("Test opening hours");
     store2.setEmail("test@test.com");
-    store2.setAcceptsShipping(false);
     store2.setUser(createTestUser());
     store2.setAccountId("acc_AAAA");
     store2 = storeRepository.save(store2);

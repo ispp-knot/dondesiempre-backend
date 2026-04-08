@@ -36,8 +36,6 @@ public class RegisterStoreDTO {
   @Size(max = 255)
   private String openingHours;
 
-  @NotNull private Boolean acceptsShipping;
-
   @Phone private String phone;
 
   @Size(max = 5000)
