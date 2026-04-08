@@ -25,10 +25,10 @@ public class OutfitDTO {
   private Integer index;
   private UUID storeId;
 
-  private List<String> tags;
+  private List<OutfitTagDTO> tags;
   private List<OutfitProductDTO> products;
 
-  public OutfitDTO(Outfit outfit, List<String> tags, List<OutfitProduct> products) {
+  public OutfitDTO(Outfit outfit, List<OutfitTagDTO> tags, List<OutfitProduct> products) {
     this.id = outfit.getId();
 
     this.name = outfit.getName();

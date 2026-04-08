@@ -5,10 +5,10 @@ import ispp.project.dondesiempre.modules.outfits.dtos.OutfitCreationProductDTO;
 import ispp.project.dondesiempre.modules.outfits.dtos.OutfitDTO;
 import ispp.project.dondesiempre.modules.outfits.dtos.OutfitProductDTO;
 import ispp.project.dondesiempre.modules.outfits.dtos.OutfitSortDTO;
+import ispp.project.dondesiempre.modules.outfits.dtos.OutfitTagDTO;
 import ispp.project.dondesiempre.modules.outfits.dtos.OutfitUpdateDTO;
 import ispp.project.dondesiempre.modules.outfits.models.Outfit;
 import ispp.project.dondesiempre.modules.outfits.services.OutfitService;
-import ispp.project.dondesiempre.modules.outfits.validators.Tag;
 import ispp.project.dondesiempre.modules.products.services.ProductService;
 import ispp.project.dondesiempre.modules.stores.services.StoreService;
 import jakarta.validation.Valid;
@@ -84,14 +84,16 @@ public class OutfitController {
 
   @PostMapping("outfits/{id}/tags")
   @ResponseStatus(HttpStatus.CREATED)
-  public ResponseEntity<String> addTag(@PathVariable("id") UUID id, @RequestBody @Tag String tag) {
-    return new ResponseEntity<>(outfitService.addTag(id, tag), HttpStatus.CREATED);
+  public ResponseEntity<OutfitTagDTO> addTag(
+      @PathVariable("id") UUID id, @RequestBody @Valid OutfitTagDTO tagDTO) {
+    return new ResponseEntity<>(outfitService.addTag(id, tagDTO), HttpStatus.CREATED);
   }
 
   @DeleteMapping("outfits/{id}/tags")
   @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<String> removeTag(@PathVariable("id") UUID id, @RequestBody String tag) {
-    outfitService.removeTag(id, tag);
+  public ResponseEntity<String> removeTag(
+      @PathVariable("id") UUID id, @RequestBody @Valid OutfitTagDTO tagDTO) {
+    outfitService.removeTag(id, tagDTO);
     return new ResponseEntity<>("Tag successfully removed from outfit.", HttpStatus.OK);
   }
 
