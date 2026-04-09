@@ -90,10 +90,6 @@ public class OrderService {
   public Order setPaymentIntentId(UUID orderId, String paymentIntentId) {
     Order order = applicationContext.getBean(OrderService.class).findById(orderId);
 
-    if (!authService.getCurrentUser().equals(order.getUser())) {
-      throw new UnauthorizedException(
-          "You can't set the paymentIntent id of an order you don't own.");
-    }
     order.setPaymentIntentId(paymentIntentId);
     return order;
   }
