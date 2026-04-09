@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 @Service
-@Profile("!test") // Se activa en dev, prod, etc.
+@Profile("!test")
 public class StripeProviderImpl implements StripeProvider {
 
   @Override

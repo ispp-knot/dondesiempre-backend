@@ -35,10 +35,8 @@ public class PaymentService {
 
   @Transactional
   public void createConnectAccount(Store store) {
-    // Ya no hay lógica de Stripe aquí, solo llamamos al proveedor
     String accountId = stripeProvider.createConnectAccount(store);
 
-    // Guardamos el ID (ya sea el real o el mock)
     storeService.setAccountId(store.getId(), accountId);
   }
 }
