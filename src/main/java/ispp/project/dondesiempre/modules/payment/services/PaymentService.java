@@ -12,6 +12,7 @@ import com.stripe.param.checkout.SessionCreateParams;
 import ispp.project.dondesiempre.modules.auth.models.User;
 import ispp.project.dondesiempre.modules.auth.services.AuthService;
 import ispp.project.dondesiempre.modules.common.exceptions.InvalidRequestException;
+import ispp.project.dondesiempre.modules.common.exceptions.StripeFailException;
 import ispp.project.dondesiempre.modules.common.exceptions.UnauthorizedException;
 import ispp.project.dondesiempre.modules.orders.models.Order;
 import ispp.project.dondesiempre.modules.orders.models.OrderItem;
@@ -45,6 +46,67 @@ public class PaymentService {
   private float premiumFeePercentage = 0.02f;
 
   @Transactional
+  public void capturePayment(Event event) throws StripeException {
+    if (!"checkout.session.completed".equals(event.getType())) {
+      return;
+    }
+
+    Session session = this.deserializeSession(event);
+    if (session == null) {
+      return;
+    }
+
+    String rawOrderId = session.getMetadata() != null ? session.getMetadata().get("orderId") : null;
+
+    if (rawOrderId == null || rawOrderId.isBlank()) {
+      return;
+    }
+
+    String paymentIntentId = session.getPaymentIntent();
+
+    if (paymentIntentId == null || paymentIntentId.isBlank()) {
+      return;
+    }
+
+    UUID orderId = UUID.fromString(rawOrderId);
+
+    try {
+      orderService.findById(orderId);
+    } catch (Exception e) {
+      this.refundPaymentIntent(paymentIntentId);
+      return;
+    }
+
+    applicationContext.getBean(PaymentService.class).registerPaymentOrder(orderId, paymentIntentId);
+  }
+
+  private Session deserializeSession(Event event) {
+    EventDataObjectDeserializer deserializer = event.getDataObjectDeserializer();
+
+    StripeObject obj =
+        deserializer
+            .getObject()
+            .orElseGet(
+                () -> {
+                  try {
+                    return deserializer.deserializeUnsafe();
+                  } catch (EventDataObjectDeserializationException e) {
+                    return null;
+                  }
+                });
+
+    return obj instanceof Session s ? s : null;
+  }
+
+  @Transactional
+  public Order registerPaymentOrder(UUID orderId, String paymentIntentId) {
+
+    Order order = orderService.setPaymentIntentId(orderId, paymentIntentId);
+
+    return order;
+  }
+
+  @Transactional
   public String initiateOrderPayment(UUID orderId) {
     Order order = orderService.findById(orderId);
 
@@ -58,10 +120,7 @@ public class PaymentService {
 
     String redirectUrl = String.format("%s/orders/checkout/%s", frontendUrl, orderId.toString());
     String cancelUrl = String.format("%s/orders", frontendUrl);
-    String sessionUrl =
-        applicationContext
-            .getBean(PaymentService.class)
-            .getCheckoutSession(order, redirectUrl, cancelUrl);
+    String sessionUrl = this.getCheckoutSession(order, redirectUrl, cancelUrl);
     return sessionUrl;
   }
 
@@ -100,13 +159,14 @@ public class PaymentService {
       Session session = Session.create(sessionParams);
       return session.getUrl();
     } catch (StripeException e) {
-      throw new RuntimeException(e.getMessage(), e);
+      throw new StripeFailException(e.getMessage());
     }
   }
 
-  private boolean checkIfStoreIsPremium(UUID storeId) {
-    boolean isPremium = storeService.checkStoreIsPremium(storeId);
-    return isPremium;
+  @Transactional(readOnly = true)
+  public boolean checkIfStoreIsPremium(UUID storeId) {
+
+    return storeService.checkStoreIsPremium(storeId);
   }
 
   private List<SessionCreateParams.LineItem> createLineItemsFromOrder(Order order) {
@@ -132,6 +192,14 @@ public class PaymentService {
     return order.getItems().stream().map(orderToLineItem::apply).toList();
   }
 
+  public Refund refundPaymentIntent(String paymentIntentId) throws StripeException {
+    RefundCreateParams redunParams =
+        RefundCreateParams.builder()
+            .setPaymentIntent(paymentIntentId)
+            .setReverseTransfer(true)
+            .setRefundApplicationFee(false)
+            .build();
+    return Refund.create(redunParams);
   }
 
   @Transactional
