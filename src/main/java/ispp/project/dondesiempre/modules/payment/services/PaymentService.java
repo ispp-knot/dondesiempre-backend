@@ -197,7 +197,6 @@ public class PaymentService {
         RefundCreateParams.builder()
             .setPaymentIntent(paymentIntentId)
             .setReverseTransfer(true)
-            .setRefundApplicationFee(false)
             .build();
     return Refund.create(redunParams);
   }
