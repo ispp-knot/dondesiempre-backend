@@ -124,6 +124,7 @@ public class OrderService {
         .totalPrice(order.getTotalPrice())
         .userId(order.getUser().getId())
         .storeName(storeName)
+        .isPaid(order.getPaymentIntentId().isPresent())
         .items(order.getItems().stream().map(this::mapItemToDTO).toList())
         .build();
   }

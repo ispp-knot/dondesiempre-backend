@@ -23,6 +23,7 @@ public class OrderDTO {
   private UUID userId;
   private String storeName;
   private List<OrderItemDTO> items;
+  private boolean isPaid;
 
   @Data
   @Builder
