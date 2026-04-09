@@ -163,4 +163,9 @@ public class StoreService {
 
     return store;
   }
+
+  @Transactional(readOnly = true)
+  public boolean checkStoreIsPremium(UUID storeId) {
+    return storeRepository.existsByIdAndPremiumPlanTrue(storeId);
+  }
 }
