@@ -1,5 +1,7 @@
 package ispp.project.dondesiempre.modules.orders.dtos;
 
+import ispp.project.dondesiempre.modules.orders.models.Order;
+import ispp.project.dondesiempre.modules.orders.models.OrderItem;
 import ispp.project.dondesiempre.modules.orders.models.OrderStatus;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -25,6 +27,21 @@ public class OrderDTO {
   private List<OrderItemDTO> items;
   private boolean isPaid;
 
+  public OrderDTO(Order order) {
+    this.id = order.getId();
+    this.orderCode = order.getOrderCode();
+    this.orderDate = order.getOrderDate();
+    this.orderStatus = order.getOrderStatus();
+    this.totalPrice = order.getTotalPrice();
+    this.userId = order.getUser().getId();
+    this.isPaid = order.getPaymentIntentId().isPresent();
+    this.storeName =
+        order.getItems() != null && !order.getItems().isEmpty()
+            ? order.getItems().get(0).getProduct().getStore().getName()
+            : null;
+    this.items = order.getItems().stream().map(OrderItemDTO::new).toList();
+  }
+
   @Data
   @Builder
   @NoArgsConstructor
@@ -35,5 +52,13 @@ public class OrderDTO {
     private Integer quantity;
     private Integer priceAtPurchase;
     private Integer subtotal;
+
+    public OrderItemDTO(OrderItem orderItem) {
+      this.productId = orderItem.getProduct().getId();
+      this.productName = orderItem.getProduct().getName();
+      this.quantity = orderItem.getQuantity();
+      this.priceAtPurchase = orderItem.getPriceAtPurchase();
+      this.subtotal = orderItem.getQuantity() * orderItem.getPriceAtPurchase();
+    }
   }
 }

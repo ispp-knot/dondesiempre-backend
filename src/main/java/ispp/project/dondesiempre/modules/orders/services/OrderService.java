@@ -60,12 +60,12 @@ public class OrderService {
       orders = orderRepository.findByUserId(currentUser.getId());
     }
 
-    return orders.stream().map(this::mapToOrderDTO).toList();
+    return orders.stream().map(OrderDTO::new).toList();
   }
 
   @Transactional(readOnly = true)
   public List<OrderDTO> findOrdersByUserId(UUID userId) {
-    return orderRepository.findByUserId(userId).stream().map(this::mapToOrderDTO).toList();
+    return orderRepository.findByUserId(userId).stream().map(OrderDTO::new).toList();
   }
 
   @Transactional(readOnly = true, rollbackFor = ResourceNotFoundException.class)
@@ -106,35 +106,6 @@ public class OrderService {
     return sb.toString();
   }
 
-  private OrderDTO mapToOrderDTO(Order order) {
-    String storeName = null;
-    if (order.getItems() != null && !order.getItems().isEmpty()) {
-      storeName = order.getItems().get(0).getProduct().getStore().getName();
-    }
-
-    return OrderDTO.builder()
-        .id(order.getId())
-        .orderCode(order.getOrderCode())
-        .orderDate(order.getOrderDate())
-        .orderStatus(order.getOrderStatus())
-        .totalPrice(order.getTotalPrice())
-        .userId(order.getUser().getId())
-        .storeName(storeName)
-        .isPaid(order.getPaymentIntentId().isPresent())
-        .items(order.getItems().stream().map(this::mapItemToDTO).toList())
-        .build();
-  }
-
-  private OrderDTO.OrderItemDTO mapItemToDTO(OrderItem item) {
-    return OrderDTO.OrderItemDTO.builder()
-        .productId(item.getProduct().getId())
-        .productName(item.getProduct().getName())
-        .quantity(item.getQuantity())
-        .priceAtPurchase(item.getPriceAtPurchase())
-        .subtotal(item.getQuantity() * item.getPriceAtPurchase())
-        .build();
-  }
-
   @Transactional(rollbackFor = ResourceNotFoundException.class)
   public OrderDTO createOrder(Map<Product, Integer> productsToBuy) {
     User user = authService.getCurrentUser();
@@ -158,7 +129,7 @@ public class OrderService {
     order.setTotalPrice(this.calculateAndSetTotalPrice(order));
     Order savedOrder = orderRepository.save(order);
 
-    return mapToOrderDTO(savedOrder);
+    return new OrderDTO(savedOrder);
   }
 
   @Transactional
@@ -202,7 +173,7 @@ public class OrderService {
             .orElseThrow(
                 () -> new ResourceNotFoundException("Order with Code" + orderCode + "not found"));
     authService.assertUserOwnsStore(order.getItems().getFirst().getProduct().getStore());
-    return mapToOrderDTO(order);
+    return new OrderDTO(order);
   }
 
   @Transactional
