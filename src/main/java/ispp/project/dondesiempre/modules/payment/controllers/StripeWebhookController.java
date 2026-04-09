@@ -6,6 +6,7 @@ import com.stripe.model.Event;
 import com.stripe.net.Webhook;
 import ispp.project.dondesiempre.modules.common.exceptions.InvalidRequestException;
 import ispp.project.dondesiempre.modules.payment.services.PaymentService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,16 +17,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(value = "/api/v1/webhook")
+@RequiredArgsConstructor
 public class StripeWebhookController {
 
   private final PaymentService paymentService;
-  private final String endpointSecret;
 
-  public StripeWebhookController(
-      PaymentService paymentService, @Value("${stripe.webhook.secret}") String endpointSecret) {
-    this.paymentService = paymentService;
-    this.endpointSecret = endpointSecret;
-  }
+  @Value("${stripe.webhook.secret}")
+  private String endpointSecret;
 
   @PostMapping
   public ResponseEntity<Void> capturePayments(
