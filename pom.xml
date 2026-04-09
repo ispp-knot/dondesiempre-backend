@@ -29,6 +29,7 @@
 	<properties>
 		<java.version>25</java.version>
 		<maven.build.timestamp.format>yyyy-MM-dd-HHmmss</maven.build.timestamp.format>
+		<excluded.groups>load</excluded.groups>
 	</properties>
 
 	<dependencyManagement>
@@ -259,28 +260,36 @@
 			</plugin>
 			<!-- Coverage -->
 			<plugin>
-            <groupId>org.jacoco</groupId>
-            <artifactId>jacoco-maven-plugin</artifactId>
-            <executions>
-                <execution>
-                    <goals>
-                        <goal>prepare-agent</goal>
-                    </goals>
-                </execution>
-                <execution>
-                    <id>report</id>
-                    <phase>test</phase>
-                    <goals>
-                        <goal>report</goal>
-                    </goals>
-                </execution>
-            </executions>
-						<configuration>
-							<excludes>
-								<exclude>ispp/project/dondesiempre/seed/**/*</exclude>
-							</excludes>
-						</configuration>
-        </plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>report</id>
+						<phase>test</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<excludes>
+						<exclude>ispp/project/dondesiempre/seed/**/*</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
+			<!-- Skipping load tests -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<excludedGroups>${excluded.groups}</excludedGroups>
+				</configuration>
+			</plugin>
 		</plugins>
 		<pluginManagement>
 			<plugins>

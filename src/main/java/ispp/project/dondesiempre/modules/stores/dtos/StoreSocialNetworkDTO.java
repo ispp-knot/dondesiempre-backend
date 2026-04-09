@@ -3,10 +3,12 @@ package ispp.project.dondesiempre.modules.stores.dtos;
 import ispp.project.dondesiempre.modules.stores.models.StoreSocialNetwork;
 import java.util.UUID;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class StoreSocialNetworkDTO {
 
   private UUID id;
