@@ -1,5 +1,6 @@
 package ispp.project.dondesiempre.modules.orders.dtos;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import ispp.project.dondesiempre.modules.orders.models.Order;
 import ispp.project.dondesiempre.modules.orders.models.OrderItem;
 import ispp.project.dondesiempre.modules.orders.models.OrderStatus;
@@ -25,6 +26,8 @@ public class OrderDTO {
   private UUID userId;
   private String storeName;
   private List<OrderItemDTO> items;
+
+  @JsonProperty("isPaid")
   private boolean isPaid;
 
   public OrderDTO(Order order) {
