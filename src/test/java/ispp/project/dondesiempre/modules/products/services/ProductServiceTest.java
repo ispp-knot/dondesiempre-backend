@@ -44,7 +44,7 @@ public class ProductServiceTest {
   @Autowired private ProductService productService;
   @Autowired private ProductTypeRepository productTypeRepository;
   @Autowired private StoreRepository storeRepository;
-  @Autowired private OutfitProductRepository outfitProductRepository;
+  @MockitoBean private OutfitProductRepository outfitProductRepository;
   @Autowired private UserRepository userRepository;
   @MockitoBean private AuthService authService;
   @MockitoBean private CloudinaryService cloudinaryService;
