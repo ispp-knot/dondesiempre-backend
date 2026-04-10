@@ -40,14 +40,15 @@ public class StoreSocialNetworkService {
     String clean = link.replaceAll("\\s+", "");
     String nameLower = name.toLowerCase();
 
+    String phoneDigits = clean.startsWith("tel:") ? clean.replace("tel:", "") : clean;
+
     if (PHONE_NETWORKS.contains(name)) {
-      String phoneDigits = clean.startsWith("tel:") ? clean.replace("tel:", "") : clean;
       if (!phoneDigits.matches(PHONE_REGEX)) {
         throw new InvalidSocialNetworkException(
             "Must be a valid telephone number, formed by 9-15 digits, prefix allowed.");
       }
     } else {
-      boolean isWhatsappPhone = nameLower.equals("whatsapp") && clean.matches(PHONE_REGEX);
+      boolean isWhatsappPhone = nameLower.equals("whatsapp") && phoneDigits.matches(PHONE_REGEX);
 
       if (!isWhatsappPhone && !link.matches(URL_REGEX)) {
         throw new InvalidSocialNetworkException("Must be a valid URL.");
@@ -57,7 +58,7 @@ public class StoreSocialNetworkService {
 
       switch (nameLower) {
         case "instagram":
-          if (!linkLower.matches("^(https?://)?(www\\.)?instagram\\.com(/.*)?$")) {
+          if (!linkLower.matches("^(https?://)?(www\\.)?(instagram\\.com|ig\\.me)(/.*)?$")) {
             throw new InvalidSocialNetworkException("Link must be a valid Instagram URL.");
           }
           break;

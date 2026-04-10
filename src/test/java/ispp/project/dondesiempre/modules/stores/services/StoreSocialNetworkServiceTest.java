@@ -352,4 +352,53 @@ public class StoreSocialNetworkServiceTest {
     verify(authService, never()).assertUserOwnsStore(store);
     verify(storeSocialNetworkRepository, never()).delete(relation);
   }
+
+  @Test
+  void addStoreSocialNetwork_shouldSaveRelation_whenInstagramUsesIgMe() {
+    when(applicationContext.getBean(StoreService.class)).thenReturn(storeService);
+
+    SocialNetworkDTO dto = new SocialNetworkDTO();
+    dto.setName("Instagram");
+    dto.setLink("https://ig.me/m/usuario");
+
+    when(storeService.findById(storeId)).thenReturn(store);
+    when(socialNetworkRepository.findByName("Instagram")).thenReturn(Optional.of(socialNetwork));
+    when(storeSocialNetworkRepository.existsByStoreIdAndSocialNetworkId(storeId, socialNetworkId))
+        .thenReturn(false);
+    when(storeSocialNetworkRepository.save(
+            org.mockito.ArgumentMatchers.any(StoreSocialNetwork.class)))
+        .thenAnswer(invocation -> invocation.getArgument(0));
+
+    StoreSocialNetwork result = storeSocialNetworkService.addStoreSocialNetwork(storeId, dto);
+
+    assertEquals("https://ig.me/m/usuario", result.getLink());
+    verify(storeSocialNetworkRepository).save(any(StoreSocialNetwork.class));
+  }
+
+  @Test
+  void addStoreSocialNetwork_shouldSaveRelation_whenWhatsappUsesTelPrefix() {
+    when(applicationContext.getBean(StoreService.class)).thenReturn(storeService);
+
+    SocialNetworkDTO dto = new SocialNetworkDTO();
+    dto.setName("Whatsapp");
+    dto.setLink("tel:+34123456789");
+
+    SocialNetwork whatsappNetwork = new SocialNetwork();
+    whatsappNetwork.setId(UUID.randomUUID());
+    whatsappNetwork.setName("Whatsapp");
+
+    when(storeService.findById(storeId)).thenReturn(store);
+    when(socialNetworkRepository.findByName("Whatsapp")).thenReturn(Optional.of(whatsappNetwork));
+    when(storeSocialNetworkRepository.existsByStoreIdAndSocialNetworkId(
+            storeId, whatsappNetwork.getId()))
+        .thenReturn(false);
+    when(storeSocialNetworkRepository.save(
+            org.mockito.ArgumentMatchers.any(StoreSocialNetwork.class)))
+        .thenAnswer(invocation -> invocation.getArgument(0));
+
+    StoreSocialNetwork result = storeSocialNetworkService.addStoreSocialNetwork(storeId, dto);
+
+    assertEquals("tel:+34123456789", result.getLink());
+    verify(storeSocialNetworkRepository).save(any(StoreSocialNetwork.class));
+  }
 }
