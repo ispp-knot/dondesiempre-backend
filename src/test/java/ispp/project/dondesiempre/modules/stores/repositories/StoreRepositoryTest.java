@@ -50,7 +50,6 @@ public class StoreRepositoryTest {
     store.setAddress("Direccion de prueba");
     store.setOpeningHours("09:00-18:00");
     store.setPhone("123456789");
-    store.setAcceptsShipping(true);
     store.setLocation(coordinatesService.createPoint(longitude, latitude));
     store.setAccountId("acc_AAAAA");
     store.setUser(createTestUser());
@@ -94,7 +93,6 @@ public class StoreRepositoryTest {
     assertNotNull(store.getId());
     assertEquals("Tienda Mapeo", store.getName());
     assertEquals("09:00-18:00", store.getOpeningHours());
-    assertTrue(store.getAcceptsShipping());
     assertEquals(37.290025, store.getLocation().getY());
     assertEquals(-5.932650, store.getLocation().getX());
   }

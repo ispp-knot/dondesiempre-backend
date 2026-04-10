@@ -54,8 +54,6 @@ public class Store extends BaseEntity {
   @Size(max = 5000)
   String aboutUs;
 
-  @Column @NotNull Boolean acceptsShipping;
-
   @Column String accountId;
   @Column @NotNull Boolean premiumPlan = false;
 
