@@ -22,11 +22,17 @@ import ispp.project.dondesiempre.modules.orders.models.OrderStatus;
 import ispp.project.dondesiempre.modules.orders.repositories.OrderRepository;
 import ispp.project.dondesiempre.modules.orders.services.OrderService;
 import ispp.project.dondesiempre.modules.products.models.Product;
+import ispp.project.dondesiempre.modules.products.models.ProductColor;
+import ispp.project.dondesiempre.modules.products.models.ProductSize;
+import ispp.project.dondesiempre.modules.products.models.ProductType;
+import ispp.project.dondesiempre.modules.products.models.ProductVariant;
+import ispp.project.dondesiempre.modules.products.services.ProductVariantService;
 import ispp.project.dondesiempre.modules.stores.models.Store;
 import ispp.project.dondesiempre.modules.stores.repositories.StoreRepository;
 import ispp.project.dondesiempre.utils.crypto.CryptoConverter;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -46,20 +52,24 @@ public class OrderServiceTest {
   @Mock private UserRepository userRepository;
   @Mock private StoreRepository storeRepository;
   @Mock private AuthService authService;
+  @Mock private ProductVariantService productVariantService;
   @Mock private CryptoConverter cryptoConverter;
 
   @InjectMocks private OrderService orderService;
 
   private UUID orderId;
+  private UUID variantId;
   private Order order;
   private User user;
   private Store store;
   private Product product;
+  private ProductVariant variant;
   private OrderItem item;
 
   @BeforeEach
   void setUp() {
     orderId = UUID.randomUUID();
+    variantId = UUID.randomUUID();
 
     user = new User();
     user.setId(UUID.randomUUID());
@@ -73,8 +83,23 @@ public class OrderServiceTest {
     product.setPriceInCents(100);
     product.setName("Producto Test");
 
+    // Create variant
+    ProductSize size = new ProductSize();
+    size.setSize("M");
+
+    ProductColor color = new ProductColor();
+    color.setColor("Red");
+
+    variant = new ProductVariant();
+    variant.setId(variantId);
+    variant.setProduct(product);
+    variant.setSize(size);
+    variant.setColor(color);
+    variant.setIsAvailable(true);
+
     item = new OrderItem();
     item.setProduct(product);
+    item.setVariant(variant);
     item.setQuantity(2);
     item.setPriceAtPurchase(100);
 
@@ -154,12 +179,16 @@ public class OrderServiceTest {
   }
 
   @Test
-  void createOrder_ShouldCreateAndReturnDTO() {
+  void createOrder_ShouldCreateAndReturnDTO()
+      throws ResourceNotFoundException, UnauthorizedException {
     when(authService.getCurrentUser()).thenReturn(user);
+    when(productVariantService.getProductVariantById(variantId)).thenReturn(variant);
     when(orderRepository.save(any())).thenReturn(order);
-    Map<Product, Integer> products = Map.of(product, 2);
 
-    OrderDTO result = orderService.createOrder(products);
+    Map<UUID, Integer> variantIdsWithQuantity = new HashMap<>();
+    variantIdsWithQuantity.put(variantId, 2);
+
+    OrderDTO result = orderService.createOrder(variantIdsWithQuantity);
 
     assertNotNull(result);
     verify(orderRepository).save(any(Order.class));
@@ -236,5 +265,108 @@ public class OrderServiceTest {
   void generateRandomCode_ShouldMatchFormat() {
     String code = orderService.generateRandomCode();
     assertTrue(code.matches("^[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$"));
+  }
+
+  // Tests for variant-based createOrder
+  @Test
+  void createOrder_WithValidVariants_ShouldCreateOrderWithVariantDetails()
+      throws ResourceNotFoundException, UnauthorizedException {
+    when(authService.getCurrentUser()).thenReturn(user);
+    when(productVariantService.getProductVariantById(variantId)).thenReturn(variant);
+    when(orderRepository.save(any(Order.class))).thenReturn(order);
+
+    Map<UUID, Integer> variantIdsWithQuantity = new HashMap<>();
+    variantIdsWithQuantity.put(variantId, 2);
+
+    OrderDTO result = orderService.createOrder(variantIdsWithQuantity);
+
+    assertNotNull(result);
+    assertEquals(user.getId(), result.getUserId());
+    assertEquals(1, result.getItems().size());
+    assertEquals(2, result.getItems().get(0).getQuantity());
+    assertEquals(OrderStatus.PENDING, result.getOrderStatus());
+  }
+
+  @Test
+  void createOrder_WithUnavailableVariant_ShouldThrowUnauthorizedException()
+      throws ResourceNotFoundException {
+    variant.setIsAvailable(false);
+    when(authService.getCurrentUser()).thenReturn(user);
+    when(productVariantService.getProductVariantById(variantId)).thenReturn(variant);
+
+    Map<UUID, Integer> variantIdsWithQuantity = new HashMap<>();
+    variantIdsWithQuantity.put(variantId, 2);
+
+    assertThrows(
+        UnauthorizedException.class, () -> orderService.createOrder(variantIdsWithQuantity));
+  }
+
+  @Test
+  void createOrder_WithNonExistentVariant_ShouldThrowResourceNotFoundException()
+      throws ResourceNotFoundException {
+    when(authService.getCurrentUser()).thenReturn(user);
+    when(productVariantService.getProductVariantById(variantId))
+        .thenThrow(new ResourceNotFoundException("Variant not found"));
+
+    Map<UUID, Integer> variantIdsWithQuantity = new HashMap<>();
+    variantIdsWithQuantity.put(variantId, 2);
+
+    assertThrows(
+        ResourceNotFoundException.class, () -> orderService.createOrder(variantIdsWithQuantity));
+  }
+
+  @Test
+  void createOrder_WithMultipleVariants_ShouldCreateOrderWithAllVariants()
+      throws ResourceNotFoundException, UnauthorizedException {
+    UUID variantId2 = UUID.randomUUID();
+    Product product2 = new Product();
+    product2.setId(UUID.randomUUID());
+    product2.setName("Test Product 2");
+    product2.setPriceInCents(200);
+    product2.setType(new ProductType());
+    product2.setStore(store);
+
+    ProductVariant variant2 = new ProductVariant();
+    variant2.setId(variantId2);
+    variant2.setProduct(product2);
+    variant2.setSize(variant.getSize());
+    variant2.setColor(variant.getColor());
+    variant2.setIsAvailable(true);
+
+    when(authService.getCurrentUser()).thenReturn(user);
+    when(productVariantService.getProductVariantById(variantId)).thenReturn(variant);
+    when(productVariantService.getProductVariantById(variantId2)).thenReturn(variant2);
+    when(orderRepository.save(any(Order.class))).thenReturn(order);
+
+    Map<UUID, Integer> variantIdsWithQuantity = new HashMap<>();
+    variantIdsWithQuantity.put(variantId, 1);
+    variantIdsWithQuantity.put(variantId2, 2);
+
+    OrderDTO result = orderService.createOrder(variantIdsWithQuantity);
+
+    assertNotNull(result);
+    assertEquals(OrderStatus.PENDING, result.getOrderStatus());
+  }
+
+  @Test
+  void createOrder_CalculatesTotalPriceCorrectly()
+      throws ResourceNotFoundException, UnauthorizedException {
+    when(authService.getCurrentUser()).thenReturn(user);
+    when(productVariantService.getProductVariantById(variantId)).thenReturn(variant);
+    when(orderRepository.save(any(Order.class)))
+        .thenAnswer(
+            invocation -> {
+              Order savedOrder = invocation.getArgument(0);
+              // Verify total price was calculated correctly (100 price * 2 quantity = 200)
+              assertEquals(200, savedOrder.getTotalPrice());
+              return savedOrder;
+            });
+
+    Map<UUID, Integer> variantIdsWithQuantity = new HashMap<>();
+    variantIdsWithQuantity.put(variantId, 2);
+
+    OrderDTO result = orderService.createOrder(variantIdsWithQuantity);
+
+    assertEquals(200, result.getTotalPrice());
   }
 }
