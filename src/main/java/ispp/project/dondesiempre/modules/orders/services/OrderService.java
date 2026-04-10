@@ -11,7 +11,7 @@ import ispp.project.dondesiempre.modules.orders.models.OrderItem;
 import ispp.project.dondesiempre.modules.orders.models.OrderStatus;
 import ispp.project.dondesiempre.modules.orders.repositories.OrderRepository;
 import ispp.project.dondesiempre.modules.outfits.models.Outfit;
-import ispp.project.dondesiempre.modules.outfits.repositories.OutfitRepository;
+import ispp.project.dondesiempre.modules.outfits.services.OutfitService;
 import ispp.project.dondesiempre.modules.products.models.Product;
 import ispp.project.dondesiempre.modules.stores.models.Store;
 import ispp.project.dondesiempre.modules.stores.repositories.StoreRepository;
@@ -37,7 +37,7 @@ public class OrderService {
   private final AuthService authService;
   private final CryptoConverter cryptoConverter;
   private final ApplicationContext applicationContext;
-  private final OutfitRepository outfitRepository;
+  private final OutfitService outfitService;
 
   private final SecureRandom secureRandom = new SecureRandom();
   private static final String CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -142,7 +142,8 @@ public class OrderService {
   }
 
   @Transactional(rollbackFor = ResourceNotFoundException.class)
-  public OrderDTO createOrder(Map<Product, Integer> productsToBuy, UUID outfitId) {
+  public OrderDTO createOrder(Map<Product, Integer> productsToBuy, UUID outfitId)
+      throws ResourceNotFoundException {
     User user = authService.getCurrentUser();
 
     Order order = new Order();
@@ -164,7 +165,7 @@ public class OrderService {
     Integer total = this.calculateAndSetTotalPrice(order);
 
     if (outfitId != null) {
-      Outfit outfit = outfitRepository.findById(outfitId).orElse(null);
+      Outfit outfit = outfitService.findById(outfitId);
       if (outfit != null && outfit.getDiscountPercentage().isPresent()) {
         Integer discount = outfit.getDiscountPercentage().get();
         total = (total * (100 - discount)) / 100;

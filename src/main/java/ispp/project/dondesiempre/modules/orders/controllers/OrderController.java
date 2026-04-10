@@ -8,6 +8,7 @@ import ispp.project.dondesiempre.modules.products.models.Product;
 import ispp.project.dondesiempre.modules.products.services.ProductService;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -45,8 +46,8 @@ public class OrderController {
 
   @PostMapping
   public ResponseEntity<OrderDTO> createOrder(
-      @RequestBody Map<UUID, Integer> productIdsWithQuantity,
-      @RequestParam(required = false) UUID outfitId) {
+      @RequestBody Map<UUID, Integer> productIdsWithQuantity, @RequestParam Optional<UUID> outfitId)
+      throws ResourceNotFoundException {
 
     Map<Product, Integer> productsToBuy =
         productIdsWithQuantity.entrySet().stream()
@@ -54,7 +55,7 @@ public class OrderController {
                 Collectors.toMap(
                     e -> productService.getProductById(e.getKey()), Map.Entry::getValue));
 
-    OrderDTO response = orderService.createOrder(productsToBuy, outfitId);
+    OrderDTO response = orderService.createOrder(productsToBuy, outfitId.orElse(null));
     return new ResponseEntity<>(response, HttpStatus.CREATED);
   }
 

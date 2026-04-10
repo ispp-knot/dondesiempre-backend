@@ -22,7 +22,7 @@ import ispp.project.dondesiempre.modules.orders.models.OrderStatus;
 import ispp.project.dondesiempre.modules.orders.repositories.OrderRepository;
 import ispp.project.dondesiempre.modules.orders.services.OrderService;
 import ispp.project.dondesiempre.modules.outfits.models.Outfit;
-import ispp.project.dondesiempre.modules.outfits.repositories.OutfitRepository;
+import ispp.project.dondesiempre.modules.outfits.services.OutfitService;
 import ispp.project.dondesiempre.modules.products.models.Product;
 import ispp.project.dondesiempre.modules.stores.models.Store;
 import ispp.project.dondesiempre.modules.stores.repositories.StoreRepository;
@@ -51,7 +51,7 @@ public class OrderServiceTest {
   @Mock private AuthService authService;
   @Mock private CryptoConverter cryptoConverter;
   @Mock private ApplicationContext applicationContext;
-  @Mock private OutfitRepository outfitRepository;
+  @Mock private OutfitService outfitService;
 
   @InjectMocks private OrderService orderService;
 
@@ -159,7 +159,7 @@ public class OrderServiceTest {
   }
 
   @Test
-  void createOrder_ShouldCreateAndReturnDTO() {
+  void createOrder_ShouldCreateAndReturnDTO() throws Exception {
     when(authService.getCurrentUser()).thenReturn(user);
     when(orderRepository.save(any())).thenReturn(order);
     Map<Product, Integer> products = Map.of(product, 2);
@@ -171,14 +171,14 @@ public class OrderServiceTest {
   }
 
   @Test
-  void createOrder_WithOutfitDiscount_ShouldApplyDiscount() {
+  void createOrder_WithOutfitDiscount_ShouldApplyDiscount() throws Exception {
     UUID outfitId = UUID.randomUUID();
     Outfit outfit = new Outfit();
     outfit.setId(outfitId);
     outfit.setDiscountPercentage(20);
 
     when(authService.getCurrentUser()).thenReturn(user);
-    when(outfitRepository.findById(outfitId)).thenReturn(Optional.of(outfit));
+    when(outfitService.findById(outfitId)).thenReturn(outfit);
     when(orderRepository.save(any(Order.class)))
         .thenAnswer(invocation -> invocation.getArgument(0));
 
@@ -192,14 +192,14 @@ public class OrderServiceTest {
   }
 
   @Test
-  void createOrder_WithOutfitDiscount_ShouldTruncateCorrectly() {
+  void createOrder_WithOutfitDiscount_ShouldTruncateCorrectly() throws Exception {
     UUID outfitId = UUID.randomUUID();
     Outfit outfit = new Outfit();
     outfit.setId(outfitId);
     outfit.setDiscountPercentage(25);
 
     when(authService.getCurrentUser()).thenReturn(user);
-    when(outfitRepository.findById(outfitId)).thenReturn(Optional.of(outfit));
+    when(outfitService.findById(outfitId)).thenReturn(outfit);
     when(orderRepository.save(any(Order.class)))
         .thenAnswer(invocation -> invocation.getArgument(0));
 
