@@ -2,11 +2,6 @@ package ispp.project.dondesiempre.config;
 
 import com.stripe.exception.StripeException;
 import ispp.project.dondesiempre.modules.common.exceptions.*;
-import ispp.project.dondesiempre.modules.common.exceptions.AlreadyExistsException;
-import ispp.project.dondesiempre.modules.common.exceptions.InvalidBoundingBoxException;
-import ispp.project.dondesiempre.modules.common.exceptions.InvalidRequestException;
-import ispp.project.dondesiempre.modules.common.exceptions.ResourceNotFoundException;
-import ispp.project.dondesiempre.modules.common.exceptions.UnauthorizedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -82,5 +77,12 @@ public class GlobalExceptionHandler {
   public ResponseEntity<String> handleLimitExceededException(
       LimitExceededException exception, WebRequest request) {
     return new ResponseEntity<>(exception.getMessage(), HttpStatus.UNAUTHORIZED);
+  }
+
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  @ExceptionHandler(InvalidSocialNetworkException.class)
+  public ResponseEntity<String> handleInvalidSocialNetworkException(
+      InvalidSocialNetworkException exception, WebRequest request) {
+    return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
   }
 }
