@@ -1,6 +1,7 @@
 package ispp.project.dondesiempre.modules.orders.services;
 
 import ispp.project.dondesiempre.modules.common.exceptions.ResourceNotFoundException;
+import ispp.project.dondesiempre.modules.common.exceptions.UnauthorizedException;
 import ispp.project.dondesiempre.modules.orders.dtos.OrderDTO.OrderItemDTO;
 import ispp.project.dondesiempre.modules.orders.models.OrderItem;
 import ispp.project.dondesiempre.modules.orders.repositories.OrderItemRepository;
@@ -30,7 +31,9 @@ public class OrderItemService {
   }
 
   @Transactional
-  public OrderItem saveOrderItem(OrderItem orderItem) {
+  public OrderItem saveOrderItem(OrderItem orderItem) throws UnauthorizedException {
+    validateVariantBelongsToProduct(orderItem.getVariant().getId(), orderItem.getProduct().getId());
+    validateVariantIsAvailable(orderItem.getVariant());
     return orderItemRepository.save(orderItem);
   }
 
@@ -54,10 +57,44 @@ public class OrderItemService {
     return orderItemRepository.findByProductId(productId).stream().map(this::mapToDTO).toList();
   }
 
+  @Transactional(readOnly = true)
+  public List<OrderItemDTO> findItemsByVariantId(UUID variantId) {
+    return orderItemRepository.findByVariantId(variantId).stream().map(this::mapToDTO).toList();
+  }
+
+  /**
+   * Validates that the provided variant belongs to the product. Throws UnauthorizedException if
+   * not.
+   */
+  private void validateVariantBelongsToProduct(UUID variantId, UUID productId)
+      throws UnauthorizedException {
+    if (!orderItemRepository.isVariantBelongsToProduct(variantId, productId)) {
+      throw new UnauthorizedException(
+          String.format(
+              "ProductVariant with ID %s does not belong to Product with ID %s",
+              variantId, productId));
+    }
+  }
+
+  /** Validates that the variant is available for purchase. Throws UnauthorizedException if not. */
+  private void validateVariantIsAvailable(
+      ispp.project.dondesiempre.modules.products.models.ProductVariant variant)
+      throws UnauthorizedException {
+    if (!variant.getIsAvailable()) {
+      throw new UnauthorizedException(
+          String.format(
+              "ProductVariant with ID %s is not available for purchase", variant.getId()));
+    }
+  }
+
   private OrderItemDTO mapToDTO(OrderItem item) {
     return OrderItemDTO.builder()
+        .id(item.getId())
         .productId(item.getProduct().getId())
         .productName(item.getProduct().getName())
+        .variantId(item.getVariant().getId())
+        .variantSize(item.getVariant().getSize().getSize())
+        .variantColor(item.getVariant().getColor().getColor())
         .quantity(item.getQuantity())
         .priceAtPurchase(item.getPriceAtPurchase())
         .subtotal(item.getQuantity() * item.getPriceAtPurchase())

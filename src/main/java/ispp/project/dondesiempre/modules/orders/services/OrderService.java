@@ -1,7 +1,6 @@
 package ispp.project.dondesiempre.modules.orders.services;
 
 import ispp.project.dondesiempre.modules.auth.models.User;
-import ispp.project.dondesiempre.modules.auth.repositories.UserRepository;
 import ispp.project.dondesiempre.modules.auth.services.AuthService;
 import ispp.project.dondesiempre.modules.common.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.modules.common.exceptions.UnauthorizedException;
@@ -10,7 +9,8 @@ import ispp.project.dondesiempre.modules.orders.models.Order;
 import ispp.project.dondesiempre.modules.orders.models.OrderItem;
 import ispp.project.dondesiempre.modules.orders.models.OrderStatus;
 import ispp.project.dondesiempre.modules.orders.repositories.OrderRepository;
-import ispp.project.dondesiempre.modules.products.models.Product;
+import ispp.project.dondesiempre.modules.products.models.ProductVariant;
+import ispp.project.dondesiempre.modules.products.services.ProductVariantService;
 import ispp.project.dondesiempre.modules.stores.models.Store;
 import ispp.project.dondesiempre.modules.stores.repositories.StoreRepository;
 import ispp.project.dondesiempre.utils.crypto.CryptoConverter;
@@ -30,9 +30,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class OrderService {
 
   private final OrderRepository orderRepository;
-  private final UserRepository userRepository;
   private final StoreRepository storeRepository;
   private final AuthService authService;
+  private final ProductVariantService productVariantService;
   private final CryptoConverter cryptoConverter;
   private final ApplicationContext applicationContext;
 
@@ -130,16 +130,21 @@ public class OrderService {
 
   private OrderDTO.OrderItemDTO mapItemToDTO(OrderItem item) {
     return OrderDTO.OrderItemDTO.builder()
+        .id(item.getId())
         .productId(item.getProduct().getId())
         .productName(item.getProduct().getName())
+        .variantId(item.getVariant().getId())
+        .variantSize(item.getVariant().getSize().getSize())
+        .variantColor(item.getVariant().getColor().getColor())
         .quantity(item.getQuantity())
         .priceAtPurchase(item.getPriceAtPurchase())
         .subtotal(item.getQuantity() * item.getPriceAtPurchase())
         .build();
   }
 
-  @Transactional(rollbackFor = ResourceNotFoundException.class)
-  public OrderDTO createOrder(Map<Product, Integer> productsToBuy) {
+  @Transactional(rollbackFor = {ResourceNotFoundException.class, UnauthorizedException.class})
+  public OrderDTO createOrder(Map<UUID, Integer> variantIdsWithQuantity)
+      throws ResourceNotFoundException, UnauthorizedException {
     User user = authService.getCurrentUser();
 
     Order order = new Order();
@@ -148,12 +153,22 @@ public class OrderService {
     order.setOrderStatus(OrderStatus.PENDING);
     order.setOrderCode(this.generateRandomCode());
 
-    for (Map.Entry<Product, Integer> entry : productsToBuy.entrySet()) {
+    for (Map.Entry<UUID, Integer> entry : variantIdsWithQuantity.entrySet()) {
+      ProductVariant variant = productVariantService.getProductVariantById(entry.getKey());
+
+      // Validate that variant is available
+      if (!variant.getIsAvailable()) {
+        throw new UnauthorizedException(
+            String.format(
+                "ProductVariant with ID %s is not available for purchase", variant.getId()));
+      }
+
       OrderItem item = new OrderItem();
       item.setOrder(order);
-      item.setProduct(entry.getKey());
+      item.setProduct(variant.getProduct());
+      item.setVariant(variant);
       item.setQuantity(entry.getValue());
-      item.setPriceAtPurchase(entry.getKey().getPriceInCents());
+      item.setPriceAtPurchase(variant.getProduct().getPriceInCents());
 
       order.getItems().add(item);
     }
