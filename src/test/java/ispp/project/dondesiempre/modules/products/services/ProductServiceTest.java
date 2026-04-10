@@ -6,12 +6,15 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.when;
 
 import ispp.project.dondesiempre.modules.auth.models.User;
 import ispp.project.dondesiempre.modules.auth.repositories.UserRepository;
 import ispp.project.dondesiempre.modules.auth.services.AuthService;
+import ispp.project.dondesiempre.modules.common.exceptions.InvalidRequestException;
 import ispp.project.dondesiempre.modules.common.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.modules.common.exceptions.UnauthorizedException;
+import ispp.project.dondesiempre.modules.outfits.repositories.OutfitProductRepository;
 import ispp.project.dondesiempre.modules.products.dtos.ProductCreationDTO;
 import ispp.project.dondesiempre.modules.products.dtos.ProductUpdateDTO;
 import ispp.project.dondesiempre.modules.products.models.Product;
@@ -41,6 +44,7 @@ public class ProductServiceTest {
   @Autowired private ProductService productService;
   @Autowired private ProductTypeRepository productTypeRepository;
   @Autowired private StoreRepository storeRepository;
+  @MockitoBean private OutfitProductRepository outfitProductRepository;
   @Autowired private UserRepository userRepository;
   @MockitoBean private AuthService authService;
   @MockitoBean private CloudinaryService cloudinaryService;
@@ -128,10 +132,21 @@ public class ProductServiceTest {
   @Test
   public void shouldDeleteProduct() {
     Product product = createTestProduct();
+    when(outfitProductRepository.existsByProductId(product.getId())).thenReturn(false);
     doNothing().when(authService).assertUserOwnsStore(any(Store.class));
     productService.deleteProduct(product.getId());
     assertThrows(
         ResourceNotFoundException.class, () -> productService.getProductById(product.getId()));
+  }
+
+  @Test
+  public void shouldNotDeleteProduct() {
+    Product product = createTestProduct();
+    when(outfitProductRepository.existsByProductId(product.getId())).thenReturn(true);
+    doNothing().when(authService).assertUserOwnsStore(any(Store.class));
+
+    assertThrows(
+        InvalidRequestException.class, () -> productService.deleteProduct(product.getId()));
   }
 
   @Test
