@@ -1,6 +1,8 @@
 package ispp.project.dondesiempre.modules.promotions.services;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import ispp.project.dondesiempre.modules.auth.models.User;
 import ispp.project.dondesiempre.modules.auth.repositories.UserRepository;
@@ -56,7 +58,6 @@ public class PromotionShareServiceTest {
     store.setLocation(coordinatesService.createPoint(0.0, 0.0));
     store.setAddress("123 Test Street");
     store.setOpeningHours("9am - 5pm");
-    store.setAcceptsShipping(true);
     store.setStorefront(createStorefront());
     store.setUser(user);
     store.setPremiumPlan(isPremium);

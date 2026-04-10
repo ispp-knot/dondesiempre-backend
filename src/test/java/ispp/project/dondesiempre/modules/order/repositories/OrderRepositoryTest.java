@@ -59,7 +59,6 @@ public class OrderRepositoryTest {
     savedStore.setEmail("order-store-" + UUID.randomUUID() + "@test.com");
     savedStore.setAddress("Test address");
     savedStore.setOpeningHours("9-5");
-    savedStore.setAcceptsShipping(false);
     savedStore.setLocation(coordinatesService.createPoint(0.0, 0.0));
     savedStore.setStorefront(storefront);
     savedStore.setUser(savedUser);
