@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 
 import ispp.project.dondesiempre.modules.auth.services.AuthService;
 import ispp.project.dondesiempre.modules.common.exceptions.AlreadyExistsException;
+import ispp.project.dondesiempre.modules.common.exceptions.InvalidSocialNetworkException;
 import ispp.project.dondesiempre.modules.common.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.modules.stores.dtos.SocialNetworkDTO;
 import ispp.project.dondesiempre.modules.stores.dtos.SocialNetworkUpdateDTO;
@@ -193,7 +194,7 @@ public class StoreSocialNetworkServiceTest {
         .thenReturn(false);
 
     assertThrows(
-        IllegalArgumentException.class,
+        InvalidSocialNetworkException.class,
         () -> storeSocialNetworkService.addStoreSocialNetwork(storeId, dto));
   }
 
@@ -215,7 +216,7 @@ public class StoreSocialNetworkServiceTest {
         .thenReturn(false);
 
     assertThrows(
-        IllegalArgumentException.class,
+        InvalidSocialNetworkException.class,
         () -> storeSocialNetworkService.addStoreSocialNetwork(storeId, dto));
   }
 
@@ -231,9 +232,9 @@ public class StoreSocialNetworkServiceTest {
     when(storeSocialNetworkRepository.existsByStoreIdAndSocialNetworkId(storeId, socialNetworkId))
         .thenReturn(false);
 
-    IllegalArgumentException exception =
+    InvalidSocialNetworkException exception =
         assertThrows(
-            IllegalArgumentException.class,
+            InvalidSocialNetworkException.class,
             () -> storeSocialNetworkService.addStoreSocialNetwork(storeId, dto));
 
     assertEquals("Link must be a valid Instagram URL.", exception.getMessage());
@@ -256,9 +257,9 @@ public class StoreSocialNetworkServiceTest {
             storeId, whatsappNetwork.getId()))
         .thenReturn(false);
 
-    IllegalArgumentException exception =
+    InvalidSocialNetworkException exception =
         assertThrows(
-            IllegalArgumentException.class,
+            InvalidSocialNetworkException.class,
             () -> storeSocialNetworkService.addStoreSocialNetwork(storeId, dto));
 
     assertEquals(
@@ -307,7 +308,8 @@ public class StoreSocialNetworkServiceTest {
         .thenReturn(Optional.of(relation));
 
     assertThrows(
-        IllegalArgumentException.class, () -> storeSocialNetworkService.update(relationId, dto));
+        InvalidSocialNetworkException.class,
+        () -> storeSocialNetworkService.update(relationId, dto));
   }
 
   @Test
@@ -318,9 +320,9 @@ public class StoreSocialNetworkServiceTest {
     when(storeSocialNetworkRepository.findByIdWithSocialNetwork(relationId))
         .thenReturn(Optional.of(relation));
 
-    IllegalArgumentException exception =
+    InvalidSocialNetworkException exception =
         assertThrows(
-            IllegalArgumentException.class,
+            InvalidSocialNetworkException.class,
             () -> storeSocialNetworkService.update(relationId, dto));
 
     assertEquals("Link must be a valid Instagram URL.", exception.getMessage());
