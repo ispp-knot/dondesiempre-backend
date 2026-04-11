@@ -97,7 +97,8 @@ public class ProductService {
     Product product = applicationContext.getBean(ProductService.class).getProductById(id);
     authService.assertUserOwnsStore(product.getStore());
 
-    product.setDiscountPercentage(discountPercentage);
+    if (discountPercentage != 0) product.setDiscountPercentage(discountPercentage);
+    else product.setDiscountPercentage(null);
     return productRepository.save(product);
   }
 
