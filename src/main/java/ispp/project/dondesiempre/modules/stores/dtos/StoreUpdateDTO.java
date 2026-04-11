@@ -27,6 +27,6 @@ public class StoreUpdateDTO {
 
   @Size(max = 5000)
   private String aboutUs;
-  // TODO social network
+  
 
 }
