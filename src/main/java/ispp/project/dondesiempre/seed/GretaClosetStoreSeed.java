@@ -31,7 +31,41 @@ class GretaClosetStoreSeed {
             "demo@gretacloset.com",
             37.283160057885304,
             -5.9237761491318235,
-            "C. Sta. María Magdalena, 14, 41701 Dos Hermanas, Sevilla",
+            "Greta Closet nació de una idea sencilla pero poderosa: que vestir bien no debería ser complicado ni caro. Somos una tienda de barrio con alma moderna, ubicada en el corazón de Dos Hermanas, donde cada prenda se elige pensando en ti, en tu día a día y en esos momentos especiales que merecen un look único.\r\n"
+                + //
+                "\r\n"
+                + //
+                "Aquí no encontrarás grandes cadenas ni etiquetas impersonales. Encontrarás una selección cuidada de ropa, complementos y tendencias actuales, con talles reales y precios que se ajustan a tu bolsillo. Desde básicos que no pueden faltar en tu armario hasta esas piezas con las que recibes cumplidos allá donde vas.\r\n"
+                + //
+                "\r\n"
+                + //
+                "Pero Greta Closet es más que una tienda: es un espacio donde conocernos, aconsejarte y celebrar juntas tu estilo. Porque cuando entras por nuestra puerta (en la calle Santa María Magdalena, 14), no eres una clienta más, eres parte de nuestra comunidad.\r\n"
+                + //
+                "\r\n"
+                + //
+                "¿Por qué elegirnos?\r\n"
+                + //
+                "\r\n"
+                + //
+                "🛍️ Trato cercano y asesoramiento real.\r\n"
+                + //
+                "\r\n"
+                + //
+                "💶 Calidad y moda sin perder de vista el precio.\r\n"
+                + //
+                "\r\n"
+                + //
+                "📍 Tienda física en Dos Hermanas (también hacemos envíos).\r\n"
+                + //
+                "\r\n"
+                + //
+                "💡 Renovamos colecciones a menudo para que siempre encuentres algo que te inspire.\r\n"
+                + //
+                "\r\n"
+                + //
+                "Te esperamos con los brazos abiertos… y con el probador listo para que te enamores de tu nueva prenda favorita.\r\n"
+                + //
+                "¿Vienes a conocernos? Greta Closet, tu tienda de confianza en Dos Hermanas.",
             "Lun-Vie 10:00-13:00, 17:30-20:30. Sab 10:30-14:00",
             "#000000",
             "#a1005c",

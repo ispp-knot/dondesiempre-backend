@@ -36,7 +36,15 @@ class AlfonsiStoreSeed {
             "#183b27",
             "#214a1b",
             "alfonsi/escaparate_alfonsi.png",
-            "Calle Romera, 32, 41701 Dos Hermanas, Sevilla ",
+            "En la calle Romera, número 32, seguimos haciendo lo que mejor sabemos: vestir con oficio, cariño y confianza. Confecciones Alfonsi es una de esas tiendas de barrio que resisten con orgullo, donde cada cliente sabe que encontrará calidad, variedad y una sonrisa sincera.\r\n"
+                + //
+                "\r\n"
+                + //
+                "Nos dedicamos a la confección y venta de prendas para toda la familia, con especial atención a los detalles, los tejidos duraderos y las tallas que de verdad se adaptan a ti. Ni moda desechable ni tendencias imposibles: aquí priman el sentido común y el buen gusto.\r\n"
+                + //
+                "\r\n"
+                + //
+                "Si buscas una tienda donde te conozcan, te aconsejen y te cuiden… ya sabes dónde estamos. Confecciones Alfonsi: la confianza se cose, como la ropa de antes.",
             "acct_1TFzN97Xt9jc8bVg");
     s.addSocialNetwork(
         alfonsi, socialNetworks, "Facebook", "https://www.facebook.com/confecciones.alfonsi/");

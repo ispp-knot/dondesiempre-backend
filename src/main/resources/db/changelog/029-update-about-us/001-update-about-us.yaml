@@ -1,0 +1,100 @@
+databaseChangeLog:
+  - changeSet:
+      id: 029-001-update-about-us-bazar-romera
+      author: ivanm
+      changes:
+        - update:
+            tableName: stores
+            where: "name = 'Bazar Romera'"
+            columns:
+              - column:
+                  name: about_us
+                  value: "Hay sitios donde solo compras. Y luego está Bazar Romera, donde encuentras de todo… y además te sientes como en casa. En la calle Romera, número 8, llevamos años siendo ese comercio de referencia donde siempre hay algo que necesitas (aunque no supieras que lo necesitabas hasta que lo ves).\r\n\r\nSomos un bazar de toda la vida: variedad, precios ajustados y un trato cercano que convierte una simple compra en un buen rato. Sin grandes pretensiones, pero con mucha utilidad.\r\n\r\nBazar Romera: lo que buscas, donde menos te lo esperas… y siempre con una sonrisa."
+  - changeSet:
+      id: 029-002-update-about-us-alfonsi
+      author: ivanm
+      changes:
+        - update:
+            tableName: stores
+            where: "name = 'Confecciones Alfonsi'"
+            columns:
+              - column:
+                  name: about_us
+                  value: "En la calle Romera, número 32, seguimos haciendo lo que mejor sabemos: vestir con oficio, cariño y confianza. Confecciones Alfonsi es una de esas tiendas de barrio que resisten con orgullo, donde cada cliente sabe que encontrará calidad, variedad y una sonrisa sincera.\r\n\r\nNos dedicamos a la confección y venta de prendas para toda la familia, con especial atención a los detalles, los tejidos duraderos y las tallas que de verdad se adaptan a ti. Ni moda desechable ni tendencias imposibles: aquí priman el sentido común y el buen gusto.\r\n\r\nSi buscas una tienda donde te conozcan, te aconsejen y te cuiden… ya sabes dónde estamos. Confecciones Alfonsi: la confianza se cose, como la ropa de antes."
+  - changeSet:
+      id: 029-003-update-about-us-san-sebastian
+      author: ivanm
+      changes:  
+        - update:
+            tableName: stores
+            where: "name = 'Confecciones y Hogar San Sebastián'"
+            columns:
+              - column:
+                  name: about_us
+                  value: "Llevamos en el mercado desde 1959. Más de seis décadas vistiendo a familias enteras de Dos Hermanas y haciendo del comercio local un verdadero hogar. Somos una empresa física, de toda la vida, con la puerta siempre abierta y el trato que ya casi no se encuentra.\r\n\r\n¿Qué ofrecemos?\r\nUn poco de todo, pero hecho con mucho mimo:\r\n\r\n👔 Confección de caballero y señora.\r\n\r\n📏 Tallas especiales (porque los cuerpos reales merecen ropa real).\r\n\r\n🧦 Interiores de caballeros, señoras y niños.\r\n\r\n📦 Paquetería y calcetería de calidad.\r\n\r\n🛋️ Textil de hogar: desde sábanas hasta mantelería.\r\n\r\n¿De dónde viene nuestra ropa?\r\nSolo trabajamos con proveedores 100% nacionales: Harper & Neyer, La Bassette, Kents, Dos Galgos, Brown Fury, Carlos Córdoba, Capelhi, Persam, Tachi & Zucca, Boguar, Egatex, Señoretta, Ysabel Mora, Dolores Cortés, Selmark, Belty, Abanderado, Ferry, Avet, Set, Morante, Naiara, Selene, Burrito Blanco, Catotex, Cañete, Manterol, Belnou, Cotopour… y muchos más.\r\n\r\nY si no lo tenemos… lo buscamos.\r\nPorque nuestra mayor satisfacción es resolver lo que necesitas, aunque no esté en el escaparate. Si buscas un artículo y no lo encuentras, intentamos conseguirlo poniendo todo lo que está en nuestras manos para satisfacerte.\r\n\r\nConfecciones y Hogar San Sebastián: tradición, calidad y trato de familia desde 1959."
+  - changeSet:
+      id: 029-004-update-about-us-greta-closet
+      author: ivanm
+      changes: 
+        - update:
+            tableName: stores
+            where: "name = 'Greta Closet'"
+            columns:
+              - column:
+                  name: about_us
+                  value: "Greta Closet nació de una idea sencilla pero poderosa: que vestir bien no debería ser complicado ni caro. Somos una tienda de barrio con alma moderna, ubicada en el corazón de Dos Hermanas, donde cada prenda se elige pensando en ti, en tu día a día y en esos momentos especiales que merecen un look único.\r\n\r\nAquí no encontrarás grandes cadenas ni etiquetas impersonales. Encontrarás una selección cuidada de ropa, complementos y tendencias actuales, con talles reales y precios que se ajustan a tu bolsillo. Desde básicos que no pueden faltar en tu armario hasta esas piezas con las que recibes cumplidos allá donde vas.\r\n\r\nPero Greta Closet es más que una tienda: es un espacio donde conocernos, aconsejarte y celebrar juntas tu estilo. Porque cuando entras por nuestra puerta (en la calle Santa María Magdalena, 14), no eres una clienta más, eres parte de nuestra comunidad.\r\n\r\n¿Por qué elegirnos?\r\n\r\n🛍️ Trato cercano y asesoramiento real.\r\n\r\n💶 Calidad y moda sin perder de vista el precio.\r\n\r\n📍 Tienda física en Dos Hermanas (también hacemos envíos).\r\n\r\n💡 Renovamos colecciones a menudo para que siempre encuentres algo que te inspire.\r\n\r\nTe esperamos con los brazos abiertos… y con el probador listo para que te enamores de tu nueva prenda favorita.\r\n¿Vienes a conocernos? Greta Closet, tu tienda de confianza en Dos Hermanas."
+  - changeSet:
+      id: 029-005-update-about-us-lucemes-bags
+      author: ivanm
+      changes:
+        - update:
+            tableName: stores
+            where: "name = 'Luceme''s Bags'"
+            columns:
+              - column:
+                  name: about_us
+                  value: "Hay complementos que visten, y luego están los que te definen. En Luceme's Bags creemos que un bolso es mucho más que un accesorio: es tu compañero fiel del día a día, el que guarda tus pequeños tesoros, tus prisas, tus llaves y esa libreta donde apuntas tus ideas.\r\n\r\nSituados en la céntrica calle San Sebastián, número 6, en pleno corazón de Dos Hermanas, somos una tienda specializada en bolsos, carteras y complementos de piel y materiales cuidadosamente seleccionados. No buscamos seguir todas las tendencias pasajeras, sino ofrecerte diseños atemporales, con calidad real y un precio justo.\r\n\r\n¿Qué nos hace diferentes?\r\n\r\n👜 Variedad sin agobios: Desde bolsos de diario amplios y resistentes hasta modelos más elegantes para tus noches o eventos especiales.\r\n\r\n✨ Piel y materiales con carácter: Toca, siente y comprueba tú misma la diferencia de una buena hebilla, un buen forro y unos acabados que duran.\r\n\r\n💬 Trato de toda la vida: Aquí no eres un código de barras. Te conocemos, te aconsejamos y si no encuentras lo que buscas, lo buscamos juntas.\r\n\r\n📍 Tienda física en Dos Hermanas: Aunque también hacemos envíos, sabemos que un bolso se prueba, se mira bien y se huele. Por eso nuestra puerta está siempre abierta en la calle San Sebastián, 6.\r\n\r\nEn Luceme's Bags no vendemos bolsos por inercia. Los elegimos uno a uno pensando en mujeres reales, con ritmos reales y estilos propios. Porque el bolso perfecto no es el más caro, sino el que te hace sentir tú misma cada vez que lo coges al salir de casa.\r\n\r\nPásate a conocernos.\r\nTe esperamos con una sonrisa, buenos precios y esa pieza que aún no sabes que necesitas… pero que cuando la veas, no podrás dejar escapar.\r\n\r\nLuceme's Bags – Tu bolso, tu estilo, tu tienda en Dos Hermanas."
+  - changeSet:
+      id: 029-006-update-about-us-mar-govantes
+      author: ivanm
+      changes:
+        - update:
+            tableName: stores
+            where: "name = 'Mar Govantes'"
+            columns:
+              - column:
+                  name: about_us
+                  value: "En Mar Govantes sabemos que la moda femenina no entiende de tallas únicas, ni de cuerpos estándar. Por eso, desde nuestra tienda en Dos Hermanas (Sevilla), ofrecemos una cuidada selección de ropa casual y de vestir pensada para la mujer real: la que trabaja, la que disfruta, la que quiere sentirse cómoda y guapa a la vez.\r\nSomos especialistas en tallas grandes porque creemos que todas merecen encontrar prendas que se ajusten bien, favorezcan y expresen su estilo. Sin renunciar a nada: ni a la tendencia, ni a la calidad, ni a un precio coherente.\r\n\r\n¿Qué encontrarás en Mar Govantes?\r\n\r\n👗 Moda femenina actual para el día a día y para ocasiones especiales.\r\n\r\n📏 Tallas grandes con corte y caída pensados de verdad.\r\n\r\n🧥 Ropa casual, cómoda y versátil, además de opciones más arregladas.\r\n\r\n💬 Trato cercano, asesoramiento honesto y un probador donde te sientas como en casa.\r\n\r\nPase lo que pase en las pasarelas, aquí lo importante eres tú. Ven a conocernos, porque la moda no tiene límites… pero sí tiene un sitio donde te entienden: Mar Govantes."
+  - changeSet:
+      id: 029-007-update-about-us-pineapple
+      author: ivanm
+      changes:
+        - update:
+            tableName: stores
+            where: "name = 'Pineapple Moda'"
+            columns:
+              - column:
+                  name: about_us
+                  value: "Pineapple nace con una idea fresca, colorida y sin complejos: que tu armario refleje tu personalidad más auténtica. Estamos en la calle Canónigo, 73, en pleno Dos Hermanas, y hemos venido para quedarnos con una propuesta diferente, vibrante y llena de vida.\r\n\r\nNo somos una tienda de moda al uso. En Pineapple encontrarás ropa y complementos con carácter, pensados para mujeres que no le temen al color, a los estampados ni a mezclar estilos. Porque vestir también es divertido.\r\n\r\nNuestra filosofía en tres ideas:\r\n\r\n🍍 Originalidad ante todo: nada de uniformes aburridos.\r\n\r\n🎨 Comodidad y estilo van de la mano.\r\n\r\n💛 Un trato tan cálido como nuestro nombre.\r\n\r\nPásate por la calle Canónigo, 73, y descubre por qué en Pineapple cada prenda tiene su propia historia… y estamos deseando que la hagas tuya."
+  - changeSet:
+      id: 029-008-update-about-us-roire
+      author: ivanm
+      changes:
+        - update:
+            tableName: stores
+            where: "name = 'Roire'"
+            columns:
+              - column:
+                  name: about_us
+                  value: "En Roire no concebimos la moda como un producto más. Para nosotros, cada prenda, cada tejido y cada cliente merecen la misma exigencia: la de la calidad real y el compromiso honesto.\r\n\r\nPor eso nos aseguramos de que solo vendemos productos que cumplen con los estándares más altos de nuestros clientes. Pero no nos quedamos ahí. Escuchamos, observamos y aprendemos de quienes confían en nosotros día tras día. Nos esforzamos por comprender las necesidades de nuestros clientes leales y trabajamos para ofrecerles un servicio personalizado, adaptado a sus gustos, su talla, su momento de vida y sus exigencias.\r\n\r\nEn Roire no vendemos por vender. Vendemos para que vuelvas.\r\n\r\nPorque la fidelidad no se pide, se construye. Y nosotros la construimos prenda a prenda, conversación a conversación, con calidad, cercanía y una sola obsesión: que te sientas única, bien atendida y con ganas de repetir."
+  - changeSet:
+      id: 029-009-update-about-us-modas-romantika-vintage
+      author: ivanm
+      changes:
+        - update:
+            tableName: stores
+            where: "name = 'Modas Romantika Vintage'"
+            columns:
+              - column:
+                  name: about_us
+                  value: "¿Eres de las que huye de los looks predecibles? ¿Te gusta brillar en los eventos y sentir que nadie viste como tú? Entonces Modas Romantika Vintage es tu sitio.\r\nNos especializamos en moda para eventos y ocasiones especiales, pero no de cualquier manera: con un espíritu único, divertido y diferente que celebra la personalidad de cada mujer. Aquí no encontrarás el vestido de 'todas'. Encontrarás complementos originales, piezas con carácter y toda la moda urbana más alegre y auténtica.\r\nLo que nos hace especiales:\r\n\r\n🎉 Moda para bodas, comuniones, cenas y fiestas que piden un look inolvidable.\r\n\r\n🧣 Complementos que no pasan desapercibidos.\r\n\r\n🌈 Estilo romántico, vintage y divertido, hecho para mujeres que saben lo que quieren.\r\n\r\nPorque lo común es aburrido. Lo original, es románticamente vintage."
