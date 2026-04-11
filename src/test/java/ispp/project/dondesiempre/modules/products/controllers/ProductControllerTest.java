@@ -12,6 +12,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ispp.project.dondesiempre.config.GlobalExceptionHandler;
+import ispp.project.dondesiempre.modules.outfits.services.OutfitService;
 import ispp.project.dondesiempre.modules.products.dtos.ProductCreationDTO;
 import ispp.project.dondesiempre.modules.products.dtos.ProductDiscountUpdateDTO;
 import ispp.project.dondesiempre.modules.products.dtos.ProductUpdateDTO;
@@ -45,6 +46,7 @@ public class ProductControllerTest {
   @Autowired private ObjectMapper objectMapper;
 
   @MockitoBean private ProductService productService;
+  @MockitoBean private OutfitService outfitService;
 
   private UUID productId;
   private UUID storeId;

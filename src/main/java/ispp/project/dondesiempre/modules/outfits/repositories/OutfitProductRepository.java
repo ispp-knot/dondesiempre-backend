@@ -18,6 +18,8 @@ public interface OutfitProductRepository extends JpaRepository<OutfitProduct, UU
 
   Optional<OutfitProduct> findByOutfitIdAndProductId(UUID outfitId, UUID productId);
 
+  boolean existsByProductId(UUID productId);
+
   @Query(
       """
       SELECT op FROM OutfitProduct op

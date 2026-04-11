@@ -4,6 +4,7 @@ import ispp.project.dondesiempre.modules.auth.services.AuthService;
 import ispp.project.dondesiempre.modules.common.exceptions.InvalidRequestException;
 import ispp.project.dondesiempre.modules.common.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.modules.common.exceptions.UnauthorizedException;
+import ispp.project.dondesiempre.modules.outfits.repositories.OutfitProductRepository;
 import ispp.project.dondesiempre.modules.products.dtos.ProductCreationDTO;
 import ispp.project.dondesiempre.modules.products.dtos.ProductUpdateDTO;
 import ispp.project.dondesiempre.modules.products.models.Product;
@@ -29,6 +30,13 @@ public class ProductService {
   private final ProductTypeService productTypeService;
   private final AuthService authService;
   private final CloudinaryService cloudinaryService;
+  private final OutfitProductRepository outfitProductRepository;
+
+  private void validateMinPriceInCents(Integer priceInCents) throws InvalidRequestException {
+    if (priceInCents != null && priceInCents < 1) {
+      throw new InvalidRequestException("Price must be at least 1 cent.");
+    }
+  }
 
   @Transactional(
       rollbackFor = {
@@ -38,6 +46,7 @@ public class ProductService {
       })
   public Product createProduct(ProductCreationDTO dto, MultipartFile image, UUID storeId)
       throws UnauthorizedException, ResourceNotFoundException, InvalidRequestException {
+    validateMinPriceInCents(dto.getPriceInCents());
     Store store =
         storeRepository
             .findById(storeId)
@@ -105,6 +114,7 @@ public class ProductService {
       })
   public Product updateProduct(UUID productId, ProductUpdateDTO dto, MultipartFile image)
       throws UnauthorizedException, ResourceNotFoundException, InvalidRequestException {
+    validateMinPriceInCents(dto.getPriceInCents());
     Product product =
         productRepository
             .findById(productId)
@@ -138,6 +148,13 @@ public class ProductService {
   @Transactional(rollbackFor = {UnauthorizedException.class, ResourceNotFoundException.class})
   public void deleteProduct(UUID productId)
       throws UnauthorizedException, ResourceNotFoundException {
+    boolean outfitsUsingProduct = outfitProductRepository.existsByProductId(productId);
+
+    if (outfitsUsingProduct) {
+      throw new InvalidRequestException(
+          "Cannot delete product because it is used in one or more outfits.");
+    }
+
     Product product =
         productRepository
             .findById(productId)
