@@ -1,6 +1,7 @@
 package ispp.project.dondesiempre.modules.stores.controllers;
 
 import ispp.project.dondesiempre.modules.payment.dto.AccountStatusDTO;
+import ispp.project.dondesiempre.modules.payment.dto.StripeDashboardLinkDTO;
 import ispp.project.dondesiempre.modules.payment.dto.StripeOnBoardingLinkDTO;
 import ispp.project.dondesiempre.modules.payment.services.PaymentService;
 import ispp.project.dondesiempre.modules.stores.dtos.StoreDTO;
@@ -84,5 +85,11 @@ public class StoreController {
   public ResponseEntity<StripeOnBoardingLinkDTO> getOnBoardingLink(@PathVariable UUID id) {
     String link = paymentService.getStripeOnboardingLink(storeService.findById(id));
     return new ResponseEntity<>(new StripeOnBoardingLinkDTO(link), HttpStatus.OK);
+  }
+
+  @GetMapping("/stores/{id}/stripe/dashboard")
+  public ResponseEntity<StripeDashboardLinkDTO> getStripeDashboardLink(@PathVariable UUID id) {
+    String link = paymentService.getStripeDashboardLink(storeService.findById(id));
+    return new ResponseEntity<>(new StripeDashboardLinkDTO(link), HttpStatus.OK);
   }
 }

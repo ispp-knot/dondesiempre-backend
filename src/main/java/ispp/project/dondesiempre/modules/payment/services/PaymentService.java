@@ -7,6 +7,7 @@ import com.stripe.model.Account.Requirements;
 import com.stripe.model.AccountLink;
 import com.stripe.model.Event;
 import com.stripe.model.EventDataObjectDeserializer;
+import com.stripe.model.LoginLink;
 import com.stripe.model.Refund;
 import com.stripe.model.StripeObject;
 import com.stripe.model.checkout.Session;
@@ -255,6 +256,7 @@ public class PaymentService {
   }
 
   public String getStripeOnboardingLink(Store store) {
+    authService.assertUserOwnsStore(store);
     String stripeAccountId =
         store
             .getAccountId()
@@ -278,5 +280,26 @@ public class PaymentService {
       throw new StripeFailException("Hubo un fallo al generar el link de verificación.");
     }
     return accountLink.getUrl();
+  }
+
+  public String getStripeDashboardLink(Store store) {
+
+    authService.assertUserOwnsStore(store);
+
+    String stripeAccountId =
+        store
+            .getAccountId()
+            .orElseThrow(
+                () ->
+                    new StripeFailException(
+                        "La tienda no tiene cuenta de stripe asociada, contacte con soporte"));
+    LoginLink loginLink;
+    try {
+      loginLink = LoginLink.createOnAccount(stripeAccountId);
+    } catch (StripeException e) {
+      throw new StripeFailException("Hubo un fallo al generar el link de de acceso al dashboard.");
+    }
+
+    return loginLink.getUrl();
   }
 }
