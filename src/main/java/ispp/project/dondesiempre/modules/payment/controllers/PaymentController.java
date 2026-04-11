@@ -5,6 +5,7 @@ import ispp.project.dondesiempre.modules.orders.services.OrderService;
 import ispp.project.dondesiempre.modules.payment.dto.AccountStatusDTO;
 import ispp.project.dondesiempre.modules.payment.dto.PaymentInitDTO;
 import ispp.project.dondesiempre.modules.payment.services.PaymentService;
+import ispp.project.dondesiempre.modules.payment.services.StripeVerificationService;
 import ispp.project.dondesiempre.modules.stores.models.Store;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ public class PaymentController {
 
   private final PaymentService paymentService;
   private final OrderService orderService;
+  private final StripeVerificationService stripeVerificationService;
 
   @GetMapping("/checkout/{orderId}")
   public ResponseEntity<PaymentInitDTO> initiateOrderPayment(
@@ -40,7 +42,7 @@ public class PaymentController {
             .findById(orderId)
             .getStore()
             .orElseThrow(() -> new InvalidRequestException("El pedido no tiene productos."));
-    boolean isVerified = paymentService.checkAccountIsVerifiedForPayments(store);
+    boolean isVerified = stripeVerificationService.checkAccountIsVerifiedForPayments(store);
     return new ResponseEntity<>(new AccountStatusDTO(isVerified), HttpStatus.OK);
   }
 }

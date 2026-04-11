@@ -4,6 +4,7 @@ import ispp.project.dondesiempre.modules.payment.dto.AccountStatusDTO;
 import ispp.project.dondesiempre.modules.payment.dto.StripeDashboardLinkDTO;
 import ispp.project.dondesiempre.modules.payment.dto.StripeOnBoardingLinkDTO;
 import ispp.project.dondesiempre.modules.payment.services.PaymentService;
+import ispp.project.dondesiempre.modules.payment.services.StripeVerificationService;
 import ispp.project.dondesiempre.modules.stores.dtos.StoreDTO;
 import ispp.project.dondesiempre.modules.stores.dtos.StoreUpdateDTO;
 import ispp.project.dondesiempre.modules.stores.dtos.StoreUpdateLocationDTO;
@@ -29,6 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class StoreController {
   private final StoreService storeService;
   private final PaymentService paymentService;
+  private final StripeVerificationService stripeVerificationService;
 
   @GetMapping("/stores")
   @ResponseStatus(HttpStatus.OK)
@@ -77,7 +79,7 @@ public class StoreController {
   @GetMapping("/stores/{id}/stripe/status")
   public ResponseEntity<AccountStatusDTO> checkStoreStripeAccountStatus(@PathVariable UUID id) {
     boolean verificationStatus =
-        paymentService.checkAccountIsVerifiedForPayments(storeService.findById(id));
+        stripeVerificationService.checkAccountIsVerifiedForPayments(storeService.findById(id));
     return new ResponseEntity<>(new AccountStatusDTO(verificationStatus), HttpStatus.OK);
   }
 

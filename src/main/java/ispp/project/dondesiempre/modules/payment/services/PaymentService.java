@@ -2,8 +2,6 @@ package ispp.project.dondesiempre.modules.payment.services;
 
 import com.stripe.exception.EventDataObjectDeserializationException;
 import com.stripe.exception.StripeException;
-import com.stripe.model.Account;
-import com.stripe.model.Account.Requirements;
 import com.stripe.model.AccountLink;
 import com.stripe.model.Event;
 import com.stripe.model.EventDataObjectDeserializer;
@@ -17,7 +15,6 @@ import com.stripe.param.checkout.SessionCreateParams;
 import ispp.project.dondesiempre.modules.auth.models.User;
 import ispp.project.dondesiempre.modules.auth.services.AuthService;
 import ispp.project.dondesiempre.modules.common.exceptions.InvalidRequestException;
-import ispp.project.dondesiempre.modules.common.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.modules.common.exceptions.StoreNotVerifiedException;
 import ispp.project.dondesiempre.modules.common.exceptions.StripeFailException;
 import ispp.project.dondesiempre.modules.common.exceptions.UnauthorizedException;
@@ -45,6 +42,7 @@ public class PaymentService {
   private final AuthService authService;
   private final StripeProvider stripeProvider;
   private final ApplicationContext applicationContext;
+  private final StripeVerificationService stripeVerificationService;
 
   @Value("${frontend.url}")
   private String frontendUrl;
@@ -126,7 +124,7 @@ public class PaymentService {
       throw new InvalidRequestException("The order is already paid");
 
     boolean isVerified =
-        checkAccountIsVerifiedForPayments(
+        stripeVerificationService.checkAccountIsVerifiedForPayments(
             order
                 .getStore()
                 .orElseThrow(() -> new InvalidRequestException("El pedido no tiene productos.")));
@@ -225,34 +223,6 @@ public class PaymentService {
     String accountId = stripeProvider.createConnectAccount(store);
 
     storeService.setAccountId(store.getId(), accountId);
-  }
-
-  public boolean checkAccountIsVerifiedForPayments(Store store) {
-
-    if (store == null) throw new ResourceNotFoundException();
-
-    boolean verified = false;
-    String accountId =
-        store
-            .getAccountId()
-            .orElseThrow(
-                () ->
-                    new StripeFailException(
-                        "La tienda no tiene cuenta de stripe asociada, contacte con soporte"));
-
-    try {
-      Account account = Account.retrieve(accountId);
-      Requirements requirements = account.getRequirements();
-      verified =
-          account.getPayoutsEnabled()
-              && account.getChargesEnabled()
-              && requirements != null
-              && requirements.getCurrentlyDue().isEmpty();
-    } catch (StripeException e) {
-      throw new StripeFailException(e.getMessage());
-    }
-
-    return verified;
   }
 
   public String getStripeOnboardingLink(Store store) {
