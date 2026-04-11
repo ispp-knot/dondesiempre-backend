@@ -49,3 +49,5 @@ databaseChangeLog:
       file: db/changelog/026-premium-plan-restrictions/premium-plan-restrictions.changelog.yaml
   - include:
       file: db/changelog/027-remove-accepts-shipping/remove-accepts-shipping.changelog.yaml
+  - include:
+      file: db/changelog/032-add-store-images-about-us/add-store-images-about-us.changelog.yaml
