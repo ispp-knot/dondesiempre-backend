@@ -163,4 +163,81 @@ public class ProductVariantRepositoryTest {
     assertNotNull(variant.getSize());
     assertNotNull(variant.getColor());
   }
+
+  @Test
+  public void shouldNotReturnDeletedVariantsWhenFindByProductId() {
+    List<ProductVariant> initialVariants =
+        productVariantRepository.findByProductIdAndIsDeletedIsFalse(product.getId());
+    int initialCount = initialVariants.size();
+
+    if (!initialVariants.isEmpty()) {
+      ProductVariant variantToDelete = initialVariants.get(0);
+      variantToDelete.setDeleted(true);
+      productVariantRepository.save(variantToDelete);
+
+      List<ProductVariant> updatedVariants =
+          productVariantRepository.findByProductIdAndIsDeletedIsFalse(product.getId());
+      assertEquals(initialCount - 1, updatedVariants.size());
+    }
+  }
+
+  @Test
+  public void shouldNotReturnDeletedVariantsWhenFindAvailable() {
+    List<ProductVariant> initialAvailableVariants =
+        productVariantRepository.findByProductIdAndIsAvailableTrueAndIsDeletedIsFalse(
+            product.getId());
+    int initialCount = initialAvailableVariants.size();
+
+    if (!initialAvailableVariants.isEmpty()) {
+      ProductVariant variantToDelete = initialAvailableVariants.get(0);
+      variantToDelete.setDeleted(true);
+      productVariantRepository.save(variantToDelete);
+
+      List<ProductVariant> updatedVariants =
+          productVariantRepository.findByProductIdAndIsAvailableTrueAndIsDeletedIsFalse(
+              product.getId());
+      assertEquals(initialCount - 1, updatedVariants.size());
+    }
+  }
+
+  @Test
+  public void shouldFindVariantByIdAndNotDeleted() {
+    List<ProductVariant> allVariants =
+        productVariantRepository.findByProductIdAndIsDeletedIsFalse(product.getId());
+
+    if (!allVariants.isEmpty()) {
+      ProductVariant variant = allVariants.get(0);
+      var foundVariant = productVariantRepository.findByIdAndIsDeletedIsFalse(variant.getId());
+
+      assertTrue(foundVariant.isPresent());
+      assertEquals(variant.getId(), foundVariant.get().getId());
+      assertFalse(foundVariant.get().isDeleted());
+    }
+  }
+
+  @Test
+  public void shouldNotFindDeletedVariantById() {
+    List<ProductVariant> allVariants =
+        productVariantRepository.findByProductIdAndIsDeletedIsFalse(product.getId());
+
+    if (!allVariants.isEmpty()) {
+      ProductVariant variant = allVariants.get(0);
+      variant.setDeleted(true);
+      productVariantRepository.save(variant);
+
+      var foundVariant = productVariantRepository.findByIdAndIsDeletedIsFalse(variant.getId());
+      assertFalse(foundVariant.isPresent());
+    }
+  }
+
+  @Test
+  public void shouldFindAllNonDeletedVariants() {
+    List<ProductVariant> allVariants = productVariantRepository.findByIsDeletedIsFalse();
+
+    assertNotNull(allVariants);
+    assertFalse(allVariants.isEmpty());
+    for (ProductVariant variant : allVariants) {
+      assertFalse(variant.isDeleted());
+    }
+  }
 }

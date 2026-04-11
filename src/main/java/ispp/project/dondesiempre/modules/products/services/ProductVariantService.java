@@ -84,24 +84,24 @@ public class ProductVariantService {
   @Transactional(readOnly = true, rollbackFor = ResourceNotFoundException.class)
   public ProductVariant getProductVariantById(UUID id) throws ResourceNotFoundException {
     return productVariantRepository
-        .findById(id)
+        .findByIdAndIsDeletedIsFalse(id)
         .orElseThrow(
             () -> new ResourceNotFoundException("ProductVariant not found with id: " + id));
   }
 
   @Transactional(readOnly = true)
   public List<ProductVariant> getAllProductVariants() {
-    return productVariantRepository.findAll();
+    return productVariantRepository.findByIsDeletedIsFalse();
   }
 
   @Transactional(readOnly = true)
   public List<ProductVariant> getVariantsByProductId(UUID productId) {
-    return productVariantRepository.findByProductId(productId);
+    return productVariantRepository.findByProductIdAndIsDeletedIsFalse(productId);
   }
 
   @Transactional(readOnly = true)
   public List<ProductVariant> getAvailableVariantsByProductId(UUID productId) {
-    return productVariantRepository.findByProductIdAndIsAvailableTrue(productId);
+    return productVariantRepository.findByProductIdAndIsAvailableTrueAndIsDeletedIsFalse(productId);
   }
 
   @Transactional(rollbackFor = {UnauthorizedException.class, ResourceNotFoundException.class})
@@ -127,6 +127,7 @@ public class ProductVariantService {
 
     authService.assertUserOwnsStore(variant.getProduct().getStore());
 
-    productVariantRepository.deleteById(id);
+    variant.setDeleted(true);
+    productVariantRepository.save(variant);
   }
 }
