@@ -1,0 +1,5 @@
+databaseChangeLog:
+  - include:
+      file: db/changelog/034-remove-phone-store-client/001-remove-phone-store.yaml
+  - include:
+      file: db/changelog/034-remove-phone-store-client/002-remove-phone-client.yaml

@@ -1,0 +1,15 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20260411-02
+      author: danilr16
+      changes:
+        - dropColumn:
+            columnName: phone
+            tableName: clients
+      rollback:
+        - addColumn:
+            tableName: clients
+            columns:
+              - column:
+                  name: phone
+                  type: VARCHAR(255)
