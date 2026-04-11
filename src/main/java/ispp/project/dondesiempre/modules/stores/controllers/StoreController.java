@@ -1,5 +1,8 @@
 package ispp.project.dondesiempre.modules.stores.controllers;
 
+import ispp.project.dondesiempre.modules.payment.dto.AccountStatusDTO;
+import ispp.project.dondesiempre.modules.payment.dto.StripeOnBoardingLinkDTO;
+import ispp.project.dondesiempre.modules.payment.services.PaymentService;
 import ispp.project.dondesiempre.modules.stores.dtos.StoreDTO;
 import ispp.project.dondesiempre.modules.stores.dtos.StoreUpdateDTO;
 import ispp.project.dondesiempre.modules.stores.dtos.StoreUpdateLocationDTO;
@@ -24,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class StoreController {
   private final StoreService storeService;
+  private final PaymentService paymentService;
 
   @GetMapping("/stores")
   @ResponseStatus(HttpStatus.OK)
@@ -67,5 +71,18 @@ public class StoreController {
       @PathVariable UUID id, @RequestBody @Valid StoreUpdateLocationDTO dto) {
     return new ResponseEntity<>(
         storeService.updateLocation(id, dto.getLongitude(), dto.getLatitude()), HttpStatus.OK);
+  }
+
+  @GetMapping("/stores/{id}/stripe/status")
+  public ResponseEntity<AccountStatusDTO> checkStoreStripeAccountStatus(@PathVariable UUID id) {
+    boolean verificationStatus =
+        paymentService.checkAccountIsVerifiedForPayments(storeService.findById(id));
+    return new ResponseEntity<>(new AccountStatusDTO(verificationStatus), HttpStatus.OK);
+  }
+
+  @GetMapping("/stores/{id}/stripe/onboarding")
+  public ResponseEntity<StripeOnBoardingLinkDTO> getOnBoardingLink(@PathVariable UUID id) {
+    String link = paymentService.getStripeOnboardingLink(storeService.findById(id));
+    return new ResponseEntity<>(new StripeOnBoardingLinkDTO(link), HttpStatus.OK);
   }
 }
