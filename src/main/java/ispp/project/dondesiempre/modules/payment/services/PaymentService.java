@@ -4,11 +4,13 @@ import com.stripe.exception.EventDataObjectDeserializationException;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Account;
 import com.stripe.model.Account.Requirements;
+import com.stripe.model.AccountLink;
 import com.stripe.model.Event;
 import com.stripe.model.EventDataObjectDeserializer;
 import com.stripe.model.Refund;
 import com.stripe.model.StripeObject;
 import com.stripe.model.checkout.Session;
+import com.stripe.param.AccountLinkCreateParams;
 import com.stripe.param.RefundCreateParams;
 import com.stripe.param.checkout.SessionCreateParams;
 import ispp.project.dondesiempre.modules.auth.models.User;
@@ -250,5 +252,31 @@ public class PaymentService {
     }
 
     return verified;
+  }
+
+  public String getStripeOnboardingLink(Store store) {
+    String stripeAccountId =
+        store
+            .getAccountId()
+            .orElseThrow(
+                () ->
+                    new StripeFailException(
+                        "La tienda no tiene cuenta de stripe asociada, contacte con soporte"));
+    String profileUrl = frontendUrl + "/" + "/profile";
+    AccountLinkCreateParams params =
+        AccountLinkCreateParams.builder()
+            .setAccount(stripeAccountId)
+            .setRefreshUrl(profileUrl)
+            .setReturnUrl(profileUrl)
+            .setType(AccountLinkCreateParams.Type.ACCOUNT_ONBOARDING)
+            .build();
+    AccountLink accountLink;
+    try {
+      accountLink = AccountLink.create(params);
+
+    } catch (Exception e) {
+      throw new StripeFailException("Hubo un fallo al generar el link de verificación.");
+    }
+    return accountLink.getUrl();
   }
 }
