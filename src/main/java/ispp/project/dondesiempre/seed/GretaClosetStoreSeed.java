@@ -31,6 +31,11 @@ class GretaClosetStoreSeed {
             "demo@gretacloset.com",
             37.283160057885304,
             -5.9237761491318235,
+            "Calle Santa María Magdalena, 14, 41701 Dos Hermanas, Sevilla",
+            "Lun-Vie 10:00-13:00, 17:30-20:30. Sab 10:30-14:00",
+            "#000000",
+            "#a1005c",
+            "greta/escaparate_greta_closet.png",
             "Greta Closet nació de una idea sencilla pero poderosa: que vestir bien no debería ser complicado ni caro. Somos una tienda de barrio con alma moderna, ubicada en el corazón de Dos Hermanas, donde cada prenda se elige pensando en ti, en tu día a día y en esos momentos especiales que merecen un look único.\r\n"
                 + //
                 "\r\n"
@@ -66,11 +71,6 @@ class GretaClosetStoreSeed {
                 "Te esperamos con los brazos abiertos… y con el probador listo para que te enamores de tu nueva prenda favorita.\r\n"
                 + //
                 "¿Vienes a conocernos? Greta Closet, tu tienda de confianza en Dos Hermanas.",
-            "Lun-Vie 10:00-13:00, 17:30-20:30. Sab 10:30-14:00",
-            "#000000",
-            "#a1005c",
-            "greta/escaparate_greta_closet.png",
-            "C. Sta. María Magdalena, 14, 41701 Dos Hermanas, Sevilla, España",
             "acct_1TFzN97Xt9jc8bVg");
     s.addSocialNetwork(
         greta, socialNetworks, "Instagram", "https://www.instagram.com/gretacloset/");

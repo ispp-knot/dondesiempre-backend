@@ -98,3 +98,14 @@ databaseChangeLog:
               - column:
                   name: about_us
                   value: "¿Eres de las que huye de los looks predecibles? ¿Te gusta brillar en los eventos y sentir que nadie viste como tú? Entonces Modas Romantika Vintage es tu sitio.\r\nNos especializamos en moda para eventos y ocasiones especiales, pero no de cualquier manera: con un espíritu único, divertido y diferente que celebra la personalidad de cada mujer. Aquí no encontrarás el vestido de 'todas'. Encontrarás complementos originales, piezas con carácter y toda la moda urbana más alegre y auténtica.\r\nLo que nos hace especiales:\r\n\r\n🎉 Moda para bodas, comuniones, cenas y fiestas que piden un look inolvidable.\r\n\r\n🧣 Complementos que no pasan desapercibidos.\r\n\r\n🌈 Estilo romántico, vintage y divertido, hecho para mujeres que saben lo que quieren.\r\n\r\nPorque lo común es aburrido. Lo original, es románticamente vintage."
+  - changeSet:
+      id: 029-003-fix-address-greta-closet
+      author: tu_nombre
+      changes:
+        - update:
+            tableName: stores
+            where: "name = 'Greta Closet'"
+            columns:
+              - column:
+                  name: address
+                  value: "C. Santa María Magdalena, 14, 41701 Dos Hermanas, Sevilla"
