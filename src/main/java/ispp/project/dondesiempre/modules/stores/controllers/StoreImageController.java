@@ -1,13 +1,9 @@
 package ispp.project.dondesiempre.modules.stores.controllers;
-import ispp.project.dondesiempre.modules.stores.dtos.SocialNetworkDTO;
-import ispp.project.dondesiempre.modules.stores.dtos.SocialNetworkUpdateDTO;
+
 import ispp.project.dondesiempre.modules.stores.dtos.StoreImageDTO;
 import ispp.project.dondesiempre.modules.stores.dtos.StoreImageUpdateDTO;
-import ispp.project.dondesiempre.modules.stores.dtos.StoreSocialNetworkDTO;
-import ispp.project.dondesiempre.modules.stores.models.StoreSocialNetwork;
 import ispp.project.dondesiempre.modules.stores.services.StoreImageService;
 import ispp.project.dondesiempre.modules.stores.services.StoreService;
-import ispp.project.dondesiempre.modules.stores.services.StoreSocialNetworkService;
 import jakarta.validation.Valid;
 import java.util.List;
 import java.util.UUID;
@@ -36,9 +32,7 @@ public class StoreImageController {
   public ResponseEntity<List<StoreImageDTO>> getByStore(@PathVariable UUID storeId) {
     storeService.findById(storeId);
     List<StoreImageDTO> images =
-      storeImageService.findImageByStoreId(storeId).stream()
-          .map(StoreImageDTO::new)
-          .toList();
+        storeImageService.findImageByStoreId(storeId).stream().map(StoreImageDTO::new).toList();
     return new ResponseEntity<>(images, HttpStatus.OK);
   }
 
@@ -68,6 +62,4 @@ public class StoreImageController {
 
     return new ResponseEntity<>("Image successfully removed.", HttpStatus.OK);
   }
-
-    
 }

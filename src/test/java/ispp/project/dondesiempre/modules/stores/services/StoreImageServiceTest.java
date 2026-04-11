@@ -47,15 +47,15 @@ public class StoreImageServiceTest {
   private StoreImage storeImage;
   private UUID storeId;
   private UUID imageId;
-  
-    private StoreImage createStoreImageWithOrder(int order) {
+
+  private StoreImage createStoreImageWithOrder(int order) {
     StoreImage image = new StoreImage();
     image.setId(UUID.randomUUID());
     image.setStore(store);
     image.setImage("https://example.com/image-" + order + ".jpg");
     image.setDisplayOrder(order);
     return image;
-    }
+  }
 
   @BeforeEach
   void setUp() {
@@ -116,8 +116,7 @@ public class StoreImageServiceTest {
     when(storeImageRepository.findById(nonExistentId)).thenReturn(Optional.empty());
 
     assertThrows(
-        ResourceNotFoundException.class,
-        () -> storeImageService.findImageById(nonExistentId));
+        ResourceNotFoundException.class, () -> storeImageService.findImageById(nonExistentId));
 
     verify(storeImageRepository, times(1)).findById(nonExistentId);
   }
@@ -243,7 +242,8 @@ public class StoreImageServiceTest {
     UUID nonExistentId = UUID.randomUUID();
     when(storeImageRepository.findById(nonExistentId)).thenReturn(Optional.empty());
 
-    assertThrows(ResourceNotFoundException.class, () -> storeImageService.update(nonExistentId, dto));
+    assertThrows(
+        ResourceNotFoundException.class, () -> storeImageService.update(nonExistentId, dto));
 
     verify(authService, never()).assertUserOwnsStore(any());
     verify(storeImageRepository, never()).save(any());
@@ -295,11 +295,11 @@ public class StoreImageServiceTest {
     assertThrows(UnauthorizedException.class, () -> storeImageService.delete(imageId));
 
     verify(storeImageRepository, never()).delete(any());
-    }
-    
-    @Test
-    void shouldThrowInvalidRequestException_whenAddingMoreThanFiveImages()
-        throws UnauthorizedException, ResourceNotFoundException {
+  }
+
+  @Test
+  void shouldThrowInvalidRequestException_whenAddingMoreThanFiveImages()
+      throws UnauthorizedException, ResourceNotFoundException {
 
     StoreImageUpdateDTO dto = new StoreImageUpdateDTO();
     dto.setImage("https://example.com/new-image.jpg");
@@ -322,5 +322,5 @@ public class StoreImageServiceTest {
 
     verify(authService, times(1)).assertUserOwnsStore(store);
     verify(storeImageRepository, never()).save(any());
-    }
+  }
 }

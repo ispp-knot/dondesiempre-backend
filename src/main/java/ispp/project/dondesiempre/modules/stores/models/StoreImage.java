@@ -1,8 +1,8 @@
 package ispp.project.dondesiempre.modules.stores.models;
-import ispp.project.dondesiempre.modules.auth.models.User;
+
 import ispp.project.dondesiempre.modules.common.models.BaseEntity;
-import jakarta.persistence.Column;
 import jakarta.annotation.Nullable;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -20,21 +20,20 @@ import org.hibernate.validator.constraints.URL;
 @Getter
 @Setter
 @Table(name = "store_images")
-public class StoreImage extends BaseEntity  {
-    @Column
-    @NotNull
-    @Min(0)
-    @Max(4)
-    private Integer displayOrder;
+public class StoreImage extends BaseEntity {
+  @Column
+  @NotNull
+  @Min(0)
+  @Max(4)
+  private Integer displayOrder;
 
-    @Column @Nullable @URL private String image;
+  @Column @Nullable @URL private String image;
 
-    @ManyToOne(optional = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private Store store;
+  @ManyToOne(optional = false)
+  @OnDelete(action = OnDeleteAction.CASCADE)
+  private Store store;
 
-    public Optional<String> getImage() {
-        return Optional.ofNullable(this.image);
-    }
-    
+  public Optional<String> getImage() {
+    return Optional.ofNullable(this.image);
+  }
 }

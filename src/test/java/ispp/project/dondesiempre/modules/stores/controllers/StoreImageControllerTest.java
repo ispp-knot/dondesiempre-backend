@@ -122,7 +122,8 @@ public class StoreImageControllerTest {
     responseDTO.setImage("https://example.com/new-image.jpg");
     responseDTO.setDisplayOrder(0);
 
-    when(storeImageService.add(eq(storeId), any(StoreImageUpdateDTO.class))).thenReturn(responseDTO);
+    when(storeImageService.add(eq(storeId), any(StoreImageUpdateDTO.class)))
+        .thenReturn(responseDTO);
 
     mockMvc
         .perform(
@@ -169,7 +170,8 @@ public class StoreImageControllerTest {
     responseDTO.setImage("https://example.com/updated-image.jpg");
     responseDTO.setDisplayOrder(2);
 
-    when(storeImageService.update(eq(imageId), any(StoreImageUpdateDTO.class))).thenReturn(responseDTO);
+    when(storeImageService.update(eq(imageId), any(StoreImageUpdateDTO.class)))
+        .thenReturn(responseDTO);
 
     mockMvc
         .perform(
@@ -253,22 +255,22 @@ public class StoreImageControllerTest {
   }
 
   @Test
-@WithMockUser
-void shouldReturnBadRequest_whenCreatingMoreThanFiveImages() throws Exception {
-  UUID storeId = UUID.randomUUID();
+  @WithMockUser
+  void shouldReturnBadRequest_whenCreatingMoreThanFiveImages() throws Exception {
+    UUID storeId = UUID.randomUUID();
 
-  StoreImageUpdateDTO requestDTO = new StoreImageUpdateDTO();
-  requestDTO.setImage("https://example.com/new-image.jpg");
-  requestDTO.setDisplayOrder(4);
+    StoreImageUpdateDTO requestDTO = new StoreImageUpdateDTO();
+    requestDTO.setImage("https://example.com/new-image.jpg");
+    requestDTO.setDisplayOrder(4);
 
-  when(storeImageService.add(eq(storeId), any(StoreImageUpdateDTO.class)))
-      .thenThrow(new InvalidRequestException("A store cannot have more than 5 images."));
+    when(storeImageService.add(eq(storeId), any(StoreImageUpdateDTO.class)))
+        .thenThrow(new InvalidRequestException("A store cannot have more than 5 images."));
 
-  mockMvc
-      .perform(
-          post("/api/v1/stores/{storeId}/images", storeId)
-              .contentType(MediaType.APPLICATION_JSON)
-              .content(objectMapper.writeValueAsString(requestDTO)))
-      .andExpect(status().isBadRequest());
-}
+    mockMvc
+        .perform(
+            post("/api/v1/stores/{storeId}/images", storeId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(requestDTO)))
+        .andExpect(status().isBadRequest());
+  }
 }
