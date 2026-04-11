@@ -10,6 +10,8 @@ import ispp.project.dondesiempre.modules.orders.models.Order;
 import ispp.project.dondesiempre.modules.orders.models.OrderItem;
 import ispp.project.dondesiempre.modules.orders.models.OrderStatus;
 import ispp.project.dondesiempre.modules.orders.repositories.OrderRepository;
+import ispp.project.dondesiempre.modules.outfits.models.Outfit;
+import ispp.project.dondesiempre.modules.outfits.services.OutfitService;
 import ispp.project.dondesiempre.modules.products.models.Product;
 import ispp.project.dondesiempre.modules.stores.models.Store;
 import ispp.project.dondesiempre.modules.stores.repositories.StoreRepository;
@@ -35,6 +37,7 @@ public class OrderService {
   private final AuthService authService;
   private final CryptoConverter cryptoConverter;
   private final ApplicationContext applicationContext;
+  private final OutfitService outfitService;
 
   private final SecureRandom secureRandom = new SecureRandom();
   private static final String CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -107,7 +110,8 @@ public class OrderService {
   }
 
   @Transactional(rollbackFor = ResourceNotFoundException.class)
-  public OrderDTO createOrder(Map<Product, Integer> productsToBuy) {
+  public OrderDTO createOrder(Map<Product, Integer> productsToBuy, UUID outfitId)
+      throws ResourceNotFoundException {
     User user = authService.getCurrentUser();
 
     Order order = new Order();
@@ -126,7 +130,17 @@ public class OrderService {
       order.getItems().add(item);
     }
 
-    order.setTotalPrice(this.calculateAndSetTotalPrice(order));
+    Integer total = this.calculateAndSetTotalPrice(order);
+
+    if (outfitId != null) {
+      Outfit outfit = outfitService.findById(outfitId);
+      if (outfit != null && outfit.getDiscountPercentage().isPresent()) {
+        Integer discount = outfit.getDiscountPercentage().get();
+        total = (total * (100 - discount)) / 100;
+      }
+    }
+
+    order.setTotalPrice(total);
     Order savedOrder = orderRepository.save(order);
 
     return new OrderDTO(savedOrder);
@@ -192,15 +206,6 @@ public class OrderService {
     }
   }
 
-  // Este método se puede usar para cancelar un pedido que aún no ha sido
-  // confirmado.
-  /**
-   * TODO: Podría añadirse que un pedido sea cancelado por un cliente o una tienda, si y solo si: -
-   * Cliente: puede cancelar un pedido si está PENDING (se ha equivocado, se ha dado cuenta que no
-   * quería X item, etc.) - Tienda: puede cancelar un pedido si está CONFIRMED (se han dado cuenta
-   * que no queda stock, el pedido es imposible de preparar, etc.) Ahora mismo no está teniendo en
-   * cuenta estos roles.
-   */
   @Transactional
   public void cancelOrder(UUID orderId) throws UnauthorizedException, ResourceNotFoundException {
     Order order =

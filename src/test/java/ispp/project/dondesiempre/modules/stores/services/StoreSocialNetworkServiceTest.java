@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 
 import ispp.project.dondesiempre.modules.auth.services.AuthService;
 import ispp.project.dondesiempre.modules.common.exceptions.AlreadyExistsException;
+import ispp.project.dondesiempre.modules.common.exceptions.InvalidSocialNetworkException;
 import ispp.project.dondesiempre.modules.common.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.modules.stores.dtos.SocialNetworkDTO;
 import ispp.project.dondesiempre.modules.stores.dtos.SocialNetworkUpdateDTO;
@@ -193,7 +194,7 @@ public class StoreSocialNetworkServiceTest {
         .thenReturn(false);
 
     assertThrows(
-        IllegalArgumentException.class,
+        InvalidSocialNetworkException.class,
         () -> storeSocialNetworkService.addStoreSocialNetwork(storeId, dto));
   }
 
@@ -215,8 +216,54 @@ public class StoreSocialNetworkServiceTest {
         .thenReturn(false);
 
     assertThrows(
-        IllegalArgumentException.class,
+        InvalidSocialNetworkException.class,
         () -> storeSocialNetworkService.addStoreSocialNetwork(storeId, dto));
+  }
+
+  @Test
+  void addStoreSocialNetwork_shouldThrowException_whenMismatchedDomain() {
+    SocialNetworkDTO dto = new SocialNetworkDTO();
+    dto.setName("Instagram");
+    dto.setLink("https://tiktok.com/@midominio");
+
+    when(applicationContext.getBean(StoreService.class)).thenReturn(storeService);
+    when(storeService.findById(storeId)).thenReturn(store);
+    when(socialNetworkRepository.findByName("Instagram")).thenReturn(Optional.of(socialNetwork));
+    when(storeSocialNetworkRepository.existsByStoreIdAndSocialNetworkId(storeId, socialNetworkId))
+        .thenReturn(false);
+
+    InvalidSocialNetworkException exception =
+        assertThrows(
+            InvalidSocialNetworkException.class,
+            () -> storeSocialNetworkService.addStoreSocialNetwork(storeId, dto));
+
+    assertEquals("Link must be a valid Instagram URL.", exception.getMessage());
+  }
+
+  @Test
+  void addStoreSocialNetwork_shouldThrowException_whenWhatsappHasInvalidLink() {
+    SocialNetworkDTO dto = new SocialNetworkDTO();
+    dto.setName("Whatsapp");
+    dto.setLink("https://google.com");
+
+    SocialNetwork whatsappNetwork = new SocialNetwork();
+    whatsappNetwork.setId(UUID.randomUUID());
+    whatsappNetwork.setName("Whatsapp");
+
+    when(applicationContext.getBean(StoreService.class)).thenReturn(storeService);
+    when(storeService.findById(storeId)).thenReturn(store);
+    when(socialNetworkRepository.findByName("Whatsapp")).thenReturn(Optional.of(whatsappNetwork));
+    when(storeSocialNetworkRepository.existsByStoreIdAndSocialNetworkId(
+            storeId, whatsappNetwork.getId()))
+        .thenReturn(false);
+
+    InvalidSocialNetworkException exception =
+        assertThrows(
+            InvalidSocialNetworkException.class,
+            () -> storeSocialNetworkService.addStoreSocialNetwork(storeId, dto));
+
+    assertEquals(
+        "Link must be a valid WhatsApp URL (wa.me) or phone number.", exception.getMessage());
   }
 
   @Test
@@ -261,7 +308,24 @@ public class StoreSocialNetworkServiceTest {
         .thenReturn(Optional.of(relation));
 
     assertThrows(
-        IllegalArgumentException.class, () -> storeSocialNetworkService.update(relationId, dto));
+        InvalidSocialNetworkException.class,
+        () -> storeSocialNetworkService.update(relationId, dto));
+  }
+
+  @Test
+  void update_shouldThrowException_whenMismatchedDomain() {
+    SocialNetworkUpdateDTO dto = new SocialNetworkUpdateDTO();
+    dto.setLink("https://facebook.com/mi-pagina");
+
+    when(storeSocialNetworkRepository.findByIdWithSocialNetwork(relationId))
+        .thenReturn(Optional.of(relation));
+
+    InvalidSocialNetworkException exception =
+        assertThrows(
+            InvalidSocialNetworkException.class,
+            () -> storeSocialNetworkService.update(relationId, dto));
+
+    assertEquals("Link must be a valid Instagram URL.", exception.getMessage());
   }
 
   @Test
@@ -287,5 +351,54 @@ public class StoreSocialNetworkServiceTest {
     verify(storeSocialNetworkRepository).findByIdWithSocialNetwork(relationId);
     verify(authService, never()).assertUserOwnsStore(store);
     verify(storeSocialNetworkRepository, never()).delete(relation);
+  }
+
+  @Test
+  void addStoreSocialNetwork_shouldSaveRelation_whenInstagramUsesIgMe() {
+    when(applicationContext.getBean(StoreService.class)).thenReturn(storeService);
+
+    SocialNetworkDTO dto = new SocialNetworkDTO();
+    dto.setName("Instagram");
+    dto.setLink("https://ig.me/m/usuario");
+
+    when(storeService.findById(storeId)).thenReturn(store);
+    when(socialNetworkRepository.findByName("Instagram")).thenReturn(Optional.of(socialNetwork));
+    when(storeSocialNetworkRepository.existsByStoreIdAndSocialNetworkId(storeId, socialNetworkId))
+        .thenReturn(false);
+    when(storeSocialNetworkRepository.save(
+            org.mockito.ArgumentMatchers.any(StoreSocialNetwork.class)))
+        .thenAnswer(invocation -> invocation.getArgument(0));
+
+    StoreSocialNetwork result = storeSocialNetworkService.addStoreSocialNetwork(storeId, dto);
+
+    assertEquals("https://ig.me/m/usuario", result.getLink());
+    verify(storeSocialNetworkRepository).save(any(StoreSocialNetwork.class));
+  }
+
+  @Test
+  void addStoreSocialNetwork_shouldSaveRelation_whenWhatsappUsesTelPrefix() {
+    when(applicationContext.getBean(StoreService.class)).thenReturn(storeService);
+
+    SocialNetworkDTO dto = new SocialNetworkDTO();
+    dto.setName("Whatsapp");
+    dto.setLink("tel:+34123456789");
+
+    SocialNetwork whatsappNetwork = new SocialNetwork();
+    whatsappNetwork.setId(UUID.randomUUID());
+    whatsappNetwork.setName("Whatsapp");
+
+    when(storeService.findById(storeId)).thenReturn(store);
+    when(socialNetworkRepository.findByName("Whatsapp")).thenReturn(Optional.of(whatsappNetwork));
+    when(storeSocialNetworkRepository.existsByStoreIdAndSocialNetworkId(
+            storeId, whatsappNetwork.getId()))
+        .thenReturn(false);
+    when(storeSocialNetworkRepository.save(
+            org.mockito.ArgumentMatchers.any(StoreSocialNetwork.class)))
+        .thenAnswer(invocation -> invocation.getArgument(0));
+
+    StoreSocialNetwork result = storeSocialNetworkService.addStoreSocialNetwork(storeId, dto);
+
+    assertEquals("tel:+34123456789", result.getLink());
+    verify(storeSocialNetworkRepository).save(any(StoreSocialNetwork.class));
   }
 }

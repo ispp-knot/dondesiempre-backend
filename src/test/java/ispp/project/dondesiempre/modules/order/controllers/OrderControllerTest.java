@@ -1,6 +1,7 @@
 package ispp.project.dondesiempre.modules.order.controllers;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -110,7 +111,7 @@ class OrderControllerTest {
     Map<UUID, Integer> payload = Map.of(productId, 1);
 
     when(productService.getProductById(productId)).thenReturn(product);
-    when(orderService.createOrder(any(Map.class))).thenReturn(orderDTO);
+    when(orderService.createOrder(any(Map.class), any())).thenReturn(orderDTO);
 
     mockMvc
         .perform(
@@ -121,7 +122,29 @@ class OrderControllerTest {
         .andExpect(jsonPath("$.id").value(orderId.toString()));
 
     verify(productService, times(1)).getProductById(productId);
-    verify(orderService, times(1)).createOrder(any(Map.class));
+    verify(orderService, times(1)).createOrder(any(Map.class), any());
+  }
+
+  @Test
+  @WithMockUser
+  void createOrder_withOutfit_shouldReturnCreated() throws Exception {
+    UUID outfitId = UUID.randomUUID();
+    Map<UUID, Integer> payload = Map.of(productId, 1);
+
+    when(productService.getProductById(productId)).thenReturn(product);
+    when(orderService.createOrder(any(Map.class), eq(outfitId))).thenReturn(orderDTO);
+
+    mockMvc
+        .perform(
+            post("/api/v1/orders")
+                .param("outfitId", outfitId.toString())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(payload)))
+        .andExpect(status().isCreated())
+        .andExpect(jsonPath("$.id").value(orderId.toString()));
+
+    verify(productService, times(1)).getProductById(productId);
+    verify(orderService, times(1)).createOrder(any(Map.class), eq(outfitId));
   }
 
   @Test
