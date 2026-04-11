@@ -34,8 +34,7 @@ public class ProductVariantService {
 
   private void checkProductVariantExists(UUID productId, UUID sizeId, UUID colorId) {
     if (productVariantRepository.existsByProductIdAndSizeIdAndColorId(productId, sizeId, colorId)) {
-      throw new InvalidRequestException(
-          "This product variant already exists.");
+      throw new InvalidRequestException("This product variant already exists.");
     }
   }
 
