@@ -51,7 +51,6 @@ public class ClientServiceTest {
     client.setName("client");
     client.setSurname("surname");
     client.setAddress("fake address");
-    client.setPhone("1234567890");
     client.setEmail(user.getEmail());
     client.setUser(user);
   }
@@ -64,7 +63,6 @@ public class ClientServiceTest {
 
     ClientUpdateDTO dto = new ClientUpdateDTO();
     dto.setAddress("true address");
-    dto.setPhone("0987654321");
     dto.setName("name");
     dto.setSurname("client surname");
     dto.setEmail(client.getEmail());
@@ -72,7 +70,6 @@ public class ClientServiceTest {
     ClientDTO response = clientService.updateClient(dto);
 
     assertEquals("true address", response.getAddress());
-    assertEquals("0987654321", response.getPhone());
     assertEquals("name", response.getName());
     assertEquals("client surname", response.getSurname());
     assertEquals(user.getEmail(), response.getEmail());
@@ -90,7 +87,6 @@ public class ClientServiceTest {
 
     ClientUpdateDTO dto = new ClientUpdateDTO();
     dto.setAddress("true address");
-    dto.setPhone(client.getPhone().get());
     dto.setName("name");
     dto.setSurname(client.getSurname());
     dto.setEmail("fake@test.com");
@@ -98,7 +94,6 @@ public class ClientServiceTest {
     ClientDTO response = clientService.updateClient(dto);
 
     assertEquals("true address", response.getAddress());
-    assertEquals(client.getPhone().get(), response.getPhone());
     assertEquals("name", response.getName());
     assertEquals(client.getSurname(), response.getSurname());
     assertEquals("fake@test.com", response.getEmail());
@@ -115,7 +110,6 @@ public class ClientServiceTest {
 
     ClientUpdateDTO dto = new ClientUpdateDTO();
     dto.setAddress("true address");
-    dto.setPhone(client.getPhone().get());
     dto.setName("name");
     dto.setSurname(client.getSurname());
     dto.setEmail(otherUser.getEmail());

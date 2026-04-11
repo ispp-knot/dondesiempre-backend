@@ -46,14 +46,12 @@ public class ClientControllerTest {
     dto.setEmail("client@test.com");
     dto.setAddress("fake address");
     dto.setName("client");
-    dto.setPhone("123456789");
     dto.setSurname("surname");
 
     ClientDTO response = new ClientDTO();
     response.setEmail("client@test.com");
     response.setAddress("fake address");
     response.setName("client");
-    response.setPhone("123456789");
     response.setSurname("surname");
 
     when(clientService.updateClient(any(ClientUpdateDTO.class))).thenReturn(response);
@@ -93,7 +91,6 @@ public class ClientControllerTest {
     dto1.setEmail("correo-invalido");
     dto1.setAddress("fake address");
     dto1.setName("client");
-    dto1.setPhone("123456789");
     dto1.setSurname("surname");
 
     mockMvc
@@ -107,7 +104,6 @@ public class ClientControllerTest {
     dto2.setEmail("client@test.com");
     dto2.setAddress("fake address");
     dto2.setName(null);
-    dto2.setPhone("123456789");
     dto2.setSurname("surname");
 
     mockMvc
@@ -127,7 +123,6 @@ public class ClientControllerTest {
     dto.setEmail("correo.ocupado@test.com");
     dto.setAddress("fake address");
     dto.setName("client");
-    dto.setPhone("123456789");
     dto.setSurname("surname");
 
     when(clientService.updateClient(any(ClientUpdateDTO.class)))
@@ -148,7 +143,6 @@ public class ClientControllerTest {
     dto.setEmail("store@test.com");
     dto.setAddress("fake address");
     dto.setName("store");
-    dto.setPhone("123456789");
     dto.setSurname("surname");
 
     when(clientService.updateClient(any(ClientUpdateDTO.class)))

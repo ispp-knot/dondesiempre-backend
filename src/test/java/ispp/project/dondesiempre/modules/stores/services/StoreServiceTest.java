@@ -184,9 +184,7 @@ public class StoreServiceTest {
     StoreDTO result = storeService.updateStore(storeId, dto);
 
     assertEquals("Nombre Nuevo", store.getName());
-    assertEquals("123456789", store.getPhone().orElse(null));
     assertEquals("Nombre Nuevo", result.getName());
-    assertEquals("123456789", result.getPhone());
 
     verify(storeRepository, times(1)).findById(storeId);
     verify(authService, times(1)).assertUserOwnsStore(store);
@@ -232,11 +230,9 @@ public class StoreServiceTest {
     StoreDTO result = storeService.updateStore(storeId, dto);
 
     assertEquals("nuevo@email.com", store.getEmail());
-    assertEquals("555555", store.getPhone().orElse(null));
     assertEquals("Tienda de Prueba", store.getName());
 
     assertEquals("nuevo@email.com", result.getEmail());
-    assertEquals("555555", result.getPhone());
     assertEquals("Tienda de Prueba", result.getName());
 
     verify(storeRepository, times(1)).findById(storeId);

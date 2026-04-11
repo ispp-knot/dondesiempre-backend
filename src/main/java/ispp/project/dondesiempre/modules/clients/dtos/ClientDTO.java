@@ -15,7 +15,6 @@ public class ClientDTO {
   private String name;
   private String surname;
   private String email;
-  private String phone;
   private String address;
 
   public ClientDTO(Client client) {
@@ -23,7 +22,6 @@ public class ClientDTO {
     this.name = client.getName();
     this.surname = client.getSurname();
     this.email = client.getEmail();
-    this.phone = client.getPhone().orElse(null);
     this.address = client.getAddress().orElse(null);
   }
 }

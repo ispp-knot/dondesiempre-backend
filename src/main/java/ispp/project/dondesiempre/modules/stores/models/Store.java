@@ -2,7 +2,6 @@ package ispp.project.dondesiempre.modules.stores.models;
 
 import ispp.project.dondesiempre.modules.auth.models.User;
 import ispp.project.dondesiempre.modules.common.models.BaseEntity;
-import ispp.project.dondesiempre.modules.common.validators.Phone;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -48,8 +47,6 @@ public class Store extends BaseEntity {
   @Size(max = 255)
   String openingHours;
 
-  @Column @Phone String phone;
-
   @Column(columnDefinition = "TEXT")
   @Size(max = 5000)
   String aboutUs;
@@ -65,10 +62,6 @@ public class Store extends BaseEntity {
   @OneToOne(optional = false)
   @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
   private User user;
-
-  public Optional<String> getPhone() {
-    return Optional.ofNullable(this.phone);
-  }
 
   public Optional<String> getAboutUs() {
     return Optional.ofNullable(this.aboutUs);

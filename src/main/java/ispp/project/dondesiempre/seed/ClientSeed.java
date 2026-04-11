@@ -44,7 +44,6 @@ class ClientSeed {
     manualClient.setName("Ana");
     manualClient.setSurname("García");
     manualClient.setEmail("client@client.com");
-    manualClient.setPhone("+34 623456789");
     manualClient.setAddress("Calle San Fernando, nº 12, Sevilla");
     manualClient.setUser(clientUser);
     s.clientRepository.save(manualClient);
@@ -106,7 +105,6 @@ class ClientSeed {
       client.setName(name);
       client.setSurname(surname);
       client.setEmail(clientEmail);
-      client.setPhone(s.pick(phoneNumbers, rng));
       client.setAddress(s.pick(addresses, rng));
       client.setUser(user);
       s.clientRepository.save(client);

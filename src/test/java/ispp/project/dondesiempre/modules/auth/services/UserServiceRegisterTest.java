@@ -126,7 +126,6 @@ class UserServiceRegisterTest {
     savedClient.setName("John");
     savedClient.setSurname("Doe");
     savedClient.setEmail("client@test.com");
-    savedClient.setPhone("+34600000000");
     savedClient.setAddress("Test Street 1");
     when(clientRepository.save(any(Client.class))).thenReturn(savedClient);
 
@@ -160,7 +159,6 @@ class UserServiceRegisterTest {
     dto.setLongitude(-3.703790);
     dto.setAddress("Gran Vía 1, Madrid");
     dto.setOpeningHours("Mon-Fri 9-18");
-    dto.setPhone("+34600000000");
     dto.setAboutUs("A great store.");
     dto.setPrimaryColor("#c65a3a");
     dto.setSecondaryColor("#19756a");
