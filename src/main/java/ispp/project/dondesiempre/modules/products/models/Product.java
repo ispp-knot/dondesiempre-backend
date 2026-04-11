@@ -31,7 +31,7 @@ public class Product extends BaseEntity {
 
   @Column
   @NotNull
-  @Min(0)
+  @Min(1)
   Integer priceInCents;
 
   @Column

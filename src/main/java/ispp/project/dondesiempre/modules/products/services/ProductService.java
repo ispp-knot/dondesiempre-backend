@@ -32,6 +32,12 @@ public class ProductService {
   private final CloudinaryService cloudinaryService;
   private final OutfitProductRepository outfitProductRepository;
 
+  private void validateMinPriceInCents(Integer priceInCents) throws InvalidRequestException {
+    if (priceInCents != null && priceInCents < 1) {
+      throw new InvalidRequestException("Price must be at least 1 cent.");
+    }
+  }
+
   @Transactional(
       rollbackFor = {
         UnauthorizedException.class,
@@ -40,6 +46,7 @@ public class ProductService {
       })
   public Product createProduct(ProductCreationDTO dto, MultipartFile image, UUID storeId)
       throws UnauthorizedException, ResourceNotFoundException, InvalidRequestException {
+    validateMinPriceInCents(dto.getPriceInCents());
     Store store =
         storeRepository
             .findById(storeId)
@@ -107,6 +114,7 @@ public class ProductService {
       })
   public Product updateProduct(UUID productId, ProductUpdateDTO dto, MultipartFile image)
       throws UnauthorizedException, ResourceNotFoundException, InvalidRequestException {
+    validateMinPriceInCents(dto.getPriceInCents());
     Product product =
         productRepository
             .findById(productId)

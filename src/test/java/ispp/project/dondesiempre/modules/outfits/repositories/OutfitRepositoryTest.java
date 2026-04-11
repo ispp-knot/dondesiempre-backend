@@ -208,16 +208,16 @@ class OutfitRepositoryTest {
     numProducts = 4;
     products = new ArrayList<>();
 
-    for (Integer i = 0; i < numProducts; i++) {
+    for (Integer i = 1; i <= numProducts; i++) {
       Product product;
 
       product = new Product();
-      product.setName("Test product" + i);
+      product.setName("Test product" + (i - 1));
       product.setPriceInCents(i * 1000); // Set price in cents (e.g., 1000 = $10.00)
-      product.setDiscountPercentage(i + 1); // Set discounted price in cents
+      product.setDiscountPercentage(i); // Set discounted price in cents
       product.setType(type);
       Store storeToSet =
-          (i < 3)
+          (i <= 3)
               ? store1
               : store2; // First 3 products belong to store1, last product belongs to store2
       product.setStore(storeToSet);
