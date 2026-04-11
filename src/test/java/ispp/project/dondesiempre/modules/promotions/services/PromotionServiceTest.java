@@ -64,7 +64,7 @@ public class PromotionServiceTest {
   private Store createAndSaveStore(String name, String email, String storeId) {
 
     User user = new User();
-    user.setEmail("user@example.com");
+    user.setEmail("user-" + UUID.randomUUID() + "@example.com");
     user.setPassword("password");
     user = userRepository.save(user);
 

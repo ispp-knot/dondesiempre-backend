@@ -46,6 +46,10 @@ public class Product extends BaseEntity {
 
   @Column @Nullable @URL private String image;
 
+  @Column(columnDefinition = "BOOLEAN DEFAULT FALSE")
+  @NotNull
+  private boolean isDeleted = false;
+
   @NotNull
   @ManyToOne(optional = false)
   @OnDelete(action = OnDeleteAction.CASCADE)

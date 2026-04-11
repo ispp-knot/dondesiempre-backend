@@ -51,3 +51,5 @@ databaseChangeLog:
       file: db/changelog/027-remove-accepts-shipping/remove-accepts-shipping.changelog.yaml
   - include:
       file: db/changelog/030-change-minimum-product-price/change-minimum-product-price.changelog.yaml
+  - include:
+      file: db/changelog/032-pasive-product-delete/001-pasive-product-delete.yaml

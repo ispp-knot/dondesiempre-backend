@@ -3,6 +3,7 @@ package ispp.project.dondesiempre.modules.products.services;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
@@ -20,6 +21,7 @@ import ispp.project.dondesiempre.modules.products.dtos.ProductUpdateDTO;
 import ispp.project.dondesiempre.modules.products.models.Product;
 import ispp.project.dondesiempre.modules.products.models.ProductType;
 import ispp.project.dondesiempre.modules.products.repositories.ProductTypeRepository;
+import ispp.project.dondesiempre.modules.promotions.repositories.PromotionProductRepository;
 import ispp.project.dondesiempre.modules.stores.models.Store;
 import ispp.project.dondesiempre.modules.stores.models.Storefront;
 import ispp.project.dondesiempre.modules.stores.repositories.StoreRepository;
@@ -45,6 +47,7 @@ public class ProductServiceTest {
   @Autowired private ProductTypeRepository productTypeRepository;
   @Autowired private StoreRepository storeRepository;
   @MockitoBean private OutfitProductRepository outfitProductRepository;
+  @MockitoBean private PromotionProductRepository promotionProductRepository;
   @Autowired private UserRepository userRepository;
   @MockitoBean private AuthService authService;
   @MockitoBean private CloudinaryService cloudinaryService;
@@ -133,6 +136,7 @@ public class ProductServiceTest {
   public void shouldDeleteProduct() {
     Product product = createTestProduct();
     when(outfitProductRepository.existsByProductId(product.getId())).thenReturn(false);
+    when(promotionProductRepository.existsByProductId(product.getId())).thenReturn(false);
     doNothing().when(authService).assertUserOwnsStore(any(Store.class));
     productService.deleteProduct(product.getId());
     assertThrows(
@@ -143,6 +147,7 @@ public class ProductServiceTest {
   public void shouldNotDeleteProduct() {
     Product product = createTestProduct();
     when(outfitProductRepository.existsByProductId(product.getId())).thenReturn(true);
+    when(promotionProductRepository.existsByProductId(product.getId())).thenReturn(false);
     doNothing().when(authService).assertUserOwnsStore(any(Store.class));
 
     assertThrows(
@@ -196,5 +201,147 @@ public class ProductServiceTest {
         .when(authService)
         .assertUserOwnsStore(any(Store.class));
     assertThrows(UnauthorizedException.class, () -> productService.deleteProduct(product.getId()));
+  }
+
+  @Test
+  public void shouldThrowException_WhenCreatingProductWithInvalidPrice() {
+    ProductCreationDTO invalidDto = new ProductCreationDTO();
+    invalidDto.setName("Invalid Product");
+    invalidDto.setPriceInCents(0);
+    invalidDto.setDescription("This product has invalid price");
+    invalidDto.setTypeId(savedProductType.getId());
+
+    doNothing().when(authService).assertUserOwnsStore(any(Store.class));
+
+    assertThrows(
+        InvalidRequestException.class,
+        () -> productService.createProduct(invalidDto, null, saved_store.getId()));
+  }
+
+  @Test
+  public void shouldThrowException_WhenCreatingProductWithNegativePrice() {
+    ProductCreationDTO invalidDto = new ProductCreationDTO();
+    invalidDto.setName("Invalid Product");
+    invalidDto.setPriceInCents(-100);
+    invalidDto.setDescription("This product has negative price");
+    invalidDto.setTypeId(savedProductType.getId());
+
+    doNothing().when(authService).assertUserOwnsStore(any(Store.class));
+
+    assertThrows(
+        InvalidRequestException.class,
+        () -> productService.createProduct(invalidDto, null, saved_store.getId()));
+  }
+
+  @Test
+  public void shouldThrowException_WhenUpdatingProductWithInvalidPrice() {
+    Product product = createTestProduct();
+    ProductUpdateDTO updateDTO = new ProductUpdateDTO();
+    updateDTO.setPriceInCents(0);
+
+    doNothing().when(authService).assertUserOwnsStore(any(Store.class));
+
+    assertThrows(
+        InvalidRequestException.class,
+        () -> productService.updateProduct(product.getId(), updateDTO, null));
+  }
+
+  @Test
+  public void shouldFindAllProductsByStoreId() {
+    createTestProduct();
+    List<Product> products = productService.findByStoreId(saved_store.getId());
+    assertEquals(1, products.size());
+    assertEquals("Test Product", products.get(0).getName());
+  }
+
+  @Test
+  public void shouldReturnEmptyListWhenNoProductsInStore() {
+    UUID anotherStoreId = UUID.randomUUID();
+    List<Product> products = productService.findByStoreId(anotherStoreId);
+    assertTrue(products.isEmpty());
+  }
+
+  @Test
+  public void shouldFindAllDiscountedProducts() {
+    Product product = createTestProduct();
+    doNothing().when(authService).assertUserOwnsStore(any(Store.class));
+    productService.updateProductDiscount(product.getId(), 25);
+
+    List<Product> discountedProducts = productService.getAllDiscountedProducts();
+    assertNotNull(discountedProducts);
+    assertTrue(discountedProducts.stream().allMatch(p -> p.getDiscountPercentage().isPresent()));
+  }
+
+  @Test
+  public void shouldDeleteProductSuccessfully_WhenNotUsedInPromotionsOrOutfits() {
+    Product product = createTestProduct();
+    when(outfitProductRepository.existsByProductId(product.getId())).thenReturn(false);
+    when(promotionProductRepository.existsByProductId(product.getId())).thenReturn(false);
+    doNothing().when(authService).assertUserOwnsStore(any(Store.class));
+
+    productService.deleteProduct(product.getId());
+
+    assertThrows(
+        ResourceNotFoundException.class, () -> productService.getProductById(product.getId()));
+  }
+
+  @Test
+  public void shouldThrowException_WhenDeletingProductUsedInPromotion() {
+    Product product = createTestProduct();
+    when(outfitProductRepository.existsByProductId(product.getId())).thenReturn(false);
+    when(promotionProductRepository.existsByProductId(product.getId())).thenReturn(true);
+    doNothing().when(authService).assertUserOwnsStore(any(Store.class));
+
+    assertThrows(
+        InvalidRequestException.class, () -> productService.deleteProduct(product.getId()));
+  }
+
+  @Test
+  public void shouldThrowException_WhenCreatingProductInNonExistentStore() {
+    UUID invalidStoreId = UUID.randomUUID();
+
+    assertThrows(
+        ResourceNotFoundException.class,
+        () -> productService.createProduct(dto, null, invalidStoreId));
+  }
+
+  @Test
+  public void shouldFindProductsByPromotionId() {
+    createTestProduct();
+    List<Product> products = productService.findProductsByPromotionId(UUID.randomUUID());
+    assertNotNull(products);
+  }
+
+  @Test
+  public void shouldFindOutfitProductsById() {
+    createTestProduct();
+    List<Product> products = productService.getOutfitProductsById(UUID.randomUUID());
+    assertNotNull(products);
+  }
+
+  @Test
+  public void shouldPartiallyUpdateProduct() {
+    Product product = createTestProduct();
+    ProductUpdateDTO updateDTO = new ProductUpdateDTO();
+    updateDTO.setName("Updated Name");
+
+    doNothing().when(authService).assertUserOwnsStore(any(Store.class));
+
+    Product updatedProduct = productService.updateProduct(product.getId(), updateDTO, null);
+    assertEquals("Updated Name", updatedProduct.getName());
+    assertEquals(1000, updatedProduct.getPriceInCents());
+  }
+
+  @Test
+  public void shouldThrowException_WhenGettingDeletedProduct() {
+    Product product = createTestProduct();
+    when(outfitProductRepository.existsByProductId(product.getId())).thenReturn(false);
+    when(promotionProductRepository.existsByProductId(product.getId())).thenReturn(false);
+    doNothing().when(authService).assertUserOwnsStore(any(Store.class));
+
+    productService.deleteProduct(product.getId());
+
+    assertThrows(
+        ResourceNotFoundException.class, () -> productService.getProductById(product.getId()));
   }
 }
