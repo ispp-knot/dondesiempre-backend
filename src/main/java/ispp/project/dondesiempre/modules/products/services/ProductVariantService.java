@@ -1,6 +1,7 @@
 package ispp.project.dondesiempre.modules.products.services;
 
 import ispp.project.dondesiempre.modules.auth.services.AuthService;
+import ispp.project.dondesiempre.modules.common.exceptions.InvalidRequestException;
 import ispp.project.dondesiempre.modules.common.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.modules.common.exceptions.UnauthorizedException;
 import ispp.project.dondesiempre.modules.products.dtos.ProductVariantCreationDTO;
@@ -31,13 +32,21 @@ public class ProductVariantService {
   private final ProductColorRepository productColorRepository;
   private final AuthService authService;
 
+  private void checkProductVariantExists(UUID productId, UUID sizeId, UUID colorId) {
+    if (productVariantRepository.existsByProductIdAndSizeIdAndColorId(productId, sizeId, colorId)) {
+      throw new InvalidRequestException(
+          "This product variant already exists.");
+    }
+  }
+
   @Transactional(
       rollbackFor = {
         UnauthorizedException.class,
         ResourceNotFoundException.class,
       })
   public ProductVariant createProductVariant(ProductVariantCreationDTO dto)
-      throws UnauthorizedException, ResourceNotFoundException {
+      throws UnauthorizedException, ResourceNotFoundException, InvalidRequestException {
+    checkProductVariantExists(dto.getProductId(), dto.getSizeId(), dto.getColorId());
     Product product =
         productRepository
             .findById(dto.getProductId())
