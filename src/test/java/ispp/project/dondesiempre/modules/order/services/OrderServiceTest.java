@@ -21,6 +21,8 @@ import ispp.project.dondesiempre.modules.orders.models.OrderItem;
 import ispp.project.dondesiempre.modules.orders.models.OrderStatus;
 import ispp.project.dondesiempre.modules.orders.repositories.OrderRepository;
 import ispp.project.dondesiempre.modules.orders.services.OrderService;
+import ispp.project.dondesiempre.modules.outfits.models.Outfit;
+import ispp.project.dondesiempre.modules.outfits.services.OutfitService;
 import ispp.project.dondesiempre.modules.products.models.Product;
 import ispp.project.dondesiempre.modules.products.models.ProductColor;
 import ispp.project.dondesiempre.modules.products.models.ProductSize;
@@ -43,6 +45,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationContext;
 import org.springframework.test.util.ReflectionTestUtils;
 
 @ExtendWith(MockitoExtension.class)
@@ -54,6 +57,8 @@ public class OrderServiceTest {
   @Mock private AuthService authService;
   @Mock private ProductVariantService productVariantService;
   @Mock private CryptoConverter cryptoConverter;
+  @Mock private ApplicationContext applicationContext;
+  @Mock private OutfitService outfitService;
 
   @InjectMocks private OrderService orderService;
 
@@ -188,10 +193,68 @@ public class OrderServiceTest {
     Map<UUID, Integer> variantIdsWithQuantity = new HashMap<>();
     variantIdsWithQuantity.put(variantId, 2);
 
-    OrderDTO result = orderService.createOrder(variantIdsWithQuantity);
+    OrderDTO result = orderService.createOrder(variantIdsWithQuantity, null);
 
     assertNotNull(result);
     verify(orderRepository).save(any(Order.class));
+  }
+
+  @Test
+  void createOrder_WithOutfitDiscount_ShouldApplyDiscount() throws Exception {
+    UUID outfitId = UUID.randomUUID();
+    Outfit outfit = new Outfit();
+    outfit.setId(outfitId);
+    outfit.setDiscountPercentage(20);
+
+    when(authService.getCurrentUser()).thenReturn(user);
+    when(productVariantService.getProductVariantById(variantId)).thenReturn(variant);
+    when(outfitService.findById(outfitId)).thenReturn(outfit);
+    when(orderRepository.save(any(Order.class)))
+        .thenAnswer(invocation -> invocation.getArgument(0));
+
+    Map<UUID, Integer> variantIdsWithQuantity = new HashMap<>();
+    variantIdsWithQuantity.put(variantId, 2);
+
+    OrderDTO result = orderService.createOrder(variantIdsWithQuantity, outfitId);
+
+    assertNotNull(result);
+    assertEquals(160, result.getTotalPrice()); // 100 * 2 = 200, -20% = 160
+    verify(orderRepository).save(any(Order.class));
+  }
+
+  @Test
+  void createOrder_WithOutfitDiscount_ShouldTruncateCorrectly() throws Exception {
+    UUID outfitId = UUID.randomUUID();
+    Outfit outfit = new Outfit();
+    outfit.setId(outfitId);
+    outfit.setDiscountPercentage(25);
+
+    UUID truncVariantId = UUID.randomUUID();
+    Product productTruncateTest = new Product();
+    productTruncateTest.setStore(store);
+    productTruncateTest.setPriceInCents(3998);
+    productTruncateTest.setName("Producto Truncado");
+
+    ProductVariant truncVariant = new ProductVariant();
+    truncVariant.setId(truncVariantId);
+    truncVariant.setProduct(productTruncateTest);
+    truncVariant.setSize(variant.getSize());
+    truncVariant.setColor(variant.getColor());
+    truncVariant.setIsAvailable(true);
+
+    when(authService.getCurrentUser()).thenReturn(user);
+    when(productVariantService.getProductVariantById(truncVariantId)).thenReturn(truncVariant);
+    when(outfitService.findById(outfitId)).thenReturn(outfit);
+    when(orderRepository.save(any(Order.class)))
+        .thenAnswer(invocation -> invocation.getArgument(0));
+
+    Map<UUID, Integer> variantIdsWithQuantity = new HashMap<>();
+    variantIdsWithQuantity.put(truncVariantId, 1);
+
+    OrderDTO result = orderService.createOrder(variantIdsWithQuantity, outfitId);
+
+    assertNotNull(result);
+    assertEquals(2998, result.getTotalPrice()); // 3998 * 0.75 = 2998.5 → truncated to 2998
   }
 
   @Test
@@ -278,7 +341,7 @@ public class OrderServiceTest {
     Map<UUID, Integer> variantIdsWithQuantity = new HashMap<>();
     variantIdsWithQuantity.put(variantId, 2);
 
-    OrderDTO result = orderService.createOrder(variantIdsWithQuantity);
+    OrderDTO result = orderService.createOrder(variantIdsWithQuantity, null);
 
     assertNotNull(result);
     assertEquals(user.getId(), result.getUserId());
@@ -298,7 +361,7 @@ public class OrderServiceTest {
     variantIdsWithQuantity.put(variantId, 2);
 
     assertThrows(
-        UnauthorizedException.class, () -> orderService.createOrder(variantIdsWithQuantity));
+        UnauthorizedException.class, () -> orderService.createOrder(variantIdsWithQuantity, null));
   }
 
   @Test
@@ -312,7 +375,8 @@ public class OrderServiceTest {
     variantIdsWithQuantity.put(variantId, 2);
 
     assertThrows(
-        ResourceNotFoundException.class, () -> orderService.createOrder(variantIdsWithQuantity));
+        ResourceNotFoundException.class,
+        () -> orderService.createOrder(variantIdsWithQuantity, null));
   }
 
   @Test
@@ -342,7 +406,7 @@ public class OrderServiceTest {
     variantIdsWithQuantity.put(variantId, 1);
     variantIdsWithQuantity.put(variantId2, 2);
 
-    OrderDTO result = orderService.createOrder(variantIdsWithQuantity);
+    OrderDTO result = orderService.createOrder(variantIdsWithQuantity, null);
 
     assertNotNull(result);
     assertEquals(OrderStatus.PENDING, result.getOrderStatus());
@@ -365,7 +429,7 @@ public class OrderServiceTest {
     Map<UUID, Integer> variantIdsWithQuantity = new HashMap<>();
     variantIdsWithQuantity.put(variantId, 2);
 
-    OrderDTO result = orderService.createOrder(variantIdsWithQuantity);
+    OrderDTO result = orderService.createOrder(variantIdsWithQuantity, null);
 
     assertEquals(200, result.getTotalPrice());
   }
