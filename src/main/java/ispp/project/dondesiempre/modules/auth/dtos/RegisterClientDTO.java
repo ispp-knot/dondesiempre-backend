@@ -1,7 +1,6 @@
 package ispp.project.dondesiempre.modules.auth.dtos;
 
 import ispp.project.dondesiempre.modules.auth.validators.StrongPassword;
-import ispp.project.dondesiempre.modules.common.validators.Phone;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -25,8 +24,6 @@ public class RegisterClientDTO {
   @NotBlank
   @Size(max = 255)
   private String surname;
-
-  @Phone private String phone;
 
   @Size(max = 255)
   private String address;

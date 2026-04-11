@@ -171,7 +171,6 @@ class UserServiceRegisterTest {
     dto.setPassword("Password1!");
     dto.setName("John");
     dto.setSurname("Doe");
-    dto.setPhone("+34600000000");
     dto.setAddress("Test Street 1");
     return dto;
   }

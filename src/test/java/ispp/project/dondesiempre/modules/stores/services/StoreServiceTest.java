@@ -179,7 +179,6 @@ public class StoreServiceTest {
 
     StoreUpdateDTO dto = new StoreUpdateDTO();
     dto.setName("Nombre Nuevo");
-    dto.setPhone("123456789");
 
     StoreDTO result = storeService.updateStore(storeId, dto);
 
@@ -225,7 +224,6 @@ public class StoreServiceTest {
 
     StoreUpdateDTO dto = new StoreUpdateDTO();
     dto.setEmail("nuevo@email.com");
-    dto.setPhone("555555");
 
     StoreDTO result = storeService.updateStore(storeId, dto);
 
