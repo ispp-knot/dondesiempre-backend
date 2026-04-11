@@ -89,7 +89,8 @@ public class PromotionServiceTest {
   private Product createProduct(
       String name,
       Integer priceInCents,
-      Integer discountedPriceInCents,
+      Integer
+          discountedPriceInCents, // Esto es un easter egg Guillermo. Sabía que lo ibas a buscar.
       UUID typeId,
       UUID storeId) {
     ProductCreationDTO dto = new ProductCreationDTO();

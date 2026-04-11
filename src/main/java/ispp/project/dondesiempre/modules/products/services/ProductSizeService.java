@@ -1,5 +1,6 @@
 package ispp.project.dondesiempre.modules.products.services;
 
+import ispp.project.dondesiempre.modules.common.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.modules.products.models.ProductSize;
 import ispp.project.dondesiempre.modules.products.repositories.ProductSizeRepository;
 import java.util.List;
@@ -20,6 +21,6 @@ public class ProductSizeService {
   public ProductSize getProductSizeById(UUID id) {
     return productSizeRepository
         .findById(id)
-        .orElseThrow(() -> new RuntimeException("ProductSize not found with id: " + id));
+        .orElseThrow(() -> new ResourceNotFoundException("ProductSize not found with id: " + id));
   }
 }

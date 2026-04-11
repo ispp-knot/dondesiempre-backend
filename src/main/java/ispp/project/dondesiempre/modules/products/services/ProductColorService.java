@@ -1,5 +1,6 @@
 package ispp.project.dondesiempre.modules.products.services;
 
+import ispp.project.dondesiempre.modules.common.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.modules.products.models.ProductColor;
 import ispp.project.dondesiempre.modules.products.repositories.ProductColorRepository;
 import java.util.List;
@@ -20,6 +21,6 @@ public class ProductColorService {
   public ProductColor getProductColorById(UUID id) {
     return productColorRepository
         .findById(id)
-        .orElseThrow(() -> new RuntimeException("ProductColor not found with id: " + id));
+        .orElseThrow(() -> new ResourceNotFoundException("ProductColor not found with id: " + id));
   }
 }
