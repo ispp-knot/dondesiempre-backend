@@ -33,7 +33,8 @@ public class ProductVariantService {
   private final AuthService authService;
 
   private void checkProductVariantExists(UUID productId, UUID sizeId, UUID colorId) {
-    if (productVariantRepository.existsByProductIdAndSizeIdAndColorId(productId, sizeId, colorId)) {
+    if (productVariantRepository.existsByProductIdAndSizeIdAndColorIdAndIsDeletedIsFalse(
+        productId, sizeId, colorId)) {
       throw new InvalidRequestException("This product variant already exists.");
     }
   }
@@ -46,6 +47,7 @@ public class ProductVariantService {
   public ProductVariant createProductVariant(ProductVariantCreationDTO dto)
       throws UnauthorizedException, ResourceNotFoundException, InvalidRequestException {
     checkProductVariantExists(dto.getProductId(), dto.getSizeId(), dto.getColorId());
+
     Product product =
         productRepository
             .findById(dto.getProductId())
@@ -71,6 +73,18 @@ public class ProductVariantService {
                 () ->
                     new ResourceNotFoundException(
                         "ProductColor with ID " + dto.getColorId() + " not found."));
+
+    // Check if a deleted variant exists and reactivate it
+    var deletedVariant =
+        productVariantRepository.findByProductIdAndSizeIdAndColorIdAndIsDeletedIsTrue(
+            dto.getProductId(), dto.getSizeId(), dto.getColorId());
+
+    if (deletedVariant.isPresent()) {
+      ProductVariant variant = deletedVariant.get();
+      variant.setDeleted(false);
+      variant.setIsAvailable(dto.getIsAvailable());
+      return productVariantRepository.save(variant);
+    }
 
     ProductVariant variant = new ProductVariant();
     variant.setProduct(product);

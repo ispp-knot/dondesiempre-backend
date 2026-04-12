@@ -24,5 +24,9 @@ public interface ProductVariantRepository extends JpaRepository<ProductVariant, 
 
   List<ProductVariant> findByColorId(UUID colorId);
 
-  boolean existsByProductIdAndSizeIdAndColorId(UUID productId, UUID sizeId, UUID colorId);
+  boolean existsByProductIdAndSizeIdAndColorIdAndIsDeletedIsFalse(
+      UUID productId, UUID sizeId, UUID colorId);
+
+  Optional<ProductVariant> findByProductIdAndSizeIdAndColorIdAndIsDeletedIsTrue(
+      UUID productId, UUID sizeId, UUID colorId);
 }
