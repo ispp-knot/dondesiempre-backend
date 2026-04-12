@@ -1,0 +1,14 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20260411-add-is-deleted-to-product-variants
+      author: roth
+      changes:
+        - addColumn:
+            tableName: product_variants
+            columns:
+              - column:
+                  name: is_deleted
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
