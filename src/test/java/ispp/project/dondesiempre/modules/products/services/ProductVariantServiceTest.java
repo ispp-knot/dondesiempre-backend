@@ -12,6 +12,7 @@ import static org.mockito.Mockito.doThrow;
 import ispp.project.dondesiempre.modules.auth.models.User;
 import ispp.project.dondesiempre.modules.auth.repositories.UserRepository;
 import ispp.project.dondesiempre.modules.auth.services.AuthService;
+import ispp.project.dondesiempre.modules.common.exceptions.InvalidRequestException;
 import ispp.project.dondesiempre.modules.common.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.modules.common.exceptions.UnauthorizedException;
 import ispp.project.dondesiempre.modules.products.dtos.ProductVariantCreationDTO;
@@ -314,5 +315,52 @@ public class ProductVariantServiceTest {
     assertThrows(
         UnauthorizedException.class,
         () -> productVariantService.deleteProductVariant(createdVariant.getId()));
+  }
+
+  @Test
+  public void shouldThrowInvalidRequestException_WhenCreatingDuplicateVariant() {
+    doNothing().when(authService).assertUserOwnsStore(any(Store.class));
+
+    productVariantService.createProductVariant(dto);
+
+    assertThrows(
+        InvalidRequestException.class, () -> productVariantService.createProductVariant(dto));
+  }
+
+  @Test
+  public void shouldCreateMultipleDifferentVariantsForSameProduct() {
+    doNothing().when(authService).assertUserOwnsStore(any(Store.class));
+
+    productVariantService.createProductVariant(dto);
+
+    ProductSize size2 = new ProductSize();
+    size2.setSize("L");
+    size2 = productSizeRepository.save(size2);
+
+    ProductVariantCreationDTO dto2 = new ProductVariantCreationDTO();
+    dto2.setProductId(savedProduct.getId());
+    dto2.setSizeId(size2.getId());
+    dto2.setColorId(savedColor.getId());
+    dto2.setIsAvailable(true);
+
+    productVariantService.createProductVariant(dto2);
+
+    assertEquals(2, productVariantService.getVariantsByProductId(savedProduct.getId()).size());
+  }
+
+  @Test
+  public void shouldFetchVariantWithAllRelations() {
+    doNothing().when(authService).assertUserOwnsStore(any(Store.class));
+
+    ProductVariant createdVariant = productVariantService.createProductVariant(dto);
+    ProductVariant fetchedVariant =
+        productVariantService.getProductVariantById(createdVariant.getId());
+
+    assertNotNull(fetchedVariant.getProduct());
+    assertNotNull(fetchedVariant.getSize());
+    assertNotNull(fetchedVariant.getColor());
+    assertEquals(savedProduct.getId(), fetchedVariant.getProduct().getId());
+    assertEquals(savedSize.getId(), fetchedVariant.getSize().getId());
+    assertEquals(savedColor.getId(), fetchedVariant.getColor().getId());
   }
 }

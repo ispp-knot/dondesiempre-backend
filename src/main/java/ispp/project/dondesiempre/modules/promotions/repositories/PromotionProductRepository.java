@@ -10,4 +10,6 @@ import org.springframework.stereotype.Repository;
 public interface PromotionProductRepository extends JpaRepository<PromotionProduct, UUID> {
 
   List<PromotionProduct> findByPromotionId(UUID promotionId);
+
+  boolean existsByProductId(UUID productId);
 }
