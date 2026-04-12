@@ -25,30 +25,27 @@ public class StoreImageService {
   private final ApplicationContext applicationContext;
   private final AuthService authService;
 
-  @Transactional(readOnly = true, rollbackFor = ResourceNotFoundException.class)
   public Store findById(UUID id) throws ResourceNotFoundException {
     return storeRepository
         .findById(id)
         .orElseThrow(() -> new ResourceNotFoundException("Store with ID " + id + " not found."));
   }
 
-  @Transactional(readOnly = true, rollbackFor = ResourceNotFoundException.class)
   public StoreImage findImageById(UUID id) throws ResourceNotFoundException {
     return storeImageRepository
         .findById(id)
         .orElseThrow(() -> new ResourceNotFoundException("Image with ID " + id + " not found."));
   }
 
-  @Transactional(readOnly = true)
   public List<StoreImage> findImageByStoreId(UUID storeId) {
     return storeImageRepository.findImagesByStoreIdOrderByDisplayOrder(storeId);
   }
 
-  @Transactional(readOnly = true)
   public StoreImageDTO toDTO(StoreImage storeImage) {
     return new StoreImageDTO(storeImage);
   }
 
+  @Transactional(rollbackFor = {UnauthorizedException.class, ResourceNotFoundException.class, InvalidRequestException.class})
   public StoreImageDTO add(UUID id, StoreImageUpdateDTO dto)
       throws UnauthorizedException, ResourceNotFoundException, InvalidRequestException {
 
