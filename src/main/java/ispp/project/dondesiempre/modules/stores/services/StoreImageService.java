@@ -45,7 +45,12 @@ public class StoreImageService {
     return new StoreImageDTO(storeImage);
   }
 
-  @Transactional(rollbackFor = {UnauthorizedException.class, ResourceNotFoundException.class, InvalidRequestException.class})
+  @Transactional(
+      rollbackFor = {
+        UnauthorizedException.class,
+        ResourceNotFoundException.class,
+        InvalidRequestException.class
+      })
   public StoreImageDTO add(UUID id, StoreImageUpdateDTO dto)
       throws UnauthorizedException, ResourceNotFoundException, InvalidRequestException {
 

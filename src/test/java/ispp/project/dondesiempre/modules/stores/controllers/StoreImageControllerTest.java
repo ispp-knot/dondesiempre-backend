@@ -45,7 +45,7 @@ import org.springframework.test.web.servlet.MockMvc;
             type = FilterType.ASSIGNABLE_TYPE,
             classes = {GlobalExceptionHandler.class}))
 @Import(SecurityConfig.class)
-public class StoreImageControllerTest {
+class StoreImageControllerTest {
 
   @Autowired private MockMvc mockMvc;
 

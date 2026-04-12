@@ -33,7 +33,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationContext;
 
 @ExtendWith(MockitoExtension.class)
-public class StoreImageServiceTest {
+class StoreImageServiceTest {
 
   @Mock private StoreRepository storeRepository;
   @Mock private StoreImageRepository storeImageRepository;

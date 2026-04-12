@@ -47,7 +47,9 @@ public class StoreImageController {
 
   @PutMapping("stores/{storeId}/images/{id}")
   public ResponseEntity<StoreImageDTO> update(
-      @PathVariable UUID id, @RequestBody @Valid StoreImageUpdateDTO dto) {
+      @PathVariable UUID storeId,
+      @PathVariable UUID id,
+      @RequestBody @Valid StoreImageUpdateDTO dto) {
 
     StoreImageDTO image = storeImageService.update(id, dto);
 
@@ -56,7 +58,7 @@ public class StoreImageController {
 
   @DeleteMapping("stores/{storeId}/images/{id}")
   @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<String> delete(@PathVariable UUID id) {
+  public ResponseEntity<String> delete(@PathVariable UUID storeId, @PathVariable UUID id) {
 
     storeImageService.delete(id);
 
