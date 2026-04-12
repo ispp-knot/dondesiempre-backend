@@ -33,7 +33,8 @@ public class ProductVariantService {
   private final AuthService authService;
 
   private void checkProductVariantExists(UUID productId, UUID sizeId, UUID colorId) {
-    if (productVariantRepository.existsByProductIdAndSizeIdAndColorId(productId, sizeId, colorId)) {
+    if (productVariantRepository.existsByProductIdAndSizeIdAndColorIdAndIsDeletedIsFalse(
+        productId, sizeId, colorId)) {
       throw new InvalidRequestException("This product variant already exists.");
     }
   }
@@ -46,6 +47,7 @@ public class ProductVariantService {
   public ProductVariant createProductVariant(ProductVariantCreationDTO dto)
       throws UnauthorizedException, ResourceNotFoundException, InvalidRequestException {
     checkProductVariantExists(dto.getProductId(), dto.getSizeId(), dto.getColorId());
+
     Product product =
         productRepository
             .findByIdAndIsDeletedIsFalse(dto.getProductId())
@@ -72,6 +74,18 @@ public class ProductVariantService {
                     new ResourceNotFoundException(
                         "ProductColor with ID " + dto.getColorId() + " not found."));
 
+    // Check if a deleted variant exists and reactivate it
+    var deletedVariant =
+        productVariantRepository.findByProductIdAndSizeIdAndColorIdAndIsDeletedIsTrue(
+            dto.getProductId(), dto.getSizeId(), dto.getColorId());
+
+    if (deletedVariant.isPresent()) {
+      ProductVariant variant = deletedVariant.get();
+      variant.setDeleted(false);
+      variant.setIsAvailable(dto.getIsAvailable());
+      return productVariantRepository.save(variant);
+    }
+
     ProductVariant variant = new ProductVariant();
     variant.setProduct(product);
     variant.setSize(size);
@@ -84,24 +98,24 @@ public class ProductVariantService {
   @Transactional(readOnly = true, rollbackFor = ResourceNotFoundException.class)
   public ProductVariant getProductVariantById(UUID id) throws ResourceNotFoundException {
     return productVariantRepository
-        .findById(id)
+        .findByIdAndIsDeletedIsFalse(id)
         .orElseThrow(
             () -> new ResourceNotFoundException("ProductVariant not found with id: " + id));
   }
 
   @Transactional(readOnly = true)
   public List<ProductVariant> getAllProductVariants() {
-    return productVariantRepository.findAll();
+    return productVariantRepository.findByIsDeletedIsFalse();
   }
 
   @Transactional(readOnly = true)
   public List<ProductVariant> getVariantsByProductId(UUID productId) {
-    return productVariantRepository.findByProductId(productId);
+    return productVariantRepository.findByProductIdAndIsDeletedIsFalse(productId);
   }
 
   @Transactional(readOnly = true)
   public List<ProductVariant> getAvailableVariantsByProductId(UUID productId) {
-    return productVariantRepository.findByProductIdAndIsAvailableTrue(productId);
+    return productVariantRepository.findByProductIdAndIsAvailableTrueAndIsDeletedIsFalse(productId);
   }
 
   @Transactional(rollbackFor = {UnauthorizedException.class, ResourceNotFoundException.class})
@@ -127,6 +141,7 @@ public class ProductVariantService {
 
     authService.assertUserOwnsStore(variant.getProduct().getStore());
 
-    productVariantRepository.deleteById(id);
+    variant.setDeleted(true);
+    productVariantRepository.save(variant);
   }
 }
