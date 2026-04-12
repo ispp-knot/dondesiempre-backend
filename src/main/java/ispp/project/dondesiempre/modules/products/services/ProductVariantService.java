@@ -48,7 +48,7 @@ public class ProductVariantService {
     checkProductVariantExists(dto.getProductId(), dto.getSizeId(), dto.getColorId());
     Product product =
         productRepository
-            .findById(dto.getProductId())
+            .findByIdAndIsDeletedIsFalse(dto.getProductId())
             .orElseThrow(
                 () ->
                     new ResourceNotFoundException(
