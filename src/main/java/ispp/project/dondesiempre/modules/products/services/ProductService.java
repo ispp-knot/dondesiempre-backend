@@ -99,13 +99,22 @@ public class ProductService {
     Product product = applicationContext.getBean(ProductService.class).getProductById(id);
     authService.assertUserOwnsStore(product.getStore());
 
-    product.setDiscountPercentage(discountPercentage);
+    if (discountPercentage != 0) product.setDiscountPercentage(discountPercentage);
+    else product.setDiscountPercentage(null);
     return productRepository.save(product);
   }
 
   @Transactional
   public List<Product> findByStoreId(UUID storeId) {
     return productRepository.findByStoreIdAndIsDeletedIsFalse(storeId);
+  }
+
+  @Transactional(readOnly = true)
+  public List<Product> findByStoreIdAndNameContainingIgnoreCase(UUID storeId, String name) {
+    if (name != null && !name.isBlank()) {
+      return productRepository.findByStoreIdAndNameContainingIgnoreCase(storeId, name);
+    }
+    return applicationContext.getBean(ProductService.class).findByStoreId(storeId);
   }
 
   @Transactional(
@@ -137,6 +146,13 @@ public class ProductService {
       }
       if (dto.getProductTypeId() != null) {
         product.setType(productTypeService.getProductTypeById(dto.getProductTypeId()));
+      }
+      if (dto.getDiscountPercentage() != null) {
+        if (dto.getDiscountPercentage() != 0) {
+          product.setDiscountPercentage(dto.getDiscountPercentage());
+        } else {
+          product.setDiscountPercentage(null);
+        }
       }
     }
 

@@ -25,7 +25,9 @@ import ispp.project.dondesiempre.modules.outfits.models.Outfit;
 import ispp.project.dondesiempre.modules.outfits.models.OutfitProduct;
 import ispp.project.dondesiempre.modules.outfits.models.OutfitTag;
 import ispp.project.dondesiempre.modules.outfits.models.OutfitTagRelation;
+import ispp.project.dondesiempre.modules.outfits.repositories.OutfitProductRepository;
 import ispp.project.dondesiempre.modules.outfits.repositories.OutfitRepository;
+import ispp.project.dondesiempre.modules.outfits.repositories.OutfitTagRepository;
 import ispp.project.dondesiempre.modules.products.models.Product;
 import ispp.project.dondesiempre.modules.products.services.ProductService;
 import ispp.project.dondesiempre.modules.stores.models.Store;
@@ -102,6 +104,13 @@ class OutfitServiceTest {
     product.setName("Test Product");
     product.setPriceInCents(1000);
     product.setStore(store);
+
+    // Initialize ProductType to prevent NullPointerException
+    ispp.project.dondesiempre.modules.products.models.ProductType productType =
+        new ispp.project.dondesiempre.modules.products.models.ProductType();
+    productType.setId(UUID.randomUUID());
+    productType.setType("Test Type");
+    product.setType(productType);
 
     outfitProduct = new OutfitProduct();
     outfitProduct.setId(UUID.randomUUID());
@@ -582,6 +591,209 @@ class OutfitServiceTest {
         ResourceNotFoundException.class,
         () -> outfitService.removeTag(outfitId, new OutfitTagDTO(tagName)));
     verify(outfitTagRelationService, never()).delete(any());
+  }
+
+  // --- findByIdAsDTO ---
+
+  @Mock private OutfitTagRepository outfitTagRepository;
+  @Mock private OutfitProductRepository outfitProductRepository;
+
+  @Test
+  void shouldReturnOutfitDTO_whenFindByIdAsDTO() {
+    List<String> tags = List.of("casual", "summer");
+    List<OutfitProduct> products = List.of(outfitProduct);
+
+    when(outfitRepository.findById(outfitId)).thenReturn(Optional.of(outfit));
+    when(outfitTagService.findOutfitTagsById(outfitId)).thenReturn(tags);
+    when(outfitProductRepository.findByOutfitIdWithDetails(outfitId)).thenReturn(products);
+
+    ispp.project.dondesiempre.modules.outfits.dtos.OutfitDTO result =
+        outfitService.findByIdAsDTO(outfitId);
+
+    assertNotNull(result);
+    assertEquals(outfitId, result.getId());
+    assertEquals("Test Outfit", result.getName());
+    assertEquals(2, result.getTags().size());
+    assertEquals(1, result.getProducts().size());
+  }
+
+  @Test
+  void shouldThrowResourceNotFoundException_whenFindByIdAsDTO_outfitNotFound() {
+    when(outfitRepository.findById(outfitId)).thenReturn(Optional.empty());
+
+    assertThrows(ResourceNotFoundException.class, () -> outfitService.findByIdAsDTO(outfitId));
+  }
+
+  // --- findByStoreIdAsDTO ---
+
+  @Test
+  void shouldReturnListOfOutfitDTOs_whenFindByStoreIdAsDTO() {
+    when(outfitRepository.findByStoreIdOrderByIndexAsc(storeId)).thenReturn(List.of(outfit));
+    when(outfitTagRepository.findTagEntriesByOutfitIds(List.of(outfitId)))
+        .thenReturn(
+            List.of(
+                new OutfitTagRepository.OutfitTagEntry() {
+                  @Override
+                  public UUID getOutfitId() {
+                    return outfitId;
+                  }
+
+                  @Override
+                  public String getTagName() {
+                    return "casual";
+                  }
+                }));
+    when(outfitProductRepository.findByOutfitIdsWithDetails(List.of(outfitId)))
+        .thenReturn(List.of(outfitProduct));
+
+    List<ispp.project.dondesiempre.modules.outfits.dtos.OutfitDTO> result =
+        outfitService.findByStoreIdAsDTO(storeId);
+
+    assertNotNull(result);
+    assertEquals(1, result.size());
+    assertEquals(outfitId, result.get(0).getId());
+    assertEquals(1, result.get(0).getTags().size());
+  }
+
+  @Test
+  void shouldReturnEmptyList_whenFindByStoreIdAsDTO_storeHasNoOutfits() {
+    when(outfitRepository.findByStoreIdOrderByIndexAsc(storeId)).thenReturn(new ArrayList<>());
+
+    List<ispp.project.dondesiempre.modules.outfits.dtos.OutfitDTO> result =
+        outfitService.findByStoreIdAsDTO(storeId);
+
+    assertNotNull(result);
+    assertTrue(result.isEmpty());
+    verify(outfitTagRepository, never()).findTagEntriesByOutfitIds(any());
+  }
+
+  // --- findByStoreIdAndNameAsDTO ---
+
+  @Test
+  void shouldReturnOutfitDTOs_whenFindByStoreIdAndNameAsDTO_withValidName() {
+    Outfit outfit2 = new Outfit();
+    outfit2.setId(UUID.randomUUID());
+    outfit2.setName("Summer Outfit");
+    outfit2.setStore(store);
+
+    List<Outfit> matchingOutfits = List.of(outfit2);
+
+    when(outfitRepository.findByStoreIdAndNameContainingIgnoreCase(storeId, "summer"))
+        .thenReturn(matchingOutfits);
+    when(outfitTagRepository.findTagEntriesByOutfitIds(List.of(outfit2.getId())))
+        .thenReturn(
+            List.of(
+                new OutfitTagRepository.OutfitTagEntry() {
+                  @Override
+                  public UUID getOutfitId() {
+                    return outfit2.getId();
+                  }
+
+                  @Override
+                  public String getTagName() {
+                    return "summer";
+                  }
+                }));
+    when(outfitProductRepository.findByOutfitIdsWithDetails(List.of(outfit2.getId())))
+        .thenReturn(List.of(outfitProduct));
+
+    List<ispp.project.dondesiempre.modules.outfits.dtos.OutfitDTO> result =
+        outfitService.findByStoreIdAndNameAsDTO(storeId, "summer");
+
+    assertNotNull(result);
+    assertEquals(1, result.size());
+    assertEquals(outfit2.getId(), result.get(0).getId());
+    assertEquals("Summer Outfit", result.get(0).getName());
+    assertEquals(1, result.get(0).getTags().size());
+  }
+
+  @Test
+  void shouldReturnEmptyList_whenFindByStoreIdAndNameAsDTO_noMatches() {
+    when(outfitRepository.findByStoreIdAndNameContainingIgnoreCase(storeId, "nonexistent"))
+        .thenReturn(new ArrayList<>());
+
+    List<ispp.project.dondesiempre.modules.outfits.dtos.OutfitDTO> result =
+        outfitService.findByStoreIdAndNameAsDTO(storeId, "nonexistent");
+
+    assertNotNull(result);
+    assertTrue(result.isEmpty());
+    verify(outfitTagRepository, never()).findTagEntriesByOutfitIds(any());
+  }
+
+  @Test
+  void shouldReturnAllOutfits_whenFindByStoreIdAndNameAsDTO_withNullName() {
+    List<Outfit> allOutfits = List.of(outfit);
+
+    when(outfitRepository.findByStoreIdOrderByIndexAsc(storeId)).thenReturn(allOutfits);
+    when(outfitTagRepository.findTagEntriesByOutfitIds(List.of(outfitId)))
+        .thenReturn(
+            List.of(
+                new OutfitTagRepository.OutfitTagEntry() {
+                  @Override
+                  public UUID getOutfitId() {
+                    return outfitId;
+                  }
+
+                  @Override
+                  public String getTagName() {
+                    return "casual";
+                  }
+                }));
+    when(outfitProductRepository.findByOutfitIdsWithDetails(List.of(outfitId)))
+        .thenReturn(List.of(outfitProduct));
+
+    List<ispp.project.dondesiempre.modules.outfits.dtos.OutfitDTO> result =
+        outfitService.findByStoreIdAndNameAsDTO(storeId, null);
+
+    assertNotNull(result);
+    assertEquals(1, result.size());
+    assertEquals(outfitId, result.get(0).getId());
+  }
+
+  @Test
+  void shouldReturnAllOutfits_whenFindByStoreIdAndNameAsDTO_withBlankName() {
+    List<Outfit> allOutfits = List.of(outfit);
+
+    when(outfitRepository.findByStoreIdOrderByIndexAsc(storeId)).thenReturn(allOutfits);
+    when(outfitTagRepository.findTagEntriesByOutfitIds(List.of(outfitId)))
+        .thenReturn(
+            List.of(
+                new OutfitTagRepository.OutfitTagEntry() {
+                  @Override
+                  public UUID getOutfitId() {
+                    return outfitId;
+                  }
+
+                  @Override
+                  public String getTagName() {
+                    return "casual";
+                  }
+                }));
+    when(outfitProductRepository.findByOutfitIdsWithDetails(List.of(outfitId)))
+        .thenReturn(List.of(outfitProduct));
+
+    List<ispp.project.dondesiempre.modules.outfits.dtos.OutfitDTO> result =
+        outfitService.findByStoreIdAndNameAsDTO(storeId, "   ");
+
+    assertNotNull(result);
+    assertEquals(1, result.size());
+    assertEquals(outfitId, result.get(0).getId());
+  }
+
+  @Test
+  void shouldReturnOutfitsWithoutTagsAndProducts_whenNoneExist() {
+    when(outfitRepository.findByStoreIdOrderByIndexAsc(storeId)).thenReturn(List.of(outfit));
+    when(outfitTagRepository.findTagEntriesByOutfitIds(List.of(outfitId))).thenReturn(List.of());
+    when(outfitProductRepository.findByOutfitIdsWithDetails(List.of(outfitId)))
+        .thenReturn(List.of());
+
+    List<ispp.project.dondesiempre.modules.outfits.dtos.OutfitDTO> result =
+        outfitService.findByStoreIdAsDTO(storeId);
+
+    assertNotNull(result);
+    assertEquals(1, result.size());
+    assertEquals(0, result.get(0).getTags().size());
+    assertEquals(0, result.get(0).getProducts().size());
   }
 
   // --- sortOutfits ---

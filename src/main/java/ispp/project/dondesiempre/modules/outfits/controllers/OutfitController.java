@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -47,9 +48,12 @@ public class OutfitController {
 
   @GetMapping("stores/{storeId}/outfits")
   @ResponseStatus(HttpStatus.FOUND)
-  public ResponseEntity<List<OutfitDTO>> getByStoreId(@PathVariable("storeId") UUID storeId) {
+  public ResponseEntity<List<OutfitDTO>> getByStoreId(
+      @PathVariable("storeId") UUID storeId,
+      @RequestParam(value = "name", required = false) String name) {
     storeService.findById(storeId);
-    return new ResponseEntity<>(outfitService.findByStoreIdAsDTO(storeId), HttpStatus.OK);
+    return new ResponseEntity<>(
+        outfitService.findByStoreIdAndNameAsDTO(storeId, name), HttpStatus.OK);
   }
 
   @PostMapping(value = "stores/{storeId}/outfits", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

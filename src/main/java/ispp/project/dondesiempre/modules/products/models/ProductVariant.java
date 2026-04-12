@@ -36,4 +36,8 @@ public class ProductVariant extends BaseEntity {
   private ProductColor color;
 
   @Column @NotNull Boolean isAvailable;
+
+  @Column(columnDefinition = "BOOLEAN DEFAULT FALSE")
+  @NotNull
+  private boolean isDeleted = false;
 }
