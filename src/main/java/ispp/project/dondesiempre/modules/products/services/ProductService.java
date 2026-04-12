@@ -9,6 +9,7 @@ import ispp.project.dondesiempre.modules.products.dtos.ProductCreationDTO;
 import ispp.project.dondesiempre.modules.products.dtos.ProductUpdateDTO;
 import ispp.project.dondesiempre.modules.products.models.Product;
 import ispp.project.dondesiempre.modules.products.repositories.ProductRepository;
+import ispp.project.dondesiempre.modules.promotions.repositories.PromotionProductRepository;
 import ispp.project.dondesiempre.modules.stores.models.Store;
 import ispp.project.dondesiempre.modules.stores.repositories.StoreRepository;
 import ispp.project.dondesiempre.utils.cloudinary.CloudinaryService;
@@ -31,6 +32,7 @@ public class ProductService {
   private final AuthService authService;
   private final CloudinaryService cloudinaryService;
   private final OutfitProductRepository outfitProductRepository;
+  private final PromotionProductRepository promotionProductRepository;
 
   private void validateMinPriceInCents(Integer priceInCents) throws InvalidRequestException {
     if (priceInCents != null && priceInCents < 1) {
@@ -70,7 +72,7 @@ public class ProductService {
   public Product getProductById(UUID id) throws ResourceNotFoundException {
     Product product =
         productRepository
-            .findById(id)
+            .findByIdAndIsDeletedIsFalse(id)
             .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + id));
     return product;
   }
@@ -87,7 +89,7 @@ public class ProductService {
 
   @Transactional(readOnly = true)
   public List<Product> getAllDiscountedProducts() {
-    return productRepository.findByDiscountPercentageIsNotNull();
+    return productRepository.findByDiscountPercentageIsNotNullAndIsDeletedIsFalse();
   }
 
   @Transactional(rollbackFor = ResourceNotFoundException.class)
@@ -103,7 +105,7 @@ public class ProductService {
 
   @Transactional
   public List<Product> findByStoreId(UUID storeId) {
-    return productRepository.findByStoreId(storeId);
+    return productRepository.findByStoreIdAndIsDeletedIsFalse(storeId);
   }
 
   @Transactional(
@@ -117,7 +119,7 @@ public class ProductService {
     validateMinPriceInCents(dto.getPriceInCents());
     Product product =
         productRepository
-            .findById(productId)
+            .findByIdAndIsDeletedIsFalse(productId)
             .orElseThrow(
                 () ->
                     new ResourceNotFoundException("Product with ID " + productId + " not found."));
@@ -149,23 +151,31 @@ public class ProductService {
   public void deleteProduct(UUID productId)
       throws UnauthorizedException, ResourceNotFoundException {
     boolean outfitsUsingProduct = outfitProductRepository.existsByProductId(productId);
+    boolean promotionUsingProduct = promotionProductRepository.existsByProductId(productId);
 
     if (outfitsUsingProduct) {
       throw new InvalidRequestException(
           "Cannot delete product because it is used in one or more outfits.");
     }
 
+    if (promotionUsingProduct) {
+      throw new InvalidRequestException(
+          "Cannot delete product because it is used in one or more promotions.");
+    }
+
     Product product =
         productRepository
-            .findById(productId)
+            .findByIdAndIsDeletedIsFalse(productId)
             .orElseThrow(
                 () ->
                     new ResourceNotFoundException("Product with ID " + productId + " not found."));
     authService.assertUserOwnsStore(product.getStore());
-    productRepository.delete(product);
+
+    product.setDeleted(true);
+    productRepository.save(product);
   }
 
   public List<Product> findAll() {
-    return productRepository.findAll();
+    return productRepository.findByIsDeletedIsFalse();
   }
 }

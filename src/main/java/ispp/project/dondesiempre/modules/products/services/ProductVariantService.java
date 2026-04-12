@@ -50,7 +50,7 @@ public class ProductVariantService {
 
     Product product =
         productRepository
-            .findById(dto.getProductId())
+            .findByIdAndIsDeletedIsFalse(dto.getProductId())
             .orElseThrow(
                 () ->
                     new ResourceNotFoundException(
