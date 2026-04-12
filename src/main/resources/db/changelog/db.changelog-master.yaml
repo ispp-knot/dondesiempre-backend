@@ -53,3 +53,5 @@ databaseChangeLog:
       file: db/changelog/030-change-minimum-product-price/change-minimum-product-price.changelog.yaml
   - include:
       file: db/changelog/031-pasive-product-delete/001-pasive-product-delete.yaml
+  - include:
+      file: db/changelog/033-pasive-product-variant-delete/pasive-product-variant-delete.changelog.yaml
