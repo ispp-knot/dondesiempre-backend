@@ -1,0 +1,14 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20260410-add-variant-id-to-order-items
+      author: roth
+      changes:
+        - addColumn:
+            tableName: products
+            columns:
+              - column:
+                  name: is_deleted
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
