@@ -133,6 +133,51 @@ public class ProductServiceTest {
   }
 
   @Test
+  public void shouldReturnEmptyList_whenGetAllProducts_noProductsExist() {
+    List<Product> products = productService.findAll();
+    assertEquals(0, products.size());
+  }
+
+  @Test
+  public void shouldReturnMultipleProducts_whenGetAllProducts() {
+    Product product1 = createTestProduct();
+
+    ProductCreationDTO dto2 = new ProductCreationDTO();
+    dto2.setName("Test Product 2");
+    dto2.setPriceInCents(2000);
+    dto2.setDescription("This is another test product");
+    dto2.setTypeId(savedProductType.getId());
+    Product product2 = createTestProduct();
+
+    List<Product> products = productService.findAll();
+    assertEquals(2, products.size());
+  }
+
+  @Test
+  public void shouldNotReturnDeletedProducts_whenGetAllProducts() {
+    Product product1 = createTestProduct();
+    when(outfitProductRepository.existsByProductId(product1.getId())).thenReturn(false);
+    when(promotionProductRepository.existsByProductId(product1.getId())).thenReturn(false);
+    doNothing().when(authService).assertUserOwnsStore(any(Store.class));
+
+    // Create another product
+    ProductCreationDTO dto2 = new ProductCreationDTO();
+    dto2.setName("Test Product 2");
+    dto2.setPriceInCents(2000);
+    dto2.setDescription("This is another test product");
+    dto2.setTypeId(savedProductType.getId());
+    Product product2 = createTestProduct();
+
+    // Delete first product
+    productService.deleteProduct(product1.getId());
+
+    // findAll should only return non-deleted products
+    List<Product> products = productService.findAll();
+    assertEquals(1, products.size());
+    assertEquals(product2.getId(), products.get(0).getId());
+  }
+
+  @Test
   public void shouldDeleteProduct() {
     Product product = createTestProduct();
     when(outfitProductRepository.existsByProductId(product.getId())).thenReturn(false);

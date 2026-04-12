@@ -109,6 +109,14 @@ public class ProductService {
     return productRepository.findByStoreIdAndIsDeletedIsFalse(storeId);
   }
 
+  @Transactional(readOnly = true)
+  public List<Product> findByStoreIdAndNameContainingIgnoreCase(UUID storeId, String name) {
+    if (name != null && !name.isBlank()) {
+      return productRepository.findByStoreIdAndNameContainingIgnoreCase(storeId, name);
+    }
+    return applicationContext.getBean(ProductService.class).findByStoreId(storeId);
+  }
+
   @Transactional(
       rollbackFor = {
         UnauthorizedException.class,

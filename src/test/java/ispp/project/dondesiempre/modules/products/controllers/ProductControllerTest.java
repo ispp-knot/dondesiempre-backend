@@ -141,6 +141,35 @@ public class ProductControllerTest {
   }
 
   @Test
+  public void shouldReturnEmptyList_whenGetAllProducts_noProductsExist() throws Exception {
+    when(productService.findAll()).thenReturn(List.of());
+
+    mockMvc
+        .perform(get("/api/v1/products"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.size()").value(0));
+  }
+
+  @Test
+  public void shouldReturnMultipleProducts_whenGetAllProducts() throws Exception {
+    Product product2 = new Product();
+    product2.setId(UUID.randomUUID());
+    product2.setName("Product 2");
+    product2.setPriceInCents(2000);
+    product2.setType(productType);
+    product2.setStore(store);
+
+    when(productService.findAll()).thenReturn(List.of(product, product2));
+
+    mockMvc
+        .perform(get("/api/v1/products"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.size()").value(2))
+        .andExpect(jsonPath("$[0].name").value(product.getName()))
+        .andExpect(jsonPath("$[1].name").value(product2.getName()));
+  }
+
+  @Test
   public void shouldGetAllDiscountedProducts() throws Exception {
     product.setDiscountPercentage(10);
     when(productService.getAllDiscountedProducts()).thenReturn(List.of(product));
@@ -154,13 +183,37 @@ public class ProductControllerTest {
 
   @Test
   public void shouldReturnProductsList_whenStoreHasProducts() throws Exception {
-    when(productService.findByStoreId(storeId)).thenReturn(List.of(product));
+    when(productService.findByStoreIdAndNameContainingIgnoreCase(storeId, null))
+        .thenReturn(List.of(product));
 
     mockMvc
         .perform(get("/api/v1/stores/" + storeId + "/products"))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.size()").value(1))
         .andExpect(jsonPath("$[0].name").value(product.getName()));
+  }
+
+  @Test
+  public void shouldReturnProductsList_whenFilteredByName() throws Exception {
+    when(productService.findByStoreIdAndNameContainingIgnoreCase(storeId, "Test"))
+        .thenReturn(List.of(product));
+
+    mockMvc
+        .perform(get("/api/v1/stores/" + storeId + "/products?name=Test"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.size()").value(1))
+        .andExpect(jsonPath("$[0].name").value(product.getName()));
+  }
+
+  @Test
+  public void shouldReturnEmptyList_whenStoreHasNoProducts() throws Exception {
+    when(productService.findByStoreIdAndNameContainingIgnoreCase(storeId, null))
+        .thenReturn(List.of());
+
+    mockMvc
+        .perform(get("/api/v1/stores/" + storeId + "/products"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.size()").value(0));
   }
 
   @Test
