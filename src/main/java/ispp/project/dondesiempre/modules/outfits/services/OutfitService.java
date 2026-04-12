@@ -83,7 +83,15 @@ public class OutfitService {
 
   @Transactional(readOnly = true)
   public List<OutfitDTO> findByStoreIdAsDTO(UUID storeId) {
-    List<Outfit> outfits = outfitRepository.findByStoreIdOrderByIndexAsc(storeId);
+    return findByStoreIdAndNameAsDTO(storeId, null);
+  }
+
+  @Transactional(readOnly = true)
+  public List<OutfitDTO> findByStoreIdAndNameAsDTO(UUID storeId, String name) {
+    List<Outfit> outfits =
+        name != null && !name.isBlank()
+            ? outfitRepository.findByStoreIdAndNameContainingIgnoreCase(storeId, name)
+            : outfitRepository.findByStoreIdOrderByIndexAsc(storeId);
     if (outfits.isEmpty()) return List.of();
 
     List<UUID> ids = outfits.stream().map(Outfit::getId).toList();

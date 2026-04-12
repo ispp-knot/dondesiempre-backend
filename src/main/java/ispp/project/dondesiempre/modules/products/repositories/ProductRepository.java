@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 public interface ProductRepository extends JpaRepository<Product, UUID> {
 
@@ -24,4 +25,9 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
   @Query(
       "SELECT pp.product FROM PromotionProduct pp WHERE pp.promotion.id = :promotionId AND pp.product.isDeleted = false")
   public List<Product> findProductsByPromotionId(UUID promotionId);
+
+  @Query(
+      "SELECT p FROM Product p WHERE p.store.id = :storeId AND p.isDeleted = false AND LOWER(p.name) LIKE LOWER(CONCAT('%', :name, '%'))")
+  List<Product> findByStoreIdAndNameContainingIgnoreCase(
+      @Param("storeId") UUID storeId, @Param("name") String name);
 }

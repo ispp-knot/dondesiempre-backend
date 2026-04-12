@@ -75,9 +75,12 @@ public class ProductController {
   }
 
   @GetMapping("/stores/{storeId}/products")
-  public ResponseEntity<List<ProductDTO>> getByStoreId(@PathVariable UUID storeId) {
+  public ResponseEntity<List<ProductDTO>> getByStoreId(
+      @PathVariable UUID storeId, @RequestParam(value = "name", required = false) String name) {
     List<ProductDTO> dtos =
-        productService.findByStoreId(storeId).stream().map(ProductDTO::new).toList();
+        productService.findByStoreIdAndNameContainingIgnoreCase(storeId, name).stream()
+            .map(ProductDTO::new)
+            .toList();
     return new ResponseEntity<>(dtos, HttpStatus.OK);
   }
 
