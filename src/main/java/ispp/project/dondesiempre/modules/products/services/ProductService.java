@@ -139,6 +139,13 @@ public class ProductService {
       if (dto.getProductTypeId() != null) {
         product.setType(productTypeService.getProductTypeById(dto.getProductTypeId()));
       }
+      if (dto.getDiscountPercentage() != null) {
+        if (dto.getDiscountPercentage() != 0) {
+          product.setDiscountPercentage(dto.getDiscountPercentage());
+        } else {
+          product.setDiscountPercentage(null);
+        }
+      }
     }
 
     if (image != null) {
