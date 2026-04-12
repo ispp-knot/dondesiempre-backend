@@ -83,7 +83,7 @@ public class OutfitService {
 
   @Transactional(readOnly = true)
   public List<OutfitDTO> findByStoreIdAsDTO(UUID storeId) {
-    return findByStoreIdAndNameAsDTO(storeId, null);
+    return applicationContext.getBean(OutfitService.class).findByStoreIdAndNameAsDTO(storeId, null);
   }
 
   @Transactional(readOnly = true)

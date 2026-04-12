@@ -113,7 +113,7 @@ public class ProductService {
     if (name != null && !name.isBlank()) {
       return productRepository.findByStoreIdAndNameContainingIgnoreCase(storeId, name);
     }
-    return findByStoreId(storeId);
+    return applicationContext.getBean(ProductService.class).findByStoreId(storeId);
   }
 
   @Transactional(
