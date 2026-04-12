@@ -1,5 +1,6 @@
 package ispp.project.dondesiempre.modules.products.controllers;
 
+import ispp.project.dondesiempre.modules.outfits.services.OutfitService;
 import ispp.project.dondesiempre.modules.products.dtos.ProductCreationDTO;
 import ispp.project.dondesiempre.modules.products.dtos.ProductDTO;
 import ispp.project.dondesiempre.modules.products.dtos.ProductDiscountUpdateDTO;
@@ -32,6 +33,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class ProductController {
 
   private final ProductService productService;
+  private final OutfitService outfitService;
 
   @GetMapping("products")
   public ResponseEntity<List<ProductDTO>> getAllProducts() {
@@ -73,9 +75,12 @@ public class ProductController {
   }
 
   @GetMapping("/stores/{storeId}/products")
-  public ResponseEntity<List<ProductDTO>> getByStoreId(@PathVariable UUID storeId) {
+  public ResponseEntity<List<ProductDTO>> getByStoreId(
+      @PathVariable UUID storeId, @RequestParam(value = "name", required = false) String name) {
     List<ProductDTO> dtos =
-        productService.findByStoreId(storeId).stream().map(ProductDTO::new).toList();
+        productService.findByStoreIdAndNameContainingIgnoreCase(storeId, name).stream()
+            .map(ProductDTO::new)
+            .toList();
     return new ResponseEntity<>(dtos, HttpStatus.OK);
   }
 
