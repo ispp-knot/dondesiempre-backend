@@ -1,5 +1,6 @@
 package ispp.project.dondesiempre.modules.products.repositories;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -15,6 +16,8 @@ import ispp.project.dondesiempre.modules.stores.repositories.StoreRepository;
 import ispp.project.dondesiempre.modules.stores.repositories.StorefrontRepository;
 import ispp.project.dondesiempre.utils.cloudinary.CoordinatesService;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,17 +77,124 @@ public class ProductRepositoryTest {
     notDiscounted.setDiscountPercentage(32);
     notDiscounted.setType(type);
     notDiscounted.setStore(store);
+    notDiscounted.setDeleted(false);
     productRepository.save(notDiscounted);
   }
 
   @Test
   public void shouldOnlyReturnDiscountedProducts() {
-    List<Product> discountedProducts = productRepository.findByDiscountPercentageIsNotNull();
+    List<Product> discountedProducts =
+        productRepository.findByDiscountPercentageIsNotNullAndIsDeletedIsFalse();
 
     assertNotNull(discountedProducts);
     assertFalse(discountedProducts.isEmpty());
     for (Product product : discountedProducts) {
       assertTrue(product.getDiscountPercentage().isPresent());
     }
+  }
+
+  @Test
+  public void shouldFindProductsByStoreIdAndNotDeleted() {
+    Store store = storeRepository.findAll().get(0);
+    List<Product> products = productRepository.findByStoreIdAndIsDeletedIsFalse(store.getId());
+
+    assertNotNull(products);
+    assertFalse(products.isEmpty());
+    for (Product product : products) {
+      assertEquals(store.getId(), product.getStore().getId());
+      assertFalse(product.isDeleted());
+    }
+  }
+
+  @Test
+  public void shouldNotReturnDeletedProductsWhenFindByStoreId() {
+    Store store = storeRepository.findAll().get(0);
+    List<Product> initialProducts =
+        productRepository.findByStoreIdAndIsDeletedIsFalse(store.getId());
+    int initialCount = initialProducts.size();
+
+    if (!initialProducts.isEmpty()) {
+      Product productToDelete = initialProducts.get(0);
+      productToDelete.setDeleted(true);
+      productRepository.save(productToDelete);
+
+      List<Product> updatedProducts =
+          productRepository.findByStoreIdAndIsDeletedIsFalse(store.getId());
+      assertEquals(initialCount - 1, updatedProducts.size());
+    }
+  }
+
+  @Test
+  public void shouldFindProductByIdAndNotDeleted() {
+    List<Product> allProducts = productRepository.findByIsDeletedIsFalse();
+    if (!allProducts.isEmpty()) {
+      Product product = allProducts.get(0);
+      Optional<Product> foundProduct =
+          productRepository.findByIdAndIsDeletedIsFalse(product.getId());
+
+      assertTrue(foundProduct.isPresent());
+      assertEquals(product.getId(), foundProduct.get().getId());
+      assertFalse(foundProduct.get().isDeleted());
+    }
+  }
+
+  @Test
+  public void shouldNotFindDeletedProductById() {
+    List<Product> allProducts = productRepository.findByIsDeletedIsFalse();
+    if (!allProducts.isEmpty()) {
+      Product product = allProducts.get(0);
+      product.setDeleted(true);
+      productRepository.save(product);
+
+      Optional<Product> foundProduct =
+          productRepository.findByIdAndIsDeletedIsFalse(product.getId());
+      assertFalse(foundProduct.isPresent());
+    }
+  }
+
+  @Test
+  public void shouldFindAllNonDeletedProducts() {
+    List<Product> allProducts = productRepository.findByIsDeletedIsFalse();
+
+    assertNotNull(allProducts);
+    assertFalse(allProducts.isEmpty());
+    for (Product product : allProducts) {
+      assertFalse(product.isDeleted());
+    }
+  }
+
+  @Test
+  public void shouldReturnEmptyListForNonExistentStore() {
+    UUID nonExistentStoreId = UUID.randomUUID();
+    List<Product> products = productRepository.findByStoreIdAndIsDeletedIsFalse(nonExistentStoreId);
+
+    assertNotNull(products);
+    assertTrue(products.isEmpty());
+  }
+
+  @Test
+  public void shouldReturnEmptyOptionalForNonExistentProductId() {
+    UUID nonExistentId = UUID.randomUUID();
+    Optional<Product> product = productRepository.findByIdAndIsDeletedIsFalse(nonExistentId);
+
+    assertFalse(product.isPresent());
+  }
+
+  @Test
+  public void shouldFindProductsByPromotionIdReturnsEmptyForNonExistent() {
+    UUID nonExistentPromotionId = UUID.randomUUID();
+    List<Product> products = productRepository.findProductsByPromotionId(nonExistentPromotionId);
+
+    assertNotNull(products);
+    assertTrue(products.isEmpty());
+  }
+
+  @Test
+  public void shouldFindOutfitProductsByOutfitIdReturnsEmptyForNonExistent() {
+    UUID nonExistentOutfitId = UUID.randomUUID();
+    List<Product> products = productRepository.findOutfitProductsByOutfitId(nonExistentOutfitId);
+
+    assertNotNull(products);
+    assertTrue(products.isEmpty());
   }
 }
