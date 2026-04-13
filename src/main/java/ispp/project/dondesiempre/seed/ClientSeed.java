@@ -27,8 +27,6 @@ class ClientSeed {
 
     Random rng = new Random(s.props.getRandomSeed());
 
-    List<String> phoneNumbers = s.loadTextFile("seed/phone-numbers.txt");
-    List<String> addresses = s.loadTextFile("seed/addresses.txt");
     List<String> firstNames = s.loadTextFile("seed/client-first-names.txt");
     List<String> surnames = s.loadTextFile("seed/client-surnames.txt");
 
@@ -46,9 +44,6 @@ class ClientSeed {
     manualClient.setId(s.seedUuid("client:client@client.com"));
     manualClient.setName("Ana");
     manualClient.setSurname("García");
-    manualClient.setEmail("client@client.com");
-    manualClient.setPhone("+34 623456789");
-    manualClient.setAddress("Calle San Fernando, nº 12, Sevilla");
     manualClient.setUser(clientUser);
     s.clientRepository.save(manualClient);
 
@@ -114,9 +109,6 @@ class ClientSeed {
       client.setId(s.seedUuid("client:" + clientEmail));
       client.setName(name);
       client.setSurname(surname);
-      client.setEmail(clientEmail);
-      client.setPhone(s.pick(phoneNumbers, rng));
-      client.setAddress(s.pick(addresses, rng));
       client.setUser(user);
       s.clientRepository.save(client);
 

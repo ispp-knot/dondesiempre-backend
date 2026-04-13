@@ -15,15 +15,11 @@ public class ClientDTO {
   private String name;
   private String surname;
   private String email;
-  private String phone;
-  private String address;
 
   public ClientDTO(Client client) {
     this.id = client.getId();
     this.name = client.getName();
     this.surname = client.getSurname();
-    this.email = client.getEmail();
-    this.phone = client.getPhone().orElse(null);
-    this.address = client.getAddress().orElse(null);
+    this.email = client.getUser().getEmail();
   }
 }

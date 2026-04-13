@@ -75,7 +75,7 @@ public class OrderService {
   public Order findById(UUID id) throws ResourceNotFoundException {
     return orderRepository
         .findById(id)
-        .orElseThrow(() -> new ResourceNotFoundException("Order with ID " + id + "not found."));
+        .orElseThrow(() -> new ResourceNotFoundException("Order with ID " + id + " not found."));
   }
 
   @Transactional
@@ -147,7 +147,12 @@ public class OrderService {
 
   @Transactional(rollbackFor = {ResourceNotFoundException.class, UnauthorizedException.class})
   public OrderDTO createOrder(Map<UUID, Integer> variantIdsWithQuantity, UUID outfitId)
-      throws ResourceNotFoundException, UnauthorizedException {
+      throws ResourceNotFoundException, UnauthorizedException, IllegalArgumentException {
+
+    if (variantIdsWithQuantity == null || variantIdsWithQuantity.isEmpty()) {
+      throw new IllegalArgumentException("Quantity of products must be greater than 0.");
+    }
+
     User user = authService.getCurrentUser();
 
     Order order = new Order();
@@ -156,14 +161,26 @@ public class OrderService {
     order.setOrderStatus(OrderStatus.PENDING);
     order.setOrderCode(this.generateRandomCode());
 
+    UUID storeId = null;
+
     for (Map.Entry<UUID, Integer> entry : variantIdsWithQuantity.entrySet()) {
+      if (entry.getValue() == null || entry.getValue() <= 0) {
+        throw new IllegalArgumentException("Quantity of products must be greater than 0.");
+      }
+
       ProductVariant variant = productVariantService.getProductVariantById(entry.getKey());
 
-      // Validate that variant is available
       if (!variant.getIsAvailable()) {
         throw new UnauthorizedException(
             String.format(
                 "ProductVariant with ID %s is not available for purchase", variant.getId()));
+      }
+
+      UUID currentStoreId = variant.getProduct().getStore().getId();
+      if (storeId == null) {
+        storeId = currentStoreId;
+      } else if (!storeId.equals(currentStoreId)) {
+        throw new IllegalArgumentException("All products shoulde belong to the same store.");
       }
 
       OrderItem item = new OrderItem();
@@ -198,7 +215,7 @@ public class OrderService {
         orderRepository
             .findById(orderId)
             .orElseThrow(
-                () -> new ResourceNotFoundException("Order with ID" + orderId + "not found"));
+                () -> new ResourceNotFoundException("Order with ID " + orderId + " not found"));
     if (order.getOrderStatus().equals(OrderStatus.PENDING)) {
       order.setOrderStatus(OrderStatus.CONFIRMED);
     } else {
@@ -213,8 +230,8 @@ public class OrderService {
         orderRepository
             .findById(orderId)
             .orElseThrow(
-                () -> new ResourceNotFoundException("Order with ID" + orderId + "not found"));
-    authService.assertUserOwnsStore(order.getItems().getFirst().getProduct().getStore());
+                () -> new ResourceNotFoundException("Order with ID " + orderId + " not found"));
+    authService.assertUserOwnsStore(order.getItems().get(0).getProduct().getStore());
     if (order.getOrderStatus().equals(OrderStatus.PENDING)) {
       order.setOrderStatus(OrderStatus.REJECTED);
     } else {
@@ -231,8 +248,8 @@ public class OrderService {
         orderRepository
             .findByOrderCode(encryptedCode)
             .orElseThrow(
-                () -> new ResourceNotFoundException("Order with Code" + orderCode + "not found"));
-    authService.assertUserOwnsStore(order.getItems().getFirst().getProduct().getStore());
+                () -> new ResourceNotFoundException("Order with Code " + orderCode + " not found"));
+    authService.assertUserOwnsStore(order.getItems().get(0).getProduct().getStore());
     return mapToOrderDTO(order);
   }
 
@@ -242,8 +259,8 @@ public class OrderService {
         orderRepository
             .findById(orderId)
             .orElseThrow(
-                () -> new ResourceNotFoundException("Order with ID" + orderId + "not found"));
-    authService.assertUserOwnsStore(order.getItems().getFirst().getProduct().getStore());
+                () -> new ResourceNotFoundException("Order with ID " + orderId + " not found"));
+    authService.assertUserOwnsStore(order.getItems().get(0).getProduct().getStore());
     if (order.getOrderStatus().equals(OrderStatus.CONFIRMED)) {
       order.setOrderStatus(OrderStatus.PICKED);
     } else {
@@ -258,8 +275,8 @@ public class OrderService {
         orderRepository
             .findById(orderId)
             .orElseThrow(
-                () -> new ResourceNotFoundException("Order with ID" + orderId + "not found"));
-    authService.assertUserOwnsStore(order.getItems().getFirst().getProduct().getStore());
+                () -> new ResourceNotFoundException("Order with ID " + orderId + " not found"));
+    authService.assertUserOwnsStore(order.getItems().get(0).getProduct().getStore());
     if (order.getOrderStatus().equals(OrderStatus.PENDING)) {
       order.setOrderStatus(OrderStatus.CANCELLED);
     } else {
