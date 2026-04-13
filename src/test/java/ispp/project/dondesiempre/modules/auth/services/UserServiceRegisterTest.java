@@ -121,13 +121,13 @@ class UserServiceRegisterTest {
     when(passwordEncoder.encode("Password1!")).thenReturn("hashed");
     when(userRepository.save(any(User.class))).thenReturn(new User());
 
+    User savedUser = new User();
+    savedUser.setEmail("client@test.com");
     Client savedClient = new Client();
     savedClient.setId(UUID.randomUUID());
     savedClient.setName("John");
     savedClient.setSurname("Doe");
-    savedClient.setEmail("client@test.com");
-    savedClient.setPhone("+34600000000");
-    savedClient.setAddress("Test Street 1");
+    savedClient.setUser(savedUser);
     when(clientRepository.save(any(Client.class))).thenReturn(savedClient);
 
     ClientDTO result = userService.registerClient(buildClientDTO("client@test.com"));
@@ -173,8 +173,6 @@ class UserServiceRegisterTest {
     dto.setPassword("Password1!");
     dto.setName("John");
     dto.setSurname("Doe");
-    dto.setPhone("+34600000000");
-    dto.setAddress("Test Street 1");
     return dto;
   }
 }

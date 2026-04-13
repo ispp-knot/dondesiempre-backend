@@ -11,7 +11,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class ProductDiscountUpdateDTO {
 
-  @Min(1)
+  @Min(0)
   @Max(100)
   private Integer discountPercentage;
 }

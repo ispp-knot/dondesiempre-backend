@@ -334,15 +334,40 @@ public class DataSeeder implements CommandLineRunner {
 
   void addItemsToOrder(Order order, List<Product> products) {
     int total = 0;
+
+    List<ProductVariant> allVariants = productVariantRepository.findAll();
+
     for (Product p : products) {
+      ProductVariant variant =
+          allVariants.stream()
+              .filter(v -> v.getProduct().getId().equals(p.getId()))
+              .findFirst()
+              .orElse(null);
+
+      if (variant == null) {
+        log.warn(
+            "IGNORANDO PRODUCTO: '{}' (ID: {}) no tiene variantes. "
+                + "No se puede añadir al pedido debido a restricciones de integridad.",
+            p.getName(),
+            p.getId());
+        continue; // Salta al siguiente producto del bucle
+      }
+
       OrderItem item = new OrderItem();
       item.setOrder(order);
       item.setProduct(p);
       item.setQuantity(1);
       item.setPriceAtPurchase(p.getPriceInCents());
+
+      item.setVariant(variant);
+
+      if (order.getItems() == null) {
+        order.setItems(new java.util.ArrayList<>());
+      }
       order.getItems().add(item);
       total += p.getPriceInCents();
     }
+
     order.setTotalPrice(total);
   }
 
