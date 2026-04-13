@@ -70,7 +70,6 @@ public class UserService {
     store.setLocation(coordinatesService.createPoint(dto.getLongitude(), dto.getLatitude()));
     store.setAddress(dto.getAddress());
     store.setOpeningHours(dto.getOpeningHours());
-    store.setPhone(dto.getPhone());
     store.setAboutUs(dto.getAboutUs());
     store.setStorefront(storefront);
     store.setUser(user);

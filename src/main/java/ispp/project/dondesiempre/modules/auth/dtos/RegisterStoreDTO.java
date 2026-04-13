@@ -1,7 +1,6 @@
 package ispp.project.dondesiempre.modules.auth.dtos;
 
 import ispp.project.dondesiempre.modules.auth.validators.StrongPassword;
-import ispp.project.dondesiempre.modules.common.validators.Phone;
 import ispp.project.dondesiempre.modules.stores.validators.HexColor;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -35,8 +34,6 @@ public class RegisterStoreDTO {
   @NotBlank
   @Size(max = 255)
   private String openingHours;
-
-  @Phone private String phone;
 
   @Size(max = 5000)
   private String aboutUs;
