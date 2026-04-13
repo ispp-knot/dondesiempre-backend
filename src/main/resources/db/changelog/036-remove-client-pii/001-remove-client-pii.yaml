@@ -1,0 +1,46 @@
+databaseChangeLog:
+  - changeSet:
+      id: 036-remove-client-pii-1
+      author: esther
+      comment: Remove unnecessary personal data fields from clients table (GDPR compliance)
+      changes:
+        - dropColumn:
+            columnName: email
+            tableName: clients
+      rollback:
+        addColumn:
+          tableName: clients
+          columns:
+            - column:
+                name: email
+                type: VARCHAR(255)
+                constraints:
+                  nullable: false
+  - changeSet:
+      id: 036-remove-client-pii-2
+      author: esther
+      changes:
+        - dropColumn:
+            columnName: phone
+            tableName: clients
+      rollback:
+        addColumn:
+          tableName: clients
+          columns:
+            - column:
+                name: phone
+                type: VARCHAR(255)
+  - changeSet:
+      id: 036-remove-client-pii-3
+      author: esther
+      changes:
+        - dropColumn:
+            columnName: address
+            tableName: clients
+      rollback:
+        addColumn:
+          tableName: clients
+          columns:
+            - column:
+                name: address
+                type: VARCHAR(255)
