@@ -2,17 +2,14 @@ package ispp.project.dondesiempre.modules.clients.models;
 
 import ispp.project.dondesiempre.modules.auth.models.User;
 import ispp.project.dondesiempre.modules.common.models.BaseEntity;
-import ispp.project.dondesiempre.modules.common.validators.Phone;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import java.util.Optional;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -32,24 +29,8 @@ public class Client extends BaseEntity {
   @Size(max = 255)
   String surname;
 
-  @Column @NotBlank @Email String email;
-
-  @Column @Phone String phone;
-
-  @Column
-  @Size(max = 255)
-  String address;
-
   @NotNull
   @OneToOne(optional = false)
   @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
   private User user;
-
-  public Optional<String> getPhone() {
-    return Optional.ofNullable(this.phone);
-  }
-
-  public Optional<String> getAddress() {
-    return Optional.ofNullable(address);
-  }
 }

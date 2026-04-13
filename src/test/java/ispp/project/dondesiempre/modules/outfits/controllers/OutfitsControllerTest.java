@@ -15,6 +15,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ispp.project.dondesiempre.config.GlobalExceptionHandler;
+import ispp.project.dondesiempre.modules.common.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.modules.outfits.dtos.OutfitCreationDTO;
 import ispp.project.dondesiempre.modules.outfits.dtos.OutfitCreationProductDTO;
 import ispp.project.dondesiempre.modules.outfits.dtos.OutfitSortDTO;
@@ -134,6 +135,32 @@ class OutfitsControllerTest {
         .andExpect(jsonPath("$.name").value(outfit.getName()));
   }
 
+  @Test
+  void getById_shouldReturnNotFound_whenOutfitDoesNotExist() throws Exception {
+    UUID nonExistentId = UUID.randomUUID();
+    when(outfitService.findByIdAsDTO(nonExistentId))
+        .thenThrow(new ResourceNotFoundException("Outfit not found"));
+
+    mockMvc.perform(get("/api/v1/outfits/" + nonExistentId)).andExpect(status().isNotFound());
+  }
+
+  @Test
+  void getById_shouldReturnOutfitWithTags_whenOutfitHasTags() throws Exception {
+    OutfitTagDTO tag1 = new OutfitTagDTO("casual");
+    OutfitTagDTO tag2 = new OutfitTagDTO("summer");
+    ispp.project.dondesiempre.modules.outfits.dtos.OutfitDTO outfitDTO =
+        new ispp.project.dondesiempre.modules.outfits.dtos.OutfitDTO(
+            outfit, List.of(tag1, tag2), List.of(outfitProduct));
+    when(outfitService.findByIdAsDTO(outfitId)).thenReturn(outfitDTO);
+
+    mockMvc
+        .perform(get("/api/v1/outfits/" + outfitId))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.tags.size()").value(2))
+        .andExpect(jsonPath("$.tags[0].name").value("casual"))
+        .andExpect(jsonPath("$.tags[1].name").value("summer"));
+  }
+
   // -------------------------------------------------------------------------
   // GET /api/v1/stores/{storeId}/outfits
   // -------------------------------------------------------------------------
@@ -144,13 +171,50 @@ class OutfitsControllerTest {
         new ispp.project.dondesiempre.modules.outfits.dtos.OutfitDTO(
             outfit, List.of(), List.of(outfitProduct));
     when(storeService.findById(storeId)).thenReturn(store);
-    when(outfitService.findByStoreIdAsDTO(storeId)).thenReturn(List.of(outfitDTO));
+    when(outfitService.findByStoreIdAndNameAsDTO(storeId, null)).thenReturn(List.of(outfitDTO));
 
     mockMvc
         .perform(get("/api/v1/stores/" + storeId + "/outfits"))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.size()").value(1))
         .andExpect(jsonPath("$[0].name").value(outfit.getName()));
+  }
+
+  @Test
+  void getByStoreId_shouldReturnOk_whenNameFilterIsProvided() throws Exception {
+    ispp.project.dondesiempre.modules.outfits.dtos.OutfitDTO outfitDTO =
+        new ispp.project.dondesiempre.modules.outfits.dtos.OutfitDTO(
+            outfit, List.of(), List.of(outfitProduct));
+    when(storeService.findById(storeId)).thenReturn(store);
+    when(outfitService.findByStoreIdAndNameAsDTO(storeId, "Test")).thenReturn(List.of(outfitDTO));
+
+    mockMvc
+        .perform(get("/api/v1/stores/" + storeId + "/outfits?name=Test"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.size()").value(1))
+        .andExpect(jsonPath("$[0].name").value(outfit.getName()));
+  }
+
+  @Test
+  void getByStoreId_shouldReturnEmptyList_whenNoOutfitsMatch() throws Exception {
+    when(storeService.findById(storeId)).thenReturn(store);
+    when(outfitService.findByStoreIdAndNameAsDTO(storeId, "NonExistent")).thenReturn(List.of());
+
+    mockMvc
+        .perform(get("/api/v1/stores/" + storeId + "/outfits?name=NonExistent"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.size()").value(0));
+  }
+
+  @Test
+  void getByStoreId_shouldReturnEmptyList_whenStoreHasNoOutfits() throws Exception {
+    when(storeService.findById(storeId)).thenReturn(store);
+    when(outfitService.findByStoreIdAndNameAsDTO(storeId, null)).thenReturn(List.of());
+
+    mockMvc
+        .perform(get("/api/v1/stores/" + storeId + "/outfits"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.size()").value(0));
   }
 
   // -------------------------------------------------------------------------

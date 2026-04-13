@@ -1,6 +1,5 @@
 package ispp.project.dondesiempre.modules.clients.dtos;
 
-import ispp.project.dondesiempre.modules.common.validators.Phone;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -22,9 +21,4 @@ public class ClientUpdateDTO {
   private String surname;
 
   @NotBlank @Email private String email;
-
-  @Phone private String phone;
-
-  @Size(max = 255)
-  private String address;
 }

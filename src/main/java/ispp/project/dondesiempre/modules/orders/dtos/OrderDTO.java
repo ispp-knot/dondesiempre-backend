@@ -29,8 +29,12 @@ public class OrderDTO {
   @NoArgsConstructor
   @AllArgsConstructor
   public static class OrderItemDTO {
+    private UUID id;
     private UUID productId;
     private String productName;
+    private UUID variantId;
+    private String variantSize;
+    private String variantColor;
     private Integer quantity;
     private Integer priceAtPurchase;
     private Integer subtotal;
