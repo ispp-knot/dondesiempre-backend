@@ -1,0 +1,16 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20260410-add-variant-id-to-order-items
+      author: roth
+      changes:
+        - addColumn:
+            tableName: order_items
+            columns:
+              - column:
+                  name: variant_id
+                  type: UUID
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_orderitems_variant
+                    referencedTableName: product_variants
+                    referencedColumnNames: id
