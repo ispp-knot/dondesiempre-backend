@@ -34,6 +34,7 @@ import ispp.project.dondesiempre.modules.stores.repositories.StoreRepository;
 import ispp.project.dondesiempre.utils.crypto.CryptoConverter;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -88,7 +89,6 @@ public class OrderServiceTest {
     product.setPriceInCents(100);
     product.setName("Producto Test");
 
-    // Create variant
     ProductSize size = new ProductSize();
     size.setSize("M");
 
@@ -116,6 +116,52 @@ public class OrderServiceTest {
     order.setItems(new ArrayList<>(List.of(item)));
     order.setOrderCode("CODE-1234-5678");
     order.setTotalPrice(200);
+  }
+
+  @Test
+  void createOrder_EmptyItems_ShouldThrowException() {
+    assertThrows(
+        IllegalArgumentException.class,
+        () -> orderService.createOrder(Collections.emptyMap(), null));
+  }
+
+  @Test
+  void createOrder_NegativeQuantity_ShouldThrowException() {
+    Map<UUID, Integer> items = new HashMap<>();
+    items.put(variantId, -1);
+    assertThrows(IllegalArgumentException.class, () -> orderService.createOrder(items, null));
+  }
+
+  @Test
+  void createOrder_ZeroQuantity_ShouldThrowException() {
+    Map<UUID, Integer> items = new HashMap<>();
+    items.put(variantId, 0);
+    assertThrows(IllegalArgumentException.class, () -> orderService.createOrder(items, null));
+  }
+
+  @Test
+  void createOrder_DifferentStores_ShouldThrowException() throws ResourceNotFoundException {
+    UUID variantId2 = UUID.randomUUID();
+    Store store2 = new Store();
+    store2.setId(UUID.randomUUID());
+
+    Product product2 = new Product();
+    product2.setStore(store2);
+
+    ProductVariant variant2 = new ProductVariant();
+    variant2.setId(variantId2);
+    variant2.setProduct(product2);
+    variant2.setIsAvailable(true);
+
+    when(authService.getCurrentUser()).thenReturn(user);
+    when(productVariantService.getProductVariantById(variantId)).thenReturn(variant);
+    when(productVariantService.getProductVariantById(variantId2)).thenReturn(variant2);
+
+    Map<UUID, Integer> items = new HashMap<>();
+    items.put(variantId, 1);
+    items.put(variantId2, 1);
+
+    assertThrows(IllegalArgumentException.class, () -> orderService.createOrder(items, null));
   }
 
   @Test
@@ -218,7 +264,7 @@ public class OrderServiceTest {
     OrderDTO result = orderService.createOrder(variantIdsWithQuantity, outfitId);
 
     assertNotNull(result);
-    assertEquals(160, result.getTotalPrice()); // 100 * 2 = 200, -20% = 160
+    assertEquals(160, result.getTotalPrice());
     verify(orderRepository).save(any(Order.class));
   }
 
