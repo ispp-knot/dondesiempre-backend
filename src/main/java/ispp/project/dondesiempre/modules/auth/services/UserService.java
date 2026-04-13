@@ -92,9 +92,6 @@ public class UserService {
     Client client = new Client();
     client.setName(dto.getName());
     client.setSurname(dto.getSurname());
-    client.setEmail(dto.getEmail());
-    client.setPhone(dto.getPhone());
-    client.setAddress(dto.getAddress());
     client.setUser(user);
 
     return new ClientDTO(clientRepository.save(client));
