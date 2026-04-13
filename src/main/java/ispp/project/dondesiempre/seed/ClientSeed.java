@@ -7,6 +7,7 @@ import ispp.project.dondesiempre.modules.orders.models.Order;
 import ispp.project.dondesiempre.modules.orders.models.OrderItem;
 import ispp.project.dondesiempre.modules.orders.models.OrderStatus;
 import ispp.project.dondesiempre.modules.products.models.Product;
+import ispp.project.dondesiempre.modules.products.models.ProductVariant;
 import ispp.project.dondesiempre.modules.stores.models.Store;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ class ClientSeed {
   }
 
   void seed() {
+
     Random rng = new Random(s.props.getRandomSeed());
 
     List<String> firstNames = s.loadTextFile("seed/client-first-names.txt");
@@ -30,6 +32,7 @@ class ClientSeed {
 
     List<Store> allStores = s.storeRepository.findAll();
     List<Product> allProducts = s.productRepository.findAll();
+    List<ProductVariant> allVariants = s.productVariantRepository.findAll();
 
     User clientUser = new User();
     clientUser.setId(s.seedUuid("user:client@client.com"));
@@ -49,12 +52,14 @@ class ClientSeed {
     Product p4 = allProducts.size() > 3 ? allProducts.get(3) : p1;
 
     if (p3 != null && p4 != null && p1 != null) {
+
       Order order = new Order();
       order.setUser(clientUser);
       order.setOrderDate(LocalDateTime.now());
       order.setOrderStatus(OrderStatus.PENDING);
       order.setOrderCode("SEED-MANU-0001");
       order.setItems(new ArrayList<>());
+
       s.addItemsToOrder(order, List.of(p3));
 
       Order orderConfirmed = new Order();
@@ -63,6 +68,7 @@ class ClientSeed {
       orderConfirmed.setOrderStatus(OrderStatus.CONFIRMED);
       orderConfirmed.setOrderCode("SEED-CONF-0002");
       orderConfirmed.setItems(new ArrayList<>());
+
       s.addItemsToOrder(orderConfirmed, List.of(p3));
       s.orderRepository.save(orderConfirmed);
 
@@ -72,6 +78,7 @@ class ClientSeed {
       orderRejected.setOrderStatus(OrderStatus.REJECTED);
       orderRejected.setOrderCode("SEED-REJE-0003");
       orderRejected.setItems(new ArrayList<>());
+
       s.addItemsToOrder(orderRejected, List.of(p4));
       s.orderRepository.save(orderRejected);
 
@@ -81,11 +88,13 @@ class ClientSeed {
       orderPicked.setOrderStatus(OrderStatus.PICKED);
       orderPicked.setOrderCode("SEED-PICK-0004");
       orderPicked.setItems(new ArrayList<>());
+
       s.addItemsToOrder(orderPicked, List.of(p1, p4));
       s.orderRepository.save(orderPicked);
     }
 
     for (int i = 1; i <= s.props.getClientCount(); i++) {
+
       String name = s.pick(firstNames, rng);
       String surname = s.pick(surnames, rng);
       String clientEmail = "client" + i + "@client.com";
@@ -104,10 +113,12 @@ class ClientSeed {
       s.clientRepository.save(client);
 
       if (rng.nextDouble() < 0.5 && !allProducts.isEmpty()) {
+
         Order randomOrder = new Order();
         randomOrder.setUser(user);
         randomOrder.setOrderDate(LocalDateTime.now().minusDays(rng.nextInt(10)));
         randomOrder.setOrderStatus(OrderStatus.PENDING);
+
         String uuidStr = UUID.randomUUID().toString().replace("-", "").toUpperCase();
         randomOrder.setOrderCode("SEED-" + uuidStr.substring(0, 4) + "-" + uuidStr.substring(4, 8));
         randomOrder.setItems(new ArrayList<>());
@@ -116,21 +127,40 @@ class ClientSeed {
         int randomTotal = 0;
 
         for (int k = 0; k < itemsToCreate; k++) {
+
           Product p = s.pick(allProducts, rng);
+
+          List<ProductVariant> variants =
+              allVariants.stream()
+                  .filter(v -> v.getProduct() != null)
+                  .filter(v -> v.getProduct().getId().equals(p.getId()))
+                  .toList();
+
+          if (variants.isEmpty()) {
+            continue;
+          }
+
+          ProductVariant variant = s.pick(variants, rng);
+
           OrderItem item = new OrderItem();
           item.setOrder(randomOrder);
           item.setProduct(p);
+          item.setVariant(variant);
           item.setQuantity(1 + rng.nextInt(2));
           item.setPriceAtPurchase(p.getPriceInCents());
+
           randomOrder.getItems().add(item);
+
           randomTotal += item.getPriceAtPurchase() * item.getQuantity();
         }
+
         randomOrder.setTotalPrice(randomTotal);
         s.orderRepository.save(randomOrder);
       }
 
       int followCount = 1 + rng.nextInt(3);
       List<Store> shuffled = new ArrayList<>(allStores);
+
       for (int j = 0; j < followCount && j < shuffled.size(); j++) {
         int idx = j + rng.nextInt(shuffled.size() - j);
         Store store = shuffled.get(idx);
