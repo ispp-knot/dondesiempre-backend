@@ -33,9 +33,6 @@ public class ClientService {
 
     currentClient.setName(dto.getName());
     currentClient.setSurname(dto.getSurname());
-    currentClient.setEmail(dto.getEmail());
-    currentClient.setAddress(dto.getAddress());
-    currentClient.setPhone(dto.getPhone());
     return new ClientDTO(clientRepository.save(currentClient));
   }
 }
