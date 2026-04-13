@@ -18,6 +18,7 @@ import ispp.project.dondesiempre.modules.stores.repositories.StoreRepository;
 import ispp.project.dondesiempre.utils.crypto.CryptoConverter;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -63,12 +64,18 @@ public class OrderService {
       orders = orderRepository.findByUserId(currentUser.getId());
     }
 
-    return orders.stream().map(this::mapToOrderDTO).toList();
+    return orders.stream()
+        .sorted(Comparator.comparing(Order::getOrderDate).reversed())
+        .map(this::mapToOrderDTO)
+        .toList();
   }
 
   @Transactional(readOnly = true)
   public List<OrderDTO> findOrdersByUserId(UUID userId) {
-    return orderRepository.findByUserId(userId).stream().map(this::mapToOrderDTO).toList();
+    return orderRepository.findByUserId(userId).stream()
+        .sorted(Comparator.comparing(Order::getOrderDate).reversed())
+        .map(this::mapToOrderDTO)
+        .toList();
   }
 
   @Transactional(readOnly = true, rollbackFor = ResourceNotFoundException.class)

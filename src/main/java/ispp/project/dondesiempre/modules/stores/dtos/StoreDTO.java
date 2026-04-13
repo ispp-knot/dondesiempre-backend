@@ -17,7 +17,6 @@ public class StoreDTO {
   private String email;
   private String address;
   private String openingHours;
-  private String phone;
   private Boolean hasActivePromotions;
   private Double latitude;
   private Double longitude;
@@ -33,7 +32,6 @@ public class StoreDTO {
     this.email = store.getEmail();
     this.address = store.getAddress();
     this.openingHours = store.getOpeningHours();
-    this.phone = store.getPhone().orElse(null);
     this.aboutUs = store.getAboutUs().orElse(null);
     if (store.getLocation() != null) {
       this.latitude = store.getLocation().getY();
