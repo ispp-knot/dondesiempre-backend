@@ -1,0 +1,7 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1775904294987-37
+      author: ignacio
+      changes:
+        - sql:
+            sql: ALTER TABLE products ADD CONSTRAINT chk_product_price_min_1 CHECK (price_in_cents >= 1);

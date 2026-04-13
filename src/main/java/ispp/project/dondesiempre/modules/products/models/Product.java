@@ -31,7 +31,7 @@ public class Product extends BaseEntity {
 
   @Column
   @NotNull
-  @Min(0)
+  @Min(1)
   Integer priceInCents;
 
   @Column
@@ -45,6 +45,10 @@ public class Product extends BaseEntity {
   String description;
 
   @Column @Nullable @URL private String image;
+
+  @Column(columnDefinition = "BOOLEAN DEFAULT FALSE")
+  @NotNull
+  private boolean isDeleted = false;
 
   @NotNull
   @ManyToOne(optional = false)

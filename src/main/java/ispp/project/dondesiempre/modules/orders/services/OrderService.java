@@ -1,7 +1,6 @@
 package ispp.project.dondesiempre.modules.orders.services;
 
 import ispp.project.dondesiempre.modules.auth.models.User;
-import ispp.project.dondesiempre.modules.auth.repositories.UserRepository;
 import ispp.project.dondesiempre.modules.auth.services.AuthService;
 import ispp.project.dondesiempre.modules.common.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.modules.common.exceptions.UnauthorizedException;
@@ -10,12 +9,16 @@ import ispp.project.dondesiempre.modules.orders.models.Order;
 import ispp.project.dondesiempre.modules.orders.models.OrderItem;
 import ispp.project.dondesiempre.modules.orders.models.OrderStatus;
 import ispp.project.dondesiempre.modules.orders.repositories.OrderRepository;
-import ispp.project.dondesiempre.modules.products.models.Product;
+import ispp.project.dondesiempre.modules.outfits.models.Outfit;
+import ispp.project.dondesiempre.modules.outfits.services.OutfitService;
+import ispp.project.dondesiempre.modules.products.models.ProductVariant;
+import ispp.project.dondesiempre.modules.products.services.ProductVariantService;
 import ispp.project.dondesiempre.modules.stores.models.Store;
 import ispp.project.dondesiempre.modules.stores.repositories.StoreRepository;
 import ispp.project.dondesiempre.utils.crypto.CryptoConverter;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -30,11 +33,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class OrderService {
 
   private final OrderRepository orderRepository;
-  private final UserRepository userRepository;
   private final StoreRepository storeRepository;
   private final AuthService authService;
+  private final ProductVariantService productVariantService;
   private final CryptoConverter cryptoConverter;
   private final ApplicationContext applicationContext;
+  private final OutfitService outfitService;
 
   private final SecureRandom secureRandom = new SecureRandom();
   private static final String CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -60,19 +64,25 @@ public class OrderService {
       orders = orderRepository.findByUserId(currentUser.getId());
     }
 
-    return orders.stream().map(this::mapToOrderDTO).toList();
+    return orders.stream()
+        .sorted(Comparator.comparing(Order::getOrderDate).reversed())
+        .map(this::mapToOrderDTO)
+        .toList();
   }
 
   @Transactional(readOnly = true)
   public List<OrderDTO> findOrdersByUserId(UUID userId) {
-    return orderRepository.findByUserId(userId).stream().map(this::mapToOrderDTO).toList();
+    return orderRepository.findByUserId(userId).stream()
+        .sorted(Comparator.comparing(Order::getOrderDate).reversed())
+        .map(this::mapToOrderDTO)
+        .toList();
   }
 
   @Transactional(readOnly = true, rollbackFor = ResourceNotFoundException.class)
   public Order findById(UUID id) throws ResourceNotFoundException {
     return orderRepository
         .findById(id)
-        .orElseThrow(() -> new ResourceNotFoundException("Order with ID " + id + "not found."));
+        .orElseThrow(() -> new ResourceNotFoundException("Order with ID " + id + " not found."));
   }
 
   @Transactional
@@ -130,16 +140,26 @@ public class OrderService {
 
   private OrderDTO.OrderItemDTO mapItemToDTO(OrderItem item) {
     return OrderDTO.OrderItemDTO.builder()
+        .id(item.getId())
         .productId(item.getProduct().getId())
         .productName(item.getProduct().getName())
+        .variantId(item.getVariant().getId())
+        .variantSize(item.getVariant().getSize().getSize())
+        .variantColor(item.getVariant().getColor().getColor())
         .quantity(item.getQuantity())
         .priceAtPurchase(item.getPriceAtPurchase())
         .subtotal(item.getQuantity() * item.getPriceAtPurchase())
         .build();
   }
 
-  @Transactional(rollbackFor = ResourceNotFoundException.class)
-  public OrderDTO createOrder(Map<Product, Integer> productsToBuy) {
+  @Transactional(rollbackFor = {ResourceNotFoundException.class, UnauthorizedException.class})
+  public OrderDTO createOrder(Map<UUID, Integer> variantIdsWithQuantity, UUID outfitId)
+      throws ResourceNotFoundException, UnauthorizedException, IllegalArgumentException {
+
+    if (variantIdsWithQuantity == null || variantIdsWithQuantity.isEmpty()) {
+      throw new IllegalArgumentException("Quantity of products must be greater than 0.");
+    }
+
     User user = authService.getCurrentUser();
 
     Order order = new Order();
@@ -148,17 +168,49 @@ public class OrderService {
     order.setOrderStatus(OrderStatus.PENDING);
     order.setOrderCode(this.generateRandomCode());
 
-    for (Map.Entry<Product, Integer> entry : productsToBuy.entrySet()) {
+    UUID storeId = null;
+
+    for (Map.Entry<UUID, Integer> entry : variantIdsWithQuantity.entrySet()) {
+      if (entry.getValue() == null || entry.getValue() <= 0) {
+        throw new IllegalArgumentException("Quantity of products must be greater than 0.");
+      }
+
+      ProductVariant variant = productVariantService.getProductVariantById(entry.getKey());
+
+      if (!variant.getIsAvailable()) {
+        throw new UnauthorizedException(
+            String.format(
+                "ProductVariant with ID %s is not available for purchase", variant.getId()));
+      }
+
+      UUID currentStoreId = variant.getProduct().getStore().getId();
+      if (storeId == null) {
+        storeId = currentStoreId;
+      } else if (!storeId.equals(currentStoreId)) {
+        throw new IllegalArgumentException("All products shoulde belong to the same store.");
+      }
+
       OrderItem item = new OrderItem();
       item.setOrder(order);
-      item.setProduct(entry.getKey());
+      item.setProduct(variant.getProduct());
+      item.setVariant(variant);
       item.setQuantity(entry.getValue());
-      item.setPriceAtPurchase(entry.getKey().getPriceInCents());
+      item.setPriceAtPurchase(variant.getProduct().getPriceInCents());
 
       order.getItems().add(item);
     }
 
-    order.setTotalPrice(this.calculateAndSetTotalPrice(order));
+    Integer total = this.calculateAndSetTotalPrice(order);
+
+    if (outfitId != null) {
+      Outfit outfit = outfitService.findById(outfitId);
+      if (outfit != null && outfit.getDiscountPercentage().isPresent()) {
+        Integer discount = outfit.getDiscountPercentage().get();
+        total = (total * (100 - discount)) / 100;
+      }
+    }
+
+    order.setTotalPrice(total);
     Order savedOrder = orderRepository.save(order);
 
     return mapToOrderDTO(savedOrder);
@@ -170,7 +222,7 @@ public class OrderService {
         orderRepository
             .findById(orderId)
             .orElseThrow(
-                () -> new ResourceNotFoundException("Order with ID" + orderId + "not found"));
+                () -> new ResourceNotFoundException("Order with ID " + orderId + " not found"));
     if (order.getOrderStatus().equals(OrderStatus.PENDING)) {
       order.setOrderStatus(OrderStatus.CONFIRMED);
     } else {
@@ -185,8 +237,8 @@ public class OrderService {
         orderRepository
             .findById(orderId)
             .orElseThrow(
-                () -> new ResourceNotFoundException("Order with ID" + orderId + "not found"));
-    authService.assertUserOwnsStore(order.getItems().getFirst().getProduct().getStore());
+                () -> new ResourceNotFoundException("Order with ID " + orderId + " not found"));
+    authService.assertUserOwnsStore(order.getItems().get(0).getProduct().getStore());
     if (order.getOrderStatus().equals(OrderStatus.PENDING)) {
       order.setOrderStatus(OrderStatus.REJECTED);
     } else {
@@ -203,8 +255,8 @@ public class OrderService {
         orderRepository
             .findByOrderCode(encryptedCode)
             .orElseThrow(
-                () -> new ResourceNotFoundException("Order with Code" + orderCode + "not found"));
-    authService.assertUserOwnsStore(order.getItems().getFirst().getProduct().getStore());
+                () -> new ResourceNotFoundException("Order with Code " + orderCode + " not found"));
+    authService.assertUserOwnsStore(order.getItems().get(0).getProduct().getStore());
     return mapToOrderDTO(order);
   }
 
@@ -214,8 +266,8 @@ public class OrderService {
         orderRepository
             .findById(orderId)
             .orElseThrow(
-                () -> new ResourceNotFoundException("Order with ID" + orderId + "not found"));
-    authService.assertUserOwnsStore(order.getItems().getFirst().getProduct().getStore());
+                () -> new ResourceNotFoundException("Order with ID " + orderId + " not found"));
+    authService.assertUserOwnsStore(order.getItems().get(0).getProduct().getStore());
     if (order.getOrderStatus().equals(OrderStatus.CONFIRMED)) {
       order.setOrderStatus(OrderStatus.PICKED);
     } else {
@@ -224,23 +276,14 @@ public class OrderService {
     }
   }
 
-  // Este método se puede usar para cancelar un pedido que aún no ha sido
-  // confirmado.
-  /**
-   * TODO: Podría añadirse que un pedido sea cancelado por un cliente o una tienda, si y solo si: -
-   * Cliente: puede cancelar un pedido si está PENDING (se ha equivocado, se ha dado cuenta que no
-   * quería X item, etc.) - Tienda: puede cancelar un pedido si está CONFIRMED (se han dado cuenta
-   * que no queda stock, el pedido es imposible de preparar, etc.) Ahora mismo no está teniendo en
-   * cuenta estos roles.
-   */
   @Transactional
   public void cancelOrder(UUID orderId) throws UnauthorizedException, ResourceNotFoundException {
     Order order =
         orderRepository
             .findById(orderId)
             .orElseThrow(
-                () -> new ResourceNotFoundException("Order with ID" + orderId + "not found"));
-    authService.assertUserOwnsStore(order.getItems().getFirst().getProduct().getStore());
+                () -> new ResourceNotFoundException("Order with ID " + orderId + " not found"));
+    authService.assertUserOwnsStore(order.getItems().get(0).getProduct().getStore());
     if (order.getOrderStatus().equals(OrderStatus.PENDING)) {
       order.setOrderStatus(OrderStatus.CANCELLED);
     } else {

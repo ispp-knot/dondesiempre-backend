@@ -1,6 +1,7 @@
 package ispp.project.dondesiempre.modules.order.controllers;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -13,12 +14,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ispp.project.dondesiempre.config.GlobalExceptionHandler;
+import ispp.project.dondesiempre.modules.common.exceptions.UnauthorizedException;
 import ispp.project.dondesiempre.modules.orders.controllers.OrderController;
 import ispp.project.dondesiempre.modules.orders.dtos.OrderDTO;
+import ispp.project.dondesiempre.modules.orders.dtos.OrderDTO.OrderItemDTO;
 import ispp.project.dondesiempre.modules.orders.models.OrderStatus;
 import ispp.project.dondesiempre.modules.orders.services.OrderService;
 import ispp.project.dondesiempre.modules.products.models.Product;
 import ispp.project.dondesiempre.modules.products.services.ProductService;
+import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -49,6 +54,7 @@ class OrderControllerTest {
 
   private UUID orderId;
   private UUID productId;
+  private UUID variantId;
   private OrderDTO orderDTO;
   private Product product;
   private String orderCode;
@@ -57,20 +63,37 @@ class OrderControllerTest {
   void setUp() {
     orderId = UUID.randomUUID();
     productId = UUID.randomUUID();
+    variantId = UUID.randomUUID();
     orderCode = "ABCD-1234-EFGH";
+
+    // Create order item DTO with variant information
+    OrderItemDTO itemDTO =
+        OrderItemDTO.builder()
+            .id(UUID.randomUUID())
+            .productId(productId)
+            .productName("Producto Test")
+            .variantId(variantId)
+            .variantSize("M")
+            .variantColor("Red")
+            .quantity(2)
+            .priceAtPurchase(750)
+            .subtotal(1500)
+            .build();
 
     orderDTO =
         OrderDTO.builder()
             .id(orderId)
             .orderCode(orderCode)
+            .orderDate(LocalDateTime.now())
             .orderStatus(OrderStatus.PENDING)
             .totalPrice(1500)
+            .items(List.of(itemDTO))
             .build();
 
     product = new Product();
     product.setId(productId);
     product.setName("Producto Test");
-    product.setPriceInCents(1500);
+    product.setPriceInCents(750);
   }
 
   @Test
@@ -107,11 +130,8 @@ class OrderControllerTest {
   @Test
   @WithMockUser
   void createOrder_shouldReturnCreated() throws Exception {
-    Map<UUID, Integer> payload = Map.of(productId, 1);
-
-    when(productService.getProductById(productId)).thenReturn(product);
-    when(orderService.createOrder(any(Map.class))).thenReturn(orderDTO);
-
+    Map<UUID, Integer> payload = Map.of(variantId, 1);
+    when(orderService.createOrder(any(Map.class), any())).thenReturn(orderDTO);
     mockMvc
         .perform(
             post("/api/v1/orders")
@@ -119,9 +139,24 @@ class OrderControllerTest {
                 .content(objectMapper.writeValueAsString(payload)))
         .andExpect(status().isCreated())
         .andExpect(jsonPath("$.id").value(orderId.toString()));
+    verify(orderService, times(1)).createOrder(any(Map.class), any());
+  }
 
-    verify(productService, times(1)).getProductById(productId);
-    verify(orderService, times(1)).createOrder(any(Map.class));
+  @Test
+  @WithMockUser
+  void createOrder_withOutfit_shouldReturnCreated() throws Exception {
+    UUID outfitId = UUID.randomUUID();
+    Map<UUID, Integer> payload = Map.of(variantId, 1);
+    when(orderService.createOrder(any(Map.class), eq(outfitId))).thenReturn(orderDTO);
+    mockMvc
+        .perform(
+            post("/api/v1/orders")
+                .param("outfitId", outfitId.toString())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(payload)))
+        .andExpect(status().isCreated())
+        .andExpect(jsonPath("$.id").value(orderId.toString()));
+    verify(orderService, times(1)).createOrder(any(Map.class), eq(outfitId));
   }
 
   @Test
@@ -163,5 +198,82 @@ class OrderControllerTest {
         .andExpect(status().isNoContent());
 
     verify(orderService, times(1)).pickOrder(orderId);
+  }
+
+  // Variant-related tests
+  @Test
+  @WithMockUser
+  void createOrder_WithVariants_ShouldReturnOrderWithVariantDetails() throws Exception {
+    Map<UUID, Integer> variantIdsWithQuantity = new HashMap<>();
+    variantIdsWithQuantity.put(variantId, 2);
+
+    when(orderService.createOrder(any(Map.class), any())).thenReturn(orderDTO);
+
+    mockMvc
+        .perform(
+            post("/api/v1/orders")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(variantIdsWithQuantity)))
+        .andExpect(status().isCreated())
+        .andExpect(jsonPath("$.id").value(orderId.toString()))
+        .andExpect(jsonPath("$.orderStatus").value("PENDING"))
+        .andExpect(jsonPath("$.items[0].variantId").value(variantId.toString()))
+        .andExpect(jsonPath("$.items[0].variantSize").value("M"))
+        .andExpect(jsonPath("$.items[0].variantColor").value("Red"));
+
+    verify(orderService, times(1)).createOrder(any(Map.class), any());
+  }
+
+  @Test
+  @WithMockUser
+  void getMyOrders_ShouldIncludeVariantInformation() throws Exception {
+    when(orderService.findOrdersOfCurrenUser()).thenReturn(List.of(orderDTO));
+
+    mockMvc
+        .perform(get("/api/v1/orders").contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.size()").value(1))
+        .andExpect(jsonPath("$[0].items[0].variantId").value(variantId.toString()))
+        .andExpect(jsonPath("$[0].items[0].variantSize").value("M"))
+        .andExpect(jsonPath("$[0].items[0].variantColor").value("Red"))
+        .andExpect(jsonPath("$[0].items[0].productName").value("Producto Test"))
+        .andExpect(jsonPath("$[0].items[0].quantity").value(2));
+
+    verify(orderService, times(1)).findOrdersOfCurrenUser();
+  }
+
+  @Test
+  @WithMockUser
+  void findOrder_ShouldIncludeVariantDetails() throws Exception {
+    when(orderService.findOrder(orderCode)).thenReturn(orderDTO);
+
+    mockMvc
+        .perform(
+            get("/api/v1/orders/pick/{orderCode}", orderCode)
+                .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.items[0].variantSize").value("M"))
+        .andExpect(jsonPath("$.items[0].variantColor").value("Red"));
+
+    verify(orderService, times(1)).findOrder(orderCode);
+  }
+
+  @Test
+  @WithMockUser
+  void createOrder_WithUnavailableVariant_ShouldThrowUnauthorized() throws Exception {
+    Map<UUID, Integer> variantIdsWithQuantity = new HashMap<>();
+    variantIdsWithQuantity.put(variantId, 2);
+
+    when(orderService.createOrder(any(Map.class), any()))
+        .thenThrow(new UnauthorizedException("Variant not available"));
+
+    mockMvc
+        .perform(
+            post("/api/v1/orders")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(variantIdsWithQuantity)))
+        .andExpect(status().isForbidden());
+
+    verify(orderService, times(1)).createOrder(any(Map.class), any());
   }
 }

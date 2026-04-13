@@ -2,6 +2,7 @@ package ispp.project.dondesiempre.modules.stores.services;
 
 import ispp.project.dondesiempre.modules.auth.services.AuthService;
 import ispp.project.dondesiempre.modules.common.exceptions.AlreadyExistsException;
+import ispp.project.dondesiempre.modules.common.exceptions.InvalidSocialNetworkException;
 import ispp.project.dondesiempre.modules.common.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.modules.common.exceptions.UnauthorizedException;
 import ispp.project.dondesiempre.modules.stores.dtos.SocialNetworkDTO;
@@ -35,18 +36,57 @@ public class StoreSocialNetworkService {
 
   private static final Set<String> PHONE_NETWORKS = Set.of("Teléfono", "Phone");
 
-  private void validateByNetwork(String name, String link) {
+  private void validateByNetwork(String name, String link) throws InvalidSocialNetworkException {
     String clean = link.replaceAll("\\s+", "");
+    String nameLower = name.toLowerCase();
+
+    String phoneDigits = clean.startsWith("tel:") ? clean.replace("tel:", "") : clean;
 
     if (PHONE_NETWORKS.contains(name)) {
-      String phoneDigits = clean.startsWith("tel:") ? clean.replace("tel:", "") : clean;
       if (!phoneDigits.matches(PHONE_REGEX)) {
-        throw new IllegalArgumentException(
+        throw new InvalidSocialNetworkException(
             "Must be a valid telephone number, formed by 9-15 digits, prefix allowed.");
       }
     } else {
-      if (!link.matches(URL_REGEX)) {
-        throw new IllegalArgumentException("Must be a valid URL.");
+      boolean isWhatsappPhone = nameLower.equals("whatsapp") && phoneDigits.matches(PHONE_REGEX);
+
+      if (!isWhatsappPhone && !link.matches(URL_REGEX)) {
+        throw new InvalidSocialNetworkException("Must be a valid URL.");
+      }
+
+      String linkLower = link.toLowerCase();
+
+      switch (nameLower) {
+        case "instagram":
+          if (!linkLower.matches("^(https?://)?(www\\.)?(instagram\\.com|ig\\.me)(/.*)?$")) {
+            throw new InvalidSocialNetworkException("Link must be a valid Instagram URL.");
+          }
+          break;
+        case "tiktok":
+          if (!linkLower.matches("^(https?://)?(www\\.)?tiktok\\.com(/.*)?$")) {
+            throw new InvalidSocialNetworkException("Link must be a valid TikTok URL.");
+          }
+          break;
+        case "facebook":
+          if (!linkLower.matches("^(https?://)?(www\\.)?facebook\\.com(/.*)?$")) {
+            throw new InvalidSocialNetworkException("Link must be a valid Facebook URL.");
+          }
+          break;
+        case "x":
+        case "twitter":
+          if (!linkLower.matches("^(https?://)?(www\\.)?(x\\.com|twitter\\.com)(/.*)?$")) {
+            throw new InvalidSocialNetworkException("Link must be a valid X/Twitter URL.");
+          }
+          break;
+        case "whatsapp":
+          if (!isWhatsappPhone
+              && !linkLower.matches("^(https?://)?(www\\.)?(wa\\.me|whatsapp\\.com)(/.*)?$")) {
+            throw new InvalidSocialNetworkException(
+                "Link must be a valid WhatsApp URL (wa.me) or phone number.");
+          }
+          break;
+        default:
+          break;
       }
     }
   }
@@ -83,10 +123,11 @@ public class StoreSocialNetworkService {
       rollbackFor = {
         UnauthorizedException.class,
         ResourceNotFoundException.class,
-        AlreadyExistsException.class
+        AlreadyExistsException.class,
+        InvalidSocialNetworkException.class
       })
   public StoreSocialNetwork addStoreSocialNetwork(UUID storeId, SocialNetworkDTO dto)
-      throws UnauthorizedException, ResourceNotFoundException {
+      throws UnauthorizedException, ResourceNotFoundException, InvalidSocialNetworkException {
 
     Store store = applicationContext.getBean(StoreService.class).findById(storeId);
     authService.assertUserOwnsStore(store);
@@ -111,9 +152,14 @@ public class StoreSocialNetworkService {
     return storeSocialNetworkRepository.save(ssn);
   }
 
-  @Transactional(rollbackFor = {UnauthorizedException.class, ResourceNotFoundException.class})
+  @Transactional(
+      rollbackFor = {
+        UnauthorizedException.class,
+        ResourceNotFoundException.class,
+        InvalidSocialNetworkException.class
+      })
   public StoreSocialNetwork update(UUID id, SocialNetworkUpdateDTO dto)
-      throws UnauthorizedException, ResourceNotFoundException {
+      throws UnauthorizedException, ResourceNotFoundException, InvalidSocialNetworkException {
 
     StoreSocialNetwork relation =
         storeSocialNetworkRepository
