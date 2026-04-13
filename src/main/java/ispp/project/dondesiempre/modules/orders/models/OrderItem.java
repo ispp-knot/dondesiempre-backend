@@ -2,6 +2,7 @@ package ispp.project.dondesiempre.modules.orders.models;
 
 import ispp.project.dondesiempre.modules.common.models.BaseEntity;
 import ispp.project.dondesiempre.modules.products.models.Product;
+import ispp.project.dondesiempre.modules.products.models.ProductVariant;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
@@ -23,6 +24,10 @@ public class OrderItem extends BaseEntity {
   @ManyToOne(optional = false)
   @JoinColumn(name = "product_id", referencedColumnName = "id", nullable = false)
   private Product product;
+
+  @ManyToOne(optional = false)
+  @JoinColumn(name = "variant_id", referencedColumnName = "id", nullable = false)
+  private ProductVariant variant;
 
   @Column(nullable = false)
   private Integer quantity;
