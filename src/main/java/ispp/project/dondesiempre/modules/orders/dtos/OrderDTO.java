@@ -50,18 +50,26 @@ public class OrderDTO {
   @NoArgsConstructor
   @AllArgsConstructor
   public static class OrderItemDTO {
+    private UUID id;
     private UUID productId;
     private String productName;
+    private UUID variantId;
+    private String variantSize;
+    private String variantColor;
     private Integer quantity;
     private Integer priceAtPurchase;
     private Integer subtotal;
 
     public OrderItemDTO(OrderItem orderItem) {
+      this.id = orderItem.getId();
       this.productId = orderItem.getProduct().getId();
       this.productName = orderItem.getProduct().getName();
       this.quantity = orderItem.getQuantity();
       this.priceAtPurchase = orderItem.getPriceAtPurchase();
       this.subtotal = orderItem.getQuantity() * orderItem.getPriceAtPurchase();
+      this.variantId = orderItem.getVariant().getId();
+      this.variantSize = orderItem.getVariant().getSize().getSize();
+      this.variantColor = orderItem.getVariant().getColor().getColor();
     }
   }
 }

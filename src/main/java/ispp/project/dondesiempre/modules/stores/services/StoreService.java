@@ -134,7 +134,6 @@ public class StoreService {
     if (dto.getEmail() != null) storeToUpdate.setEmail(dto.getEmail());
     if (dto.getAddress() != null) storeToUpdate.setAddress(dto.getAddress());
     if (dto.getOpeningHours() != null) storeToUpdate.setOpeningHours(dto.getOpeningHours());
-    storeToUpdate.setPhone(dto.getPhone());
     storeToUpdate.setAboutUs(dto.getAboutUs());
 
     return applicationContext

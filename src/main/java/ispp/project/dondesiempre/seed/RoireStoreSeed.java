@@ -36,8 +36,13 @@ class RoireStoreSeed {
             "#ad0000",
             "#633a00",
             "roire/escaparate_roire.png",
-            "Nos aseguramos de que solo vendemos productos de alta calidad y que cumplen con los estándares de nuestros clientes. "
-                + "Nos esforzamos por comprender las necesidades de nuestros clientes leales y trabajamos para brindarles un servicio personalizado y adaptado a sus necesidades específicas.",
+            "En Roire no concebimos la moda como un producto más. Para nosotros, cada prenda, cada tejido y cada cliente merecen la misma exigencia: la de la calidad real y el compromiso honesto.\r\n"
+                + "\r\n"
+                + "Por eso nos aseguramos de que solo vendemos productos que cumplen con los estándares más altos de nuestros clientes. Pero no nos quedamos ahí. Escuchamos, observamos y aprendemos de quienes confían en nosotros día tras día. Nos esforzamos por comprender las necesidades de nuestros clientes leales y trabajamos para ofrecerles un servicio personalizado, adaptado a sus gustos, su talla, su momento de vida y sus exigencias.\r\n"
+                + "\r\n"
+                + "En Roire no vendemos por vender. Vendemos para que vuelvas.\r\n"
+                + "\r\n"
+                + "Porque la fidelidad no se pide, se construye. Y nosotros la construimos prenda a prenda, conversación a conversación, con calidad, cercanía y una sola obsesión: que te sientas única, bien atendida y con ganas de repetir.",
             "acct_1TFzN97Xt9jc8bVg");
     s.addSocialNetwork(roire, socialNetworks, "WhatsApp", "https://wa.me/34641231378");
     s.addSocialNetwork(roire, socialNetworks, "Instagram", "https://www.instagram.com/roire.es");

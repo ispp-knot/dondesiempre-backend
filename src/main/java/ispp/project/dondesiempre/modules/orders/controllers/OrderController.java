@@ -4,13 +4,9 @@ import ispp.project.dondesiempre.modules.common.exceptions.ResourceNotFoundExcep
 import ispp.project.dondesiempre.modules.common.exceptions.UnauthorizedException;
 import ispp.project.dondesiempre.modules.orders.dtos.OrderDTO;
 import ispp.project.dondesiempre.modules.orders.services.OrderService;
-import ispp.project.dondesiempre.modules.products.models.Product;
-import ispp.project.dondesiempre.modules.products.services.ProductService;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +25,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class OrderController {
 
   private final OrderService orderService;
-  private final ProductService productService;
 
   @GetMapping
   public ResponseEntity<List<OrderDTO>> getMyOrders() {
@@ -44,18 +39,16 @@ public class OrderController {
     return new ResponseEntity<>(order, HttpStatus.OK);
   }
 
+  /**
+   * Creates a new order with product variants. The request body should be a Map of variant IDs to
+   * quantities. Example: { "variant-id-1": 2, "variant-id-2": 1 }
+   */
   @PostMapping
   public ResponseEntity<OrderDTO> createOrder(
-      @RequestBody Map<UUID, Integer> productIdsWithQuantity, @RequestParam Optional<UUID> outfitId)
-      throws ResourceNotFoundException {
-
-    Map<Product, Integer> productsToBuy =
-        productIdsWithQuantity.entrySet().stream()
-            .collect(
-                Collectors.toMap(
-                    e -> productService.getProductById(e.getKey()), Map.Entry::getValue));
-
-    OrderDTO response = orderService.createOrder(productsToBuy, outfitId.orElse(null));
+      @RequestBody Map<UUID, Integer> variantIdsWithQuantity,
+      @RequestParam(required = false) UUID outfitId)
+      throws ResourceNotFoundException, UnauthorizedException {
+    OrderDTO response = orderService.createOrder(variantIdsWithQuantity, outfitId);
     return new ResponseEntity<>(response, HttpStatus.CREATED);
   }
 

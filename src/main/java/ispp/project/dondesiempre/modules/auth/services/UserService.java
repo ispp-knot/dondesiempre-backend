@@ -70,7 +70,6 @@ public class UserService {
     store.setLocation(coordinatesService.createPoint(dto.getLongitude(), dto.getLatitude()));
     store.setAddress(dto.getAddress());
     store.setOpeningHours(dto.getOpeningHours());
-    store.setPhone(dto.getPhone());
     store.setAboutUs(dto.getAboutUs());
     store.setStorefront(storefront);
     store.setUser(user);
@@ -92,9 +91,6 @@ public class UserService {
     Client client = new Client();
     client.setName(dto.getName());
     client.setSurname(dto.getSurname());
-    client.setEmail(dto.getEmail());
-    client.setPhone(dto.getPhone());
-    client.setAddress(dto.getAddress());
     client.setUser(user);
 
     return new ClientDTO(clientRepository.save(client));

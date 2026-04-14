@@ -87,8 +87,6 @@ class AuthControllerRegisterTest {
     clientDTO.setName("John");
     clientDTO.setSurname("Doe");
     clientDTO.setEmail("client@test.com");
-    clientDTO.setPhone("+34600000000");
-    clientDTO.setAddress("Test Street 1");
 
     when(userService.registerClient(any())).thenReturn(clientDTO);
 
@@ -156,7 +154,6 @@ class AuthControllerRegisterTest {
     dto.setLongitude(-3.703790);
     dto.setAddress("Gran Vía 1, Madrid");
     dto.setOpeningHours("Mon-Fri 9-18");
-    dto.setPhone("+34600000000");
     dto.setAboutUs("A great store.");
     dto.setPrimaryColor("#c65a3a");
     dto.setSecondaryColor("#19756a");
@@ -169,8 +166,6 @@ class AuthControllerRegisterTest {
     dto.setPassword("Password1!");
     dto.setName("John");
     dto.setSurname("Doe");
-    dto.setPhone("+34600000000");
-    dto.setAddress("Test Street 1");
     return dto;
   }
 }
