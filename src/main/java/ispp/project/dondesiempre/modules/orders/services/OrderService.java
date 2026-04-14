@@ -116,7 +116,7 @@ public class OrderService {
     return sb.toString();
   }
 
-  @Transactional(rollbackFor = { ResourceNotFoundException.class, UnauthorizedException.class })
+  @Transactional(rollbackFor = {ResourceNotFoundException.class, UnauthorizedException.class})
   public OrderDTO createOrder(Map<UUID, Integer> variantIdsWithQuantity, UUID outfitId)
       throws ResourceNotFoundException, UnauthorizedException, IllegalArgumentException {
 
@@ -182,10 +182,11 @@ public class OrderService {
 
   @Transactional
   public void confirmOrder(UUID orderId) throws UnauthorizedException, ResourceNotFoundException {
-    Order order = orderRepository
-        .findById(orderId)
-        .orElseThrow(
-            () -> new ResourceNotFoundException("Order with ID " + orderId + " not found"));
+    Order order =
+        orderRepository
+            .findById(orderId)
+            .orElseThrow(
+                () -> new ResourceNotFoundException("Order with ID " + orderId + " not found"));
     if (order.getOrderStatus().equals(OrderStatus.PENDING)) {
       order.setOrderStatus(OrderStatus.CONFIRMED);
     } else {
@@ -196,10 +197,11 @@ public class OrderService {
 
   @Transactional
   public void rejectOrder(UUID orderId) throws UnauthorizedException, ResourceNotFoundException {
-    Order order = orderRepository
-        .findById(orderId)
-        .orElseThrow(
-            () -> new ResourceNotFoundException("Order with ID " + orderId + " not found"));
+    Order order =
+        orderRepository
+            .findById(orderId)
+            .orElseThrow(
+                () -> new ResourceNotFoundException("Order with ID " + orderId + " not found"));
     authService.assertUserOwnsStore(order.getItems().get(0).getProduct().getStore());
     if (order.getOrderStatus().equals(OrderStatus.PENDING)) {
       order.setOrderStatus(OrderStatus.REJECTED);
@@ -213,20 +215,22 @@ public class OrderService {
   public OrderDTO findOrder(String orderCode)
       throws UnauthorizedException, ResourceNotFoundException {
     String encryptedCode = cryptoConverter.convertToDatabaseColumn(orderCode);
-    Order order = orderRepository
-        .findByOrderCode(encryptedCode)
-        .orElseThrow(
-            () -> new ResourceNotFoundException("Order with Code " + orderCode + " not found"));
+    Order order =
+        orderRepository
+            .findByOrderCode(encryptedCode)
+            .orElseThrow(
+                () -> new ResourceNotFoundException("Order with Code " + orderCode + " not found"));
     authService.assertUserOwnsStore(order.getItems().get(0).getProduct().getStore());
     return new OrderDTO(order);
   }
 
   @Transactional
   public void pickOrder(UUID orderId) throws UnauthorizedException, ResourceNotFoundException {
-    Order order = orderRepository
-        .findById(orderId)
-        .orElseThrow(
-            () -> new ResourceNotFoundException("Order with ID " + orderId + " not found"));
+    Order order =
+        orderRepository
+            .findById(orderId)
+            .orElseThrow(
+                () -> new ResourceNotFoundException("Order with ID " + orderId + " not found"));
     authService.assertUserOwnsStore(order.getItems().get(0).getProduct().getStore());
     if (order.getOrderStatus().equals(OrderStatus.CONFIRMED)) {
       order.setOrderStatus(OrderStatus.PICKED);
@@ -238,10 +242,11 @@ public class OrderService {
 
   @Transactional
   public void cancelOrder(UUID orderId) throws UnauthorizedException, ResourceNotFoundException {
-    Order order = orderRepository
-        .findById(orderId)
-        .orElseThrow(
-            () -> new ResourceNotFoundException("Order with ID " + orderId + " not found"));
+    Order order =
+        orderRepository
+            .findById(orderId)
+            .orElseThrow(
+                () -> new ResourceNotFoundException("Order with ID " + orderId + " not found"));
     authService.assertUserOwnsStore(order.getItems().get(0).getProduct().getStore());
     if (order.getOrderStatus().equals(OrderStatus.PENDING)) {
       order.setOrderStatus(OrderStatus.CANCELLED);
@@ -259,7 +264,8 @@ public class OrderService {
   private Integer calculateAndSetTotalPrice(Order order) {
     Integer total = 0;
     if (order.getItems() != null && !order.getItems().isEmpty()) {
-      total = order.getItems().stream().mapToInt(i -> i.getQuantity() * i.getPriceAtPurchase()).sum();
+      total =
+          order.getItems().stream().mapToInt(i -> i.getQuantity() * i.getPriceAtPurchase()).sum();
     }
     return total;
   }
