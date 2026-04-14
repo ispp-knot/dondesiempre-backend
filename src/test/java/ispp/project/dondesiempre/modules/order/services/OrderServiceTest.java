@@ -173,34 +173,68 @@ public class OrderServiceTest {
   }
 
   @Test
-  void findOrdersOfCurrentUser_AsClient_ShouldReturnDTOs() {
+  void findOrdersOfCurrentUser_AsClient_ShouldReturnSortedDTOs() {
+    Order olderOrder = new Order();
+    olderOrder.setId(UUID.randomUUID());
+    olderOrder.setUser(user);
+    olderOrder.setOrderStatus(OrderStatus.PENDING);
+    olderOrder.setOrderDate(LocalDateTime.now().minusDays(5)); // Más antiguo
+    olderOrder.setItems(new ArrayList<>(List.of(item)));
+    olderOrder.setOrderCode("CODE-OLD");
+    olderOrder.setTotalPrice(100);
+
     when(authService.getCurrentUser()).thenReturn(user);
     when(storeRepository.findByUserId(user.getId())).thenReturn(Optional.empty());
-    when(orderRepository.findByUserId(user.getId())).thenReturn(List.of(order));
+    // Simulamos que la base de datos los devuelve desordenados (antiguo primero)
+    when(orderRepository.findByUserId(user.getId())).thenReturn(List.of(olderOrder, order));
 
     List<OrderDTO> result = orderService.findOrdersOfCurrenUser();
 
     assertFalse(result.isEmpty());
+    assertEquals(2, result.size());
+    // Verificamos que el más nuevo esté primero
+    assertEquals(order.getId(), result.get(0).getId());
+    assertEquals(olderOrder.getId(), result.get(1).getId());
     assertEquals("Tienda Test", result.get(0).getStoreName());
   }
 
   @Test
-  void findOrdersOfCurrentUser_AsStore_ShouldReturnStoreOrders() {
+  void findOrdersOfCurrentUser_AsStore_ShouldReturnSortedStoreOrders() {
+    Order olderOrder = new Order();
+    olderOrder.setId(UUID.randomUUID());
+    olderOrder.setUser(user);
+    olderOrder.setOrderDate(LocalDateTime.now().minusDays(2));
+    olderOrder.setItems(new ArrayList<>(List.of(item)));
+
     when(authService.getCurrentUser()).thenReturn(user);
     when(storeRepository.findByUserId(user.getId())).thenReturn(Optional.of(store));
-    when(orderRepository.findByStoreId(store.getId())).thenReturn(List.of(order));
+    when(orderRepository.findByStoreId(store.getId())).thenReturn(List.of(olderOrder, order));
 
     List<OrderDTO> result = orderService.findOrdersOfCurrenUser();
 
     assertFalse(result.isEmpty());
+    assertEquals(2, result.size());
+    // Verificamos el orden descendente
+    assertEquals(order.getId(), result.get(0).getId());
+    assertEquals(olderOrder.getId(), result.get(1).getId());
     verify(orderRepository).findByStoreId(store.getId());
   }
 
   @Test
-  void findOrdersByUserId_ShouldReturnList() {
-    when(orderRepository.findByUserId(user.getId())).thenReturn(List.of(order));
+  void findOrdersByUserId_ShouldReturnSortedList() {
+    Order olderOrder = new Order();
+    olderOrder.setId(UUID.randomUUID());
+    olderOrder.setUser(user);
+    olderOrder.setOrderDate(LocalDateTime.now().minusDays(10));
+    olderOrder.setItems(new ArrayList<>(List.of(item)));
+
+    when(orderRepository.findByUserId(user.getId())).thenReturn(List.of(olderOrder, order));
+
     List<OrderDTO> result = orderService.findOrdersByUserId(user.getId());
-    assertEquals(1, result.size());
+
+    assertEquals(2, result.size());
+    assertEquals(order.getId(), result.get(0).getId());
+    assertEquals(olderOrder.getId(), result.get(1).getId());
   }
 
   @Test

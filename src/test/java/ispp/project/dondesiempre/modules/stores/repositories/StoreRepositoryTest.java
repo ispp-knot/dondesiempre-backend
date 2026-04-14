@@ -49,7 +49,6 @@ public class StoreRepositoryTest {
     store.setEmail("test@test.com");
     store.setAddress("Direccion de prueba");
     store.setOpeningHours("09:00-18:00");
-    store.setPhone("123456789");
     store.setLocation(coordinatesService.createPoint(longitude, latitude));
     store.setAccountId("acc_AAAAA");
     store.setUser(createTestUser());

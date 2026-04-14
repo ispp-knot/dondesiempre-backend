@@ -61,3 +61,5 @@ databaseChangeLog:
       file: db/changelog/033-pasive-product-variant-delete/pasive-product-variant-delete.changelog.yaml
   - include:
       file: db/changelog/036-remove-client-pii/remove-client-pii.changelog.yaml
+  - include:
+      file: db/changelog/038-remove-store-phone/remove-store-phone.changelog.yaml
