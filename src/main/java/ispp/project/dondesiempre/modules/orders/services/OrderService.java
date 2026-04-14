@@ -66,7 +66,7 @@ public class OrderService {
 
     return orders.stream()
         .sorted(Comparator.comparing(Order::getOrderDate).reversed())
-        .map(this::mapToOrderDTO)
+        .map(OrderDTO::new)
         .toList();
   }
 
@@ -74,7 +74,7 @@ public class OrderService {
   public List<OrderDTO> findOrdersByUserId(UUID userId) {
     return orderRepository.findByUserId(userId).stream()
         .sorted(Comparator.comparing(Order::getOrderDate).reversed())
-        .map(this::mapToOrderDTO)
+        .map(OrderDTO::new)
         .toList();
   }
 
@@ -100,10 +100,6 @@ public class OrderService {
   public Order setPaymentIntentId(UUID orderId, String paymentIntentId) {
     Order order = applicationContext.getBean(OrderService.class).findById(orderId);
 
-    if (!authService.getCurrentUser().equals(order.getUser())) {
-      throw new UnauthorizedException(
-          "You can't set the paymentIntent id of an order you don't own.");
-    }
     order.setPaymentIntentId(paymentIntentId);
     return order;
   }
@@ -118,38 +114,6 @@ public class OrderService {
       sb.append(CHARS.charAt(index));
     }
     return sb.toString();
-  }
-
-  private OrderDTO mapToOrderDTO(Order order) {
-    String storeName = null;
-    if (order.getItems() != null && !order.getItems().isEmpty()) {
-      storeName = order.getItems().get(0).getProduct().getStore().getName();
-    }
-
-    return OrderDTO.builder()
-        .id(order.getId())
-        .orderCode(order.getOrderCode())
-        .orderDate(order.getOrderDate())
-        .orderStatus(order.getOrderStatus())
-        .totalPrice(order.getTotalPrice())
-        .userId(order.getUser().getId())
-        .storeName(storeName)
-        .items(order.getItems().stream().map(this::mapItemToDTO).toList())
-        .build();
-  }
-
-  private OrderDTO.OrderItemDTO mapItemToDTO(OrderItem item) {
-    return OrderDTO.OrderItemDTO.builder()
-        .id(item.getId())
-        .productId(item.getProduct().getId())
-        .productName(item.getProduct().getName())
-        .variantId(item.getVariant().getId())
-        .variantSize(item.getVariant().getSize().getSize())
-        .variantColor(item.getVariant().getColor().getColor())
-        .quantity(item.getQuantity())
-        .priceAtPurchase(item.getPriceAtPurchase())
-        .subtotal(item.getQuantity() * item.getPriceAtPurchase())
-        .build();
   }
 
   @Transactional(rollbackFor = {ResourceNotFoundException.class, UnauthorizedException.class})
@@ -213,7 +177,7 @@ public class OrderService {
     order.setTotalPrice(total);
     Order savedOrder = orderRepository.save(order);
 
-    return mapToOrderDTO(savedOrder);
+    return new OrderDTO(savedOrder);
   }
 
   @Transactional
@@ -257,7 +221,7 @@ public class OrderService {
             .orElseThrow(
                 () -> new ResourceNotFoundException("Order with Code " + orderCode + " not found"));
     authService.assertUserOwnsStore(order.getItems().get(0).getProduct().getStore());
-    return mapToOrderDTO(order);
+    return new OrderDTO(order);
   }
 
   @Transactional

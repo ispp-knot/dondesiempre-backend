@@ -15,17 +15,17 @@ public interface StoreRepository extends JpaRepository<Store, UUID> {
   @Query(
       value =
           """
-      SELECT
-          *
-      FROM stores s
-      WHERE (:name IS NULL OR s.name ILIKE %:name%)
-      ORDER BY
-          CASE WHEN :lat IS NOT NULL AND :lon IS NOT NULL
-          THEN ST_Distance(s.location, ST_SetSRID(ST_MakePoint(:lon, :lat), 4326))
-          ELSE 0 END ASC,
-          s.name ASC
-      LIMIT :numResults
-      """,
+            SELECT
+                *
+            FROM stores s
+            WHERE (:name IS NULL OR s.name ILIKE %:name%)
+            ORDER BY
+                CASE WHEN :lat IS NOT NULL AND :lon IS NOT NULL
+                THEN ST_Distance(s.location, ST_SetSRID(ST_MakePoint(:lon, :lat), 4326))
+                ELSE 0 END ASC,
+                s.name ASC
+            LIMIT :numResults
+            """,
       nativeQuery = true)
   List<Store> searchStores(
       @Param("name") String name,
@@ -36,12 +36,12 @@ public interface StoreRepository extends JpaRepository<Store, UUID> {
   @Query(
       value =
           """
-      SELECT
-          *
-      FROM stores s
-      WHERE s.location && ST_MakeEnvelope(:minLon, :minLat, :maxLon, :maxLat, 4326)
-      LIMIT :numResults
-      """,
+            SELECT
+                *
+            FROM stores s
+            WHERE s.location && ST_MakeEnvelope(:minLon, :minLat, :maxLon, :maxLat, 4326)
+            LIMIT :numResults
+            """,
       nativeQuery = true)
   List<Store> findStoresInBoundingBox(
       @Param("minLon") double minLon,
@@ -49,4 +49,6 @@ public interface StoreRepository extends JpaRepository<Store, UUID> {
       @Param("maxLon") double maxLon,
       @Param("maxLat") double maxLat,
       @Param("numResults") int numResults);
+
+  boolean existsByIdAndPremiumPlanTrue(UUID id);
 }
