@@ -10,12 +10,14 @@ import ispp.project.dondesiempre.modules.stores.models.Store;
 import ispp.project.dondesiempre.modules.stores.models.StoreImage;
 import ispp.project.dondesiempre.modules.stores.repositories.StoreImageRepository;
 import ispp.project.dondesiempre.modules.stores.repositories.StoreRepository;
+import ispp.project.dondesiempre.utils.cloudinary.CloudinaryService;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +26,7 @@ public class StoreImageService {
   private final StoreImageRepository storeImageRepository;
   private final ApplicationContext applicationContext;
   private final AuthService authService;
+  private final CloudinaryService cloudinaryService;
 
   public Store findById(UUID id) throws ResourceNotFoundException {
     return storeRepository
@@ -51,7 +54,7 @@ public class StoreImageService {
         ResourceNotFoundException.class,
         InvalidRequestException.class
       })
-  public StoreImageDTO add(UUID id, StoreImageUpdateDTO dto)
+  public StoreImageDTO add(UUID id, StoreImageUpdateDTO dto, MultipartFile imageFile)
       throws UnauthorizedException, ResourceNotFoundException, InvalidRequestException {
 
     Store storeToUpdate = applicationContext.getBean(StoreService.class).findById(id);
@@ -64,8 +67,12 @@ public class StoreImageService {
       throw new InvalidRequestException("A store cannot have more than 5 images.");
     }
 
+    if (imageFile == null || imageFile.isEmpty()) {
+      throw new InvalidRequestException("Image file is required.");
+    }
+
     StoreImage image = new StoreImage();
-    image.setImage(dto.getImage());
+    image.setImage(cloudinaryService.upload(imageFile));
     image.setDisplayOrder(dto.getDisplayOrder());
     image.setStore(storeToUpdate);
 
