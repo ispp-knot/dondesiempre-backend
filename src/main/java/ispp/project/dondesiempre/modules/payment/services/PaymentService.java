@@ -72,7 +72,7 @@ public class PaymentService {
 
     try {
       orderService.findById(orderId);
-    } catch (Exception e) {
+    } catch (Throwable _) {
       this.refundPaymentIntent(paymentIntentId);
       return;
     }
