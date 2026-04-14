@@ -13,3 +13,5 @@ frontend:
 stripe:
   key:
     secret: sk_test_fake_key
+  webhook:
+    secret: whsec_fake_secret

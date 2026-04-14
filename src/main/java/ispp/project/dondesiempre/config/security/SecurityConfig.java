@@ -98,6 +98,8 @@ public class SecurityConfig implements WebMvcConfigurer {
                     .permitAll()
                     .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/v3/docs/**")
                     .permitAll()
+                    .requestMatchers(HttpMethod.POST, "/api/v1/webhook/**")
+                    .permitAll()
                     // Everything else requires authentication
                     .anyRequest()
                     .authenticated());
