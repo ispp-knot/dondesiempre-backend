@@ -2,7 +2,9 @@ package ispp.project.dondesiempre.modules.orders.services;
 
 import ispp.project.dondesiempre.modules.auth.models.User;
 import ispp.project.dondesiempre.modules.auth.services.AuthService;
+import ispp.project.dondesiempre.modules.common.exceptions.InvalidRequestException;
 import ispp.project.dondesiempre.modules.common.exceptions.ResourceNotFoundException;
+import ispp.project.dondesiempre.modules.common.exceptions.StoreNotVerifiedException;
 import ispp.project.dondesiempre.modules.common.exceptions.UnauthorizedException;
 import ispp.project.dondesiempre.modules.orders.dtos.OrderDTO;
 import ispp.project.dondesiempre.modules.orders.models.Order;
@@ -11,6 +13,7 @@ import ispp.project.dondesiempre.modules.orders.models.OrderStatus;
 import ispp.project.dondesiempre.modules.orders.repositories.OrderRepository;
 import ispp.project.dondesiempre.modules.outfits.models.Outfit;
 import ispp.project.dondesiempre.modules.outfits.services.OutfitService;
+import ispp.project.dondesiempre.modules.payment.services.StripeVerificationService;
 import ispp.project.dondesiempre.modules.products.models.ProductVariant;
 import ispp.project.dondesiempre.modules.products.services.ProductVariantService;
 import ispp.project.dondesiempre.modules.stores.models.Store;
@@ -39,6 +42,7 @@ public class OrderService {
   private final CryptoConverter cryptoConverter;
   private final ApplicationContext applicationContext;
   private final OutfitService outfitService;
+  private final StripeVerificationService stripeVerificationService;
 
   private final SecureRandom secureRandom = new SecureRandom();
   private static final String CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -188,6 +192,16 @@ public class OrderService {
             .orElseThrow(
                 () -> new ResourceNotFoundException("Order with ID " + orderId + " not found"));
     if (order.getOrderStatus().equals(OrderStatus.PENDING)) {
+      boolean verified =
+          stripeVerificationService.checkAccountIsVerifiedForPayments(
+              order
+                  .getStore()
+                  .orElseThrow(
+                      () ->
+                          new InvalidRequestException("There cannot be orders without products.")));
+
+      if (!verified) throw new StoreNotVerifiedException();
+
       order.setOrderStatus(OrderStatus.CONFIRMED);
     } else {
       throw new UnauthorizedException(

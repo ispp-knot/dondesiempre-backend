@@ -2,16 +2,20 @@ package ispp.project.dondesiempre.modules.payment.services;
 
 import com.stripe.exception.EventDataObjectDeserializationException;
 import com.stripe.exception.StripeException;
+import com.stripe.model.AccountLink;
 import com.stripe.model.Event;
 import com.stripe.model.EventDataObjectDeserializer;
+import com.stripe.model.LoginLink;
 import com.stripe.model.Refund;
 import com.stripe.model.StripeObject;
 import com.stripe.model.checkout.Session;
+import com.stripe.param.AccountLinkCreateParams;
 import com.stripe.param.RefundCreateParams;
 import com.stripe.param.checkout.SessionCreateParams;
 import ispp.project.dondesiempre.modules.auth.models.User;
 import ispp.project.dondesiempre.modules.auth.services.AuthService;
 import ispp.project.dondesiempre.modules.common.exceptions.InvalidRequestException;
+import ispp.project.dondesiempre.modules.common.exceptions.StoreNotVerifiedException;
 import ispp.project.dondesiempre.modules.common.exceptions.StripeFailException;
 import ispp.project.dondesiempre.modules.common.exceptions.UnauthorizedException;
 import ispp.project.dondesiempre.modules.orders.models.Order;
@@ -38,6 +42,7 @@ public class PaymentService {
   private final AuthService authService;
   private final StripeProvider stripeProvider;
   private final ApplicationContext applicationContext;
+  private final StripeVerificationService stripeVerificationService;
 
   @Value("${frontend.url}")
   private String frontendUrl;
@@ -118,6 +123,14 @@ public class PaymentService {
     if (order.getPaymentIntentId().isPresent())
       throw new InvalidRequestException("The order is already paid");
 
+    boolean isVerified =
+        stripeVerificationService.checkAccountIsVerifiedForPayments(
+            order
+                .getStore()
+                .orElseThrow(() -> new InvalidRequestException("El pedido no tiene productos.")));
+
+    if (!isVerified) throw new StoreNotVerifiedException();
+
     String redirectUrl = String.format("%s/orders/checkout/%s", frontendUrl, orderId.toString());
     String cancelUrl = String.format("%s/orders", frontendUrl);
     String sessionUrl = this.getCheckoutSession(order, redirectUrl, cancelUrl);
@@ -129,7 +142,11 @@ public class PaymentService {
 
     long totalAmount = order.getTotalPrice();
 
-    Store store = order.getItems().getFirst().getProduct().getStore();
+    Store store =
+        order
+            .getStore()
+            .orElseThrow(() -> new InvalidRequestException("El pedido no tenía productos."));
+
     float fee =
         applicationContext.getBean(PaymentService.class).checkIfStoreIsPremium(store.getId())
             ? premiumFeePercentage
@@ -206,5 +223,53 @@ public class PaymentService {
     String accountId = stripeProvider.createConnectAccount(store);
 
     storeService.setAccountId(store.getId(), accountId);
+  }
+
+  public String getStripeOnboardingLink(Store store) {
+    authService.assertUserOwnsStore(store);
+    String stripeAccountId =
+        store
+            .getAccountId()
+            .orElseThrow(
+                () ->
+                    new StripeFailException(
+                        "La tienda no tiene cuenta de stripe asociada, contacte con soporte"));
+    String profileUrl = frontendUrl + "/" + "/profile";
+    AccountLinkCreateParams params =
+        AccountLinkCreateParams.builder()
+            .setAccount(stripeAccountId)
+            .setRefreshUrl(profileUrl)
+            .setReturnUrl(profileUrl)
+            .setType(AccountLinkCreateParams.Type.ACCOUNT_ONBOARDING)
+            .build();
+    AccountLink accountLink;
+    try {
+      accountLink = AccountLink.create(params);
+
+    } catch (Exception e) {
+      throw new StripeFailException("Hubo un fallo al generar el link de verificación.");
+    }
+    return accountLink.getUrl();
+  }
+
+  public String getStripeDashboardLink(Store store) {
+
+    authService.assertUserOwnsStore(store);
+
+    String stripeAccountId =
+        store
+            .getAccountId()
+            .orElseThrow(
+                () ->
+                    new StripeFailException(
+                        "La tienda no tiene cuenta de stripe asociada, contacte con soporte"));
+    LoginLink loginLink;
+    try {
+      loginLink = LoginLink.createOnAccount(stripeAccountId);
+    } catch (StripeException e) {
+      throw new StripeFailException("Hubo un fallo al generar el link de de acceso al dashboard.");
+    }
+
+    return loginLink.getUrl();
   }
 }

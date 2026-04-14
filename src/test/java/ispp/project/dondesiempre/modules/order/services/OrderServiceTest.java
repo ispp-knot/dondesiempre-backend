@@ -23,6 +23,7 @@ import ispp.project.dondesiempre.modules.orders.repositories.OrderRepository;
 import ispp.project.dondesiempre.modules.orders.services.OrderService;
 import ispp.project.dondesiempre.modules.outfits.models.Outfit;
 import ispp.project.dondesiempre.modules.outfits.services.OutfitService;
+import ispp.project.dondesiempre.modules.payment.services.StripeVerificationService;
 import ispp.project.dondesiempre.modules.products.models.Product;
 import ispp.project.dondesiempre.modules.products.models.ProductColor;
 import ispp.project.dondesiempre.modules.products.models.ProductSize;
@@ -60,6 +61,7 @@ public class OrderServiceTest {
   @Mock private CryptoConverter cryptoConverter;
   @Mock private ApplicationContext applicationContext;
   @Mock private OutfitService outfitService;
+  @Mock private StripeVerificationService stripeVerificationService;
 
   @InjectMocks private OrderService orderService;
 
@@ -340,6 +342,8 @@ public class OrderServiceTest {
   @Test
   void confirmOrder_PendingStatus_ShouldWork() throws Exception {
     when(orderRepository.findById(orderId)).thenReturn(Optional.of(order));
+    when(stripeVerificationService.checkAccountIsVerifiedForPayments(any(Store.class)))
+        .thenReturn(true);
     orderService.confirmOrder(orderId);
     assertEquals(OrderStatus.CONFIRMED, order.getOrderStatus());
   }

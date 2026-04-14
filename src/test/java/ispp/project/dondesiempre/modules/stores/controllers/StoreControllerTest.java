@@ -12,6 +12,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import ispp.project.dondesiempre.config.GlobalExceptionHandler;
 import ispp.project.dondesiempre.config.security.SecurityConfig;
 import ispp.project.dondesiempre.modules.common.exceptions.ResourceNotFoundException;
+import ispp.project.dondesiempre.modules.payment.services.PaymentService;
+import ispp.project.dondesiempre.modules.payment.services.StripeVerificationService;
 import ispp.project.dondesiempre.modules.stores.dtos.StoreDTO;
 import ispp.project.dondesiempre.modules.stores.dtos.StoreUpdateDTO;
 import ispp.project.dondesiempre.modules.stores.dtos.StoreUpdateLocationDTO;
@@ -42,6 +44,9 @@ public class StoreControllerTest {
   @Autowired private ObjectMapper objectMapper;
 
   @MockitoBean private StoreService storeService;
+  @MockitoBean private PaymentService paymentService;
+  @MockitoBean private StripeVerificationService stripeVerificationService;
+
   private static final java.util.UUID TEST_STORE_ID = java.util.UUID.randomUUID();
   private static final ispp.project.dondesiempre.modules.stores.models.Store TEST_STORE =
       ispp.project.dondesiempre.mockEntities.StoreMockEntities.sampleStore(TEST_STORE_ID);
