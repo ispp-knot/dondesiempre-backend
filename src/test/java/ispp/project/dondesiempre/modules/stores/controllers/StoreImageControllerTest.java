@@ -8,7 +8,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -34,9 +34,11 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.multipart.MultipartFile;
 
 @WebMvcTest(
     controllers = StoreImageController.class,
@@ -117,25 +119,36 @@ class StoreImageControllerTest {
     requestDTO.setImage("https://example.com/new-image.jpg");
     requestDTO.setDisplayOrder(0);
 
+    MockMultipartFile dtoPart =
+        new MockMultipartFile(
+            "dto",
+            "",
+            MediaType.APPLICATION_JSON_VALUE,
+            objectMapper.writeValueAsBytes(requestDTO));
+
+    MockMultipartFile imagePart =
+        new MockMultipartFile(
+            "image", "test.jpg", MediaType.IMAGE_JPEG_VALUE, "fake-image-content".getBytes());
+
     StoreImageDTO responseDTO = new StoreImageDTO();
     responseDTO.setId(UUID.randomUUID());
     responseDTO.setImage("https://example.com/new-image.jpg");
     responseDTO.setDisplayOrder(0);
 
-    when(storeImageService.add(eq(storeId), any(StoreImageUpdateDTO.class)))
+    when(storeImageService.add(
+            eq(storeId), any(StoreImageUpdateDTO.class), any(MultipartFile.class)))
         .thenReturn(responseDTO);
 
     mockMvc
         .perform(
-            post("/api/v1/stores/{storeId}/images", storeId)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(requestDTO)))
+            multipart("/api/v1/stores/{storeId}/images", storeId).file(dtoPart).file(imagePart))
         .andExpect(status().isCreated())
         .andExpect(jsonPath("$.id").value(responseDTO.getId().toString()))
         .andExpect(jsonPath("$.image").value("https://example.com/new-image.jpg"))
         .andExpect(jsonPath("$.displayOrder").value(0));
 
-    verify(storeImageService, times(1)).add(eq(storeId), any(StoreImageUpdateDTO.class));
+    verify(storeImageService, times(1))
+        .add(eq(storeId), any(StoreImageUpdateDTO.class), any(MultipartFile.class));
   }
 
   @Test
@@ -147,11 +160,20 @@ class StoreImageControllerTest {
     requestDTO.setImage("not-a-valid-url");
     requestDTO.setDisplayOrder(0);
 
+    MockMultipartFile dtoPart =
+        new MockMultipartFile(
+            "dto",
+            "",
+            MediaType.APPLICATION_JSON_VALUE,
+            objectMapper.writeValueAsBytes(requestDTO));
+
+    MockMultipartFile imagePart =
+        new MockMultipartFile(
+            "image", "test.jpg", MediaType.IMAGE_JPEG_VALUE, "fake-image-content".getBytes());
+
     mockMvc
         .perform(
-            post("/api/v1/stores/{storeId}/images", storeId)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(requestDTO)))
+            multipart("/api/v1/stores/{storeId}/images", storeId).file(dtoPart).file(imagePart))
         .andExpect(status().isBadRequest());
   }
 
@@ -263,14 +285,24 @@ class StoreImageControllerTest {
     requestDTO.setImage("https://example.com/new-image.jpg");
     requestDTO.setDisplayOrder(4);
 
-    when(storeImageService.add(eq(storeId), any(StoreImageUpdateDTO.class)))
+    MockMultipartFile dtoPart =
+        new MockMultipartFile(
+            "dto",
+            "",
+            MediaType.APPLICATION_JSON_VALUE,
+            objectMapper.writeValueAsBytes(requestDTO));
+
+    MockMultipartFile imagePart =
+        new MockMultipartFile(
+            "image", "test.jpg", MediaType.IMAGE_JPEG_VALUE, "fake-image-content".getBytes());
+
+    when(storeImageService.add(
+            eq(storeId), any(StoreImageUpdateDTO.class), any(MultipartFile.class)))
         .thenThrow(new InvalidRequestException("A store cannot have more than 5 images."));
 
     mockMvc
         .perform(
-            post("/api/v1/stores/{storeId}/images", storeId)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(requestDTO)))
+            multipart("/api/v1/stores/{storeId}/images", storeId).file(dtoPart).file(imagePart))
         .andExpect(status().isBadRequest());
   }
 }

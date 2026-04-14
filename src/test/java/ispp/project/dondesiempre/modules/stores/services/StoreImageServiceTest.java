@@ -21,6 +21,7 @@ import ispp.project.dondesiempre.modules.stores.models.Store;
 import ispp.project.dondesiempre.modules.stores.models.StoreImage;
 import ispp.project.dondesiempre.modules.stores.repositories.StoreImageRepository;
 import ispp.project.dondesiempre.modules.stores.repositories.StoreRepository;
+import ispp.project.dondesiempre.utils.cloudinary.CloudinaryService;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -31,6 +32,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationContext;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
 
 @ExtendWith(MockitoExtension.class)
 class StoreImageServiceTest {
@@ -40,6 +43,7 @@ class StoreImageServiceTest {
   @Mock private ApplicationContext applicationContext;
   @Mock private AuthService authService;
   @Mock private StoreService storeService;
+  @Mock private CloudinaryService cloudinaryService;
 
   @InjectMocks private StoreImageService storeImageService;
 
@@ -47,6 +51,7 @@ class StoreImageServiceTest {
   private StoreImage storeImage;
   private UUID storeId;
   private UUID imageId;
+  private MockMultipartFile imageFile;
 
   private StoreImage createStoreImageWithOrder(int order) {
     StoreImage image = new StoreImage();
@@ -75,6 +80,9 @@ class StoreImageServiceTest {
     storeImage.setStore(store);
     storeImage.setImage("https://example.com/image.jpg");
     storeImage.setDisplayOrder(0);
+
+    imageFile =
+        new MockMultipartFile("image", "test.jpg", "image/jpeg", "test image content".getBytes());
   }
 
   @Test
@@ -151,30 +159,33 @@ class StoreImageServiceTest {
   }
 
   @Test
-  void shouldAddImageSuccessfully() throws UnauthorizedException, ResourceNotFoundException {
+  void shouldAddImageSuccessfully()
+      throws UnauthorizedException, ResourceNotFoundException, InvalidRequestException {
     StoreImageUpdateDTO dto = new StoreImageUpdateDTO();
-    dto.setImage("https://example.com/new-image.jpg");
     dto.setDisplayOrder(2);
 
     StoreImage savedImage = new StoreImage();
     savedImage.setId(UUID.randomUUID());
     savedImage.setStore(store);
-    savedImage.setImage(dto.getImage());
+    savedImage.setImage("https://example.com/new-image-from-cloudinary.jpg");
     savedImage.setDisplayOrder(dto.getDisplayOrder());
 
     when(applicationContext.getBean(StoreService.class)).thenReturn(storeService);
     when(storeService.findById(storeId)).thenReturn(store);
+    when(cloudinaryService.upload(any(MultipartFile.class)))
+        .thenReturn("https://example.com/new-image-from-cloudinary.jpg");
     when(storeImageRepository.save(any(StoreImage.class))).thenReturn(savedImage);
 
-    StoreImageDTO result = storeImageService.add(storeId, dto);
+    StoreImageDTO result = storeImageService.add(storeId, dto, imageFile);
 
     assertNotNull(result);
-    assertEquals("https://example.com/new-image.jpg", result.getImage());
+    assertEquals("https://example.com/new-image-from-cloudinary.jpg", result.getImage());
     assertEquals(2, result.getDisplayOrder());
 
     verify(applicationContext, times(1)).getBean(StoreService.class);
     verify(storeService, times(1)).findById(storeId);
     verify(authService, times(1)).assertUserOwnsStore(store);
+    verify(cloudinaryService, times(1)).upload(any(MultipartFile.class));
     verify(storeImageRepository, times(1)).save(any(StoreImage.class));
   }
 
@@ -182,14 +193,14 @@ class StoreImageServiceTest {
   void shouldThrowResourceNotFoundException_whenAddingImageToNonExistentStore()
       throws ResourceNotFoundException {
     StoreImageUpdateDTO dto = new StoreImageUpdateDTO();
-    dto.setImage("https://example.com/new-image.jpg");
     dto.setDisplayOrder(0);
 
     when(applicationContext.getBean(StoreService.class)).thenReturn(storeService);
     when(storeService.findById(storeId))
         .thenThrow(new ResourceNotFoundException("Store not found"));
 
-    assertThrows(ResourceNotFoundException.class, () -> storeImageService.add(storeId, dto));
+    assertThrows(
+        ResourceNotFoundException.class, () -> storeImageService.add(storeId, dto, imageFile));
 
     verify(authService, never()).assertUserOwnsStore(any());
     verify(storeImageRepository, never()).save(any());
@@ -199,15 +210,57 @@ class StoreImageServiceTest {
   void shouldThrowUnauthorizedException_whenAddingImageWithoutOwnership()
       throws UnauthorizedException, ResourceNotFoundException {
     StoreImageUpdateDTO dto = new StoreImageUpdateDTO();
-    dto.setImage("https://example.com/new-image.jpg");
     dto.setDisplayOrder(0);
 
     when(applicationContext.getBean(StoreService.class)).thenReturn(storeService);
     when(storeService.findById(storeId)).thenReturn(store);
     doThrow(new UnauthorizedException("Not owner")).when(authService).assertUserOwnsStore(store);
 
-    assertThrows(UnauthorizedException.class, () -> storeImageService.add(storeId, dto));
+    assertThrows(UnauthorizedException.class, () -> storeImageService.add(storeId, dto, imageFile));
 
+    verify(storeImageRepository, never()).save(any());
+  }
+
+  @Test
+  void shouldThrowInvalidRequestException_whenAddingMoreThanFiveImages()
+      throws UnauthorizedException, ResourceNotFoundException {
+
+    StoreImageUpdateDTO dto = new StoreImageUpdateDTO();
+    dto.setDisplayOrder(4);
+
+    List<StoreImage> existingImages =
+        List.of(
+            createStoreImageWithOrder(0),
+            createStoreImageWithOrder(1),
+            createStoreImageWithOrder(2),
+            createStoreImageWithOrder(3),
+            createStoreImageWithOrder(4));
+
+    when(applicationContext.getBean(StoreService.class)).thenReturn(storeService);
+    when(storeService.findById(storeId)).thenReturn(store);
+    when(storeImageRepository.findImagesByStoreIdOrderByDisplayOrder(storeId))
+        .thenReturn(existingImages);
+
+    assertThrows(
+        InvalidRequestException.class, () -> storeImageService.add(storeId, dto, imageFile));
+
+    verify(authService, times(1)).assertUserOwnsStore(store);
+    verify(storeImageRepository, never()).save(any());
+  }
+
+  @Test
+  void shouldThrowInvalidRequestException_whenAddingImageWithoutFile()
+      throws UnauthorizedException, ResourceNotFoundException {
+
+    StoreImageUpdateDTO dto = new StoreImageUpdateDTO();
+    dto.setDisplayOrder(0);
+
+    when(applicationContext.getBean(StoreService.class)).thenReturn(storeService);
+    when(storeService.findById(storeId)).thenReturn(store);
+
+    assertThrows(InvalidRequestException.class, () -> storeImageService.add(storeId, dto, null));
+
+    verify(authService, times(1)).assertUserOwnsStore(store);
     verify(storeImageRepository, never()).save(any());
   }
 
@@ -295,32 +348,5 @@ class StoreImageServiceTest {
     assertThrows(UnauthorizedException.class, () -> storeImageService.delete(imageId));
 
     verify(storeImageRepository, never()).delete(any());
-  }
-
-  @Test
-  void shouldThrowInvalidRequestException_whenAddingMoreThanFiveImages()
-      throws UnauthorizedException, ResourceNotFoundException {
-
-    StoreImageUpdateDTO dto = new StoreImageUpdateDTO();
-    dto.setImage("https://example.com/new-image.jpg");
-    dto.setDisplayOrder(4);
-
-    List<StoreImage> existingImages =
-        List.of(
-            createStoreImageWithOrder(0),
-            createStoreImageWithOrder(1),
-            createStoreImageWithOrder(2),
-            createStoreImageWithOrder(3),
-            createStoreImageWithOrder(4));
-
-    when(applicationContext.getBean(StoreService.class)).thenReturn(storeService);
-    when(storeService.findById(storeId)).thenReturn(store);
-    when(storeImageRepository.findImagesByStoreIdOrderByDisplayOrder(storeId))
-        .thenReturn(existingImages);
-
-    assertThrows(InvalidRequestException.class, () -> storeImageService.add(storeId, dto));
-
-    verify(authService, times(1)).assertUserOwnsStore(store);
-    verify(storeImageRepository, never()).save(any());
   }
 }
