@@ -131,7 +131,7 @@ class OrderControllerTest {
   @WithMockUser
   void createOrder_shouldReturnCreated() throws Exception {
     Map<UUID, Integer> payload = Map.of(variantId, 1);
-    when(orderService.createOrder(any(Map.class), any())).thenReturn(orderDTO);
+    when(orderService.createOrder(any(Map.class), any(), any())).thenReturn(orderDTO);
     mockMvc
         .perform(
             post("/api/v1/orders")
@@ -139,7 +139,7 @@ class OrderControllerTest {
                 .content(objectMapper.writeValueAsString(payload)))
         .andExpect(status().isCreated())
         .andExpect(jsonPath("$.id").value(orderId.toString()));
-    verify(orderService, times(1)).createOrder(any(Map.class), any());
+    verify(orderService, times(1)).createOrder(any(Map.class), any(), any());
   }
 
   @Test
@@ -147,7 +147,7 @@ class OrderControllerTest {
   void createOrder_withOutfit_shouldReturnCreated() throws Exception {
     UUID outfitId = UUID.randomUUID();
     Map<UUID, Integer> payload = Map.of(variantId, 1);
-    when(orderService.createOrder(any(Map.class), eq(outfitId))).thenReturn(orderDTO);
+    when(orderService.createOrder(any(Map.class), eq(outfitId), any())).thenReturn(orderDTO);
     mockMvc
         .perform(
             post("/api/v1/orders")
@@ -156,7 +156,7 @@ class OrderControllerTest {
                 .content(objectMapper.writeValueAsString(payload)))
         .andExpect(status().isCreated())
         .andExpect(jsonPath("$.id").value(orderId.toString()));
-    verify(orderService, times(1)).createOrder(any(Map.class), eq(outfitId));
+    verify(orderService, times(1)).createOrder(any(Map.class), eq(outfitId), any());
   }
 
   @Test
@@ -207,7 +207,7 @@ class OrderControllerTest {
     Map<UUID, Integer> variantIdsWithQuantity = new HashMap<>();
     variantIdsWithQuantity.put(variantId, 2);
 
-    when(orderService.createOrder(any(Map.class), any())).thenReturn(orderDTO);
+    when(orderService.createOrder(any(Map.class), any(), any())).thenReturn(orderDTO);
 
     mockMvc
         .perform(
@@ -221,7 +221,7 @@ class OrderControllerTest {
         .andExpect(jsonPath("$.items[0].variantSize").value("M"))
         .andExpect(jsonPath("$.items[0].variantColor").value("Red"));
 
-    verify(orderService, times(1)).createOrder(any(Map.class), any());
+    verify(orderService, times(1)).createOrder(any(Map.class), any(), any());
   }
 
   @Test
@@ -264,7 +264,7 @@ class OrderControllerTest {
     Map<UUID, Integer> variantIdsWithQuantity = new HashMap<>();
     variantIdsWithQuantity.put(variantId, 2);
 
-    when(orderService.createOrder(any(Map.class), any()))
+    when(orderService.createOrder(any(Map.class), any(), any()))
         .thenThrow(new UnauthorizedException("Variant not available"));
 
     mockMvc
@@ -274,6 +274,6 @@ class OrderControllerTest {
                 .content(objectMapper.writeValueAsString(variantIdsWithQuantity)))
         .andExpect(status().isForbidden());
 
-    verify(orderService, times(1)).createOrder(any(Map.class), any());
+    verify(orderService, times(1)).createOrder(any(Map.class), any(), any());
   }
 }
