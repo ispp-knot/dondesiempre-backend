@@ -1,6 +1,5 @@
 package ispp.project.dondesiempre.modules.stores.dtos;
 
-import ispp.project.dondesiempre.modules.common.validators.Phone;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -23,10 +22,6 @@ public class StoreUpdateDTO {
   @Size(max = 255)
   private String openingHours;
 
-  @Phone private String phone;
-
   @Size(max = 5000)
   private String aboutUs;
-  // TODO social network
-
 }

@@ -1,0 +1,15 @@
+databaseChangeLog:
+  - changeSet:
+      id: 038-remove-store-phone-1
+      author: danilr16
+      changes:
+        - dropColumn:
+            columnName: phone
+            tableName: stores
+      rollback:
+        - addColumn:
+            tableName: stores
+            columns:
+              - column:
+                  name: phone
+                  type: VARCHAR(255)

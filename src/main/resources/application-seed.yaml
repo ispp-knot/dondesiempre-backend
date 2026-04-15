@@ -10,6 +10,8 @@ AES_SECRET_KEY: VICV&EZWVr"G8e2s+Xmg}bOy^&VK6gV+
 stripe:
   key:
     secret: sk_test_fake_key
+  webhook:
+    secret: whsec_fake_secret
 
 seed:
   random-seed: 42

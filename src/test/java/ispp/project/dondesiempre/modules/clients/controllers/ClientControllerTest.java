@@ -44,16 +44,12 @@ public class ClientControllerTest {
   void shouldReturnDTOWhenSucess() throws Exception {
     ClientUpdateDTO dto = new ClientUpdateDTO();
     dto.setEmail("client@test.com");
-    dto.setAddress("fake address");
     dto.setName("client");
-    dto.setPhone("123456789");
     dto.setSurname("surname");
 
     ClientDTO response = new ClientDTO();
     response.setEmail("client@test.com");
-    response.setAddress("fake address");
     response.setName("client");
-    response.setPhone("123456789");
     response.setSurname("surname");
 
     when(clientService.updateClient(any(ClientUpdateDTO.class))).thenReturn(response);
@@ -65,8 +61,7 @@ public class ClientControllerTest {
                 .content(objectMapper.writeValueAsString(dto)))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.email").value(dto.getEmail()))
-        .andExpect(jsonPath("$.name").value(dto.getName()))
-        .andExpect(jsonPath("$.address").value(dto.getAddress()));
+        .andExpect(jsonPath("$.name").value(dto.getName()));
 
     verify(clientService).updateClient(any(ClientUpdateDTO.class));
   }
@@ -91,9 +86,7 @@ public class ClientControllerTest {
   void shouldReturnBadRequestWhenInvalidData() throws Exception {
     ClientUpdateDTO dto1 = new ClientUpdateDTO();
     dto1.setEmail("correo-invalido");
-    dto1.setAddress("fake address");
     dto1.setName("client");
-    dto1.setPhone("123456789");
     dto1.setSurname("surname");
 
     mockMvc
@@ -105,9 +98,7 @@ public class ClientControllerTest {
 
     ClientUpdateDTO dto2 = new ClientUpdateDTO();
     dto2.setEmail("client@test.com");
-    dto2.setAddress("fake address");
     dto2.setName(null);
-    dto2.setPhone("123456789");
     dto2.setSurname("surname");
 
     mockMvc
@@ -125,9 +116,7 @@ public class ClientControllerTest {
   void shouldReturnConflictWhenEmailAlreadyExists() throws Exception {
     ClientUpdateDTO dto = new ClientUpdateDTO();
     dto.setEmail("correo.ocupado@test.com");
-    dto.setAddress("fake address");
     dto.setName("client");
-    dto.setPhone("123456789");
     dto.setSurname("surname");
 
     when(clientService.updateClient(any(ClientUpdateDTO.class)))
@@ -146,9 +135,7 @@ public class ClientControllerTest {
   void shouldReturnNotFoundWhenStoreTriesToUpdateClient() throws Exception {
     ClientUpdateDTO dto = new ClientUpdateDTO();
     dto.setEmail("store@test.com");
-    dto.setAddress("fake address");
     dto.setName("store");
-    dto.setPhone("123456789");
     dto.setSurname("surname");
 
     when(clientService.updateClient(any(ClientUpdateDTO.class)))

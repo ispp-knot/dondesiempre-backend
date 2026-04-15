@@ -2,6 +2,7 @@ package ispp.project.dondesiempre.modules.orders.models;
 
 import ispp.project.dondesiempre.modules.auth.models.User;
 import ispp.project.dondesiempre.modules.common.models.BaseEntity;
+import ispp.project.dondesiempre.modules.stores.models.Store;
 import ispp.project.dondesiempre.utils.crypto.CryptoConverter;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -55,5 +56,13 @@ public class Order extends BaseEntity {
 
   public Optional<String> getPaymentIntentId() {
     return Optional.ofNullable(this.paymentIntentId);
+  }
+
+  public Optional<Store> getStore() {
+    Optional<Store> store =
+        this.items.isEmpty()
+            ? Optional.ofNullable(null)
+            : Optional.ofNullable(this.items.getFirst().getProduct().getStore());
+    return store;
   }
 }

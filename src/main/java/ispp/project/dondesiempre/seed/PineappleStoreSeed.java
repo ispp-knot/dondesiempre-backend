@@ -36,7 +36,31 @@ class PineappleStoreSeed {
             "#75502b",
             "#333333",
             "pineapple/escaparate_pineapple.png",
-            "Calle Canónigo 73 Dos Hermanas | 41071 | Sevilla",
+            "Pineapple nace con una idea fresca, colorida y sin complejos: que tu armario refleje tu personalidad más auténtica. Estamos en la calle Canónigo, 73, en pleno Dos Hermanas, y hemos venido para quedarnos con una propuesta diferente, vibrante y llena de vida.\r\n"
+                + //
+                "\r\n"
+                + //
+                "No somos una tienda de moda al uso. En Pineapple encontrarás ropa y complementos con carácter, pensados para mujeres que no le temen al color, a los estampados ni a mezclar estilos. Porque vestir también es divertido.\r\n"
+                + //
+                "\r\n"
+                + //
+                "Nuestra filosofía en tres ideas:\r\n"
+                + //
+                "\r\n"
+                + //
+                "🍍 Originalidad ante todo: nada de uniformes aburridos.\r\n"
+                + //
+                "\r\n"
+                + //
+                "🎨 Comodidad y estilo van de la mano.\r\n"
+                + //
+                "\r\n"
+                + //
+                "💛 Un trato tan cálido como nuestro nombre.\r\n"
+                + //
+                "\r\n"
+                + //
+                "Pásate por la calle Canónigo, 73, y descubre por qué en Pineapple cada prenda tiene su propia historia… y estamos deseando que la hagas tuya.",
             "acct_1TFzN97Xt9jc8bVg");
     s.addSocialNetwork(pineapple, socialNetworks, "WhatsApp", "https://wa.me/34644807498");
     s.addSocialNetwork(

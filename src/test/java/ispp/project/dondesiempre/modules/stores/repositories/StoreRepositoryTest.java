@@ -43,13 +43,12 @@ public class StoreRepositoryTest {
     return userRepository.save(user);
   }
 
-  private void createTestStore(String name, double longitude, double latitude) {
+  private Store createTestStore(String name, double longitude, double latitude) {
     Store store = new Store();
     store.setName(name);
     store.setEmail("test@test.com");
     store.setAddress("Direccion de prueba");
     store.setOpeningHours("09:00-18:00");
-    store.setPhone("123456789");
     store.setLocation(coordinatesService.createPoint(longitude, latitude));
     store.setAccountId("acc_AAAAA");
     store.setUser(createTestUser());
@@ -58,6 +57,7 @@ public class StoreRepositoryTest {
     store.setStorefront(storefront);
 
     storeRepository.save(store);
+    return store;
   }
 
   @Test
@@ -143,5 +143,25 @@ public class StoreRepositoryTest {
 
     // Entonces: No debe encontrar nada
     assertTrue(result.isEmpty());
+  }
+
+  @Test
+  void shouldReturnFalse_whenStoreIsNotPremium() {
+
+    Store store = createTestStore("Tienda SHAW", 0, 0);
+
+    boolean isPremium = storeRepository.existsByIdAndPremiumPlanTrue(store.getId());
+    assertFalse(isPremium);
+  }
+
+  @Test
+  void shouldReturnTrue_whenStoreIsPremium() {
+    Store store = createTestStore("Tienda SHAW!!!", 0, 0);
+
+    store.setPremiumPlan(true);
+    storeRepository.save(store);
+
+    boolean isPremium = storeRepository.existsByIdAndPremiumPlanTrue(store.getId());
+    assertTrue(isPremium);
   }
 }

@@ -34,7 +34,15 @@ class BazarRomeraStoreSeed {
             "#255d56",
             "#247054",
             "romera/escaparate_bazar_romera.png",
-            "Romera, 8. 41701 Dos Hermanas (Sevilla)",
+            "Hay sitios donde solo compras. Y luego está Bazar Romera, donde encuentras de todo… y además te sientes como en casa. En la calle Romera, número 8, llevamos años siendo ese comercio de referencia donde siempre hay algo que necesitas (aunque no supieras que lo necesitabas hasta que lo ves).\r\n"
+                + //
+                "\r\n"
+                + //
+                "Somos un bazar de toda la vida: variedad, precios ajustados y un trato cercano que convierte una simple compra en un buen rato. Sin grandes pretensiones, pero con mucha utilidad.\r\n"
+                + //
+                "\r\n"
+                + //
+                "Bazar Romera: lo que buscas, donde menos te lo esperas… y siempre con una sonrisa.",
             "acct_1TFzN97Xt9jc8bVg");
     s.addSocialNetwork(bazarRomera, socialNetworks, "Teléfono", "tel:+34631122308");
 
