@@ -36,9 +36,17 @@ class RomantikaStoreSeed {
             "#315750",
             "#2b4f39",
             "romantika/escaparate_romantika.png",
-            "Encuentra tus complementos originales\n"
-                + "Moda para eventos y ocasiones especiales\n"
-                + "Toda la moda urbana divertida y diferente que hace única a cada mujer",
+            "¿Eres de las que huye de los looks predecibles? ¿Te gusta brillar en los eventos y sentir que nadie viste como tú? Entonces Modas Romantika Vintage es tu sitio.\r\n"
+                + "Nos especializamos en moda para eventos y ocasiones especiales, pero no de cualquier manera: con un espíritu único, divertido y diferente que celebra la personalidad de cada mujer. Aquí no encontrarás el vestido de 'todas'. Encontrarás complementos originales, piezas con carácter y toda la moda urbana más alegre y auténtica.\r\n"
+                + "Lo que nos hace especiales:\r\n"
+                + "\r\n"
+                + "🎉 Moda para bodas, comuniones, cenas y fiestas que piden un look inolvidable.\r\n"
+                + "\r\n"
+                + "🧣 Complementos que no pasan desapercibidos.\r\n"
+                + "\r\n"
+                + "🌈 Estilo romántico, vintage y divertido, hecho para mujeres que saben lo que quieren.\r\n"
+                + "\r\n"
+                + "Porque lo común es aburrido. Lo original, es románticamente vintage.",
             "acct_1TFzN97Xt9jc8bVg");
     s.addSocialNetwork(romantika, socialNetworks, "WhatsApp", "https://wa.me/34645142782");
     s.addSocialNetwork(

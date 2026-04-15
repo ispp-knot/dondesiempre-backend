@@ -36,11 +36,20 @@ class MarGovantesStoreSeed {
             "#000045",
             "#844652",
             "govantes/escaparate_mar_govantes.jpg",
-            "👗Tienda de ropa especializada en #moda mujer en Dos Hermanas (Sevilla).\n"
-                + //
-                "Ropa casual y de vestir.\n"
-                + //
-                "🏷️Tallas grandes.",
+            "En Mar Govantes sabemos que la moda femenina no entiende de tallas únicas, ni de cuerpos estándar. Por eso, desde nuestra tienda en Dos Hermanas (Sevilla), ofrecemos una cuidada selección de ropa casual y de vestir pensada para la mujer real: la que trabaja, la que disfruta, la que quiere sentirse cómoda y guapa a la vez.\r\n"
+                + "Somos especialistas en tallas grandes porque creemos que todas merecen encontrar prendas que se ajusten bien, favorezcan y expresen su estilo. Sin renunciar a nada: ni a la tendencia, ni a la calidad, ni a un precio coherente.\r\n"
+                + "\r\n"
+                + "¿Qué encontrarás en Mar Govantes?\r\n"
+                + "\r\n"
+                + "👗 Moda femenina actual para el día a día y para ocasiones especiales.\r\n"
+                + "\r\n"
+                + "📏 Tallas grandes con corte y caída pensados de verdad.\r\n"
+                + "\r\n"
+                + "🧥 Ropa casual, cómoda y versátil, además de opciones más arregladas.\r\n"
+                + "\r\n"
+                + "💬 Trato cercano, asesoramiento honesto y un probador donde te sientas como en casa.\r\n"
+                + "\r\n"
+                + "Pase lo que pase en las pasarelas, aquí lo importante eres tú. Ven a conocernos, porque la moda no tiene límites… pero sí tiene un sitio donde te entienden: Mar Govantes.",
             "acct_1TFzN97Xt9jc8bVg");
     s.addSocialNetwork(
         marGovantes, socialNetworks, "Facebook", "https://www.facebook.com/margovantesmodas/");

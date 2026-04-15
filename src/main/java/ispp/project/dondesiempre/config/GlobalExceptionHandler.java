@@ -63,7 +63,7 @@ public class GlobalExceptionHandler {
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
   @ExceptionHandler(StripeException.class)
   public ResponseEntity<String> handleStripeException(
-      AlreadyExistsException exception, WebRequest request) {
+      StripeException exception, WebRequest request) {
     return new ResponseEntity<>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
   }
 
@@ -92,5 +92,12 @@ public class GlobalExceptionHandler {
   public ResponseEntity<String> handleInvalidSocialNetworkException(
       InvalidSocialNetworkException exception, WebRequest request) {
     return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
+  }
+
+  @ResponseStatus(HttpStatus.CONFLICT)
+  @ExceptionHandler(StoreNotVerifiedException.class)
+  public ResponseEntity<String> handleStoreNotVerifiedException(
+      StoreNotVerifiedException exception, WebRequest request) {
+    return new ResponseEntity<>(exception.getMessage(), HttpStatus.CONFLICT);
   }
 }

@@ -2,7 +2,9 @@ package ispp.project.dondesiempre.modules.orders.services;
 
 import ispp.project.dondesiempre.modules.auth.models.User;
 import ispp.project.dondesiempre.modules.auth.services.AuthService;
+import ispp.project.dondesiempre.modules.common.exceptions.InvalidRequestException;
 import ispp.project.dondesiempre.modules.common.exceptions.ResourceNotFoundException;
+import ispp.project.dondesiempre.modules.common.exceptions.StoreNotVerifiedException;
 import ispp.project.dondesiempre.modules.common.exceptions.UnauthorizedException;
 import ispp.project.dondesiempre.modules.orders.dtos.OrderDTO;
 import ispp.project.dondesiempre.modules.orders.models.Order;
@@ -11,6 +13,7 @@ import ispp.project.dondesiempre.modules.orders.models.OrderStatus;
 import ispp.project.dondesiempre.modules.orders.repositories.OrderRepository;
 import ispp.project.dondesiempre.modules.outfits.models.Outfit;
 import ispp.project.dondesiempre.modules.outfits.services.OutfitService;
+import ispp.project.dondesiempre.modules.payment.services.StripeVerificationService;
 import ispp.project.dondesiempre.modules.products.models.ProductVariant;
 import ispp.project.dondesiempre.modules.products.services.ProductVariantService;
 import ispp.project.dondesiempre.modules.stores.models.Store;
@@ -39,6 +42,7 @@ public class OrderService {
   private final CryptoConverter cryptoConverter;
   private final ApplicationContext applicationContext;
   private final OutfitService outfitService;
+  private final StripeVerificationService stripeVerificationService;
 
   private final SecureRandom secureRandom = new SecureRandom();
   private static final String CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -66,7 +70,7 @@ public class OrderService {
 
     return orders.stream()
         .sorted(Comparator.comparing(Order::getOrderDate).reversed())
-        .map(this::mapToOrderDTO)
+        .map(OrderDTO::new)
         .toList();
   }
 
@@ -74,7 +78,7 @@ public class OrderService {
   public List<OrderDTO> findOrdersByUserId(UUID userId) {
     return orderRepository.findByUserId(userId).stream()
         .sorted(Comparator.comparing(Order::getOrderDate).reversed())
-        .map(this::mapToOrderDTO)
+        .map(OrderDTO::new)
         .toList();
   }
 
@@ -100,10 +104,6 @@ public class OrderService {
   public Order setPaymentIntentId(UUID orderId, String paymentIntentId) {
     Order order = applicationContext.getBean(OrderService.class).findById(orderId);
 
-    if (!authService.getCurrentUser().equals(order.getUser())) {
-      throw new UnauthorizedException(
-          "You can't set the paymentIntent id of an order you don't own.");
-    }
     order.setPaymentIntentId(paymentIntentId);
     return order;
   }
@@ -118,38 +118,6 @@ public class OrderService {
       sb.append(CHARS.charAt(index));
     }
     return sb.toString();
-  }
-
-  private OrderDTO mapToOrderDTO(Order order) {
-    String storeName = null;
-    if (order.getItems() != null && !order.getItems().isEmpty()) {
-      storeName = order.getItems().get(0).getProduct().getStore().getName();
-    }
-
-    return OrderDTO.builder()
-        .id(order.getId())
-        .orderCode(order.getOrderCode())
-        .orderDate(order.getOrderDate())
-        .orderStatus(order.getOrderStatus())
-        .totalPrice(order.getTotalPrice())
-        .userId(order.getUser().getId())
-        .storeName(storeName)
-        .items(order.getItems().stream().map(this::mapItemToDTO).toList())
-        .build();
-  }
-
-  private OrderDTO.OrderItemDTO mapItemToDTO(OrderItem item) {
-    return OrderDTO.OrderItemDTO.builder()
-        .id(item.getId())
-        .productId(item.getProduct().getId())
-        .productName(item.getProduct().getName())
-        .variantId(item.getVariant().getId())
-        .variantSize(item.getVariant().getSize().getSize())
-        .variantColor(item.getVariant().getColor().getColor())
-        .quantity(item.getQuantity())
-        .priceAtPurchase(item.getPriceAtPurchase())
-        .subtotal(item.getQuantity() * item.getPriceAtPurchase())
-        .build();
   }
 
   @Transactional(rollbackFor = {ResourceNotFoundException.class, UnauthorizedException.class})
@@ -213,7 +181,7 @@ public class OrderService {
     order.setTotalPrice(total);
     Order savedOrder = orderRepository.save(order);
 
-    return mapToOrderDTO(savedOrder);
+    return new OrderDTO(savedOrder);
   }
 
   @Transactional
@@ -224,6 +192,16 @@ public class OrderService {
             .orElseThrow(
                 () -> new ResourceNotFoundException("Order with ID " + orderId + " not found"));
     if (order.getOrderStatus().equals(OrderStatus.PENDING)) {
+      boolean verified =
+          stripeVerificationService.checkAccountIsVerifiedForPayments(
+              order
+                  .getStore()
+                  .orElseThrow(
+                      () ->
+                          new InvalidRequestException("There cannot be orders without products.")));
+
+      if (!verified) throw new StoreNotVerifiedException();
+
       order.setOrderStatus(OrderStatus.CONFIRMED);
     } else {
       throw new UnauthorizedException(
@@ -257,7 +235,7 @@ public class OrderService {
             .orElseThrow(
                 () -> new ResourceNotFoundException("Order with Code " + orderCode + " not found"));
     authService.assertUserOwnsStore(order.getItems().get(0).getProduct().getStore());
-    return mapToOrderDTO(order);
+    return new OrderDTO(order);
   }
 
   @Transactional

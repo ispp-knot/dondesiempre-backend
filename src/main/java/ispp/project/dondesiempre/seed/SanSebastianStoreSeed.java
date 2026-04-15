@@ -36,13 +36,49 @@ class SanSebastianStoreSeed {
             "#000000",
             "#ab327d",
             "sebastian/escaparate_san_sebastian.png",
-            "Somos una empresa local física, llevamos en el mercado desde 1959, trabajamos cada día para satisfacer las necesidades de nuestros clientes.\n"
-                + "\n"
-                + "Nos dedicamos a la venta de confección de caballero y señora, tallas especiales, interiores de caballeros, señoras y niñ@s, todo tipo de paquetería y calcetería y también trabajamos el textil de hogar.\n"
-                + "\n"
-                + "Nuestros proveedores son todos nacionales, como son Harper and Neyer, La Bassette, Kents, Dos Galgos, Brown Fury, Carlos Córdoba, Capelhi, Persam, Tachi and Zucca, Boguar, Egatex, Señoretta, Ysabel Mora, Dolores Cortés, Selmark, Belty, Abanderado, Ferry, Avet, Set, Morante, Naiara, Selene, Burrito Blanco, Catotex, Cañete, Manterol, Belnou, Cotopour, etc…\n"
-                + "\n"
-                + "Si busca un artículo y no lo encuentra, intentamos conseguirlo poniendo todo lo que está en nuestras manos para satisfacer al cliente.",
+            "Llevamos en el mercado desde 1959. Más de seis décadas vistiendo a familias enteras de Dos Hermanas y haciendo del comercio local un verdadero hogar. Somos una empresa física, de toda la vida, con la puerta siempre abierta y el trato que ya casi no se encuentra.\r\n"
+                + //
+                "\r\n"
+                + //
+                "¿Qué ofrecemos?\r\n"
+                + //
+                "Un poco de todo, pero hecho con mucho mimo:\r\n"
+                + //
+                "\r\n"
+                + //
+                "👔 Confección de caballero y señora.\r\n"
+                + //
+                "\r\n"
+                + //
+                "📏 Tallas especiales (porque los cuerpos reales merecen ropa real).\r\n"
+                + //
+                "\r\n"
+                + //
+                "🧦 Interiores de caballeros, señoras y niños.\r\n"
+                + //
+                "\r\n"
+                + //
+                "📦 Paquetería y calcetería de calidad.\r\n"
+                + //
+                "\r\n"
+                + //
+                "🛋️ Textil de hogar: desde sábanas hasta mantelería.\r\n"
+                + //
+                "\r\n"
+                + //
+                "¿De dónde viene nuestra ropa?\r\n"
+                + //
+                "Solo trabajamos con proveedores 100% nacionales: Harper & Neyer, La Bassette, Kents, Dos Galgos, Brown Fury, Carlos Córdoba, Capelhi, Persam, Tachi & Zucca, Boguar, Egatex, Señoretta, Ysabel Mora, Dolores Cortés, Selmark, Belty, Abanderado, Ferry, Avet, Set, Morante, Naiara, Selene, Burrito Blanco, Catotex, Cañete, Manterol, Belnou, Cotopour… y muchos más.\r\n"
+                + //
+                "\r\n"
+                + //
+                "Y si no lo tenemos… lo buscamos.\r\n"
+                + //
+                "Porque nuestra mayor satisfacción es resolver lo que necesitas, aunque no esté en el escaparate. Si buscas un artículo y no lo encuentras, intentamos conseguirlo poniendo todo lo que está en nuestras manos para satisfacerte.\r\n"
+                + //
+                "\r\n"
+                + //
+                "Confecciones y Hogar San Sebastián: tradición, calidad y trato de familia desde 1959.",
             "acct_1TFzN97Xt9jc8bVg");
     s.addSocialNetwork(
         sanSebastian,
