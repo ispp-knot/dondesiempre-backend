@@ -170,8 +170,13 @@ class StoreImageServiceTest {
     savedImage.setImage("https://example.com/new-image-from-cloudinary.jpg");
     savedImage.setDisplayOrder(dto.getDisplayOrder());
 
+    List<StoreImage> existingImages =
+        List.of(createStoreImageWithOrder(0), createStoreImageWithOrder(1));
+
     when(applicationContext.getBean(StoreService.class)).thenReturn(storeService);
     when(storeService.findById(storeId)).thenReturn(store);
+    when(storeImageRepository.findImagesByStoreIdOrderByDisplayOrder(storeId))
+        .thenReturn(existingImages);
     when(cloudinaryService.upload(any(MultipartFile.class)))
         .thenReturn("https://example.com/new-image-from-cloudinary.jpg");
     when(storeImageRepository.save(any(StoreImage.class))).thenReturn(savedImage);
@@ -265,25 +270,39 @@ class StoreImageServiceTest {
   }
 
   @Test
-  void shouldUpdateImageSuccessfully() throws UnauthorizedException, ResourceNotFoundException {
+  void shouldUpdateImageSuccessfully()
+      throws UnauthorizedException, ResourceNotFoundException, InvalidRequestException {
     StoreImageUpdateDTO dto = new StoreImageUpdateDTO();
     dto.setImage("https://example.com/updated-image.jpg");
     dto.setDisplayOrder(3);
 
+    StoreImage targetSwapImage = createStoreImageWithOrder(3);
+
+    List<StoreImage> existingImages =
+        List.of(
+            storeImage,
+            createStoreImageWithOrder(1),
+            createStoreImageWithOrder(2),
+            targetSwapImage);
+
     when(storeImageRepository.findById(imageId)).thenReturn(Optional.of(storeImage));
-    when(storeImageRepository.save(storeImage)).thenReturn(storeImage);
+    when(storeImageRepository.findImagesByStoreIdOrderByDisplayOrder(storeId))
+        .thenReturn(existingImages);
+    when(storeImageRepository.save(any(StoreImage.class)))
+        .thenAnswer(invocation -> invocation.getArgument(0));
 
     StoreImageDTO result = storeImageService.update(imageId, dto);
 
     assertNotNull(result);
     assertEquals("https://example.com/updated-image.jpg", result.getImage());
     assertEquals(3, result.getDisplayOrder());
-    assertEquals("https://example.com/updated-image.jpg", storeImage.getImage().orElse(null));
-    assertEquals(3, storeImage.getDisplayOrder());
+
+    assertEquals(0, targetSwapImage.getDisplayOrder());
 
     verify(storeImageRepository, times(1)).findById(imageId);
     verify(authService, times(1)).assertUserOwnsStore(store);
     verify(storeImageRepository, times(1)).save(storeImage);
+    verify(storeImageRepository, times(1)).save(targetSwapImage);
   }
 
   @Test
