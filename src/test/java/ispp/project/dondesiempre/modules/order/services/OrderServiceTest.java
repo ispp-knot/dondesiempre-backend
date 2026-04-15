@@ -53,17 +53,27 @@ import org.springframework.test.util.ReflectionTestUtils;
 @ExtendWith(MockitoExtension.class)
 public class OrderServiceTest {
 
-  @Mock private OrderRepository orderRepository;
-  @Mock private UserRepository userRepository;
-  @Mock private StoreRepository storeRepository;
-  @Mock private AuthService authService;
-  @Mock private ProductVariantService productVariantService;
-  @Mock private CryptoConverter cryptoConverter;
-  @Mock private ApplicationContext applicationContext;
-  @Mock private OutfitService outfitService;
-  @Mock private StripeVerificationService stripeVerificationService;
+  @Mock
+  private OrderRepository orderRepository;
+  @Mock
+  private UserRepository userRepository;
+  @Mock
+  private StoreRepository storeRepository;
+  @Mock
+  private AuthService authService;
+  @Mock
+  private ProductVariantService productVariantService;
+  @Mock
+  private CryptoConverter cryptoConverter;
+  @Mock
+  private ApplicationContext applicationContext;
+  @Mock
+  private OutfitService outfitService;
+  @Mock
+  private StripeVerificationService stripeVerificationService;
 
-  @InjectMocks private OrderService orderService;
+  @InjectMocks
+  private OrderService orderService;
 
   private UUID orderId;
   private UUID variantId;
@@ -124,21 +134,21 @@ public class OrderServiceTest {
   void createOrder_EmptyItems_ShouldThrowException() {
     assertThrows(
         IllegalArgumentException.class,
-        () -> orderService.createOrder(Collections.emptyMap(), null));
+        () -> orderService.createOrder(Collections.emptyMap(), null, null));
   }
 
   @Test
   void createOrder_NegativeQuantity_ShouldThrowException() {
     Map<UUID, Integer> items = new HashMap<>();
     items.put(variantId, -1);
-    assertThrows(IllegalArgumentException.class, () -> orderService.createOrder(items, null));
+    assertThrows(IllegalArgumentException.class, () -> orderService.createOrder(items, null, null));
   }
 
   @Test
   void createOrder_ZeroQuantity_ShouldThrowException() {
     Map<UUID, Integer> items = new HashMap<>();
     items.put(variantId, 0);
-    assertThrows(IllegalArgumentException.class, () -> orderService.createOrder(items, null));
+    assertThrows(IllegalArgumentException.class, () -> orderService.createOrder(items, null, null));
   }
 
   @Test
@@ -163,7 +173,7 @@ public class OrderServiceTest {
     items.put(variantId, 1);
     items.put(variantId2, 1);
 
-    assertThrows(IllegalArgumentException.class, () -> orderService.createOrder(items, null));
+    assertThrows(IllegalArgumentException.class, () -> orderService.createOrder(items, null, null));
   }
 
   @Test
@@ -275,7 +285,7 @@ public class OrderServiceTest {
     Map<UUID, Integer> variantIdsWithQuantity = new HashMap<>();
     variantIdsWithQuantity.put(variantId, 2);
 
-    OrderDTO result = orderService.createOrder(variantIdsWithQuantity, null);
+    OrderDTO result = orderService.createOrder(variantIdsWithQuantity, null, null);
 
     assertNotNull(result);
     verify(orderRepository).save(any(Order.class));
@@ -297,7 +307,7 @@ public class OrderServiceTest {
     Map<UUID, Integer> variantIdsWithQuantity = new HashMap<>();
     variantIdsWithQuantity.put(variantId, 2);
 
-    OrderDTO result = orderService.createOrder(variantIdsWithQuantity, outfitId);
+    OrderDTO result = orderService.createOrder(variantIdsWithQuantity, outfitId, null);
 
     assertNotNull(result);
     assertEquals(160, result.getTotalPrice());
@@ -333,7 +343,7 @@ public class OrderServiceTest {
     Map<UUID, Integer> variantIdsWithQuantity = new HashMap<>();
     variantIdsWithQuantity.put(truncVariantId, 1);
 
-    OrderDTO result = orderService.createOrder(variantIdsWithQuantity, outfitId);
+    OrderDTO result = orderService.createOrder(variantIdsWithQuantity, outfitId, null);
 
     assertNotNull(result);
     assertEquals(2998, result.getTotalPrice()); // 3998 * 0.75 = 2998.5 → truncated to 2998
@@ -403,8 +413,7 @@ public class OrderServiceTest {
 
   @Test
   void calculateAndSetTotalPrice_LogicCheck() {
-    Integer total =
-        ReflectionTestUtils.invokeMethod(orderService, "calculateAndSetTotalPrice", order);
+    Integer total = ReflectionTestUtils.invokeMethod(orderService, "calculateAndSetTotalPrice", order);
     assertEquals(200, total);
   }
 
@@ -425,7 +434,7 @@ public class OrderServiceTest {
     Map<UUID, Integer> variantIdsWithQuantity = new HashMap<>();
     variantIdsWithQuantity.put(variantId, 2);
 
-    OrderDTO result = orderService.createOrder(variantIdsWithQuantity, null);
+    OrderDTO result = orderService.createOrder(variantIdsWithQuantity, null, null);
 
     assertNotNull(result);
     assertEquals(user.getId(), result.getUserId());
@@ -445,7 +454,7 @@ public class OrderServiceTest {
     variantIdsWithQuantity.put(variantId, 2);
 
     assertThrows(
-        UnauthorizedException.class, () -> orderService.createOrder(variantIdsWithQuantity, null));
+        UnauthorizedException.class, () -> orderService.createOrder(variantIdsWithQuantity, null, null));
   }
 
   @Test
@@ -460,7 +469,7 @@ public class OrderServiceTest {
 
     assertThrows(
         ResourceNotFoundException.class,
-        () -> orderService.createOrder(variantIdsWithQuantity, null));
+        () -> orderService.createOrder(variantIdsWithQuantity, null, null));
   }
 
   @Test
@@ -490,7 +499,7 @@ public class OrderServiceTest {
     variantIdsWithQuantity.put(variantId, 1);
     variantIdsWithQuantity.put(variantId2, 2);
 
-    OrderDTO result = orderService.createOrder(variantIdsWithQuantity, null);
+    OrderDTO result = orderService.createOrder(variantIdsWithQuantity, null, null);
 
     assertNotNull(result);
     assertEquals(OrderStatus.PENDING, result.getOrderStatus());
@@ -513,7 +522,7 @@ public class OrderServiceTest {
     Map<UUID, Integer> variantIdsWithQuantity = new HashMap<>();
     variantIdsWithQuantity.put(variantId, 2);
 
-    OrderDTO result = orderService.createOrder(variantIdsWithQuantity, null);
+    OrderDTO result = orderService.createOrder(variantIdsWithQuantity, null, null);
 
     assertEquals(200, result.getTotalPrice());
   }
