@@ -162,13 +162,12 @@ class StoreImageServiceTest {
   void shouldAddImageSuccessfully()
       throws UnauthorizedException, ResourceNotFoundException, InvalidRequestException {
     StoreImageUpdateDTO dto = new StoreImageUpdateDTO();
-    dto.setDisplayOrder(2);
 
     StoreImage savedImage = new StoreImage();
     savedImage.setId(UUID.randomUUID());
     savedImage.setStore(store);
     savedImage.setImage("https://example.com/new-image-from-cloudinary.jpg");
-    savedImage.setDisplayOrder(dto.getDisplayOrder());
+    savedImage.setDisplayOrder(2);
 
     List<StoreImage> existingImages =
         List.of(createStoreImageWithOrder(0), createStoreImageWithOrder(1));
@@ -198,7 +197,6 @@ class StoreImageServiceTest {
   void shouldThrowResourceNotFoundException_whenAddingImageToNonExistentStore()
       throws ResourceNotFoundException {
     StoreImageUpdateDTO dto = new StoreImageUpdateDTO();
-    dto.setDisplayOrder(0);
 
     when(applicationContext.getBean(StoreService.class)).thenReturn(storeService);
     when(storeService.findById(storeId))
@@ -215,7 +213,6 @@ class StoreImageServiceTest {
   void shouldThrowUnauthorizedException_whenAddingImageWithoutOwnership()
       throws UnauthorizedException, ResourceNotFoundException {
     StoreImageUpdateDTO dto = new StoreImageUpdateDTO();
-    dto.setDisplayOrder(0);
 
     when(applicationContext.getBean(StoreService.class)).thenReturn(storeService);
     when(storeService.findById(storeId)).thenReturn(store);
@@ -231,7 +228,6 @@ class StoreImageServiceTest {
       throws UnauthorizedException, ResourceNotFoundException {
 
     StoreImageUpdateDTO dto = new StoreImageUpdateDTO();
-    dto.setDisplayOrder(4);
 
     List<StoreImage> existingImages =
         List.of(
@@ -258,7 +254,6 @@ class StoreImageServiceTest {
       throws UnauthorizedException, ResourceNotFoundException {
 
     StoreImageUpdateDTO dto = new StoreImageUpdateDTO();
-    dto.setDisplayOrder(0);
 
     when(applicationContext.getBean(StoreService.class)).thenReturn(storeService);
     when(storeService.findById(storeId)).thenReturn(store);
@@ -274,20 +269,9 @@ class StoreImageServiceTest {
       throws UnauthorizedException, ResourceNotFoundException, InvalidRequestException {
     StoreImageUpdateDTO dto = new StoreImageUpdateDTO();
     dto.setImage("https://example.com/updated-image.jpg");
-    dto.setDisplayOrder(3);
-
-    StoreImage targetSwapImage = createStoreImageWithOrder(3);
-
-    List<StoreImage> existingImages =
-        List.of(
-            storeImage,
-            createStoreImageWithOrder(1),
-            createStoreImageWithOrder(2),
-            targetSwapImage);
+    dto.setDisplayOrder(1);
 
     when(storeImageRepository.findById(imageId)).thenReturn(Optional.of(storeImage));
-    when(storeImageRepository.findImagesByStoreIdOrderByDisplayOrder(storeId))
-        .thenReturn(existingImages);
     when(storeImageRepository.save(any(StoreImage.class)))
         .thenAnswer(invocation -> invocation.getArgument(0));
 
@@ -295,14 +279,11 @@ class StoreImageServiceTest {
 
     assertNotNull(result);
     assertEquals("https://example.com/updated-image.jpg", result.getImage());
-    assertEquals(3, result.getDisplayOrder());
-
-    assertEquals(0, targetSwapImage.getDisplayOrder());
+    assertEquals(1, result.getDisplayOrder());
 
     verify(storeImageRepository, times(1)).findById(imageId);
     verify(authService, times(1)).assertUserOwnsStore(store);
     verify(storeImageRepository, times(1)).save(storeImage);
-    verify(storeImageRepository, times(1)).save(targetSwapImage);
   }
 
   @Test

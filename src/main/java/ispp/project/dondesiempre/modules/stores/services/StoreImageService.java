@@ -72,23 +72,9 @@ public class StoreImageService {
       throw new InvalidRequestException("Image file is required.");
     }
 
-    if (dto.getDisplayOrder() < 0 || dto.getDisplayOrder() > existingImages.size()) {
-      throw new InvalidRequestException("El índice proporcionado no es válido.");
-    }
-
-    if (dto.getDisplayOrder() < existingImages.size()) {
-      existingImages.stream()
-          .filter(img -> img.getDisplayOrder() >= dto.getDisplayOrder())
-          .forEach(
-              img -> {
-                img.setDisplayOrder(img.getDisplayOrder() + 1);
-                storeImageRepository.save(img);
-              });
-    }
-
     StoreImage image = new StoreImage();
     image.setImage(cloudinaryService.upload(imageFile));
-    image.setDisplayOrder(dto.getDisplayOrder());
+    image.setDisplayOrder(existingImages.size());
     image.setStore(storeToUpdate);
 
     return toDTO(storeImageRepository.save(image));
@@ -106,35 +92,8 @@ public class StoreImageService {
     StoreImage imageToUpdate = findImageById(imageId);
     authService.assertUserOwnsStore(imageToUpdate.getStore());
 
-    List<StoreImage> existingImages =
-        storeImageRepository.findImagesByStoreIdOrderByDisplayOrder(
-            imageToUpdate.getStore().getId());
-
-    int maxIndex = existingImages.size() - 1;
-
-    if (dto.getDisplayOrder() < 0 || dto.getDisplayOrder() > maxIndex) {
-      throw new InvalidRequestException(
-          "El índice proporcionado no es válido. Debe estar entre 0 y " + maxIndex);
-    }
-
-    Integer oldOrder = imageToUpdate.getDisplayOrder();
-    Integer newOrder = dto.getDisplayOrder();
-
-    if (!oldOrder.equals(newOrder)) {
-      StoreImage imageToSwap =
-          existingImages.stream()
-              .filter(img -> img.getDisplayOrder().equals(newOrder))
-              .findFirst()
-              .orElse(null);
-
-      if (imageToSwap != null) {
-        imageToSwap.setDisplayOrder(oldOrder);
-        storeImageRepository.save(imageToSwap);
-      }
-    }
-
     imageToUpdate.setImage(dto.getImage());
-    imageToUpdate.setDisplayOrder(newOrder);
+    imageToUpdate.setDisplayOrder(dto.getDisplayOrder());
 
     return toDTO(storeImageRepository.save(imageToUpdate));
   }
