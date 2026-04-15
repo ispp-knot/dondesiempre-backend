@@ -127,11 +127,6 @@ public class OrderService {
   }
 
   @Transactional(rollbackFor = { ResourceNotFoundException.class, UnauthorizedException.class })
-  public OrderDTO createOrder(Map<UUID, Integer> variantIdsWithQuantity, UUID outfitId) {
-    return createOrder(variantIdsWithQuantity, outfitId, null);
-  }
-
-  @Transactional(rollbackFor = { ResourceNotFoundException.class, UnauthorizedException.class })
 
   public OrderDTO createOrder(Map<UUID, Integer> variantIdsWithQuantity, UUID outfitId, UUID promotionId)
       throws ResourceNotFoundException, UnauthorizedException, IllegalArgumentException {
