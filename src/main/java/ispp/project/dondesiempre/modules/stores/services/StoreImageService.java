@@ -13,6 +13,8 @@ import ispp.project.dondesiempre.modules.stores.repositories.StoreRepository;
 import ispp.project.dondesiempre.utils.cloudinary.CloudinaryService;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.IntStream;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -48,20 +50,18 @@ public class StoreImageService {
     return new StoreImageDTO(storeImage);
   }
 
-  @Transactional(
-      rollbackFor = {
-        UnauthorizedException.class,
-        ResourceNotFoundException.class,
-        InvalidRequestException.class
-      })
+  @Transactional(rollbackFor = {
+      UnauthorizedException.class,
+      ResourceNotFoundException.class,
+      InvalidRequestException.class
+  })
   public StoreImageDTO add(UUID id, StoreImageUpdateDTO dto, MultipartFile imageFile)
       throws UnauthorizedException, ResourceNotFoundException, InvalidRequestException {
 
     Store storeToUpdate = applicationContext.getBean(StoreService.class).findById(id);
     authService.assertUserOwnsStore(storeToUpdate);
 
-    List<StoreImage> existingImages =
-        storeImageRepository.findImagesByStoreIdOrderByDisplayOrder(id);
+    List<StoreImage> existingImages = storeImageRepository.findImagesByStoreIdOrderByDisplayOrder(id);
 
     if (existingImages.size() >= 5) {
       throw new InvalidRequestException("A store cannot have more than 5 images.");
@@ -79,7 +79,7 @@ public class StoreImageService {
     return toDTO(storeImageRepository.save(image));
   }
 
-  @Transactional(rollbackFor = {UnauthorizedException.class, ResourceNotFoundException.class})
+  @Transactional(rollbackFor = { UnauthorizedException.class, ResourceNotFoundException.class })
   public StoreImageDTO update(UUID imageId, StoreImageUpdateDTO dto)
       throws UnauthorizedException, ResourceNotFoundException {
 
@@ -92,10 +92,20 @@ public class StoreImageService {
     return toDTO(storeImageRepository.save(imageToUpdate));
   }
 
-  @Transactional(rollbackFor = {UnauthorizedException.class, ResourceNotFoundException.class})
+  @Transactional(rollbackFor = { UnauthorizedException.class, ResourceNotFoundException.class })
   public void delete(UUID id) throws UnauthorizedException, ResourceNotFoundException {
     StoreImage imageToDelete = findImageById(id);
+    Store store = imageToDelete.getStore();
     authService.assertUserOwnsStore(imageToDelete.getStore());
     storeImageRepository.delete(imageToDelete);
+
+    List<StoreImage> storeImages = storeImageRepository.findImagesByStoreIdOrderByDisplayOrder(store.getId());
+
+    IntStream.range(0, storeImages.size())
+        .forEach(i -> {
+          StoreImage newStoreImage = storeImages.get(i);
+          newStoreImage.setDisplayOrder(i);
+          storeImageRepository.save(newStoreImage);
+        });
   }
 }
