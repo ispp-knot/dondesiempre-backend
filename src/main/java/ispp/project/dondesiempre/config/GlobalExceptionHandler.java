@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -64,6 +65,13 @@ public class GlobalExceptionHandler {
   public ResponseEntity<String> handleStripeException(
       StripeException exception, WebRequest request) {
     return new ResponseEntity<>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+  }
+
+  @ResponseStatus(HttpStatus.PAYLOAD_TOO_LARGE)
+  @ExceptionHandler(MaxUploadSizeExceededException.class)
+  public ResponseEntity<String> handleMaxSizeException(
+      MaxUploadSizeExceededException exception, WebRequest request) {
+    return new ResponseEntity<>(exception.getMessage(), HttpStatus.PAYLOAD_TOO_LARGE);
   }
 
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
