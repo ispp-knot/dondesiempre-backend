@@ -163,6 +163,7 @@ class UserServiceRegisterTest {
     dto.setAboutUs("A great store.");
     dto.setPrimaryColor("#c65a3a");
     dto.setSecondaryColor("#19756a");
+    dto.setTermsAccepted(true);
     return dto;
   }
 
@@ -172,6 +173,7 @@ class UserServiceRegisterTest {
     dto.setPassword("Password1!");
     dto.setName("John");
     dto.setSurname("Doe");
+    dto.setTermsAccepted(true);
     return dto;
   }
 }
