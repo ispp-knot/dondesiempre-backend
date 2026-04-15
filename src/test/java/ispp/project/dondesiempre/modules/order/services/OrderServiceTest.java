@@ -53,27 +53,17 @@ import org.springframework.test.util.ReflectionTestUtils;
 @ExtendWith(MockitoExtension.class)
 public class OrderServiceTest {
 
-  @Mock
-  private OrderRepository orderRepository;
-  @Mock
-  private UserRepository userRepository;
-  @Mock
-  private StoreRepository storeRepository;
-  @Mock
-  private AuthService authService;
-  @Mock
-  private ProductVariantService productVariantService;
-  @Mock
-  private CryptoConverter cryptoConverter;
-  @Mock
-  private ApplicationContext applicationContext;
-  @Mock
-  private OutfitService outfitService;
-  @Mock
-  private StripeVerificationService stripeVerificationService;
+  @Mock private OrderRepository orderRepository;
+  @Mock private UserRepository userRepository;
+  @Mock private StoreRepository storeRepository;
+  @Mock private AuthService authService;
+  @Mock private ProductVariantService productVariantService;
+  @Mock private CryptoConverter cryptoConverter;
+  @Mock private ApplicationContext applicationContext;
+  @Mock private OutfitService outfitService;
+  @Mock private StripeVerificationService stripeVerificationService;
 
-  @InjectMocks
-  private OrderService orderService;
+  @InjectMocks private OrderService orderService;
 
   private UUID orderId;
   private UUID variantId;
@@ -413,7 +403,8 @@ public class OrderServiceTest {
 
   @Test
   void calculateAndSetTotalPrice_LogicCheck() {
-    Integer total = ReflectionTestUtils.invokeMethod(orderService, "calculateAndSetTotalPrice", order);
+    Integer total =
+        ReflectionTestUtils.invokeMethod(orderService, "calculateAndSetTotalPrice", order);
     assertEquals(200, total);
   }
 
@@ -454,7 +445,8 @@ public class OrderServiceTest {
     variantIdsWithQuantity.put(variantId, 2);
 
     assertThrows(
-        UnauthorizedException.class, () -> orderService.createOrder(variantIdsWithQuantity, null, null));
+        UnauthorizedException.class,
+        () -> orderService.createOrder(variantIdsWithQuantity, null, null));
   }
 
   @Test

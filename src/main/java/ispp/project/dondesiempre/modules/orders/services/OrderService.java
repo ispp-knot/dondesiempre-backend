@@ -22,8 +22,6 @@ import ispp.project.dondesiempre.modules.promotions.services.PromotionService;
 import ispp.project.dondesiempre.modules.stores.models.Store;
 import ispp.project.dondesiempre.modules.stores.repositories.StoreRepository;
 import ispp.project.dondesiempre.utils.crypto.CryptoConverter;
-
-import java.lang.classfile.ClassFile.Option;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.Comparator;
@@ -126,9 +124,9 @@ public class OrderService {
     return sb.toString();
   }
 
-  @Transactional(rollbackFor = { ResourceNotFoundException.class, UnauthorizedException.class })
-
-  public OrderDTO createOrder(Map<UUID, Integer> variantIdsWithQuantity, UUID outfitId, UUID promotionId)
+  @Transactional(rollbackFor = {ResourceNotFoundException.class, UnauthorizedException.class})
+  public OrderDTO createOrder(
+      Map<UUID, Integer> variantIdsWithQuantity, UUID outfitId, UUID promotionId)
       throws ResourceNotFoundException, UnauthorizedException, IllegalArgumentException {
 
     if (variantIdsWithQuantity == null || variantIdsWithQuantity.isEmpty()) {
@@ -136,7 +134,8 @@ public class OrderService {
     }
 
     if (promotionId != null && outfitId != null) {
-      throw new IllegalArgumentException("Only a promotion or an outfit discount can be applied, not both.");
+      throw new IllegalArgumentException(
+          "Only a promotion or an outfit discount can be applied, not both.");
     }
 
     User user = authService.getCurrentUser();
@@ -188,10 +187,12 @@ public class OrderService {
     return new OrderDTO(savedOrder);
   }
 
-  private Integer resolveProductPriceWithDiscounts(Product product, UUID outfitId, UUID promotionId) {
+  private Integer resolveProductPriceWithDiscounts(
+      Product product, UUID outfitId, UUID promotionId) {
 
     if (promotionId != null && outfitId != null) {
-      throw new IllegalArgumentException("Only a promotion or an outfit discount can be applied, not both.");
+      throw new IllegalArgumentException(
+          "Only a promotion or an outfit discount can be applied, not both.");
     }
 
     if (promotionId != null) {
@@ -218,19 +219,21 @@ public class OrderService {
 
   @Transactional
   public void confirmOrder(UUID orderId) throws UnauthorizedException, ResourceNotFoundException {
-    Order order = orderRepository
-        .findById(orderId)
-        .orElseThrow(
-            () -> new ResourceNotFoundException("Order with ID " + orderId + " not found"));
+    Order order =
+        orderRepository
+            .findById(orderId)
+            .orElseThrow(
+                () -> new ResourceNotFoundException("Order with ID " + orderId + " not found"));
     if (order.getOrderStatus().equals(OrderStatus.PENDING)) {
-      boolean verified = stripeVerificationService.checkAccountIsVerifiedForPayments(
-          order
-              .getStore()
-              .orElseThrow(
-                  () -> new InvalidRequestException("There cannot be orders without products.")));
+      boolean verified =
+          stripeVerificationService.checkAccountIsVerifiedForPayments(
+              order
+                  .getStore()
+                  .orElseThrow(
+                      () ->
+                          new InvalidRequestException("There cannot be orders without products.")));
 
-      if (!verified)
-        throw new StoreNotVerifiedException();
+      if (!verified) throw new StoreNotVerifiedException();
 
       order.setOrderStatus(OrderStatus.CONFIRMED);
     } else {
@@ -241,10 +244,11 @@ public class OrderService {
 
   @Transactional
   public void rejectOrder(UUID orderId) throws UnauthorizedException, ResourceNotFoundException {
-    Order order = orderRepository
-        .findById(orderId)
-        .orElseThrow(
-            () -> new ResourceNotFoundException("Order with ID " + orderId + " not found"));
+    Order order =
+        orderRepository
+            .findById(orderId)
+            .orElseThrow(
+                () -> new ResourceNotFoundException("Order with ID " + orderId + " not found"));
     authService.assertUserOwnsStore(order.getItems().get(0).getProduct().getStore());
     if (order.getOrderStatus().equals(OrderStatus.PENDING)) {
       order.setOrderStatus(OrderStatus.REJECTED);
@@ -258,20 +262,22 @@ public class OrderService {
   public OrderDTO findOrder(String orderCode)
       throws UnauthorizedException, ResourceNotFoundException {
     String encryptedCode = cryptoConverter.convertToDatabaseColumn(orderCode);
-    Order order = orderRepository
-        .findByOrderCode(encryptedCode)
-        .orElseThrow(
-            () -> new ResourceNotFoundException("Order with Code " + orderCode + " not found"));
+    Order order =
+        orderRepository
+            .findByOrderCode(encryptedCode)
+            .orElseThrow(
+                () -> new ResourceNotFoundException("Order with Code " + orderCode + " not found"));
     authService.assertUserOwnsStore(order.getItems().get(0).getProduct().getStore());
     return new OrderDTO(order);
   }
 
   @Transactional
   public void pickOrder(UUID orderId) throws UnauthorizedException, ResourceNotFoundException {
-    Order order = orderRepository
-        .findById(orderId)
-        .orElseThrow(
-            () -> new ResourceNotFoundException("Order with ID " + orderId + " not found"));
+    Order order =
+        orderRepository
+            .findById(orderId)
+            .orElseThrow(
+                () -> new ResourceNotFoundException("Order with ID " + orderId + " not found"));
     authService.assertUserOwnsStore(order.getItems().get(0).getProduct().getStore());
     if (order.getOrderStatus().equals(OrderStatus.CONFIRMED)) {
       order.setOrderStatus(OrderStatus.PICKED);
@@ -283,10 +289,11 @@ public class OrderService {
 
   @Transactional
   public void cancelOrder(UUID orderId) throws UnauthorizedException, ResourceNotFoundException {
-    Order order = orderRepository
-        .findById(orderId)
-        .orElseThrow(
-            () -> new ResourceNotFoundException("Order with ID " + orderId + " not found"));
+    Order order =
+        orderRepository
+            .findById(orderId)
+            .orElseThrow(
+                () -> new ResourceNotFoundException("Order with ID " + orderId + " not found"));
     authService.assertUserOwnsStore(order.getItems().get(0).getProduct().getStore());
     if (order.getOrderStatus().equals(OrderStatus.PENDING)) {
       order.setOrderStatus(OrderStatus.CANCELLED);
@@ -304,7 +311,8 @@ public class OrderService {
   private Integer calculateAndSetTotalPrice(Order order) {
     Integer total = 0;
     if (order.getItems() != null && !order.getItems().isEmpty()) {
-      total = order.getItems().stream().mapToInt(i -> i.getQuantity() * i.getPriceAtPurchase()).sum();
+      total =
+          order.getItems().stream().mapToInt(i -> i.getQuantity() * i.getPriceAtPurchase()).sum();
     }
     return total;
   }

@@ -38,19 +38,19 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-@WebMvcTest(controllers = OrderController.class, excludeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = {
-    GlobalExceptionHandler.class }))
+@WebMvcTest(
+    controllers = OrderController.class,
+    excludeFilters =
+        @ComponentScan.Filter(
+            type = FilterType.ASSIGNABLE_TYPE,
+            classes = {GlobalExceptionHandler.class}))
 class OrderControllerTest {
 
-  @Autowired
-  private MockMvc mockMvc;
-  @Autowired
-  private ObjectMapper objectMapper;
+  @Autowired private MockMvc mockMvc;
+  @Autowired private ObjectMapper objectMapper;
 
-  @MockitoBean
-  private OrderService orderService;
-  @MockitoBean
-  private ProductService productService;
+  @MockitoBean private OrderService orderService;
+  @MockitoBean private ProductService productService;
 
   private UUID orderId;
   private UUID productId;
@@ -67,26 +67,28 @@ class OrderControllerTest {
     orderCode = "ABCD-1234-EFGH";
 
     // Create order item DTO with variant information
-    OrderItemDTO itemDTO = OrderItemDTO.builder()
-        .id(UUID.randomUUID())
-        .productId(productId)
-        .productName("Producto Test")
-        .variantId(variantId)
-        .variantSize("M")
-        .variantColor("Red")
-        .quantity(2)
-        .priceAtPurchase(750)
-        .subtotal(1500)
-        .build();
+    OrderItemDTO itemDTO =
+        OrderItemDTO.builder()
+            .id(UUID.randomUUID())
+            .productId(productId)
+            .productName("Producto Test")
+            .variantId(variantId)
+            .variantSize("M")
+            .variantColor("Red")
+            .quantity(2)
+            .priceAtPurchase(750)
+            .subtotal(1500)
+            .build();
 
-    orderDTO = OrderDTO.builder()
-        .id(orderId)
-        .orderCode(orderCode)
-        .orderDate(LocalDateTime.now())
-        .orderStatus(OrderStatus.PENDING)
-        .totalPrice(1500)
-        .items(List.of(itemDTO))
-        .build();
+    orderDTO =
+        OrderDTO.builder()
+            .id(orderId)
+            .orderCode(orderCode)
+            .orderDate(LocalDateTime.now())
+            .orderStatus(OrderStatus.PENDING)
+            .totalPrice(1500)
+            .items(List.of(itemDTO))
+            .build();
 
     product = new Product();
     product.setId(productId);
