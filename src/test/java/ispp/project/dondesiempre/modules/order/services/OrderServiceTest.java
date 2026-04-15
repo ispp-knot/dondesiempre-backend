@@ -124,21 +124,21 @@ public class OrderServiceTest {
   void createOrder_EmptyItems_ShouldThrowException() {
     assertThrows(
         IllegalArgumentException.class,
-        () -> orderService.createOrder(Collections.emptyMap(), null));
+        () -> orderService.createOrder(Collections.emptyMap(), null, null));
   }
 
   @Test
   void createOrder_NegativeQuantity_ShouldThrowException() {
     Map<UUID, Integer> items = new HashMap<>();
     items.put(variantId, -1);
-    assertThrows(IllegalArgumentException.class, () -> orderService.createOrder(items, null));
+    assertThrows(IllegalArgumentException.class, () -> orderService.createOrder(items, null, null));
   }
 
   @Test
   void createOrder_ZeroQuantity_ShouldThrowException() {
     Map<UUID, Integer> items = new HashMap<>();
     items.put(variantId, 0);
-    assertThrows(IllegalArgumentException.class, () -> orderService.createOrder(items, null));
+    assertThrows(IllegalArgumentException.class, () -> orderService.createOrder(items, null, null));
   }
 
   @Test
@@ -163,7 +163,7 @@ public class OrderServiceTest {
     items.put(variantId, 1);
     items.put(variantId2, 1);
 
-    assertThrows(IllegalArgumentException.class, () -> orderService.createOrder(items, null));
+    assertThrows(IllegalArgumentException.class, () -> orderService.createOrder(items, null, null));
   }
 
   @Test
@@ -275,7 +275,7 @@ public class OrderServiceTest {
     Map<UUID, Integer> variantIdsWithQuantity = new HashMap<>();
     variantIdsWithQuantity.put(variantId, 2);
 
-    OrderDTO result = orderService.createOrder(variantIdsWithQuantity, null);
+    OrderDTO result = orderService.createOrder(variantIdsWithQuantity, null, null);
 
     assertNotNull(result);
     verify(orderRepository).save(any(Order.class));
@@ -297,7 +297,7 @@ public class OrderServiceTest {
     Map<UUID, Integer> variantIdsWithQuantity = new HashMap<>();
     variantIdsWithQuantity.put(variantId, 2);
 
-    OrderDTO result = orderService.createOrder(variantIdsWithQuantity, outfitId);
+    OrderDTO result = orderService.createOrder(variantIdsWithQuantity, outfitId, null);
 
     assertNotNull(result);
     assertEquals(160, result.getTotalPrice());
@@ -333,7 +333,7 @@ public class OrderServiceTest {
     Map<UUID, Integer> variantIdsWithQuantity = new HashMap<>();
     variantIdsWithQuantity.put(truncVariantId, 1);
 
-    OrderDTO result = orderService.createOrder(variantIdsWithQuantity, outfitId);
+    OrderDTO result = orderService.createOrder(variantIdsWithQuantity, outfitId, null);
 
     assertNotNull(result);
     assertEquals(2998, result.getTotalPrice()); // 3998 * 0.75 = 2998.5 → truncated to 2998
@@ -425,7 +425,7 @@ public class OrderServiceTest {
     Map<UUID, Integer> variantIdsWithQuantity = new HashMap<>();
     variantIdsWithQuantity.put(variantId, 2);
 
-    OrderDTO result = orderService.createOrder(variantIdsWithQuantity, null);
+    OrderDTO result = orderService.createOrder(variantIdsWithQuantity, null, null);
 
     assertNotNull(result);
     assertEquals(user.getId(), result.getUserId());
@@ -445,7 +445,8 @@ public class OrderServiceTest {
     variantIdsWithQuantity.put(variantId, 2);
 
     assertThrows(
-        UnauthorizedException.class, () -> orderService.createOrder(variantIdsWithQuantity, null));
+        UnauthorizedException.class,
+        () -> orderService.createOrder(variantIdsWithQuantity, null, null));
   }
 
   @Test
@@ -460,7 +461,7 @@ public class OrderServiceTest {
 
     assertThrows(
         ResourceNotFoundException.class,
-        () -> orderService.createOrder(variantIdsWithQuantity, null));
+        () -> orderService.createOrder(variantIdsWithQuantity, null, null));
   }
 
   @Test
@@ -490,7 +491,7 @@ public class OrderServiceTest {
     variantIdsWithQuantity.put(variantId, 1);
     variantIdsWithQuantity.put(variantId2, 2);
 
-    OrderDTO result = orderService.createOrder(variantIdsWithQuantity, null);
+    OrderDTO result = orderService.createOrder(variantIdsWithQuantity, null, null);
 
     assertNotNull(result);
     assertEquals(OrderStatus.PENDING, result.getOrderStatus());
@@ -513,7 +514,7 @@ public class OrderServiceTest {
     Map<UUID, Integer> variantIdsWithQuantity = new HashMap<>();
     variantIdsWithQuantity.put(variantId, 2);
 
-    OrderDTO result = orderService.createOrder(variantIdsWithQuantity, null);
+    OrderDTO result = orderService.createOrder(variantIdsWithQuantity, null, null);
 
     assertEquals(200, result.getTotalPrice());
   }
