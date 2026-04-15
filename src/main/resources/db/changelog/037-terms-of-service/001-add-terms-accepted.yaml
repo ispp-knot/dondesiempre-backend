@@ -1,0 +1,14 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20260415-add-terms-accepted-to-users
+      author: esther
+      changes:
+        - addColumn:
+            tableName: users
+            columns:
+              - column:
+                  name: terms_accepted
+                  type: boolean
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
