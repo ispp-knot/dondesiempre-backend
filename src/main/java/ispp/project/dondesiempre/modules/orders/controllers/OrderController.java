@@ -40,15 +40,17 @@ public class OrderController {
   }
 
   /**
-   * Creates a new order with product variants. The request body should be a Map of variant IDs to
+   * Creates a new order with product variants. The request body should be a Map
+   * of variant IDs to
    * quantities. Example: { "variant-id-1": 2, "variant-id-2": 1 }
    */
   @PostMapping
   public ResponseEntity<OrderDTO> createOrder(
       @RequestBody Map<UUID, Integer> variantIdsWithQuantity,
-      @RequestParam(required = false) UUID outfitId)
+      @RequestParam(required = false) UUID outfitId,
+      @RequestParam(required = false) UUID promotionId)
       throws ResourceNotFoundException, UnauthorizedException {
-    OrderDTO response = orderService.createOrder(variantIdsWithQuantity, outfitId);
+    OrderDTO response = orderService.createOrder(variantIdsWithQuantity, outfitId, promotionId);
     return new ResponseEntity<>(response, HttpStatus.CREATED);
   }
 
