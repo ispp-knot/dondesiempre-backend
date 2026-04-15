@@ -46,9 +46,10 @@ public class OrderController {
   @PostMapping
   public ResponseEntity<OrderDTO> createOrder(
       @RequestBody Map<UUID, Integer> variantIdsWithQuantity,
-      @RequestParam(required = false) UUID outfitId)
+      @RequestParam(required = false) UUID outfitId,
+      @RequestParam(required = false) UUID promotionId)
       throws ResourceNotFoundException, UnauthorizedException {
-    OrderDTO response = orderService.createOrder(variantIdsWithQuantity, outfitId);
+    OrderDTO response = orderService.createOrder(variantIdsWithQuantity, outfitId, promotionId);
     return new ResponseEntity<>(response, HttpStatus.CREATED);
   }
 

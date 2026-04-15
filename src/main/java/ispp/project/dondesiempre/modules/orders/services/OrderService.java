@@ -14,8 +14,11 @@ import ispp.project.dondesiempre.modules.orders.repositories.OrderRepository;
 import ispp.project.dondesiempre.modules.outfits.models.Outfit;
 import ispp.project.dondesiempre.modules.outfits.services.OutfitService;
 import ispp.project.dondesiempre.modules.payment.services.StripeVerificationService;
+import ispp.project.dondesiempre.modules.products.models.Product;
 import ispp.project.dondesiempre.modules.products.models.ProductVariant;
 import ispp.project.dondesiempre.modules.products.services.ProductVariantService;
+import ispp.project.dondesiempre.modules.promotions.models.Promotion;
+import ispp.project.dondesiempre.modules.promotions.services.PromotionService;
 import ispp.project.dondesiempre.modules.stores.models.Store;
 import ispp.project.dondesiempre.modules.stores.repositories.StoreRepository;
 import ispp.project.dondesiempre.utils.crypto.CryptoConverter;
@@ -43,6 +46,7 @@ public class OrderService {
   private final ApplicationContext applicationContext;
   private final OutfitService outfitService;
   private final StripeVerificationService stripeVerificationService;
+  private final PromotionService promotionService;
 
   private final SecureRandom secureRandom = new SecureRandom();
   private static final String CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -121,11 +125,17 @@ public class OrderService {
   }
 
   @Transactional(rollbackFor = {ResourceNotFoundException.class, UnauthorizedException.class})
-  public OrderDTO createOrder(Map<UUID, Integer> variantIdsWithQuantity, UUID outfitId)
+  public OrderDTO createOrder(
+      Map<UUID, Integer> variantIdsWithQuantity, UUID outfitId, UUID promotionId)
       throws ResourceNotFoundException, UnauthorizedException, IllegalArgumentException {
 
     if (variantIdsWithQuantity == null || variantIdsWithQuantity.isEmpty()) {
       throw new IllegalArgumentException("Quantity of products must be greater than 0.");
+    }
+
+    if (promotionId != null && outfitId != null) {
+      throw new IllegalArgumentException(
+          "Only a promotion or an outfit discount can be applied, not both.");
     }
 
     User user = authService.getCurrentUser();
@@ -151,7 +161,8 @@ public class OrderService {
                 "ProductVariant with ID %s is not available for purchase", variant.getId()));
       }
 
-      UUID currentStoreId = variant.getProduct().getStore().getId();
+      Product product = variant.getProduct();
+      UUID currentStoreId = product.getStore().getId();
       if (storeId == null) {
         storeId = currentStoreId;
       } else if (!storeId.equals(currentStoreId)) {
@@ -160,28 +171,50 @@ public class OrderService {
 
       OrderItem item = new OrderItem();
       item.setOrder(order);
-      item.setProduct(variant.getProduct());
+      item.setProduct(product);
       item.setVariant(variant);
       item.setQuantity(entry.getValue());
-      item.setPriceAtPurchase(variant.getProduct().getPriceInCents());
+      item.setPriceAtPurchase(resolveProductPriceWithDiscounts(product, outfitId, promotionId));
 
       order.getItems().add(item);
     }
 
     Integer total = this.calculateAndSetTotalPrice(order);
 
-    if (outfitId != null) {
-      Outfit outfit = outfitService.findById(outfitId);
-      if (outfit != null && outfit.getDiscountPercentage().isPresent()) {
-        Integer discount = outfit.getDiscountPercentage().get();
-        total = (total * (100 - discount)) / 100;
-      }
-    }
-
     order.setTotalPrice(total);
     Order savedOrder = orderRepository.save(order);
 
     return new OrderDTO(savedOrder);
+  }
+
+  private Integer resolveProductPriceWithDiscounts(
+      Product product, UUID outfitId, UUID promotionId) {
+
+    if (promotionId != null && outfitId != null) {
+      throw new IllegalArgumentException(
+          "Only a promotion or an outfit discount can be applied, not both.");
+    }
+
+    if (promotionId != null) {
+      Promotion promotion = promotionService.getPromotionById(promotionId);
+      return (product.getPriceInCents() * (100 - promotion.getDiscountPercentage())) / 100;
+    }
+
+    if (outfitId != null) {
+      Outfit outfit = outfitService.findById(outfitId);
+      Optional<Integer> discount = outfit.getDiscountPercentage();
+      if (discount.isPresent()) {
+        return (product.getPriceInCents() * (100 - discount.get())) / 100;
+      } else {
+        return product.getPriceInCents();
+      }
+    }
+
+    if (product.getDiscountPercentage().isPresent()) {
+      return (product.getPriceInCents() * (100 - product.getDiscountPercentage().get())) / 100;
+    }
+
+    return product.getPriceInCents();
   }
 
   @Transactional
