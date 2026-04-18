@@ -100,4 +100,11 @@ public class GlobalExceptionHandler {
       StoreNotVerifiedException exception, WebRequest request) {
     return new ResponseEntity<>(exception.getMessage(), HttpStatus.CONFLICT);
   }
+
+  @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+  @ExceptionHandler(QRGenerationException.class)
+  public ResponseEntity<String> handleQRGenerationVerifiedException(
+      QRGenerationException exception, WebRequest request) {
+    return new ResponseEntity<>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+  }
 }
