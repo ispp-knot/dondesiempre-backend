@@ -3,7 +3,9 @@ package ispp.project.dondesiempre.modules.orders.controllers;
 import ispp.project.dondesiempre.modules.common.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.modules.common.exceptions.UnauthorizedException;
 import ispp.project.dondesiempre.modules.orders.dtos.OrderDTO;
+import ispp.project.dondesiempre.modules.orders.dtos.OrderQRDTO;
 import ispp.project.dondesiempre.modules.orders.services.OrderService;
+import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -70,5 +72,12 @@ public class OrderController {
   public ResponseEntity<Void> pickOrder(@PathVariable UUID orderId) throws UnauthorizedException {
     orderService.pickOrder(orderId);
     return ResponseEntity.noContent().build();
+  }
+
+  @GetMapping("/{orderCode}/qr")
+  public ResponseEntity<OrderQRDTO> getQRbyOrder(@PathVariable String orderCode) {
+    byte[] qrBytes = orderService.generateQRCode(orderCode);
+    String base64 = Base64.getEncoder().encodeToString(qrBytes);
+    return ResponseEntity.ok(new OrderQRDTO("data:image/png;base64," + base64));
   }
 }
