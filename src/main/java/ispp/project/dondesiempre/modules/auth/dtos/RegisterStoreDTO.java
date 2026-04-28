@@ -44,6 +44,7 @@ public class RegisterStoreDTO {
 
   @NotBlank @HexColor private String secondaryColor;
 
+  @NotNull
   @AssertTrue(message = "Debe aceptar los términos de servicio")
-  private boolean termsAccepted;
+  private Boolean termsAccepted;
 }
