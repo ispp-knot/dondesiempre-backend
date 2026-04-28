@@ -1,8 +1,10 @@
 package ispp.project.dondesiempre.modules.auth.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -22,7 +24,11 @@ import ispp.project.dondesiempre.modules.stores.models.Storefront;
 import ispp.project.dondesiempre.modules.stores.repositories.StoreRepository;
 import ispp.project.dondesiempre.modules.stores.repositories.StorefrontRepository;
 import ispp.project.dondesiempre.utils.cloudinary.CoordinatesService;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -147,6 +153,87 @@ class UserServiceRegisterTest {
     assertThrows(
         AlreadyExistsException.class,
         () -> userService.registerClient(buildClientDTO("taken@test.com")));
+  }
+
+  // --- termsAccepted validation ---
+
+  private static final Validator VALIDATOR =
+      Validation.buildDefaultValidatorFactory().getValidator();
+
+  @Test
+  void registerClientDTO_shouldFailValidation_whenTermsAcceptedIsNull() {
+    RegisterClientDTO dto = buildClientDTO("client@test.com");
+    dto.setTermsAccepted(null);
+
+    Set<ConstraintViolation<RegisterClientDTO>> violations = VALIDATOR.validate(dto);
+
+    assertFalse(violations.isEmpty());
+    assertTrue(
+        violations.stream().anyMatch(v -> "termsAccepted".equals(v.getPropertyPath().toString())));
+  }
+
+  @Test
+  void registerClientDTO_shouldFailValidation_whenTermsAcceptedIsFalse() {
+    RegisterClientDTO dto = buildClientDTO("client@test.com");
+    dto.setTermsAccepted(false);
+
+    Set<ConstraintViolation<RegisterClientDTO>> violations = VALIDATOR.validate(dto);
+
+    assertFalse(violations.isEmpty());
+    assertTrue(
+        violations.stream()
+            .anyMatch(
+                v ->
+                    "termsAccepted".equals(v.getPropertyPath().toString())
+                        && "Debe aceptar los términos de servicio".equals(v.getMessage())));
+  }
+
+  @Test
+  void registerClientDTO_shouldPassValidation_whenTermsAcceptedIsTrue() {
+    RegisterClientDTO dto = buildClientDTO("client@test.com");
+    dto.setTermsAccepted(true);
+
+    Set<ConstraintViolation<RegisterClientDTO>> violations = VALIDATOR.validate(dto);
+
+    assertTrue(violations.isEmpty());
+  }
+
+  @Test
+  void registerStoreDTO_shouldFailValidation_whenTermsAcceptedIsNull() {
+    RegisterStoreDTO dto = buildStoreDTO("store@test.com");
+    dto.setTermsAccepted(null);
+
+    Set<ConstraintViolation<RegisterStoreDTO>> violations = VALIDATOR.validate(dto);
+
+    assertFalse(violations.isEmpty());
+    assertTrue(
+        violations.stream().anyMatch(v -> "termsAccepted".equals(v.getPropertyPath().toString())));
+  }
+
+  @Test
+  void registerStoreDTO_shouldFailValidation_whenTermsAcceptedIsFalse() {
+    RegisterStoreDTO dto = buildStoreDTO("store@test.com");
+    dto.setTermsAccepted(false);
+
+    Set<ConstraintViolation<RegisterStoreDTO>> violations = VALIDATOR.validate(dto);
+
+    assertFalse(violations.isEmpty());
+    assertTrue(
+        violations.stream()
+            .anyMatch(
+                v ->
+                    "termsAccepted".equals(v.getPropertyPath().toString())
+                        && "Debe aceptar los términos de servicio".equals(v.getMessage())));
+  }
+
+  @Test
+  void registerStoreDTO_shouldPassValidation_whenTermsAcceptedIsTrue() {
+    RegisterStoreDTO dto = buildStoreDTO("store@test.com");
+    dto.setTermsAccepted(true);
+
+    Set<ConstraintViolation<RegisterStoreDTO>> violations = VALIDATOR.validate(dto);
+
+    assertTrue(violations.isEmpty());
   }
 
   // --- helpers ---
