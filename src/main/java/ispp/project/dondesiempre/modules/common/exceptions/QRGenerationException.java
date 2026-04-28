@@ -6,6 +6,6 @@ public class QRGenerationException extends RuntimeException {
   }
 
   public QRGenerationException() {
-    super("Hubo un error durante la generación del QR, intentelo de nuevo.");
+    super("Hubo un error durante la generación del QR, inténtelo de nuevo.");
   }
 }
