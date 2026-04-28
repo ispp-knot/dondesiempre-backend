@@ -38,6 +38,7 @@ class ClientSeed {
     clientUser.setId(s.seedUuid("user:client@client.com"));
     clientUser.setEmail("client@client.com");
     clientUser.setPassword(s.passwordEncoder.encode("Password123!"));
+    clientUser.setTermsAccepted(true);
     s.userRepository.save(clientUser);
 
     Client manualClient = new Client();
@@ -103,6 +104,7 @@ class ClientSeed {
       user.setId(s.seedUuid("user:" + clientEmail));
       user.setEmail(clientEmail);
       user.setPassword(s.passwordEncoder.encode("Password123!"));
+      user.setTermsAccepted(true);
       s.userRepository.save(user);
 
       Client client = new Client();
