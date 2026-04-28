@@ -1,8 +1,14 @@
 package ispp.project.dondesiempre.modules.orders.services;
 
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.WriterException;
+import com.google.zxing.client.j2se.MatrixToImageWriter;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
 import ispp.project.dondesiempre.modules.auth.models.User;
 import ispp.project.dondesiempre.modules.auth.services.AuthService;
 import ispp.project.dondesiempre.modules.common.exceptions.InvalidRequestException;
+import ispp.project.dondesiempre.modules.common.exceptions.QRGenerationException;
 import ispp.project.dondesiempre.modules.common.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.modules.common.exceptions.StoreNotVerifiedException;
 import ispp.project.dondesiempre.modules.common.exceptions.UnauthorizedException;
@@ -22,6 +28,8 @@ import ispp.project.dondesiempre.modules.promotions.services.PromotionService;
 import ispp.project.dondesiempre.modules.stores.models.Store;
 import ispp.project.dondesiempre.modules.stores.repositories.StoreRepository;
 import ispp.project.dondesiempre.utils.crypto.CryptoConverter;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.Comparator;
@@ -306,6 +314,29 @@ public class OrderService {
   @Transactional(readOnly = true)
   public boolean irOrderPaid(UUID orderId) {
     return orderRepository.existsByIdAndPaymentIntentIdIsNotNull(orderId);
+  }
+
+  @Transactional(readOnly = true)
+  public byte[] generateQRCode(String orderCode) {
+    Order order =
+        orderRepository
+            .findByOrderCode(orderCode)
+            .orElseThrow(() -> new ResourceNotFoundException("Código de orden no encontrado"));
+    if (!authService.getCurrentUser().getId().equals(order.getUser().getId()))
+      throw new InvalidRequestException(
+          "No puedes generar código QR con un código que no te pertenece.");
+
+    QRCodeWriter qrCodeWriter = new QRCodeWriter();
+    BitMatrix bitMatrix;
+    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+    try {
+      bitMatrix = qrCodeWriter.encode(orderCode, BarcodeFormat.QR_CODE, 300, 300);
+      MatrixToImageWriter.writeToStream(bitMatrix, "PNG", outputStream);
+    } catch (WriterException | IOException e) {
+      throw new QRGenerationException();
+    }
+
+    return outputStream.toByteArray();
   }
 
   private Integer calculateAndSetTotalPrice(Order order) {
