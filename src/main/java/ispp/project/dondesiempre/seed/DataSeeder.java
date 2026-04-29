@@ -203,6 +203,7 @@ public class DataSeeder implements CommandLineRunner {
     user.setId(seedUuid("user:" + email));
     user.setEmail(email);
     user.setPassword(passwordEncoder.encode("Password123!"));
+    user.setTermsAccepted(true);
     userRepository.save(user);
 
     Storefront storefront = new Storefront();

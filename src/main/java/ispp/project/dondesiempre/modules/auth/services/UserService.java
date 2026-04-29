@@ -57,6 +57,7 @@ public class UserService {
     User user = new User();
     user.setEmail(dto.getEmail());
     user.setPassword(passwordEncoder.encode(dto.getPassword()));
+    user.setTermsAccepted(dto.getTermsAccepted());
     userRepository.save(user);
 
     Storefront storefront = new Storefront();
@@ -86,6 +87,7 @@ public class UserService {
     User user = new User();
     user.setEmail(dto.getEmail());
     user.setPassword(passwordEncoder.encode(dto.getPassword()));
+    user.setTermsAccepted(dto.getTermsAccepted());
     userRepository.save(user);
 
     Client client = new Client();

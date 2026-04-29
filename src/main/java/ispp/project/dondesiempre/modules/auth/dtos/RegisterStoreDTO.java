@@ -2,6 +2,7 @@ package ispp.project.dondesiempre.modules.auth.dtos;
 
 import ispp.project.dondesiempre.modules.auth.validators.StrongPassword;
 import ispp.project.dondesiempre.modules.stores.validators.HexColor;
+import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -42,4 +43,8 @@ public class RegisterStoreDTO {
   @NotBlank @HexColor private String primaryColor;
 
   @NotBlank @HexColor private String secondaryColor;
+
+  @NotNull
+  @AssertTrue(message = "Debe aceptar los términos de servicio")
+  private Boolean termsAccepted;
 }
