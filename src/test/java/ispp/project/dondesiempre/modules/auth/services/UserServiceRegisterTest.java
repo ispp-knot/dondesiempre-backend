@@ -54,6 +54,9 @@ class UserServiceRegisterTest {
 
   @InjectMocks private UserService userService;
 
+  private final String TERMSACCEPTEDPROP = "termsAccepted";
+  private final String MUSTACCEPTTERMSMESSAGE = "Debe aceptar los términos de servicio";
+
   // --- registerStore ---
 
   @Test
@@ -169,7 +172,8 @@ class UserServiceRegisterTest {
 
     assertFalse(violations.isEmpty());
     assertTrue(
-        violations.stream().anyMatch(v -> "termsAccepted".equals(v.getPropertyPath().toString())));
+        violations.stream()
+            .anyMatch(v -> TERMSACCEPTEDPROP.equals(v.getPropertyPath().toString())));
   }
 
   @Test
@@ -184,8 +188,8 @@ class UserServiceRegisterTest {
         violations.stream()
             .anyMatch(
                 v ->
-                    "termsAccepted".equals(v.getPropertyPath().toString())
-                        && "Debe aceptar los términos de servicio".equals(v.getMessage())));
+                    TERMSACCEPTEDPROP.equals(v.getPropertyPath().toString())
+                        && MUSTACCEPTTERMSMESSAGE.equals(v.getMessage())));
   }
 
   @Test
@@ -207,7 +211,8 @@ class UserServiceRegisterTest {
 
     assertFalse(violations.isEmpty());
     assertTrue(
-        violations.stream().anyMatch(v -> "termsAccepted".equals(v.getPropertyPath().toString())));
+        violations.stream()
+            .anyMatch(v -> TERMSACCEPTEDPROP.equals(v.getPropertyPath().toString())));
   }
 
   @Test
@@ -222,8 +227,8 @@ class UserServiceRegisterTest {
         violations.stream()
             .anyMatch(
                 v ->
-                    "termsAccepted".equals(v.getPropertyPath().toString())
-                        && "Debe aceptar los términos de servicio".equals(v.getMessage())));
+                    TERMSACCEPTEDPROP.equals(v.getPropertyPath().toString())
+                        && MUSTACCEPTTERMSMESSAGE.equals(v.getMessage())));
   }
 
   @Test
