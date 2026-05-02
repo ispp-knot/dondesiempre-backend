@@ -59,6 +59,7 @@ class AlfonsiStoreSeed {
             alfonsi,
             "alfonsi/outfit8_parka_blanca_79.99.jpg");
     s.createVariant(alf_parkaBlanca, productSizes.get("M"), productColors.get("Blanco"), true);
+    s.createVariant(alf_parkaBlanca, productSizes.get("L"), productColors.get("Blanco"), true);
 
     Product alf_pantalonesNegros =
         s.createProduct(
@@ -70,6 +71,8 @@ class AlfonsiStoreSeed {
             alfonsi,
             "alfonsi/outfit8_pantalones_negros_46.99.jpg");
     s.createVariant(alf_pantalonesNegros, productSizes.get("M"), productColors.get("Negro"), true);
+    s.createVariant(alf_pantalonesNegros, productSizes.get("L"), productColors.get("Negro"), true);
+    s.createVariant(alf_pantalonesNegros, productSizes.get("XL"), productColors.get("Negro"), true);
 
     Product alf_botasNegras =
         s.createProduct(
@@ -80,7 +83,10 @@ class AlfonsiStoreSeed {
             productTypes.get("Zapatos"),
             alfonsi,
             "alfonsi/outfit8_botas_negras_89.99.jpg");
+    s.createVariant(alf_botasNegras, productSizes.get("S"), productColors.get("Negro"), true);
     s.createVariant(alf_botasNegras, productSizes.get("M"), productColors.get("Negro"), true);
+    s.createVariant(alf_botasNegras, productSizes.get("L"), productColors.get("Negro"), true);
+    s.createVariant(alf_botasNegras, productSizes.get("XL"), productColors.get("Negro"), true);
 
     Outfit alf_outfit1 =
         s.createOutfit("Cómodo Invierno", 0, null, alfonsi, "alfonsi/outfit8_cómodo_invierno.jpg");

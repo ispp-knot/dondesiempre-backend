@@ -85,6 +85,8 @@ class PineappleStoreSeed {
             pineapple,
             "pineapple/outfit7_camisa_blanca_15.99.jpg");
     s.createVariant(pine_camisaBlanca, productSizes.get("M"), productColors.get("Blanco"), true);
+    s.createVariant(pine_camisaBlanca, productSizes.get("S"), productColors.get("Blanco"), true);
+    s.createVariant(pine_camisaBlanca, productSizes.get("L"), productColors.get("Blanco"), true);
 
     Product pine_faldaRoja =
         s.createProduct(
@@ -96,6 +98,8 @@ class PineappleStoreSeed {
             pineapple,
             "pineapple/outfit7_falda_roja_45.99.jpg");
     s.createVariant(pine_faldaRoja, productSizes.get("M"), productColors.get("Rojo"), true);
+    s.createVariant(pine_faldaRoja, productSizes.get("S"), productColors.get("Rojo"), true);
+    s.createVariant(pine_faldaRoja, productSizes.get("L"), productColors.get("Rojo"), true);
 
     Outfit pine_outfit1 =
         s.createOutfit(

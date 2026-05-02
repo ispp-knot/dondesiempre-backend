@@ -100,6 +100,8 @@ class SanSebastianStoreSeed {
             sanSebastian,
             "sebastian/outfit5_albornoz_blanco_19.99.jpg");
     s.createVariant(ss_albornoz, productSizes.get("M"), productColors.get("Blanco"), true);
+    s.createVariant(ss_albornoz, productSizes.get("S"), productColors.get("Blanco"), true);
+    s.createVariant(ss_albornoz, productSizes.get("L"), productColors.get("Blanco"), true);
 
     Product ss_crocs =
         s.createProduct(
@@ -111,6 +113,8 @@ class SanSebastianStoreSeed {
             sanSebastian,
             "sebastian/outfit5_crocs_negras_15.99.jpg");
     s.createVariant(ss_crocs, productSizes.get("M"), productColors.get("Negro"), true);
+    s.createVariant(ss_crocs, productSizes.get("S"), productColors.get("Negro"), true);
+    s.createVariant(ss_crocs, productSizes.get("L"), productColors.get("Negro"), true);
 
     Outfit ss_outfit1 =
         s.createOutfit(
