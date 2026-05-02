@@ -18,7 +18,7 @@ public interface StoreRepository extends JpaRepository<Store, UUID> {
             SELECT
                 *
             FROM stores s
-            WHERE (:name IS NULL OR s.name ILIKE %:name%)
+            WHERE (:name IS NULL OR s.name ILIKE CONCAT('%', :name, '%') ESCAPE '\\')
             ORDER BY
                 CASE WHEN :lat IS NOT NULL AND :lon IS NOT NULL
                 THEN ST_Distance(s.location, ST_SetSRID(ST_MakePoint(:lon, :lat), 4326))
