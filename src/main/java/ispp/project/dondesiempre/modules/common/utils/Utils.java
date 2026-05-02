@@ -7,7 +7,6 @@ public class Utils {
 
   public String escapeString(String value) {
     if (value == null) return value;
-    String res = value.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_");
-    return res;
+    return value.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_");
   }
 }
