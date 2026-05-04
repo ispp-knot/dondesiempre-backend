@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import ispp.project.dondesiempre.config.coordinates.GeometryFactoryConfig;
 import ispp.project.dondesiempre.modules.auth.models.User;
 import ispp.project.dondesiempre.modules.auth.repositories.UserRepository;
+import ispp.project.dondesiempre.modules.common.utils.Utils;
 import ispp.project.dondesiempre.modules.products.models.Product;
 import ispp.project.dondesiempre.modules.products.models.ProductType;
 import ispp.project.dondesiempre.modules.stores.models.Store;
@@ -28,7 +29,7 @@ import org.springframework.context.annotation.Import;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = Replace.NONE)
-@Import({CoordinatesService.class, GeometryFactoryConfig.class})
+@Import({CoordinatesService.class, GeometryFactoryConfig.class, Utils.class})
 public class ProductRepositoryTest {
 
   @Autowired private ProductRepository productRepository;
@@ -37,6 +38,8 @@ public class ProductRepositoryTest {
   @Autowired private StorefrontRepository storefrontRepository;
   @Autowired private UserRepository userRepository;
   @Autowired private CoordinatesService coordinatesService;
+
+  @Autowired private Utils utils;
 
   @BeforeEach
   void setUp() {
@@ -79,6 +82,15 @@ public class ProductRepositoryTest {
     notDiscounted.setStore(store);
     notDiscounted.setDeleted(false);
     productRepository.save(notDiscounted);
+
+    Product wildcardProd = new Product();
+    wildcardProd.setName("%");
+    wildcardProd.setPriceInCents(1000);
+    wildcardProd.setDiscountPercentage(32);
+    wildcardProd.setType(type);
+    wildcardProd.setStore(store);
+    wildcardProd.setDeleted(false);
+    productRepository.save(wildcardProd);
   }
 
   @Test
@@ -196,5 +208,15 @@ public class ProductRepositoryTest {
 
     assertNotNull(products);
     assertTrue(products.isEmpty());
+  }
+
+  @Test
+  public void shouldReturnStore_whenSearchingByWildcard() {
+
+    List<Product> res =
+        productRepository.findByStoreIdAndNameContainingIgnoreCase(
+            storeRepository.findAll().getFirst().getId(), utils.escapeString("%"));
+
+    assertTrue(res.size() >= 1);
   }
 }

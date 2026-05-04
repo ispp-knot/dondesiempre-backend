@@ -27,7 +27,7 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
   public List<Product> findProductsByPromotionId(UUID promotionId);
 
   @Query(
-      "SELECT p FROM Product p WHERE p.store.id = :storeId AND p.isDeleted = false AND LOWER(p.name) LIKE LOWER(CONCAT('%', :name, '%'))")
+      "SELECT p FROM Product p WHERE p.store.id = :storeId AND p.isDeleted = false AND LOWER(p.name) LIKE LOWER(CONCAT('%', :name, '%')) ESCAPE '\\'")
   List<Product> findByStoreIdAndNameContainingIgnoreCase(
       @Param("storeId") UUID storeId, @Param("name") String name);
 }

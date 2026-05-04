@@ -4,6 +4,7 @@ import ispp.project.dondesiempre.modules.auth.services.AuthService;
 import ispp.project.dondesiempre.modules.common.exceptions.InvalidRequestException;
 import ispp.project.dondesiempre.modules.common.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.modules.common.exceptions.UnauthorizedException;
+import ispp.project.dondesiempre.modules.common.utils.Utils;
 import ispp.project.dondesiempre.modules.outfits.dtos.OutfitCreationDTO;
 import ispp.project.dondesiempre.modules.outfits.dtos.OutfitCreationProductDTO;
 import ispp.project.dondesiempre.modules.outfits.dtos.OutfitDTO;
@@ -45,6 +46,8 @@ public class OutfitService {
   private final ProductService productService;
   private final StoreService storeService;
   private final AuthService authService;
+
+  private final Utils utils;
 
   private final CloudinaryService cloudinaryService;
 
@@ -90,7 +93,8 @@ public class OutfitService {
   public List<OutfitDTO> findByStoreIdAndNameAsDTO(UUID storeId, String name) {
     List<Outfit> outfits =
         name != null && !name.isBlank()
-            ? outfitRepository.findByStoreIdAndNameContainingIgnoreCase(storeId, name)
+            ? outfitRepository.findByStoreIdAndNameContainingIgnoreCase(
+                storeId, utils.escapeString(name))
             : outfitRepository.findByStoreIdOrderByIndexAsc(storeId);
     if (outfits.isEmpty()) return List.of();
 

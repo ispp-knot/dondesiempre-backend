@@ -4,6 +4,7 @@ import ispp.project.dondesiempre.modules.auth.services.AuthService;
 import ispp.project.dondesiempre.modules.common.exceptions.InvalidBoundingBoxException;
 import ispp.project.dondesiempre.modules.common.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.modules.common.exceptions.UnauthorizedException;
+import ispp.project.dondesiempre.modules.common.utils.Utils;
 import ispp.project.dondesiempre.modules.promotions.repositories.PromotionRepository;
 import ispp.project.dondesiempre.modules.stores.dtos.StoreDTO;
 import ispp.project.dondesiempre.modules.stores.dtos.StoreSocialNetworkDTO;
@@ -32,6 +33,7 @@ public class StoreService {
   private final PromotionRepository promotionRepository;
   private final ApplicationContext applicationContext;
   private final AuthService authService;
+  private final Utils utils;
 
   @Transactional(readOnly = true, rollbackFor = ResourceNotFoundException.class)
   public Store findById(UUID id) throws ResourceNotFoundException {
@@ -73,7 +75,7 @@ public class StoreService {
 
   @Transactional(readOnly = true)
   public List<Store> searchStores(String name, Double lat, Double lon) {
-    return storeRepository.searchStores(name, lat, lon, 100);
+    return storeRepository.searchStores(utils.escapeString(name), lat, lon, 100);
   }
 
   @Transactional(readOnly = true, rollbackFor = InvalidBoundingBoxException.class)
