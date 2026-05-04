@@ -4,6 +4,7 @@ import ispp.project.dondesiempre.modules.auth.services.AuthService;
 import ispp.project.dondesiempre.modules.common.exceptions.InvalidRequestException;
 import ispp.project.dondesiempre.modules.common.exceptions.ResourceNotFoundException;
 import ispp.project.dondesiempre.modules.common.exceptions.UnauthorizedException;
+import ispp.project.dondesiempre.modules.common.utils.Utils;
 import ispp.project.dondesiempre.modules.outfits.repositories.OutfitProductRepository;
 import ispp.project.dondesiempre.modules.products.dtos.ProductCreationDTO;
 import ispp.project.dondesiempre.modules.products.dtos.ProductUpdateDTO;
@@ -33,6 +34,8 @@ public class ProductService {
   private final CloudinaryService cloudinaryService;
   private final OutfitProductRepository outfitProductRepository;
   private final PromotionProductRepository promotionProductRepository;
+
+  private final Utils utils;
 
   private void validateMinPriceInCents(Integer priceInCents) throws InvalidRequestException {
     if (priceInCents != null && priceInCents < 1) {
@@ -112,7 +115,8 @@ public class ProductService {
   @Transactional(readOnly = true)
   public List<Product> findByStoreIdAndNameContainingIgnoreCase(UUID storeId, String name) {
     if (name != null && !name.isBlank()) {
-      return productRepository.findByStoreIdAndNameContainingIgnoreCase(storeId, name);
+      return productRepository.findByStoreIdAndNameContainingIgnoreCase(
+          storeId, utils.escapeString(name));
     }
     return applicationContext.getBean(ProductService.class).findByStoreId(storeId);
   }

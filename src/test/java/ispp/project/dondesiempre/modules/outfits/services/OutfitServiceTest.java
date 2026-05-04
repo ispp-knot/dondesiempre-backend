@@ -16,6 +16,7 @@ import ispp.project.dondesiempre.modules.auth.models.User;
 import ispp.project.dondesiempre.modules.auth.services.AuthService;
 import ispp.project.dondesiempre.modules.common.exceptions.InvalidRequestException;
 import ispp.project.dondesiempre.modules.common.exceptions.ResourceNotFoundException;
+import ispp.project.dondesiempre.modules.common.utils.Utils;
 import ispp.project.dondesiempre.modules.outfits.dtos.OutfitCreationDTO;
 import ispp.project.dondesiempre.modules.outfits.dtos.OutfitCreationProductDTO;
 import ispp.project.dondesiempre.modules.outfits.dtos.OutfitSortDTO;
@@ -58,6 +59,7 @@ class OutfitServiceTest {
   @Mock private StorefrontService storefrontService;
   @Mock private StoreService storeService;
   @Mock private ApplicationContext applicationContext;
+  @Mock private Utils utils;
 
   @InjectMocks private OutfitService outfitService;
 
@@ -696,7 +698,7 @@ class OutfitServiceTest {
                 }));
     when(outfitProductRepository.findByOutfitIdsWithDetails(List.of(outfit2.getId())))
         .thenReturn(List.of(outfitProduct));
-
+    when(utils.escapeString(any())).thenReturn("summer");
     List<ispp.project.dondesiempre.modules.outfits.dtos.OutfitDTO> result =
         outfitService.findByStoreIdAndNameAsDTO(storeId, "summer");
 
@@ -711,6 +713,8 @@ class OutfitServiceTest {
   void shouldReturnEmptyList_whenFindByStoreIdAndNameAsDTO_noMatches() {
     when(outfitRepository.findByStoreIdAndNameContainingIgnoreCase(storeId, "nonexistent"))
         .thenReturn(new ArrayList<>());
+
+    when(utils.escapeString(any())).thenReturn("nonexistent");
 
     List<ispp.project.dondesiempre.modules.outfits.dtos.OutfitDTO> result =
         outfitService.findByStoreIdAndNameAsDTO(storeId, "nonexistent");
