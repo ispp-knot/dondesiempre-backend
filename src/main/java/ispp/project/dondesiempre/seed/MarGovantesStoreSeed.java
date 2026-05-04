@@ -69,6 +69,8 @@ class MarGovantesStoreSeed {
             marGovantes,
             "govantes/outfit_9_americana_marina_45.99.jpg");
     s.createVariant(mg_americanaMarina, productSizes.get("M"), productColors.get("Azul"), true);
+    s.createVariant(mg_americanaMarina, productSizes.get("S"), productColors.get("Azul"), true);
+    s.createVariant(mg_americanaMarina, productSizes.get("L"), productColors.get("Azul"), true);
 
     Product mg_pantalonesMari =
         s.createProduct(
@@ -80,6 +82,8 @@ class MarGovantesStoreSeed {
             marGovantes,
             "govantes/outfit_9_pantalones_marinos_39.99.jpg");
     s.createVariant(mg_pantalonesMari, productSizes.get("M"), productColors.get("Azul"), true);
+    s.createVariant(mg_pantalonesMari, productSizes.get("S"), productColors.get("Azul"), true);
+    s.createVariant(mg_pantalonesMari, productSizes.get("L"), productColors.get("Azul"), true);
 
     Product mg_camisaFloral =
         s.createProduct(
@@ -91,6 +95,8 @@ class MarGovantesStoreSeed {
             marGovantes,
             "govantes/outfit_10_camisa_floral_23.99.jpg");
     s.createVariant(mg_camisaFloral, productSizes.get("M"), productColors.get("Rosa"), true);
+    s.createVariant(mg_camisaFloral, productSizes.get("S"), productColors.get("Rosa"), true);
+    s.createVariant(mg_camisaFloral, productSizes.get("L"), productColors.get("Rosa"), true);
 
     Product mg_pantalonesVerdes =
         s.createProduct(
@@ -102,6 +108,8 @@ class MarGovantesStoreSeed {
             marGovantes,
             "govantes/outfit_10_pantalones_verdes_34.99.jpg");
     s.createVariant(mg_pantalonesVerdes, productSizes.get("M"), productColors.get("Verde"), true);
+    s.createVariant(mg_pantalonesVerdes, productSizes.get("S"), productColors.get("Verde"), true);
+    s.createVariant(mg_pantalonesVerdes, productSizes.get("L"), productColors.get("Verde"), true);
 
     Product mg_sueterVerde =
         s.createProduct(
@@ -113,6 +121,9 @@ class MarGovantesStoreSeed {
             marGovantes,
             "govantes/outfit_10_suéter_verde_45_99.jpg");
     s.createVariant(mg_sueterVerde, productSizes.get("M"), productColors.get("Verde"), true);
+    s.createVariant(mg_sueterVerde, productSizes.get("S"), productColors.get("Verde"), true);
+    s.createVariant(mg_sueterVerde, productSizes.get("L"), productColors.get("Verde"), true);
+    s.createVariant(mg_sueterVerde, productSizes.get("XS"), productColors.get("Verde"), true);
 
     Outfit mg_outfit1 =
         s.createOutfit(
