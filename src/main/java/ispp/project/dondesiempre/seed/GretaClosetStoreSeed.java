@@ -90,6 +90,8 @@ class GretaClosetStoreSeed {
             greta,
             "greta/outfit1_vestido_blanco_49.99.jpg");
     s.createVariant(greta_vestidoBlanco, productSizes.get("M"), productColors.get("Blanco"), true);
+    s.createVariant(greta_vestidoBlanco, productSizes.get("S"), productColors.get("Blanco"), true);
+    s.createVariant(greta_vestidoBlanco, productSizes.get("L"), productColors.get("Blanco"), true);
 
     Product greta_botasNegras1 =
         s.createProduct(
@@ -101,6 +103,8 @@ class GretaClosetStoreSeed {
             greta,
             "greta/outfit1_botas_negras_69.99.jpg");
     s.createVariant(greta_botasNegras1, productSizes.get("M"), productColors.get("Negro"), true);
+    s.createVariant(greta_botasNegras1, productSizes.get("S"), productColors.get("Negro"), true);
+    s.createVariant(greta_botasNegras1, productSizes.get("L"), productColors.get("Negro"), true);
 
     Product greta_bolsoMarron =
         s.createProduct(
@@ -123,6 +127,8 @@ class GretaClosetStoreSeed {
             greta,
             "greta/outfit2_vestido_azul_69.99.jpg");
     s.createVariant(greta_vestidoAzul, productSizes.get("M"), productColors.get("Azul"), true);
+    s.createVariant(greta_vestidoAzul, productSizes.get("S"), productColors.get("Azul"), true);
+    s.createVariant(greta_vestidoAzul, productSizes.get("L"), productColors.get("Azul"), true);
 
     Product greta_bolsoBeige =
         s.createProduct(
@@ -157,6 +163,10 @@ class GretaClosetStoreSeed {
             "greta/chaqueta_lunares_lola.png");
     s.createVariant(
         greta_chaqueta_lunares, productSizes.get("S"), productColors.get("Negro"), true);
+    s.createVariant(
+        greta_chaqueta_lunares, productSizes.get("M"), productColors.get("Negro"), true);
+    s.createVariant(
+        greta_chaqueta_lunares, productSizes.get("L"), productColors.get("Negro"), true);
 
     Product greta_falda_lunares =
         s.createProduct(
@@ -168,6 +178,8 @@ class GretaClosetStoreSeed {
             greta,
             "greta/falda_lunares_lola.png");
     s.createVariant(greta_falda_lunares, productSizes.get("S"), productColors.get("Negro"), true);
+    s.createVariant(greta_falda_lunares, productSizes.get("M"), productColors.get("Negro"), true);
+    s.createVariant(greta_falda_lunares, productSizes.get("L"), productColors.get("Negro"), true);
 
     Outfit greta_outfit1 =
         s.createOutfit("Conjunto Mihai", 0, null, greta, "greta/outfit1_conjunto_mihai.jpg");

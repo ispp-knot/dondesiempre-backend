@@ -59,6 +59,8 @@ class RoireStoreSeed {
             roire,
             "roire/outfit6_falda_cebra_29.99.jpg");
     s.createVariant(roire_faldaCebra, productSizes.get("M"), productColors.get("Blanco"), true);
+    s.createVariant(roire_faldaCebra, productSizes.get("S"), productColors.get("Blanco"), true);
+    s.createVariant(roire_faldaCebra, productSizes.get("L"), productColors.get("Blanco"), true);
 
     Product roire_sueterMarron =
         s.createProduct(
@@ -70,6 +72,8 @@ class RoireStoreSeed {
             roire,
             "roire/outfit6_suéter_marrón_49.99.jpg");
     s.createVariant(roire_sueterMarron, productSizes.get("M"), productColors.get("Beige"), true);
+    s.createVariant(roire_sueterMarron, productSizes.get("S"), productColors.get("Beige"), true);
+    s.createVariant(roire_sueterMarron, productSizes.get("L"), productColors.get("Beige"), true);
 
     Outfit roire_outfit1 =
         s.createOutfit("Savana Otoñal", 0, 20, roire, "roire/outfit6_savana_otoñal.jpg");

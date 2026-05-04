@@ -66,6 +66,8 @@ class RomantikaStoreSeed {
             romantika,
             "romantika/outfit3_vestido_rojo_64.99.jpg");
     s.createVariant(rom_vestidoRojo, productSizes.get("M"), productColors.get("Rojo"), true);
+    s.createVariant(rom_vestidoRojo, productSizes.get("S"), productColors.get("Rojo"), true);
+    s.createVariant(rom_vestidoRojo, productSizes.get("L"), productColors.get("Rojo"), true);
 
     Product rom_sandaliasRojas =
         s.createProduct(
@@ -77,6 +79,8 @@ class RomantikaStoreSeed {
             romantika,
             "romantika/outfit3_sandalias_rojas_con_tacón_46.99.jpg");
     s.createVariant(rom_sandaliasRojas, productSizes.get("M"), productColors.get("Rojo"), true);
+    s.createVariant(rom_sandaliasRojas, productSizes.get("S"), productColors.get("Rojo"), true);
+    s.createVariant(rom_sandaliasRojas, productSizes.get("L"), productColors.get("Rojo"), true);
 
     Product rom_vestidoVerde =
         s.createProduct(
@@ -88,7 +92,7 @@ class RomantikaStoreSeed {
             romantika,
             "romantika/outfit4_vestido_verde_49.99.jpg");
     s.createVariant(rom_vestidoVerde, productSizes.get("M"), productColors.get("Verde"), true);
-
+    s.createVariant(rom_vestidoVerde, productSizes.get("S"), productColors.get("Verde"), true);
     Product rom_taconesBeige =
         s.createProduct(
             "Tacones Beige",
@@ -99,6 +103,8 @@ class RomantikaStoreSeed {
             romantika,
             "romantika/outfit4_tacones_beige_44.99.jpg");
     s.createVariant(rom_taconesBeige, productSizes.get("M"), productColors.get("Beige"), true);
+    s.createVariant(rom_taconesBeige, productSizes.get("S"), productColors.get("Beige"), true);
+    s.createVariant(rom_taconesBeige, productSizes.get("L"), productColors.get("Beige"), true);
 
     Outfit rom_outfit1 =
         s.createOutfit("Verano Rojo", 0, 10, romantika, "romantika/outfit3_verano_rojo.jpg");
