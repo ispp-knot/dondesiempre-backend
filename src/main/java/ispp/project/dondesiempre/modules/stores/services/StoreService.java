@@ -75,7 +75,8 @@ public class StoreService {
 
   @Transactional(readOnly = true)
   public List<Store> searchStores(String name, Double lat, Double lon) {
-    return storeRepository.searchStores(utils.escapeString(name.trim()), lat, lon, 100);
+    String trimmedName = name != null ? name.trim() : null;
+    return storeRepository.searchStores(utils.escapeString(trimmedName), lat, lon, 100);
   }
 
   @Transactional(readOnly = true, rollbackFor = InvalidBoundingBoxException.class)
@@ -95,17 +96,17 @@ public class StoreService {
     if (minLon > maxLon || minLat > maxLat)
       throw new InvalidBoundingBoxException(
           "Invalid bounding box parameters: minimum coordinates cannot be greater than maximum coordinates.");
-    List<Store> stores =
-        storeRepository.findStoresInBoundingBox(minLon, minLat, maxLon, maxLat, 500);
-    if (stores.isEmpty()) return List.of();
+    List<Store> stores = storeRepository.findStoresInBoundingBox(minLon, minLat, maxLon, maxLat, 500);
+    if (stores.isEmpty())
+      return List.of();
 
     List<UUID> ids = stores.stream().map(Store::getId).toList();
-    Map<UUID, List<StoreSocialNetworkDTO>> socialNetworksByStore =
-        storeSocialNetworkRepository.findByStoreIdsWithSocialNetwork(ids).stream()
-            .collect(
-                Collectors.groupingBy(
-                    s -> s.getStore().getId(),
-                    Collectors.mapping(StoreSocialNetworkDTO::new, Collectors.toList())));
+    Map<UUID, List<StoreSocialNetworkDTO>> socialNetworksByStore = storeSocialNetworkRepository
+        .findByStoreIdsWithSocialNetwork(ids).stream()
+        .collect(
+            Collectors.groupingBy(
+                s -> s.getStore().getId(),
+                Collectors.mapping(StoreSocialNetworkDTO::new, Collectors.toList())));
 
     return stores.stream()
         .map(
@@ -124,7 +125,7 @@ public class StoreService {
     return stores.stream().map(StoreDTO::new).toList();
   }
 
-  @Transactional(rollbackFor = {UnauthorizedException.class, ResourceNotFoundException.class})
+  @Transactional(rollbackFor = { UnauthorizedException.class, ResourceNotFoundException.class })
   public StoreDTO updateStore(UUID id, StoreUpdateDTO dto)
       throws UnauthorizedException, ResourceNotFoundException {
     Store storeToUpdate;
@@ -132,10 +133,14 @@ public class StoreService {
     storeToUpdate = applicationContext.getBean(StoreService.class).findById(id);
     authService.assertUserOwnsStore(storeToUpdate);
 
-    if (dto.getName() != null) storeToUpdate.setName(dto.getName());
-    if (dto.getEmail() != null) storeToUpdate.setEmail(dto.getEmail());
-    if (dto.getAddress() != null) storeToUpdate.setAddress(dto.getAddress());
-    if (dto.getOpeningHours() != null) storeToUpdate.setOpeningHours(dto.getOpeningHours());
+    if (dto.getName() != null)
+      storeToUpdate.setName(dto.getName());
+    if (dto.getEmail() != null)
+      storeToUpdate.setEmail(dto.getEmail());
+    if (dto.getAddress() != null)
+      storeToUpdate.setAddress(dto.getAddress());
+    if (dto.getOpeningHours() != null)
+      storeToUpdate.setOpeningHours(dto.getOpeningHours());
     storeToUpdate.setAboutUs(dto.getAboutUs());
 
     return applicationContext
@@ -156,7 +161,7 @@ public class StoreService {
     return applicationContext.getBean(StoreService.class).toDTO(storeRepository.save(store));
   }
 
-  @Transactional(rollbackFor = {UnauthorizedException.class})
+  @Transactional(rollbackFor = { UnauthorizedException.class })
   public Store setAccountId(UUID storeId, String accountId) {
     Store store = applicationContext.getBean(StoreService.class).findById(storeId);
 
