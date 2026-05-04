@@ -75,7 +75,7 @@ public class StoreService {
 
   @Transactional(readOnly = true)
   public List<Store> searchStores(String name, Double lat, Double lon) {
-    return storeRepository.searchStores(utils.escapeString(name.trim()), lat, lon, 100);
+    return storeRepository.searchStores(utils.escapeString(name), lat, lon, 100);
   }
 
   @Transactional(readOnly = true, rollbackFor = InvalidBoundingBoxException.class)
