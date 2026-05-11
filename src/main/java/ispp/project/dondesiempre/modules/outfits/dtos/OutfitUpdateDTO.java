@@ -18,7 +18,7 @@ public class OutfitUpdateDTO {
   @Size(max = 5000)
   private String description;
 
-  @Min(0)
+  @Min(1)
   @Max(100)
   private Integer discountPercentage;
 }
