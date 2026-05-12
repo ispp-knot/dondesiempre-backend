@@ -1,10 +1,14 @@
 package ispp.project.dondesiempre.modules.products.controllers;
 
-import static org.mockito.BDDMockito.given;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import ispp.project.dondesiempre.modules.products.dtos.ProductSizeCreationDTO;
 import ispp.project.dondesiempre.modules.products.models.ProductSize;
 import ispp.project.dondesiempre.modules.products.services.ProductSizeService;
 import java.util.Collections;
@@ -13,6 +17,7 @@ import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -21,13 +26,14 @@ import org.springframework.test.web.servlet.MockMvc;
 public class ProductSizeControllerTest {
 
   @Autowired private MockMvc mockMvc;
+  @Autowired private ObjectMapper objectMapper;
 
   @MockitoBean private ProductSizeService productSizeService;
 
   @Test
   @WithMockUser
   void getAllProductSizes_shouldReturnOk() throws Exception {
-    given(productSizeService.getAllProductSizes()).willReturn(Collections.emptyList());
+    when(productSizeService.getAllProductSizes()).thenReturn(Collections.emptyList());
 
     mockMvc.perform(get("/api/v1/product-sizes")).andExpect(status().isOk());
   }
@@ -44,7 +50,7 @@ public class ProductSizeControllerTest {
     size2.setSize("L");
 
     List<ProductSize> sizes = List.of(size1, size2);
-    given(productSizeService.getAllProductSizes()).willReturn(sizes);
+    when(productSizeService.getAllProductSizes()).thenReturn(sizes);
 
     mockMvc
         .perform(get("/api/v1/product-sizes"))
@@ -60,7 +66,7 @@ public class ProductSizeControllerTest {
     size.setId(UUID.randomUUID());
     size.setSize("XL");
 
-    given(productSizeService.getProductSizeById(size.getId())).willReturn(size);
+    when(productSizeService.getProductSizeById(size.getId())).thenReturn(size);
 
     mockMvc
         .perform(get("/api/v1/product-sizes/{id}", size.getId()))
@@ -72,8 +78,8 @@ public class ProductSizeControllerTest {
   @WithMockUser
   void getProductSizeById_shouldReturnNotFoundWhenSizeDoesNotExist() throws Exception {
     UUID randomId = UUID.randomUUID();
-    given(productSizeService.getProductSizeById(randomId))
-        .willThrow(new RuntimeException("ProductSize not found with id: " + randomId));
+    when(productSizeService.getProductSizeById(randomId))
+        .thenThrow(new RuntimeException("ProductSize not found with id: " + randomId));
 
     mockMvc
         .perform(get("/api/v1/product-sizes/{id}", randomId))
@@ -88,7 +94,7 @@ public class ProductSizeControllerTest {
     size.setId(sizeId);
     size.setSize("S");
 
-    given(productSizeService.getProductSizeById(sizeId)).willReturn(size);
+    when(productSizeService.getProductSizeById(sizeId)).thenReturn(size);
 
     mockMvc
         .perform(get("/api/v1/product-sizes/{id}", sizeId))
@@ -100,12 +106,44 @@ public class ProductSizeControllerTest {
   @Test
   @WithMockUser
   void getAllProductSizes_shouldReturnEmptyListWhenNoSizes() throws Exception {
-    given(productSizeService.getAllProductSizes()).willReturn(Collections.emptyList());
+    when(productSizeService.getAllProductSizes()).thenReturn(Collections.emptyList());
 
     mockMvc
         .perform(get("/api/v1/product-sizes"))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$").isArray())
         .andExpect(jsonPath("$.length()").value(0));
+  }
+
+  @Test
+  @WithMockUser
+  void createProductSize_shouldReturnCreated() throws Exception {
+    ProductSize size = new ProductSize();
+    size.setId(UUID.randomUUID());
+    size.setSize("XS");
+    ProductSizeCreationDTO dto = new ProductSizeCreationDTO();
+    dto.setSize("XS");
+
+    when(productSizeService.createProductSize(any())).thenReturn(size);
+
+    mockMvc
+        .perform(
+            post("/api/v1/product-sizes")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)))
+        .andExpect(status().isCreated())
+        .andExpect(jsonPath("$.name").value("XS"));
+  }
+
+  @Test
+  @WithMockUser
+  void createProductSize_shouldReturnBadRequestWhenBodyIsEmpty() throws Exception {
+    ProductSizeCreationDTO dto = new ProductSizeCreationDTO();
+    mockMvc
+        .perform(
+            post("/api/v1/product-sizes")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)))
+        .andExpect(status().isBadRequest());
   }
 }

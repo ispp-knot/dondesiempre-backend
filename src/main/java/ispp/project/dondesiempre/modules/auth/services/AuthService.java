@@ -63,6 +63,17 @@ public class AuthService {
     }
   }
 
+  @Transactional(
+      readOnly = true,
+      rollbackFor = {UnauthorizedException.class, ResourceNotFoundException.class})
+  public void assertUserIsStore() throws UnauthorizedException, ResourceNotFoundException {
+    try {
+      userService.getCurrentStore();
+    } catch (ResourceNotFoundException e) {
+      throw new UnauthorizedException("You are not a store.");
+    }
+  }
+
   @Transactional(readOnly = true, rollbackFor = UnauthorizedException.class)
   public User logIn(String email, String password) throws UnauthorizedException {
     User user =
