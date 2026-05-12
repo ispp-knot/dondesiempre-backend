@@ -29,12 +29,17 @@ public class PromotionDTO {
     this.id = promotion.getId();
     this.name = promotion.getName();
     this.discountPercentage = promotion.getDiscountPercentage();
-    this.isActive = promotion.isActive();
     this.description = promotion.getDescription().orElse(null);
     this.storeId = promotion.getStore().getId();
     this.products = products;
     this.promotionImageUrl = promotion.getPromotionImageUrl().orElse(null);
     this.startDate = promotion.getStartDate();
     this.endDate = promotion.getEndDate();
+
+    LocalDate today = LocalDate.now();
+    boolean isAfterStart =
+        promotion.getStartDate() == null || !today.isBefore(promotion.getStartDate());
+    boolean isBeforeEnd = promotion.getEndDate() == null || !today.isAfter(promotion.getEndDate());
+    this.isActive = promotion.isActive() && isAfterStart && isBeforeEnd;
   }
 }
