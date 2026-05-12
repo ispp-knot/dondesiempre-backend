@@ -1,7 +1,7 @@
 package ispp.project.dondesiempre.modules.products.controllers;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -33,7 +33,7 @@ public class ProductSizeControllerTest {
   @Test
   @WithMockUser
   void getAllProductSizes_shouldReturnOk() throws Exception {
-    given(productSizeService.getAllProductSizes()).willReturn(Collections.emptyList());
+    when(productSizeService.getAllProductSizes()).thenReturn(Collections.emptyList());
 
     mockMvc.perform(get("/api/v1/product-sizes")).andExpect(status().isOk());
   }
@@ -50,7 +50,7 @@ public class ProductSizeControllerTest {
     size2.setSize("L");
 
     List<ProductSize> sizes = List.of(size1, size2);
-    given(productSizeService.getAllProductSizes()).willReturn(sizes);
+    when(productSizeService.getAllProductSizes()).thenReturn(sizes);
 
     mockMvc
         .perform(get("/api/v1/product-sizes"))
@@ -66,7 +66,7 @@ public class ProductSizeControllerTest {
     size.setId(UUID.randomUUID());
     size.setSize("XL");
 
-    given(productSizeService.getProductSizeById(size.getId())).willReturn(size);
+    when(productSizeService.getProductSizeById(size.getId())).thenReturn(size);
 
     mockMvc
         .perform(get("/api/v1/product-sizes/{id}", size.getId()))
@@ -78,8 +78,8 @@ public class ProductSizeControllerTest {
   @WithMockUser
   void getProductSizeById_shouldReturnNotFoundWhenSizeDoesNotExist() throws Exception {
     UUID randomId = UUID.randomUUID();
-    given(productSizeService.getProductSizeById(randomId))
-        .willThrow(new RuntimeException("ProductSize not found with id: " + randomId));
+    when(productSizeService.getProductSizeById(randomId))
+        .thenThrow(new RuntimeException("ProductSize not found with id: " + randomId));
 
     mockMvc
         .perform(get("/api/v1/product-sizes/{id}", randomId))
@@ -94,7 +94,7 @@ public class ProductSizeControllerTest {
     size.setId(sizeId);
     size.setSize("S");
 
-    given(productSizeService.getProductSizeById(sizeId)).willReturn(size);
+    when(productSizeService.getProductSizeById(sizeId)).thenReturn(size);
 
     mockMvc
         .perform(get("/api/v1/product-sizes/{id}", sizeId))
@@ -106,7 +106,7 @@ public class ProductSizeControllerTest {
   @Test
   @WithMockUser
   void getAllProductSizes_shouldReturnEmptyListWhenNoSizes() throws Exception {
-    given(productSizeService.getAllProductSizes()).willReturn(Collections.emptyList());
+    when(productSizeService.getAllProductSizes()).thenReturn(Collections.emptyList());
 
     mockMvc
         .perform(get("/api/v1/product-sizes"))
@@ -124,7 +124,7 @@ public class ProductSizeControllerTest {
     ProductSizeCreationDTO dto = new ProductSizeCreationDTO();
     dto.setSize("XS");
 
-    given(productSizeService.createProductSize(any())).willReturn(size);
+    when(productSizeService.createProductSize(any())).thenReturn(size);
 
     mockMvc
         .perform(
