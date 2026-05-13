@@ -49,7 +49,6 @@ public class PromotionService {
     if (dto.getDiscountPercentage() < 1 || dto.getDiscountPercentage() > 100) {
       throw new InvalidRequestException("Discount must be between 1 and 100");
     }
-    promotion.setActive(dto.isActive());
     promotion.setDiscountPercentage(dto.getDiscountPercentage());
     promotion.setDescription(dto.getDescription());
 

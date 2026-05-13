@@ -54,7 +54,7 @@ public class StoreService {
         storeSocialNetworkRepository.findByStoreId(store.getId()).stream()
             .map(StoreSocialNetworkDTO::new)
             .toList());
-    dto.setHasActivePromotions(promotionRepository.existsByStoreIdAndIsActiveTrue(store.getId()));
+    dto.setHasActivePromotions(promotionRepository.existsByStoreId(store.getId()));
     return dto;
   }
 
@@ -95,17 +95,17 @@ public class StoreService {
     if (minLon > maxLon || minLat > maxLat)
       throw new InvalidBoundingBoxException(
           "Invalid bounding box parameters: minimum coordinates cannot be greater than maximum coordinates.");
-    List<Store> stores =
-        storeRepository.findStoresInBoundingBox(minLon, minLat, maxLon, maxLat, 500);
-    if (stores.isEmpty()) return List.of();
+    List<Store> stores = storeRepository.findStoresInBoundingBox(minLon, minLat, maxLon, maxLat, 500);
+    if (stores.isEmpty())
+      return List.of();
 
     List<UUID> ids = stores.stream().map(Store::getId).toList();
-    Map<UUID, List<StoreSocialNetworkDTO>> socialNetworksByStore =
-        storeSocialNetworkRepository.findByStoreIdsWithSocialNetwork(ids).stream()
-            .collect(
-                Collectors.groupingBy(
-                    s -> s.getStore().getId(),
-                    Collectors.mapping(StoreSocialNetworkDTO::new, Collectors.toList())));
+    Map<UUID, List<StoreSocialNetworkDTO>> socialNetworksByStore = storeSocialNetworkRepository
+        .findByStoreIdsWithSocialNetwork(ids).stream()
+        .collect(
+            Collectors.groupingBy(
+                s -> s.getStore().getId(),
+                Collectors.mapping(StoreSocialNetworkDTO::new, Collectors.toList())));
 
     return stores.stream()
         .map(
@@ -113,7 +113,7 @@ public class StoreService {
               StoreDTO dto = new StoreDTO(store);
               dto.setSocialNetworks(socialNetworksByStore.getOrDefault(store.getId(), List.of()));
               dto.setHasActivePromotions(
-                  promotionRepository.existsByStoreIdAndIsActiveTrue(store.getId()));
+                  promotionRepository.existsByStoreId(store.getId()));
               return dto;
             })
         .toList();
@@ -124,7 +124,7 @@ public class StoreService {
     return stores.stream().map(StoreDTO::new).toList();
   }
 
-  @Transactional(rollbackFor = {UnauthorizedException.class, ResourceNotFoundException.class})
+  @Transactional(rollbackFor = { UnauthorizedException.class, ResourceNotFoundException.class })
   public StoreDTO updateStore(UUID id, StoreUpdateDTO dto)
       throws UnauthorizedException, ResourceNotFoundException {
     Store storeToUpdate;
@@ -132,10 +132,14 @@ public class StoreService {
     storeToUpdate = applicationContext.getBean(StoreService.class).findById(id);
     authService.assertUserOwnsStore(storeToUpdate);
 
-    if (dto.getName() != null) storeToUpdate.setName(dto.getName());
-    if (dto.getEmail() != null) storeToUpdate.setEmail(dto.getEmail());
-    if (dto.getAddress() != null) storeToUpdate.setAddress(dto.getAddress());
-    if (dto.getOpeningHours() != null) storeToUpdate.setOpeningHours(dto.getOpeningHours());
+    if (dto.getName() != null)
+      storeToUpdate.setName(dto.getName());
+    if (dto.getEmail() != null)
+      storeToUpdate.setEmail(dto.getEmail());
+    if (dto.getAddress() != null)
+      storeToUpdate.setAddress(dto.getAddress());
+    if (dto.getOpeningHours() != null)
+      storeToUpdate.setOpeningHours(dto.getOpeningHours());
     storeToUpdate.setAboutUs(dto.getAboutUs());
 
     return applicationContext
@@ -156,7 +160,7 @@ public class StoreService {
     return applicationContext.getBean(StoreService.class).toDTO(storeRepository.save(store));
   }
 
-  @Transactional(rollbackFor = {UnauthorizedException.class})
+  @Transactional(rollbackFor = { UnauthorizedException.class })
   public Store setAccountId(UUID storeId, String accountId) {
     Store store = applicationContext.getBean(StoreService.class).findById(storeId);
 

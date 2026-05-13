@@ -74,7 +74,6 @@ public class PromotionControllerTest {
     PromotionCreationDTO createDTO = new PromotionCreationDTO();
     createDTO.setName("Test Promotion");
     createDTO.setDiscountPercentage(20);
-    createDTO.setActive(true);
     createDTO.setProductIds(List.of(TEST_PRODUCT_ID));
     createDTO.setStoreId(TEST_STORE_ID);
 
@@ -94,7 +93,6 @@ public class PromotionControllerTest {
     PromotionCreationDTO createDTO = new PromotionCreationDTO();
     createDTO.setName("Test Promotion");
     createDTO.setDiscountPercentage(20);
-    createDTO.setActive(true);
     createDTO.setProductIds(List.of(TEST_PRODUCT_ID));
     createDTO.setStoreId(TEST_STORE_ID);
 
@@ -202,7 +200,6 @@ public class PromotionControllerTest {
     PromotionUpdateDTO updateDTO = new PromotionUpdateDTO();
     updateDTO.setName("Super Sale");
     updateDTO.setDiscountPercentage(50);
-    updateDTO.setActive(false);
 
     Promotion updatedPromotion = samplePromotion();
     updatedPromotion.setName("Super Sale");
@@ -220,8 +217,7 @@ public class PromotionControllerTest {
             multipart(HttpMethod.PUT, "/api/v1/promotions/{id}", TEST_PROMOTION_ID).part(dtoPart))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.name").value("Super Sale"))
-        .andExpect(jsonPath("$.discountPercentage").value(50))
-        .andExpect(jsonPath("$.active").value(false));
+        .andExpect(jsonPath("$.discountPercentage").value(50));
   }
 
   @Test

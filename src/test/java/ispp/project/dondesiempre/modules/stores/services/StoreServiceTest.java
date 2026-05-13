@@ -41,14 +41,20 @@ import org.springframework.context.ApplicationContext;
 @ExtendWith(MockitoExtension.class)
 public class StoreServiceTest {
 
-  @Mock private StoreRepository storeRepository;
-  @Mock private StoreSocialNetworkRepository socialNetworkRepository;
-  @Mock private PromotionRepository promotionRepository;
-  @Mock private AuthService authService;
+  @Mock
+  private StoreRepository storeRepository;
+  @Mock
+  private StoreSocialNetworkRepository socialNetworkRepository;
+  @Mock
+  private PromotionRepository promotionRepository;
+  @Mock
+  private AuthService authService;
 
-  @Mock private ApplicationContext applicationContext;
+  @Mock
+  private ApplicationContext applicationContext;
 
-  @InjectMocks private StoreService storeService;
+  @InjectMocks
+  private StoreService storeService;
 
   private Store store;
   private UUID storeId;
@@ -138,7 +144,7 @@ public class StoreServiceTest {
     ssn.setSocialNetwork(sn);
 
     when(socialNetworkRepository.findByStoreId(TEST_STORE_ID)).thenReturn(List.of(ssn));
-    when(promotionRepository.existsByStoreIdAndIsActiveTrue(TEST_STORE_ID)).thenReturn(true);
+    when(promotionRepository.existsByStoreId(TEST_STORE_ID)).thenReturn(true);
 
     StoreDTO result = storeService.toDTO(TEST_STORE);
 
@@ -247,7 +253,7 @@ public class StoreServiceTest {
     when(storeRepository.save(store)).thenReturn(store);
 
     when(socialNetworkRepository.findByStoreId(storeId)).thenReturn(List.of());
-    when(promotionRepository.existsByStoreIdAndIsActiveTrue(storeId)).thenReturn(false);
+    when(promotionRepository.existsByStoreId(storeId)).thenReturn(false);
 
     Double newLon = -5.9281;
     Double newLat = 37.2829;
