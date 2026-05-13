@@ -28,21 +28,14 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class PromotionShareServiceTest {
 
-  @Autowired
-  private PromotionRepository promotionRepository;
-  @Autowired
-  private StoreRepository storeRepository;
-  @Autowired
-  private UserRepository userRepository;
-  @MockitoBean
-  private AuthService authService;
-  @Autowired
-  CoordinatesService coordinatesService;
-  @Autowired
-  private PromotionShareRepository promotionShareRepository;
+  @Autowired private PromotionRepository promotionRepository;
+  @Autowired private StoreRepository storeRepository;
+  @Autowired private UserRepository userRepository;
+  @MockitoBean private AuthService authService;
+  @Autowired CoordinatesService coordinatesService;
+  @Autowired private PromotionShareRepository promotionShareRepository;
 
-  @Autowired
-  private PromotionShareService promotionShareService;
+  @Autowired private PromotionShareService promotionShareService;
 
   private Storefront createStorefront() {
     Storefront storefront = new Storefront();

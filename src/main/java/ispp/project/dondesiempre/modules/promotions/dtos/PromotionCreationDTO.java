@@ -30,16 +30,13 @@ public class PromotionCreationDTO implements HasDateRange {
   @Max(100)
   private Integer discountPercentage;
 
-  @NotEmpty
-  private List<UUID> productIds;
+  @NotEmpty private List<UUID> productIds;
 
-  @NotNull
-  private UUID storeId;
+  @NotNull private UUID storeId;
 
   private String description;
 
   private LocalDate startDate;
 
-  @FutureOrPresent
-  private LocalDate endDate;
+  @FutureOrPresent private LocalDate endDate;
 }

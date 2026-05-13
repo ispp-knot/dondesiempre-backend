@@ -37,11 +37,12 @@ public class PromotionService {
   private final PromotionProductService promotionProductService;
   private final CloudinaryService cloudinaryService;
 
-  @Transactional(rollbackFor = {
-      UnauthorizedException.class,
-      ResourceNotFoundException.class,
-      InvalidRequestException.class
-  })
+  @Transactional(
+      rollbackFor = {
+        UnauthorizedException.class,
+        ResourceNotFoundException.class,
+        InvalidRequestException.class
+      })
   public Promotion createPromotion(PromotionCreationDTO dto, MultipartFile image)
       throws UnauthorizedException, ResourceNotFoundException, InvalidRequestException {
     Promotion promotion = new Promotion();
@@ -69,9 +70,10 @@ public class PromotionService {
 
     authService.assertUserOwnsStore(store);
 
-    Set<Product> products = dto.getProductIds().stream()
-        .map(productService::getProductById)
-        .collect(java.util.stream.Collectors.toSet());
+    Set<Product> products =
+        dto.getProductIds().stream()
+            .map(productService::getProductById)
+            .collect(java.util.stream.Collectors.toSet());
 
     if (products.stream()
         .anyMatch(product -> !product.getStore().getId().equals(dto.getStoreId()))) {
@@ -88,14 +90,16 @@ public class PromotionService {
     }
   }
 
-  @Transactional(rollbackFor = {
-      UnauthorizedException.class,
-      ResourceNotFoundException.class,
-      InvalidRequestException.class
-  })
+  @Transactional(
+      rollbackFor = {
+        UnauthorizedException.class,
+        ResourceNotFoundException.class,
+        InvalidRequestException.class
+      })
   public PromotionProduct addProduct(UUID promotionId, UUID productId)
       throws UnauthorizedException, ResourceNotFoundException, InvalidRequestException {
-    Promotion promotion = applicationContext.getBean(PromotionService.class).getPromotionById(promotionId);
+    Promotion promotion =
+        applicationContext.getBean(PromotionService.class).getPromotionById(promotionId);
     Product product = productService.getProductById(productId);
     PromotionProduct promotionProduct = new PromotionProduct();
     promotionProduct.setPromotion(promotion);
@@ -138,11 +142,12 @@ public class PromotionService {
     return (int) Math.round(discounted);
   }
 
-  @Transactional(rollbackFor = {
-      UnauthorizedException.class,
-      ResourceNotFoundException.class,
-      InvalidRequestException.class
-  })
+  @Transactional(
+      rollbackFor = {
+        UnauthorizedException.class,
+        ResourceNotFoundException.class,
+        InvalidRequestException.class
+      })
   public Promotion updatePromotion(UUID id, PromotionUpdateDTO dto, MultipartFile image)
       throws UnauthorizedException, ResourceNotFoundException, InvalidRequestException {
 
@@ -175,9 +180,10 @@ public class PromotionService {
     }
 
     if (dto.getProductIds() != null && !dto.getProductIds().isEmpty()) {
-      Set<Product> products = dto.getProductIds().stream()
-          .map(productService::getProductById)
-          .collect(Collectors.toSet());
+      Set<Product> products =
+          dto.getProductIds().stream()
+              .map(productService::getProductById)
+              .collect(Collectors.toSet());
 
       if (products.stream()
           .anyMatch(product -> !product.getStore().getId().equals(promotion.getStore().getId()))) {
@@ -192,7 +198,8 @@ public class PromotionService {
       promotionProductService.flushChanges(); //
       // Add new associations
       products.forEach(
-          product -> applicationContext.getBean(PromotionService.class).addProduct(id, product.getId()));
+          product ->
+              applicationContext.getBean(PromotionService.class).addProduct(id, product.getId()));
     }
     try {
       return promotionRepository.save(promotion);
@@ -201,7 +208,7 @@ public class PromotionService {
     }
   }
 
-  @Transactional(rollbackFor = { UnauthorizedException.class, ResourceNotFoundException.class })
+  @Transactional(rollbackFor = {UnauthorizedException.class, ResourceNotFoundException.class})
   public void deletePromotion(UUID id) throws UnauthorizedException, ResourceNotFoundException {
     Promotion promotion = applicationContext.getBean(PromotionService.class).getPromotionById(id);
     authService.assertUserOwnsStore(promotion.getStore());

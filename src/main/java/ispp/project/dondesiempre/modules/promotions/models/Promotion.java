@@ -62,5 +62,4 @@ public class Promotion extends BaseEntity implements HasDateRange {
   public Optional<String> getPromotionImageUrl() {
     return Optional.ofNullable(this.promotionImageUrl);
   }
-
 }

@@ -1,6 +1,5 @@
 package ispp.project.dondesiempre.modules.promotions.dtos;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import ispp.project.dondesiempre.modules.promotions.validators.HasDateRange;
 import ispp.project.dondesiempre.modules.promotions.validators.StartDateBeforeEndDate;
 import jakarta.validation.constraints.FutureOrPresent;
@@ -33,6 +32,5 @@ public class PromotionUpdateDTO implements HasDateRange {
 
   private LocalDate startDate;
 
-  @FutureOrPresent
-  private LocalDate endDate;
+  @FutureOrPresent private LocalDate endDate;
 }

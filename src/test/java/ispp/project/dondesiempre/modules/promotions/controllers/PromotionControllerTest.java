@@ -32,21 +32,20 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-@WebMvcTest(controllers = PromotionController.class, excludeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = {
-    GlobalExceptionHandler.class }))
+@WebMvcTest(
+    controllers = PromotionController.class,
+    excludeFilters =
+        @ComponentScan.Filter(
+            type = FilterType.ASSIGNABLE_TYPE,
+            classes = {GlobalExceptionHandler.class}))
 public class PromotionControllerTest {
 
-  @Autowired
-  private MockMvc mockMvc;
-  @Autowired
-  private ObjectMapper objectMapper;
+  @Autowired private MockMvc mockMvc;
+  @Autowired private ObjectMapper objectMapper;
 
-  @MockitoBean
-  private PromotionService promotionService;
-  @MockitoBean
-  private UserService userService;
-  @MockitoBean
-  private PromotionShareService promotionShareService;
+  @MockitoBean private PromotionService promotionService;
+  @MockitoBean private UserService userService;
+  @MockitoBean private PromotionShareService promotionShareService;
 
   private static final UUID TEST_PROMOTION_ID = UUID.randomUUID();
   private static final UUID TEST_STORE_ID = UUID.randomUUID();

@@ -23,21 +23,15 @@ import org.springframework.context.annotation.Import;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@Import({ CoordinatesService.class, GeometryFactoryConfig.class })
+@Import({CoordinatesService.class, GeometryFactoryConfig.class})
 public class PromotionShareRepositoryTest {
 
-  @Autowired
-  private StoreRepository storeRepository;
-  @Autowired
-  private UserRepository userRepository;
-  @Autowired
-  CoordinatesService coordinatesService;
-  @Autowired
-  private StorefrontRepository storefrontRepository;
-  @Autowired
-  private PromotionRepository promotionRepository;
-  @Autowired
-  private PromotionShareRepository promotionShareRepository;
+  @Autowired private StoreRepository storeRepository;
+  @Autowired private UserRepository userRepository;
+  @Autowired CoordinatesService coordinatesService;
+  @Autowired private StorefrontRepository storefrontRepository;
+  @Autowired private PromotionRepository promotionRepository;
+  @Autowired private PromotionShareRepository promotionShareRepository;
 
   private Promotion savedPromotion;
 
@@ -86,7 +80,8 @@ public class PromotionShareRepositoryTest {
 
   @Test
   public void shouldReturnNotExceededLimit_whenNoShares() {
-    boolean exceedsLimit = promotionShareRepository.hasReachedMonthlyLimit(savedPromotion, LocalDate.now());
+    boolean exceedsLimit =
+        promotionShareRepository.hasReachedMonthlyLimit(savedPromotion, LocalDate.now());
     assertFalse(exceedsLimit);
   }
 
@@ -95,8 +90,9 @@ public class PromotionShareRepositoryTest {
     for (int i = 0; i < 5; i++) {
       createOldPromotionShare();
     }
-    boolean exceedsLimit = promotionShareRepository.hasReachedMonthlyLimit(
-        savedPromotion, LocalDate.now().minusMonths(1));
+    boolean exceedsLimit =
+        promotionShareRepository.hasReachedMonthlyLimit(
+            savedPromotion, LocalDate.now().minusMonths(1));
     assertFalse(exceedsLimit);
   }
 
@@ -105,8 +101,9 @@ public class PromotionShareRepositoryTest {
     for (int i = 0; i < 1; i++) {
       createPromotionShare();
     }
-    boolean exceedsLimit = promotionShareRepository.hasReachedMonthlyLimit(
-        savedPromotion, LocalDate.now().minusMonths(1));
+    boolean exceedsLimit =
+        promotionShareRepository.hasReachedMonthlyLimit(
+            savedPromotion, LocalDate.now().minusMonths(1));
     assertFalse(exceedsLimit);
   }
 
@@ -115,8 +112,9 @@ public class PromotionShareRepositoryTest {
     for (int i = 0; i < 3; i++) {
       createPromotionShare();
     }
-    boolean exceedsLimit = promotionShareRepository.hasReachedMonthlyLimit(
-        savedPromotion, LocalDate.now().minusMonths(1));
+    boolean exceedsLimit =
+        promotionShareRepository.hasReachedMonthlyLimit(
+            savedPromotion, LocalDate.now().minusMonths(1));
     assertTrue(exceedsLimit);
   }
 }
