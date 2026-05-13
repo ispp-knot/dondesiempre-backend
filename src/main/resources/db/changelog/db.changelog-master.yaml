@@ -65,3 +65,5 @@ databaseChangeLog:
       file: db/changelog/037-terms-of-service/terms-of-service.changelog.yaml
   - include:
       file: db/changelog/038-remove-store-phone/remove-store-phone.changelog.yaml
+  - include:
+      file: db/changelog/039-remove-is-active-from-promotions/remove-is-active-from-promotions.changelog.yaml

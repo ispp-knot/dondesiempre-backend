@@ -1,0 +1,19 @@
+databaseChangeLog:
+  - changeSet:
+      id: 039-remove-is-active-from-promotions
+      author: pepe
+      changes:
+        - dropColumn:
+            columnName: is_active
+            tableName: promotions
+
+      rollback:
+        - addColumn:
+            tableName: promotions
+            columns:
+              - column:
+                  name: is_active
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
