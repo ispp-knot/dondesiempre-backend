@@ -15,5 +15,9 @@ public interface PromotionRepository extends JpaRepository<Promotion, UUID> {
   @Query("SELECT pp.promotion FROM PromotionProduct pp WHERE pp.product.id = :productId")
   public List<Promotion> findPromotionsByProductId(UUID productId);
 
-  boolean existsByStoreId(UUID storeId);
+  @Query(
+      "SELECT COUNT(p) > 0 FROM Promotion p WHERE p.store.id = :storeId "
+          + "AND (p.startDate IS NULL OR p.startDate <= CURRENT_DATE) "
+          + "AND (p.endDate IS NULL OR p.endDate >= CURRENT_DATE)")
+  boolean hasActivePromotions(UUID storeId);
 }

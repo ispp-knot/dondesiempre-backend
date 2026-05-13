@@ -138,7 +138,7 @@ public class StoreServiceTest {
     ssn.setSocialNetwork(sn);
 
     when(socialNetworkRepository.findByStoreId(TEST_STORE_ID)).thenReturn(List.of(ssn));
-    when(promotionRepository.existsByStoreId(TEST_STORE_ID)).thenReturn(true);
+    when(promotionRepository.hasActivePromotions(TEST_STORE_ID)).thenReturn(true);
 
     StoreDTO result = storeService.toDTO(TEST_STORE);
 
@@ -247,7 +247,7 @@ public class StoreServiceTest {
     when(storeRepository.save(store)).thenReturn(store);
 
     when(socialNetworkRepository.findByStoreId(storeId)).thenReturn(List.of());
-    when(promotionRepository.existsByStoreId(storeId)).thenReturn(false);
+    when(promotionRepository.hasActivePromotions(storeId)).thenReturn(false);
 
     Double newLon = -5.9281;
     Double newLat = 37.2829;
