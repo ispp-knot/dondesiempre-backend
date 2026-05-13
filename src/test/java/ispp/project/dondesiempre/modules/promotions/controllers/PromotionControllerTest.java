@@ -32,20 +32,21 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-@WebMvcTest(
-    controllers = PromotionController.class,
-    excludeFilters =
-        @ComponentScan.Filter(
-            type = FilterType.ASSIGNABLE_TYPE,
-            classes = {GlobalExceptionHandler.class}))
+@WebMvcTest(controllers = PromotionController.class, excludeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = {
+    GlobalExceptionHandler.class }))
 public class PromotionControllerTest {
 
-  @Autowired private MockMvc mockMvc;
-  @Autowired private ObjectMapper objectMapper;
+  @Autowired
+  private MockMvc mockMvc;
+  @Autowired
+  private ObjectMapper objectMapper;
 
-  @MockitoBean private PromotionService promotionService;
-  @MockitoBean private UserService userService;
-  @MockitoBean private PromotionShareService promotionShareService;
+  @MockitoBean
+  private PromotionService promotionService;
+  @MockitoBean
+  private UserService userService;
+  @MockitoBean
+  private PromotionShareService promotionShareService;
 
   private static final UUID TEST_PROMOTION_ID = UUID.randomUUID();
   private static final UUID TEST_STORE_ID = UUID.randomUUID();
@@ -63,7 +64,6 @@ public class PromotionControllerTest {
     promotion.setId(TEST_PROMOTION_ID);
     promotion.setName("Test Promotion");
     promotion.setDiscountPercentage(20);
-    promotion.setActive(true);
     promotion.setStore(sampleStore());
     return promotion;
   }
@@ -198,29 +198,6 @@ public class PromotionControllerTest {
 
   @Test
   @WithMockUser(username = "testUser")
-  void shouldUpdatePromotionActiveStatus_whenAuthorized() throws Exception {
-    PromotionUpdateDTO updateDTO = new PromotionUpdateDTO();
-    updateDTO.setActive(false);
-
-    Promotion updatedPromotion = samplePromotion();
-    updatedPromotion.setActive(false);
-
-    when(promotionService.updatePromotion(any(UUID.class), any(PromotionUpdateDTO.class), any()))
-        .thenReturn(updatedPromotion);
-    when(promotionService.getAllProductsDTOByPromotionId(TEST_PROMOTION_ID)).thenReturn(List.of());
-
-    MockPart dtoPart = new MockPart("dto", objectMapper.writeValueAsBytes(updateDTO));
-    dtoPart.getHeaders().setContentType(MediaType.APPLICATION_JSON);
-
-    mockMvc
-        .perform(
-            multipart(HttpMethod.PUT, "/api/v1/promotions/{id}", TEST_PROMOTION_ID).part(dtoPart))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$.active").value(false));
-  }
-
-  @Test
-  @WithMockUser(username = "testUser")
   void shouldUpdateMultiplePromotionFields_whenAuthorized() throws Exception {
     PromotionUpdateDTO updateDTO = new PromotionUpdateDTO();
     updateDTO.setName("Super Sale");
@@ -230,7 +207,6 @@ public class PromotionControllerTest {
     Promotion updatedPromotion = samplePromotion();
     updatedPromotion.setName("Super Sale");
     updatedPromotion.setDiscountPercentage(50);
-    updatedPromotion.setActive(false);
 
     when(promotionService.updatePromotion(any(UUID.class), any(PromotionUpdateDTO.class), any()))
         .thenReturn(updatedPromotion);

@@ -29,7 +29,6 @@ public class StartDateBeforeEndDateValidatorTest {
     Promotion p = new Promotion();
     p.setName("Promo test");
     p.setDiscountPercentage(15);
-    p.setActive(true);
     return p;
   }
 
@@ -75,9 +74,8 @@ public class StartDateBeforeEndDateValidatorTest {
     assertTrue(
         violations.stream()
             .anyMatch(
-                v ->
-                    v.getMessage()
-                        .equals("La fecha de fin debe ser posterior a la fecha de inicio")));
+                v -> v.getMessage()
+                    .equals("La fecha de fin debe ser posterior a la fecha de inicio")));
   }
 
   @Test
