@@ -15,5 +15,5 @@ public interface PromotionRepository extends JpaRepository<Promotion, UUID> {
   @Query("SELECT pp.promotion FROM PromotionProduct pp WHERE pp.product.id = :productId")
   public List<Promotion> findPromotionsByProductId(UUID productId);
 
-  boolean existsByStoreIdAndIsActiveTrue(UUID storeId);
+  boolean existsByStoreId(UUID storeId);
 }
