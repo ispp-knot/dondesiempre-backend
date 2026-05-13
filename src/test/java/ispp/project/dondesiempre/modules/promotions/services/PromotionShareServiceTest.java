@@ -68,7 +68,6 @@ public class PromotionShareServiceTest {
     Promotion promotion = new Promotion();
     promotion.setName("Test Promotion");
     promotion.setDiscountPercentage(20);
-    promotion.setActive(true);
     promotion.setStore(store);
     promotion.setStartDate(LocalDate.now());
     promotion.setEndDate(LocalDate.now().plusMonths(1));

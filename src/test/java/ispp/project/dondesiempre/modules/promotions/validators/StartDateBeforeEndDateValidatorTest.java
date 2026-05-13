@@ -29,7 +29,6 @@ public class StartDateBeforeEndDateValidatorTest {
     Promotion p = new Promotion();
     p.setName("Promo test");
     p.setDiscountPercentage(15);
-    p.setActive(true);
     return p;
   }
 

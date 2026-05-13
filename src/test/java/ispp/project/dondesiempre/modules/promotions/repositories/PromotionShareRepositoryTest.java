@@ -60,7 +60,6 @@ public class PromotionShareRepositoryTest {
     savedPromotion.setStartDate(LocalDate.now());
     savedPromotion.setEndDate(LocalDate.now().plusDays(7));
     savedPromotion.setDiscountPercentage(20);
-    savedPromotion.setActive(true);
     savedPromotion.setStore(store);
     promotionRepository.save(savedPromotion);
   }

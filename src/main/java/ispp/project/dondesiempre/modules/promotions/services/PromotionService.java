@@ -50,7 +50,6 @@ public class PromotionService {
     if (dto.getDiscountPercentage() < 1 || dto.getDiscountPercentage() > 100) {
       throw new InvalidRequestException("Discount must be between 1 and 100");
     }
-    promotion.setActive(dto.isActive());
     promotion.setDiscountPercentage(dto.getDiscountPercentage());
     promotion.setDescription(dto.getDescription());
 
@@ -160,9 +159,6 @@ public class PromotionService {
     }
     if (dto.getDescription() != null) {
       promotion.setDescription(dto.getDescription());
-    }
-    if (dto.isActive() != promotion.isActive()) {
-      promotion.setActive(dto.isActive());
     }
     if (dto.getDiscountPercentage() != null) {
       if (dto.getDiscountPercentage() < 1 || dto.getDiscountPercentage() > 100) {

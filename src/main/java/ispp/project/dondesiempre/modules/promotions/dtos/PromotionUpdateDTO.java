@@ -1,6 +1,5 @@
 package ispp.project.dondesiempre.modules.promotions.dtos;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import ispp.project.dondesiempre.modules.promotions.validators.HasDateRange;
 import ispp.project.dondesiempre.modules.promotions.validators.StartDateBeforeEndDate;
 import jakarta.validation.constraints.FutureOrPresent;
@@ -26,9 +25,6 @@ public class PromotionUpdateDTO implements HasDateRange {
   @Min(1)
   @Max(100)
   private Integer discountPercentage;
-
-  @JsonProperty("isActive")
-  private boolean isActive;
 
   private List<UUID> productIds;
 

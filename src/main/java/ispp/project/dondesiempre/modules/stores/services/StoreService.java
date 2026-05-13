@@ -54,7 +54,7 @@ public class StoreService {
         storeSocialNetworkRepository.findByStoreId(store.getId()).stream()
             .map(StoreSocialNetworkDTO::new)
             .toList());
-    dto.setHasActivePromotions(promotionRepository.existsByStoreIdAndIsActiveTrue(store.getId()));
+    dto.setHasActivePromotions(promotionRepository.hasActivePromotions(store.getId()));
     return dto;
   }
 
@@ -112,8 +112,7 @@ public class StoreService {
             store -> {
               StoreDTO dto = new StoreDTO(store);
               dto.setSocialNetworks(socialNetworksByStore.getOrDefault(store.getId(), List.of()));
-              dto.setHasActivePromotions(
-                  promotionRepository.existsByStoreIdAndIsActiveTrue(store.getId()));
+              dto.setHasActivePromotions(promotionRepository.hasActivePromotions(store.getId()));
               return dto;
             })
         .toList();

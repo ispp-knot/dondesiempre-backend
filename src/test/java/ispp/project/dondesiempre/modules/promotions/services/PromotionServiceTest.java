@@ -106,7 +106,6 @@ public class PromotionServiceTest {
     PromotionCreationDTO promotionCreationDTO = new PromotionCreationDTO();
     promotionCreationDTO.setName(name);
     promotionCreationDTO.setDiscountPercentage(discount);
-    promotionCreationDTO.setActive(active);
     promotionCreationDTO.setProductIds(productIds);
     promotionCreationDTO.setStoreId(storeId);
     return promotionService.createPromotion(promotionCreationDTO, null);
@@ -123,7 +122,6 @@ public class PromotionServiceTest {
     assertNotNull(promotion);
     assertEquals("Test Promotion", promotion.getName());
     assertEquals(20, promotion.getDiscountPercentage());
-    assertEquals(true, promotion.isActive());
     assertEquals(1, promotionService.getAllProductsDTOByPromotionId(promotion.getId()).size());
   }
 
@@ -133,7 +131,6 @@ public class PromotionServiceTest {
     PromotionCreationDTO promotionCreationDTO = new PromotionCreationDTO();
     promotionCreationDTO.setName("Test Promotion");
     promotionCreationDTO.setDiscountPercentage(150); // Invalid discount percentage
-    promotionCreationDTO.setActive(true);
     promotionCreationDTO.setProductIds(
         List.of(
             UUID.randomUUID(),
@@ -151,7 +148,6 @@ public class PromotionServiceTest {
     PromotionCreationDTO promotionCreationDTO = new PromotionCreationDTO();
     promotionCreationDTO.setName("Test Promotion");
     promotionCreationDTO.setDiscountPercentage(20);
-    promotionCreationDTO.setActive(true);
     promotionCreationDTO.setStoreId(store.getId());
     promotionCreationDTO.setProductIds(
         List.of(UUID.randomUUID(), UUID.randomUUID())); // Non-existent product IDs
@@ -174,7 +170,6 @@ public class PromotionServiceTest {
     PromotionCreationDTO promotionCreationDTO = new PromotionCreationDTO();
     promotionCreationDTO.setName("Test Promotion");
     promotionCreationDTO.setDiscountPercentage(20);
-    promotionCreationDTO.setActive(true);
     promotionCreationDTO.setStoreId(store.getId());
     promotionCreationDTO.setProductIds(List.of(product.getId(), anotherProduct.getId()));
 
@@ -329,7 +324,6 @@ public class PromotionServiceTest {
     PromotionCreationDTO promotionCreationDTO = new PromotionCreationDTO();
     promotionCreationDTO.setName("Test Promotion");
     promotionCreationDTO.setDiscountPercentage(20);
-    promotionCreationDTO.setActive(true);
     promotionCreationDTO.setProductIds(List.of(UUID.randomUUID()));
     promotionCreationDTO.setStoreId(store.getId());
 

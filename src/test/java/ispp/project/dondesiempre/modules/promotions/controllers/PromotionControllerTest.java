@@ -63,7 +63,6 @@ public class PromotionControllerTest {
     promotion.setId(TEST_PROMOTION_ID);
     promotion.setName("Test Promotion");
     promotion.setDiscountPercentage(20);
-    promotion.setActive(true);
     promotion.setStore(sampleStore());
     return promotion;
   }
@@ -74,7 +73,6 @@ public class PromotionControllerTest {
     PromotionCreationDTO createDTO = new PromotionCreationDTO();
     createDTO.setName("Test Promotion");
     createDTO.setDiscountPercentage(20);
-    createDTO.setActive(true);
     createDTO.setProductIds(List.of(TEST_PRODUCT_ID));
     createDTO.setStoreId(TEST_STORE_ID);
 
@@ -94,7 +92,6 @@ public class PromotionControllerTest {
     PromotionCreationDTO createDTO = new PromotionCreationDTO();
     createDTO.setName("Test Promotion");
     createDTO.setDiscountPercentage(20);
-    createDTO.setActive(true);
     createDTO.setProductIds(List.of(TEST_PRODUCT_ID));
     createDTO.setStoreId(TEST_STORE_ID);
 
@@ -198,39 +195,14 @@ public class PromotionControllerTest {
 
   @Test
   @WithMockUser(username = "testUser")
-  void shouldUpdatePromotionActiveStatus_whenAuthorized() throws Exception {
-    PromotionUpdateDTO updateDTO = new PromotionUpdateDTO();
-    updateDTO.setActive(false);
-
-    Promotion updatedPromotion = samplePromotion();
-    updatedPromotion.setActive(false);
-
-    when(promotionService.updatePromotion(any(UUID.class), any(PromotionUpdateDTO.class), any()))
-        .thenReturn(updatedPromotion);
-    when(promotionService.getAllProductsDTOByPromotionId(TEST_PROMOTION_ID)).thenReturn(List.of());
-
-    MockPart dtoPart = new MockPart("dto", objectMapper.writeValueAsBytes(updateDTO));
-    dtoPart.getHeaders().setContentType(MediaType.APPLICATION_JSON);
-
-    mockMvc
-        .perform(
-            multipart(HttpMethod.PUT, "/api/v1/promotions/{id}", TEST_PROMOTION_ID).part(dtoPart))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$.active").value(false));
-  }
-
-  @Test
-  @WithMockUser(username = "testUser")
   void shouldUpdateMultiplePromotionFields_whenAuthorized() throws Exception {
     PromotionUpdateDTO updateDTO = new PromotionUpdateDTO();
     updateDTO.setName("Super Sale");
     updateDTO.setDiscountPercentage(50);
-    updateDTO.setActive(false);
 
     Promotion updatedPromotion = samplePromotion();
     updatedPromotion.setName("Super Sale");
     updatedPromotion.setDiscountPercentage(50);
-    updatedPromotion.setActive(false);
 
     when(promotionService.updatePromotion(any(UUID.class), any(PromotionUpdateDTO.class), any()))
         .thenReturn(updatedPromotion);
@@ -244,8 +216,7 @@ public class PromotionControllerTest {
             multipart(HttpMethod.PUT, "/api/v1/promotions/{id}", TEST_PROMOTION_ID).part(dtoPart))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.name").value("Super Sale"))
-        .andExpect(jsonPath("$.discountPercentage").value(50))
-        .andExpect(jsonPath("$.active").value(false));
+        .andExpect(jsonPath("$.discountPercentage").value(50));
   }
 
   @Test
