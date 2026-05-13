@@ -37,8 +37,6 @@ public class Promotion extends BaseEntity implements HasDateRange {
   @Max(100)
   private Integer discountPercentage;
 
-  @Column @NotNull private boolean isActive;
-
   @ManyToOne(optional = false)
   @NotNull
   private Store store;
@@ -64,4 +62,5 @@ public class Promotion extends BaseEntity implements HasDateRange {
   public Optional<String> getPromotionImageUrl() {
     return Optional.ofNullable(this.promotionImageUrl);
   }
+
 }
