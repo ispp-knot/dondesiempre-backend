@@ -27,14 +27,12 @@ public class PromotionUpdateDTO implements HasDateRange {
   @Max(100)
   private Integer discountPercentage;
 
-  @JsonProperty("isActive")
-  private boolean isActive;
-
   private List<UUID> productIds;
 
   private String description;
 
   private LocalDate startDate;
 
-  @FutureOrPresent private LocalDate endDate;
+  @FutureOrPresent
+  private LocalDate endDate;
 }

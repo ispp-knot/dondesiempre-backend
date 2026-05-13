@@ -37,9 +37,8 @@ public class PromotionDTO {
     this.endDate = promotion.getEndDate();
 
     LocalDate today = LocalDate.now();
-    boolean isAfterStart =
-        promotion.getStartDate() == null || !today.isBefore(promotion.getStartDate());
+    boolean isAfterStart = promotion.getStartDate() == null || !today.isBefore(promotion.getStartDate());
     boolean isBeforeEnd = promotion.getEndDate() == null || !today.isAfter(promotion.getEndDate());
-    this.isActive = promotion.isActive() && isAfterStart && isBeforeEnd;
+    this.isActive = isAfterStart && isBeforeEnd;
   }
 }
