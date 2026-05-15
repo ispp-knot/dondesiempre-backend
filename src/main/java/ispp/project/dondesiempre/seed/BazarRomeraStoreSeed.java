@@ -1,6 +1,7 @@
 package ispp.project.dondesiempre.seed;
 
 import ispp.project.dondesiempre.modules.outfits.models.OutfitTag;
+import ispp.project.dondesiempre.modules.products.models.Product;
 import ispp.project.dondesiempre.modules.products.models.ProductColor;
 import ispp.project.dondesiempre.modules.products.models.ProductSize;
 import ispp.project.dondesiempre.modules.products.models.ProductType;
@@ -46,21 +47,28 @@ class BazarRomeraStoreSeed {
             "acct_1TFzN97Xt9jc8bVg");
     s.addSocialNetwork(bazarRomera, socialNetworks, "Teléfono", "tel:+34631122308");
 
-    s.createProduct(
-        "Camisa Azul",
-        3499,
-        null,
-        "Camisa azul, un básico cómodo para el día a día.",
-        productTypes.get("Camiseta"),
-        bazarRomera,
-        "romera/producto_camisa_azul_34.99.jpg");
-    s.createProduct(
-        "Chandal Negro",
-        2999,
-        20,
-        "Chándal negro, cómodo y apropiado para el día a día.",
-        productTypes.get("Pantalón"),
-        bazarRomera,
-        "romera/producto_chandal_negro_29.99.jpg");
+    Product rom_camisaAzul =
+        s.createProduct(
+            "Camisa Azul",
+            3499,
+            null,
+            "Camisa azul, un básico cómodo para el día a día.",
+            productTypes.get("Camiseta"),
+            bazarRomera,
+            "romera/producto_camisa_azul_34.99.jpg");
+    s.createVariant(rom_camisaAzul, productSizes.get("M"), productColors.get("Azul"), true);
+    s.createVariant(rom_camisaAzul, productSizes.get("L"), productColors.get("Azul"), true);
+
+    Product rom_chandalNegro =
+        s.createProduct(
+            "Chandal Negro",
+            2999,
+            20,
+            "Chándal negro, cómodo y apropiado para el día a día.",
+            productTypes.get("Pantalón"),
+            bazarRomera,
+            "romera/producto_chandal_negro_29.99.jpg");
+    s.createVariant(rom_chandalNegro, productSizes.get("S"), productColors.get("Negro"), true);
+    s.createVariant(rom_chandalNegro, productSizes.get("M"), productColors.get("Negro"), true);
   }
 }
