@@ -1,6 +1,7 @@
 package ispp.project.dondesiempre.seed;
 
 import ispp.project.dondesiempre.modules.outfits.models.OutfitTag;
+import ispp.project.dondesiempre.modules.products.models.Product;
 import ispp.project.dondesiempre.modules.products.models.ProductColor;
 import ispp.project.dondesiempre.modules.products.models.ProductSize;
 import ispp.project.dondesiempre.modules.products.models.ProductType;
@@ -79,21 +80,33 @@ class LucemesStoreSeed {
         socialNetworks,
         "Facebook",
         "https://www.facebook.com/profile.php?id=100090603545882");
-    s.createProduct(
-        "Bolso Crema",
-        1599,
-        null,
-        "Bolso crema de estilo moderno, ideal para cualquier ocasión.",
-        productTypes.get("Accesorio"),
-        lucemes,
-        "luceme/producto_bolso_crema_15.99.jpg");
-    s.createProduct(
-        "Bolso Crema Oro",
-        1899,
-        null,
-        "Bolso crema con detalles dorados, un complemento elegante y atemporal.",
-        productTypes.get("Accesorio"),
-        lucemes,
-        "luceme/producto_bolso_crema_oro_18.99.jpg");
+
+    final String BEIGE = "Beige";
+
+    Product luc_bolsoCrema =
+        s.createProduct(
+            "Bolso Crema",
+            1599,
+            null,
+            "Bolso crema de estilo moderno, ideal para cualquier ocasión.",
+            productTypes.get("Accesorio"),
+            lucemes,
+            "luceme/producto_bolso_crema_15.99.jpg");
+    s.createVariant(luc_bolsoCrema, productSizes.get("S"), productColors.get(BEIGE), true);
+    s.createVariant(luc_bolsoCrema, productSizes.get("M"), productColors.get(BEIGE), true);
+    s.createVariant(luc_bolsoCrema, productSizes.get("L"), productColors.get(BEIGE), true);
+
+    Product luc_bolsoCremaOro =
+        s.createProduct(
+            "Bolso Crema Oro",
+            1899,
+            null,
+            "Bolso crema con detalles dorados, un complemento elegante y atemporal.",
+            productTypes.get("Accesorio"),
+            lucemes,
+            "luceme/producto_bolso_crema_oro_18.99.jpg");
+    s.createVariant(luc_bolsoCremaOro, productSizes.get("S"), productColors.get(BEIGE), true);
+    s.createVariant(luc_bolsoCremaOro, productSizes.get("M"), productColors.get(BEIGE), true);
+    s.createVariant(luc_bolsoCremaOro, productSizes.get("L"), productColors.get(BEIGE), true);
   }
 }
