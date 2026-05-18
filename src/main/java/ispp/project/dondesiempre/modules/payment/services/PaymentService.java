@@ -234,7 +234,7 @@ public class PaymentService {
                 () ->
                     new StripeFailException(
                         "La tienda no tiene cuenta de stripe asociada, contacte con soporte"));
-    String profileUrl = frontendUrl + "/" + "/profile";
+    String profileUrl = frontendUrl + "/profile";
     AccountLinkCreateParams params =
         AccountLinkCreateParams.builder()
             .setAccount(stripeAccountId)
