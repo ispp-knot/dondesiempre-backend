@@ -81,6 +81,8 @@ class LucemesStoreSeed {
         "Facebook",
         "https://www.facebook.com/profile.php?id=100090603545882");
 
+    final String BEIGE = "Beige";
+
     Product luc_bolsoCrema =
         s.createProduct(
             "Bolso Crema",
@@ -90,9 +92,9 @@ class LucemesStoreSeed {
             productTypes.get("Accesorio"),
             lucemes,
             "luceme/producto_bolso_crema_15.99.jpg");
-    s.createVariant(luc_bolsoCrema, productSizes.get("S"), productColors.get("Beige"), true);
-    s.createVariant(luc_bolsoCrema, productSizes.get("M"), productColors.get("Beige"), true);
-    s.createVariant(luc_bolsoCrema, productSizes.get("L"), productColors.get("Beige"), true);
+    s.createVariant(luc_bolsoCrema, productSizes.get("S"), productColors.get(BEIGE), true);
+    s.createVariant(luc_bolsoCrema, productSizes.get("M"), productColors.get(BEIGE), true);
+    s.createVariant(luc_bolsoCrema, productSizes.get("L"), productColors.get(BEIGE), true);
 
     Product luc_bolsoCremaOro =
         s.createProduct(
@@ -103,8 +105,8 @@ class LucemesStoreSeed {
             productTypes.get("Accesorio"),
             lucemes,
             "luceme/producto_bolso_crema_oro_18.99.jpg");
-    s.createVariant(luc_bolsoCremaOro, productSizes.get("S"), productColors.get("Beige"), true);
-    s.createVariant(luc_bolsoCremaOro, productSizes.get("M"), productColors.get("Beige"), true);
-    s.createVariant(luc_bolsoCremaOro, productSizes.get("L"), productColors.get("Beige"), true);
+    s.createVariant(luc_bolsoCremaOro, productSizes.get("S"), productColors.get(BEIGE), true);
+    s.createVariant(luc_bolsoCremaOro, productSizes.get("M"), productColors.get(BEIGE), true);
+    s.createVariant(luc_bolsoCremaOro, productSizes.get("L"), productColors.get(BEIGE), true);
   }
 }
